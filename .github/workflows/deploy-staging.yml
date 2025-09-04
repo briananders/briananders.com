@@ -1,4 +1,4 @@
-name: Build and Deploy
+name: Build and Deploy Staging
 
 env:
   CLOUDFRONT_ID: "${{ secrets.CLOUDFRONT_ID }}"
