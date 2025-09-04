@@ -53,6 +53,8 @@
 <meta itemprop="copyrightYear"                     content="<%- new Date().getFullYear(); %>"/>
 <meta itemprop="isFamilyFriendly"                  content="true"/>
 
+<meta name="build-id" content="<%- locals.commitHash %>" />
+
 <meta itemprop="author"                            content="<%- locals.author %>"/>
 <% if (locals.date) { %>
   <meta itemprop="datePublished"                     content="<%- `${locals.date.getFullYear()}-${('00' + (locals.date.getMonth() + 1)).slice(-2)}-${('00' + locals.date.getDate()).slice(-2)}` %>"/>

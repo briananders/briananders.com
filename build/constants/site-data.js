@@ -1,6 +1,22 @@
+const { execSync } = require('child_process');
+
 module.exports = (dir) => {
   const pkg = require(`${dir.root}package.json`);
   const production = require(`${dir.build}helpers/production`);
+
+  // Get commit hash from git
+  let commitHash = process.env.COMMIT_HASH;
+  if (!commitHash) {
+    try {
+      commitHash = execSync('git rev-parse HEAD', {
+        encoding: 'utf8',
+        cwd: dir.root
+      }).trim();
+    } catch (error) {
+      console.warn('Could not get git commit hash:', error.message);
+      commitHash = 'unknown';
+    }
+  }
 
   const instagramHandle = 'imbanders';
   const instagram = `https://instagram.com/${instagramHandle}`;
@@ -12,6 +28,7 @@ module.exports = (dir) => {
   const cdYT = `https://www.youtube.com/@${cdYTHandle}`;
 
   return {
+    commitHash,
     devBuild: !production,
     version: pkg.version,
     name: 'Brian Anders',
