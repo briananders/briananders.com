@@ -10,6 +10,7 @@
     "debug:build": "NODE_ENV=production node index.js --verbose",
     "inspect:build": "NODE_ENV=production node inspect index.js --verbose",
     "inspect:start": "node inspect index.js --verbose",
+    "test": "node --test",
     "deploy": "NODE_ENV=production node s3-uploader.js",
     "lint:build": "npx eslint build/** --fix",
     "lint:src": "npx eslint src/js/** --fix",
@@ -67,7 +68,7 @@
     "image-size": "^1.0.2",
     "merge": "^2.1.1",
     "node-notifier": "^10.0.1",
-    "node-sass": "^8.0.0",
+    "sass": "^1.80.6",
     "png-to-ico": "^2.1.8",
     "svgo": "^3.0.2",
     "uglify-js": "^3.17.4",
@@ -76,10 +77,10 @@
     "vinyl-source-stream": "^2.0.0",
     "watchify": "^4.0.0",
     "webp-converter": "^2.3.3",
-    "xxhash": "^0.3.0"
+    "xxhashjs": "^0.2.2"
   },
   "engines": {
-    "node": "^18.12.1",
-    "npm": "^9.2.0"
+    "node": "^18.12.1 || >=20",
+    "npm": ">=9"
   }
 }

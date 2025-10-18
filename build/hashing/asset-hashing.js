@@ -1,6 +1,6 @@
 const fs = require('fs-extra');
 const glob = require('glob');
-const XXHash = require('xxhash');
+const XXH = require('xxhashjs');
 
 const { log } = console;
 
@@ -36,7 +36,7 @@ module.exports = function assetHashing({
   let processedJs = 0;
   jsGlob.forEach((file, index, array) => {
     const fileContents = fs.readFileSync(file);
-    const hash = XXHash.hash(fileContents, 0xCAFEBABE);
+    const hash = XXH.h32(fileContents, 0xCAFEBABE).toString(16);
     const hashedFileName = `${file.substr(0, file.lastIndexOf('.'))}-${hash}${file.substr(file.lastIndexOf('.'))}`;
     hashingFileNameList[file] = hashedFileName;
     fs.rename(file, hashedFileName, (err) => {
@@ -53,7 +53,7 @@ module.exports = function assetHashing({
   let processedImages = 0;
   assetGlob.forEach((file, index, array) => {
     const fileContents = fs.readFileSync(file);
-    const hash = XXHash.hash(fileContents, 0xCAFEBABE);
+    const hash = XXH.h32(fileContents, 0xCAFEBABE).toString(16);
     const hashedFileName = `${file.substr(0, file.lastIndexOf('.'))}-${hash}${file.substr(file.lastIndexOf('.'))}`;
     hashingFileNameList[file] = hashedFileName;
     fs.rename(file, hashedFileName, (err) => {

@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-const sass = require('node-sass');
+const sass = require('sass');
 const fs = require('fs-extra');
 const glob = require('glob');
 const path = require('path');
