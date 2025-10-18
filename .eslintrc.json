@@ -21,7 +21,7 @@
     "import/no-dynamic-require": 0,
     "import/newline-after-import": 0,
     "lines-around-directive": 0,
-    "arror-parens": 0,
+    "arrow-parens": 0,
     "no-prototype-builtins": 0,
     "no-plusplus": 0,
     "global-require": 0,

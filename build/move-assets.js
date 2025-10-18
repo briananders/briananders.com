@@ -156,7 +156,7 @@ function moveAllVideos(configs) {
 
   for (let i = 0; i < videoGlob.length; i++) {
     const videoPath = videoGlob[i];
-    moveOneImage(videoPath, configs, () => {
+    moveOneVideo(videoPath, configs, () => {
       processed++;
       if (debug) log(`${timestamp.stamp()} ${processed}/${videoGlob.length}: ${videoPath}`);
       checkDone(processed, videoGlob.length);

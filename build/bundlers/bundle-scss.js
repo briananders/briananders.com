@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-const sass = require('node-sass');
+const sass = require('sass');
 const fs = require('fs-extra');
 const glob = require('glob');
 const path = require('path');
@@ -34,10 +34,11 @@ module.exports = function bundleSCSS({
       if (error) {
         if (production) throw error;
         else {
-          console.error(error.formatted.red);
+          const message = (error && (error.formatted || error.message)) || 'SASS error';
+          console.error(message.red);
           notifier.notify({
             title: 'SASS Error',
-            message: error.formatted,
+            message,
           });
           processed++;
         }
