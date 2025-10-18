@@ -25,13 +25,19 @@ module.exports = function bundleJS({ dir, buildEvents, debug }) {
     const outFile = jsFilename.replace(`${dir.src}js/`, dir.jsOutputPath);
     if (debug) log(`${timestamp.stamp()} ${'REQUEST'.magenta} - Compiling JS - ${outFile.split(/scripts/)[1]}`);
 
-    browserify({
+    const isProd = production;
+    const browserifyOptions = {
       entries: [jsFilename],
-      debug: true,
-      plugin: [watchify],
-      cache: {}, // required for watchify
-      packageCache: {}, // required for watchify
-    })
+      debug: !isProd, // disable sourcemaps in production
+      cache: {},
+      packageCache: {},
+    };
+
+    if (!isProd) {
+      browserifyOptions.plugin = [watchify];
+    }
+
+    browserify(browserifyOptions)
       .transform(babelify, { presets: ['@babel/preset-env', '@babel/preset-react'] })
       .bundle()
       .on('error', (error) => {

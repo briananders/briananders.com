@@ -64,19 +64,26 @@ const getContentType = (fileName) => {
   }
 };
 
-function getS3Objects() {
-  const uploadPromise = new Promise((resolve, reject) => {
-    s3.listObjectsV2({
-      Bucket: bucketName,
-      MaxKeys: 1000,
-    }, (err, data) => {
-      if (err) reject(err);
-      else resolve(data);
+async function listAllS3Objects() {
+  const all = [];
+  let ContinuationToken;
+  do {
+    // eslint-disable-next-line no-await-in-loop
+    const page = await new Promise((resolve, reject) => {
+      s3.listObjectsV2({
+        Bucket: bucketName,
+        ContinuationToken,
+        MaxKeys: 1000,
+      }, (err, data) => {
+        if (err) reject(err);
+        else resolve(data);
+      });
     });
-  });
-
-  return uploadPromise;
-};
+    all.push(...(page.Contents || []));
+    ContinuationToken = page.IsTruncated ? page.NextContinuationToken : undefined;
+  } while (ContinuationToken);
+  return all;
+}
 
 function deleteS3Files(fileList) {
   const deletePromise = new Promise((resolve, reject) => {
@@ -148,33 +155,66 @@ function uploadFile(fileName, index, fileList) {
   return uploadPromise;
 };
 
-function uploadFiles(fileList) {
+function uploadFiles(fileList, concurrency = 10) {
   fs.chmodSync(dir.package, '0755');
 
-  return Promise.all(fileList.map(uploadFile));
-};
+  return new Promise((resolve, reject) => {
+    const total = fileList.length;
+    const results = new Array(total);
+    let inFlight = 0;
+    let index = 0;
 
-function invalidateCloudFront() {
+    function schedule() {
+      if (index >= total && inFlight === 0) {
+        resolve(results);
+        return;
+      }
+      while (inFlight < concurrency && index < total) {
+        const i = index++;
+        inFlight++;
+        uploadFile(fileList[i], i, fileList)
+          .then((res) => {
+            results[i] = res;
+            inFlight--;
+            schedule();
+          })
+          .catch(reject);
+      }
+    }
+
+    schedule();
+  });
+}
+
+function invalidateCloudFront(changedKeys = []) {
   console.log('Invalidate Cache');
+
+  let items = Array.from(new Set(changedKeys
+    .map((k) => (k.startsWith('/') ? k : `/${k}`))
+    .map((k) => k.replace(/\/+/g, '/'))));
+
+  // Fallback to wildcard if no keys provided
+  if (items.length === 0) items = ['/*'];
+
+  // CloudFront limit is 1000 paths per invalidation
+  if (items.length > 1000) items = items.slice(0, 1000);
 
   const params = {
     DistributionId: process.env.CLOUDFRONT_ID,
-    InvalidationBatch: { /* required */
-      CallerReference: Date.now().toString(), /* required */
-      Paths: { /* required */
-        Quantity: '1', /* required */
-        Items: [
-          '/*'
-        ],
+    InvalidationBatch: {
+      CallerReference: Date.now().toString(),
+      Paths: {
+        Quantity: items.length,
+        Items: items,
       },
     },
   };
 
   cloudfront.createInvalidation(params, (err, data) => {
-    if (err) console.log(err, err.stack); // an error occurred
-    else console.log(data); // successful response
+    if (err) console.log(err, err.stack);
+    else console.log(data);
   });
-};
+}
 
 const alwaysSwapFiles = (fileName) => [
   /\.html$/,
@@ -187,8 +227,8 @@ const alwaysSwapFiles = (fileName) => [
   /\.ico$/
 ].filter((regex) => regex.test(fileName)).length;
 
-getS3Objects().then((data) => {
-  const s3FileList = data.Contents.map(({ Key }) => Key);
+listAllS3Objects().then((data) => {
+  const s3FileList = data.map(({ Key }) => Key);
 
   const packageGlob = glob.sync(`${dir.package}**/*`);
 
@@ -205,12 +245,17 @@ getS3Objects().then((data) => {
 
   const s3DeleteListTranslate = s3DeleteList.map((file) => ({ Key: file }));
 
-  return deleteS3Files(s3DeleteListTranslate).then(() => uploadFiles(toUploadList));
-}).then(() => {
+  const changedUploadKeys = toUploadList.map((p) => p.replace(dir.package, ''));
+
+  return deleteS3Files(s3DeleteListTranslate)
+    .then(() => uploadFiles(toUploadList, 10))
+    .then(() => ({ changedUploadKeys, s3DeleteList }));
+}).then(({ changedUploadKeys, s3DeleteList }) => {
   console.log('Upload Complete');
 
   if (production) {
-    invalidateCloudFront();
+    const changedKeys = Array.from(new Set([...s3DeleteList, ...changedUploadKeys]));
+    invalidateCloudFront(changedKeys);
   }
 
   console.log('Run `blc https://briananders.com -ro` to check for broken links');

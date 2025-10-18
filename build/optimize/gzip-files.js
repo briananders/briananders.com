@@ -20,9 +20,9 @@ module.exports = function gzipFiles({
   if (debug) log(`overallGlob: ${overallGlob.length} \n\n ${overallGlob} \n`);
 
   overallGlob.forEach((file) => {
-    fs.readFile(file, (error) => {
+    fs.readFile(file, (error, buffer) => {
       if (error) throw error;
-      zlib.gzip(file, (err, result) => {
+      zlib.gzip(buffer, (err, result) => {
         if (err) throw err;
         fs.writeFile(`${file}.gz`, result, (e) => {
           if (e) throw e;
