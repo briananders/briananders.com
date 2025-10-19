@@ -1,6 +1,6 @@
 const fs = require('fs-extra');
 const glob = require('glob');
-const XXH = require('xxhashjs');
+const XXHash = require('xxhash');
 
 const { log } = console;
 
@@ -18,7 +18,7 @@ module.exports = function hashCSS({
   let processedCss = 0;
   cssGlob.forEach((file, index, array) => {
     const fileContents = fs.readFileSync(file);
-    const hash = XXH.h32(fileContents, 0xCAFEBABE).toString(16);
+    const hash = XXHash.hash(fileContents, 0xCAFEBABE);
     const hashedFileName = `${file.substr(0, file.lastIndexOf('.'))}-${hash}${file.substr(file.lastIndexOf('.'))}`;
     hashingFileNameList[file] = hashedFileName;
     fs.rename(file, hashedFileName, (err) => {
