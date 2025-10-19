@@ -16,6 +16,7 @@ const production = require(`${dir.build}helpers/production`);
 
 const bundleEJS = require(`${dir.build}bundlers/bundle-ejs`);
 const bundleJS = require(`${dir.build}bundlers/bundle-js`);
+const bundleMarkdown = require(`${dir.build}bundlers/bundle-markdown`);
 const bundleSCSS = require(`${dir.build}bundlers/bundle-scss`);
 const clean = require(`${dir.build}helpers/clean`);
 const compilePageMappingData = require(`${dir.build}page-mapping-data`);
@@ -50,18 +51,19 @@ const configs = {
 
 /* ////////////////////////////// event listeners /////////////////////////// */
 
-function shouldBundleEjs(configs) {
+function shouldBundleTemplates(configs) {
   const { completionFlags } = configs;
 
   if (completionFlags.IMAGES_ARE_MOVED &&
       completionFlags.VIDEOS_ARE_MOVED) {
     bundleEJS(configs);
+    bundleMarkdown(configs);
   }
 }
 
-buildEvents.on(BUILD_EVENTS.videosMoved, shouldBundleEjs.bind(this, configs));
-buildEvents.on(BUILD_EVENTS.imagesMoved, shouldBundleEjs.bind(this, configs));
-buildEvents.on(BUILD_EVENTS.pageMappingDataCompiled, shouldBundleEjs.bind(this, configs));
+buildEvents.on(BUILD_EVENTS.videosMoved, shouldBundleTemplates.bind(this, configs));
+buildEvents.on(BUILD_EVENTS.imagesMoved, shouldBundleTemplates.bind(this, configs));
+buildEvents.on(BUILD_EVENTS.pageMappingDataCompiled, shouldBundleTemplates.bind(this, configs));
 buildEvents.on(BUILD_EVENTS.pageMappingDataCompiled, compileSitemap.bind(this, configs));
 buildEvents.on(BUILD_EVENTS.previewReady, log.bind(this, `${timestamp.stamp()} ${'Preview Ready'.green.bold}`));
 
