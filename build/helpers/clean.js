@@ -4,10 +4,12 @@ const timestamp = require('./timestamp');
 
 const { log } = console;
 
-module.exports = ({ dir }) => new Promise((resolve, reject) => {
+module.exports = ({ dir, isComparisonBuild }) => new Promise((resolve, reject) => {
   log(`${timestamp.stamp()} clean()`);
 
-  fs.emptyDir(dir.package, (error) => {
+  const targetDir = isComparisonBuild ? dir.package : dir.package;
+  
+  fs.emptyDir(targetDir, (error) => {
     if (error) {
       log(error);
       reject();

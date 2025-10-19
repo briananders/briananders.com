@@ -1,8 +1,8 @@
-module.exports = (appRoot) => ({
+module.exports = (appRoot, isComparisonBuild = false) => ({
   root: `${appRoot}/`,
   src: `${appRoot}/src/`,
-  package: `${appRoot}/package/`,
+  package: isComparisonBuild ? `${appRoot}/comparison/` : `${appRoot}/package/`,
   build: `${appRoot}/build/`,
-  jsOutputPath: `${appRoot}/package/scripts/`,
+  jsOutputPath: isComparisonBuild ? `${appRoot}/comparison/scripts/` : `${appRoot}/package/scripts/`,
   nodeModules: `${appRoot}/node_modules/`,
 });

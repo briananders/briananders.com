@@ -1,0 +1,120 @@
+{
+  "sources": {
+    "artist": "https://www.last.fm/user/imbanders/library/artists?from=2021-01-01&rangetype=year",
+    "album": "https://www.last.fm/user/imbanders/library/albums?from=2021-01-01&rangetype=year"
+  },
+  "artists": [
+    {
+      "name": "Electric Light Orchestra",
+      "img": "/images/last-fm/artist/electric-light-orchestra.webp",
+      "count": 1010
+    },
+    {
+      "name": "Pink Floyd",
+      "img": "/images/last-fm/artist/pink-floyd.webp",
+      "count": 685
+    },
+    {
+      "name": "Paul McCartney",
+      "img": "/images/last-fm/artist/paul-mccartney.webp",
+      "count": 510
+    },
+    {
+      "name": "The Beatles",
+      "img": "/images/last-fm/artist/the-beatles.webp",
+      "count": 454
+    },
+    {
+      "name": "Underoath",
+      "img": "/images/last-fm/artist/underoath.webp",
+      "count": 432
+    },
+    {
+      "name": "Bad Religion",
+      "img": "/images/last-fm/artist/bad-religion.webp",
+      "count": 424
+    },
+    {
+      "name": "The Used",
+      "img": "/images/last-fm/artist/the-used.webp",
+      "count": 375
+    },
+    {
+      "name": "Atreyu",
+      "img": "/images/last-fm/artist/atreyu.webp",
+      "count": 341
+    },
+    {
+      "name": "He Is Legend",
+      "img": "/images/last-fm/artist/he-is-legend.webp",
+      "count": 311
+    },
+    {
+      "name": "Senses Fail",
+      "img": "/images/last-fm/artist/senses-fail.webp",
+      "count": 277
+    }
+  ],
+  "albums": [
+    {
+      "name": "The Wall",
+      "artist": "Pink Floyd",
+      "img": "/images/last-fm/album/pink-floyd+the-wall.webp",
+      "count": 247
+    },
+    {
+      "name": "Baptize",
+      "artist": "Atreyu",
+      "img": "/images/last-fm/album/atreyu+baptize.webp",
+      "count": 233
+    },
+    {
+      "name": "Out of the Blue",
+      "artist": "Electric Light Orchestra",
+      "img": "/images/last-fm/album/electric-light-orchestra+out-of-the-blue.webp",
+      "count": 223
+    },
+    {
+      "name": "Voyeurist",
+      "artist": "Underoath",
+      "img": "/images/last-fm/album/underoath+voyeurist.webp",
+      "count": 219
+    },
+    {
+      "name": "Heartwork",
+      "artist": "The Used",
+      "img": "/images/last-fm/album/the-used+heartwork.webp",
+      "count": 190
+    },
+    {
+      "name": "Pure McCartney",
+      "artist": "Paul McCartney",
+      "img": "/images/last-fm/album/paul-mccartney+pure-mccartney.webp",
+      "count": 178
+    },
+    {
+      "name": "Is This the Life We Really Want?",
+      "artist": "Roger Waters",
+      "img": "/images/last-fm/album/roger-waters+is-this-the-life-we-really-want.webp",
+      "count": 173
+    },
+    {
+      "name": "amo",
+      "artist": "Bring Me the Horizon",
+      "img": "/images/last-fm/album/bring-me-the-horizon+amo.webp",
+      "count": 143
+    },
+    {
+      "name": "Secret Messages",
+      "artist": "Electric Light Orchestra",
+      "img": "/images/last-fm/album/electric-light-orchestra+secret-messages.webp",
+      "count": 138
+    },
+    {
+      "name": "Eldorado",
+      "artist": "Electric Light Orchestra",
+      "img": "/images/last-fm/album/electric-light-orchestra+eldorado.webp",
+      "count": 135
+    }
+  ]
+}

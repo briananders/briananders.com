@@ -7,7 +7,13 @@ const fs = require('fs-extra');
 const express = require('express');
 const serve = require('express-static');
 const EventEmitter = require('events');
-const dir = require('./build/constants/directories')(__dirname);
+/* ///////////////////////////// local variables //////////////////////////// */
+
+const { log } = console;
+const debug = process.argv.includes('--verbose');
+const isComparisonBuild = process.argv.includes('--comparison');
+
+const dir = require('./build/constants/directories')(__dirname, isComparisonBuild);
 
 /* //////////////////////////// local packages ////////////////////////////// */
 
@@ -22,15 +28,11 @@ const compilePageMappingData = require(`${dir.build}page-mapping-data`);
 const { moveAssets } = require(`${dir.build}move-assets`);
 const previewBuilder = require(`${dir.build}preview-builder`);
 const prodBuilder = require(`${dir.build}prod-builder`);
+const comparisonBuilder = require(`${dir.build}comparison-builder`);
 const compileSitemap = require(`${dir.build}bundlers/sitemap`);
 
 const completionFlagsSource = require(`${dir.build}constants/completion-flags`);
 const BUILD_EVENTS = require(`${dir.build}constants/build-events`);
-
-/* ///////////////////////////// local variables //////////////////////////// */
-
-const { log } = console;
-const debug = process.argv.includes('--verbose');
 
 const app = express();
 const buildEvents = new EventEmitter();
@@ -46,6 +48,7 @@ const configs = {
   dir,
   hashingFileNameList,
   pageMappingData,
+  isComparisonBuild,
 };
 
 /* ////////////////////////////// event listeners /////////////////////////// */
@@ -67,6 +70,8 @@ buildEvents.on(BUILD_EVENTS.previewReady, log.bind(this, `${timestamp.stamp()} $
 
 if (!production) {
   previewBuilder(configs);
+} else if (isComparisonBuild) {
+  comparisonBuilder(configs);
 } else {
   prodBuilder(configs);
 }
@@ -77,7 +82,7 @@ if (!production) {
 
 log(`production: ${production}`.toUpperCase().brightBlue.bold);
 
-clean(configs).then(() => {
+clean({ ...configs, isComparisonBuild }).then(() => {
   if (debug) log(`${timestamp.stamp()} clean().then()`);
   fs.mkdirp(dir.package);
   compilePageMappingData(configs);

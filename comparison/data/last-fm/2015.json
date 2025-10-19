@@ -1,0 +1,120 @@
+{
+  "sources": {
+    "artist": "https://www.last.fm/user/imbanders/library/artists?from=2015-01-01&rangetype=year",
+    "album": "https://www.last.fm/user/imbanders/library/albums?from=2015-01-01&rangetype=year"
+  },
+  "artists": [
+    {
+      "name": "Billy Joel",
+      "img": "/images/last-fm/artist/billy-joel.webp",
+      "count": 1408
+    },
+    {
+      "name": "George Harrison",
+      "img": "/images/last-fm/artist/george-harrison.webp",
+      "count": 927
+    },
+    {
+      "name": "The Beatles",
+      "img": "/images/last-fm/artist/the-beatles.webp",
+      "count": 674
+    },
+    {
+      "name": "The Beach Boys",
+      "img": "/images/last-fm/artist/the-beach-boys.webp",
+      "count": 671
+    },
+    {
+      "name": "Brian Wilson",
+      "img": "/images/last-fm/artist/brian-wilson.webp",
+      "count": 373
+    },
+    {
+      "name": "Muse",
+      "img": "/images/last-fm/artist/muse.webp",
+      "count": 313
+    },
+    {
+      "name": "Fall Out Boy",
+      "img": "/images/last-fm/artist/fall-out-boy.webp",
+      "count": 287
+    },
+    {
+      "name": "My Chemical Romance",
+      "img": "/images/last-fm/artist/my-chemical-romance.webp",
+      "count": 277
+    },
+    {
+      "name": "John Lennon",
+      "img": "/images/last-fm/artist/john-lennon.webp",
+      "count": 273
+    },
+    {
+      "name": "Bruce Springsteen",
+      "img": "/images/last-fm/artist/bruce-springsteen.webp",
+      "count": 262
+    }
+  ],
+  "albums": [
+    {
+      "name": "All Things Must Pass",
+      "artist": "George Harrison",
+      "img": "/images/last-fm/album/george-harrison+all-things-must-pass.webp",
+      "count": 547
+    },
+    {
+      "name": "Pet Sounds",
+      "artist": "The Beach Boys",
+      "img": "/images/last-fm/album/the-beach-boys+pet-sounds.webp",
+      "count": 473
+    },
+    {
+      "name": "SMiLE",
+      "artist": "Brian Wilson",
+      "img": "/images/last-fm/album/brian-wilson+smile.webp",
+      "count": 353
+    },
+    {
+      "name": "The Essential Billy Joel",
+      "artist": "Billy Joel",
+      "img": "/images/last-fm/album/billy-joel+the-essential-billy-joel.webp",
+      "count": 182
+    },
+    {
+      "name": "Heavy Fruit",
+      "artist": "He Is Legend",
+      "img": "/images/last-fm/album/he-is-legend+heavy-fruit.webp",
+      "count": 169
+    },
+    {
+      "name": "The Black Parade",
+      "artist": "My Chemical Romance",
+      "img": "/images/last-fm/album/my-chemical-romance+the-black-parade.webp",
+      "count": 162
+    },
+    {
+      "name": "American Beauty / American Psycho",
+      "artist": "Fall Out Boy",
+      "img": "/images/last-fm/album/fall-out-boy+american-beauty-american-psycho.webp",
+      "count": 160
+    },
+    {
+      "name": "Glass Houses",
+      "artist": "Billy Joel",
+      "img": "/images/last-fm/album/billy-joel+glass-houses.webp",
+      "count": 151
+    },
+    {
+      "name": "An Innocent Man",
+      "artist": "Billy Joel",
+      "img": "/images/last-fm/album/billy-joel+an-innocent-man.webp",
+      "count": 145
+    },
+    {
+      "name": "Hungry Ghosts",
+      "artist": "OK Go",
+      "img": "/images/last-fm/album/ok-go+hungry-ghosts.webp",
+      "count": 140
+    }
+  ]
+}

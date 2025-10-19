@@ -5,9 +5,11 @@
   "homepage": "https://briananders.com",
   "scripts": {
     "build": "NODE_ENV=production node index.js",
-    "clean": "rm -rf node_modules tmp dist && npm cache clean --force",
+    "build:comparison": "NODE_ENV=production node index.js --comparison",
+    "clean": "rm -rf node_modules tmp dist package comparison && npm cache clean --force",
     "debug:start": "node index.js --verbose",
     "debug:build": "NODE_ENV=production node index.js --verbose",
+    "debug:build:comparison": "NODE_ENV=production node index.js --verbose --comparison",
     "inspect:build": "NODE_ENV=production node inspect index.js --verbose",
     "inspect:start": "node inspect index.js --verbose",
     "deploy": "NODE_ENV=production node s3-uploader.js",
