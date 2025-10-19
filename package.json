@@ -12,6 +12,7 @@
     "debug:build:comparison": "NODE_ENV=production node index.js --verbose --comparison",
     "inspect:build": "NODE_ENV=production node inspect index.js --verbose",
     "inspect:start": "node inspect index.js --verbose",
+    "test": "node --test",
     "deploy": "NODE_ENV=production node s3-uploader.js",
     "lint:build": "npx eslint build/** --fix",
     "lint:src": "npx eslint src/js/** --fix",
@@ -81,7 +82,7 @@
     "xxhash": "^0.3.0"
   },
   "engines": {
-    "node": "^18.12.1",
-    "npm": "^9.2.0"
+    "node": "^18.12.1 || >=20",
+    "npm": ">=9"
   }
 }
