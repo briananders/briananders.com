@@ -9,7 +9,7 @@
   ul {
     display: flex;
     flex-wrap: wrap;
-    gap: $s4;
+    gap: space(4);
     justify-content: center;
   }
 
@@ -18,7 +18,7 @@
     display: flex;
     flex-flow: column;
     align-items: center;
-    gap: $s1;
+    gap: space(1);
   }
 
   span {
@@ -56,7 +56,7 @@
     background-color: $palette--accent-color;
   }
   [class^="palette--"] {
-    padding: $s1;
+    padding: space(1);
     @include ds-box-shadow;
   }
   .palette--base {
@@ -80,8 +80,8 @@
   .container div {
     @include palette--base--inverted;
     @include ds-box-shadow;
-    text-align: center;
-    padding: $s1 0;
+    text-align: left;
+    padding: space(1) 0;
     margin: 0 auto $paragraph-bottom;
   }
   .content-max-width {
@@ -102,8 +102,8 @@
   .container div {
     @include palette--base--inverted;
     @include ds-box-shadow;
-    text-align: center;
-    padding: $s1 0;
+    text-align: left;
+    padding: space(1) 0;
     margin: 0 auto $paragraph-bottom;
   }
   .small {

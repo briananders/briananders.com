@@ -2,7 +2,7 @@
 
 ul li {
   list-style: disc;
-  margin-left: $s4;
+  margin-left: space(4);
 }
 
 .posts.yahtzee {
@@ -14,13 +14,13 @@ ul li {
     @include margin-center;
     display: grid;
     justify-content: center;
-    grid-gap: $s2;
-    margin-top: $s6;
+    grid-gap: space(2);
+    margin-top: space(6);
     width: css-min(100%, 360px);
 
     label {
       @include type--body;
-      padding: 0 $s2;
+      padding: 0 space(2);
       width: 160px;
       margin-bottom: unset;
     }
@@ -58,12 +58,12 @@ ul li {
     display: grid;
     justify-content: center;
     grid-template-columns: repeat(5, 1fr);
-    grid-gap: $s2;
+    grid-gap: space(2);
 
     button {
       @include button-link;
       height: 37px;
-      padding: 0 $s2;
+      padding: 0 space(2);
       margin: unset;
     }
   }
@@ -85,7 +85,7 @@ ul li {
   #score-board {
     display: grid;
     grid-template-columns: 1fr;
-    grid-gap: $s6;
+    grid-gap: space(6);
 
     @include mq($medium) {
       grid-template-columns: 1fr 1fr;
@@ -102,7 +102,7 @@ ul li {
     > div {
       display: flex;
       justify-content: space-between;
-      margin-bottom: $s1;
+      margin-bottom: space(1);
       position: relative;
       align-items: center;
     }
@@ -110,10 +110,10 @@ ul li {
   .score {
     @include button-link;
     min-width: 72px;
-    text-align: center;
-    margin-left: $s2;
+    text-align: left;
+    margin-left: space(2);
     display: inline-block;
-    padding: 0 $s3;
+    padding: 0 space(3);
     font-family: $sans-serif;
     margin: unset;
   }
@@ -121,11 +121,11 @@ ul li {
   #total {
     display: flex;
     justify-content: space-between;
-    padding-top: $s1;
-    border-top: $s1/3 solid;
+    padding-top: space(1);
+    border-top: space(1)/3 solid;
 
     @include mq($medium) {
-      width: calc(50% - #{$s6});
+      width: calc(50% - #{space(6)});
     }
   }
 

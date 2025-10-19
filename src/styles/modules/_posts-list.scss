@@ -2,26 +2,16 @@
   display: grid;
   grid-template-columns: 1fr;
   justify-content: space-around;
-  column-gap: $s6;
-  row-gap: $s12;
   align-items: stretch;
   justify-items: stretch;
-  margin-bottom: $s6;
+  margin-bottom: space(6);
   text-align: left;
 
-  h5 {
-    text-align: left;
-  }
-
-  figcaption {
-    margin-bottom: $s2;
-    flex-grow: 1;
-    text-align: left;
-  }
-
   a {
-    display: block;
-    @include sixHundred;
-    margin: 0 auto;
+    display: grid;
+    @include readingWidth;
+    margin-bottom: 0;
+    grid-template-columns: 1fr 130px;
+    align-items: center;
   }
 }

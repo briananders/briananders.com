@@ -6,7 +6,7 @@ canvas {
   max-height: 100vw;
   display: block;
   border: 2px solid $palette--divider-color;
-  margin: $s6 auto 0;
+  margin: space(6) auto 0;
 }
 
 form {
@@ -16,7 +16,7 @@ form {
   font-family: $sans-serif;
 
   > * {
-    margin: 0 $s1;
+    margin: 0 space(1);
   }
 
   span,

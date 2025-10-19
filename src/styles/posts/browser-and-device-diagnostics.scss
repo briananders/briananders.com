@@ -5,7 +5,7 @@
 .posts.browser-and-device-diagnostics {
   input {
     width: 100%;
-    margin: $s2 auto;
+    margin: space(2) auto;
   }
 
   #error {
@@ -26,15 +26,15 @@
     border: 2px solid $palette--divider-color;
     display: block;
     font-family: monospace;
-    margin-bottom: $s6;
-    margin: auto auto $s6;
-    @include sixHundred;
-    padding: $s4;
+    margin-bottom: space(6);
+    margin: auto auto space(6);
+    @include readingWidth;
+    padding: space(4);
     text-align: left;
     word-wrap: break-word;
 
     ul {
-      margin-left: $s4;
+      margin-left: space(4);
     }
 
     li {

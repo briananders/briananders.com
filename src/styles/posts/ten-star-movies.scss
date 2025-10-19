@@ -6,25 +6,25 @@ article {
   align-content: center;
   justify-content: center;
   justify-items: center;
-  text-align: center;
-  gap: $s4;
+  text-align: left;
+  gap: space(4);
   @include margin-center;
 
   width: 240px;
   grid-template-columns: repeat(1, 1fr);
 
-  @include mq((240px*2) + ($s4*3)) {
-    width: (240px*2) + ($s4*1);
+  @include mq((240px*2) + (space(4)*3)) {
+    width: (240px*2) + (space(4)*1);
     grid-template-columns: repeat(2, 1fr);
   }
 
-  @include mq((240px*3) + ($s4*4)) {
-    width: (240px*3) + ($s4*2);
+  @include mq((240px*3) + (space(4)*4)) {
+    width: (240px*3) + (space(4)*2);
     grid-template-columns: repeat(3, 1fr);
   }
 
-  @include mq((240px*4) + ($s4*5)) {
-    width: (240px*4) + ($s4*3);
+  @include mq((240px*4) + (space(4)*5)) {
+    width: (240px*4) + (space(4)*3);
     grid-template-columns: repeat(4, 1fr);
   }
 }
@@ -34,7 +34,7 @@ a.movie {
   display: flex;
   flex-wrap: wrap;
   align-content: space-between;
-  gap: $s2;
+  gap: space(2);
 
   transition-property: color;
   background-color: transparent;

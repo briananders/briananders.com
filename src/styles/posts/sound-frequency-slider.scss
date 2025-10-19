@@ -3,24 +3,24 @@
 button[value=add] {
   display: block;
   margin: auto;
-  margin-bottom: $s6;
+  margin-bottom: space(6);
 }
 
 .sound-slider {
-  text-align: center;
+  text-align: left;
   width: 100%;
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
   position: relative;
-  padding: $s2;
-  border-radius: $border-radius;
+  padding: space(2);
+  border-radius: var(--border-radius, $border-radius);
   border: 2px solid $palette--divider-color;
   @include paragraph;
 
   input[type=range] {
     width: 100%;
-    margin: $s2 0;
+    margin: space(2) 0;
   }
   input[type=number] {
     width: 150px;
@@ -35,7 +35,7 @@ button[value=add] {
     margin: 0;
 
     span {
-      margin-left: $s1;
+      margin-left: space(1);
     }
   }
 

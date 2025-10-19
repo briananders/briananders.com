@@ -15,7 +15,7 @@ yearTemplate.innerHTML = `
     line-height: 24px;
     font-size: 18px;
     width: 50px;
-    text-align: center;
+    text-align: left;
     cursor: pointer;
 
     transition-duration: var(--transition-speed);

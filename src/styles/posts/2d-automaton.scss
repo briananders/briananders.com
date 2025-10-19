@@ -8,16 +8,16 @@ canvas {
   max-height: 100vw;
   display: block;
   border: 2px solid $palette--divider-color;
-  margin: $s6 auto 0;
+  margin: space(6) auto 0;
 }
 
 td {
-  padding: $s4 $s4 0;
+  padding: space(4) space(4) 0;
   @include type--heading-2;
   line-height: .7;
 
   @include mq-max(500px) {
-    padding: $s2 $s2 0;
+    padding: space(2) space(2) 0;
     @include type--heading-3;
     line-height: .7;
   }
@@ -34,7 +34,7 @@ form {
   font-family: $sans-serif;
 
   > * {
-    margin: 0 $s1;
+    margin: 0 space(1);
   }
 
   span,

@@ -55,7 +55,7 @@ main-stroke {
 main-stroke {
   min-width: 72px;
   min-height: 72px;
-  padding: $s1;
+  padding: space(1);
   display: flex;
   flex-flow: column;
 
@@ -64,8 +64,8 @@ main-stroke {
     display: block;
     background-color: black;
     border-radius: 100%;
-    height: var(--stroke, #{$s2});
-    width: var(--stroke, #{$s2});
+    height: var(--stroke, #{space(2)});
+    width: var(--stroke, #{space(2)});
     margin: auto;
     box-shadow: 0 0 0px 1px currentColor;
   }
@@ -73,7 +73,7 @@ main-stroke {
   span {
     width: 100%;
     display: block;
-    text-align: center;
+    text-align: left;
     align-self: flex-end;
   }
 }
@@ -86,7 +86,7 @@ $slider-height: 20px;
   position: relative;
   width: $slider-height;
   height: $slider-width;
-  margin-right: $s4;
+  margin-right: space(4);
 }
 
 #stroke-slider {

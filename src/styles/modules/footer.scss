@@ -1,7 +1,7 @@
 @import "system/utilities";
 
 footer {
-  padding: $s6 0 $s2;
+  padding: space(6) 0 space(2);
   margin-top: $section-spacer;
   @include palette--base;
   position: relative;
@@ -24,10 +24,10 @@ footer {
 
   .links {
     display: flex;
-    gap: $s2;
+    gap: space(2);
     flex-wrap: wrap;
-    margin-top: $s4;
-    margin-bottom: $s4;
+    margin-top: space(4);
+    margin-bottom: space(4);
   }
 
   a {

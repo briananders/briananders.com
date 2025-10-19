@@ -15,7 +15,7 @@ $aspectRatio: $height / $width;
 
   .videos {
     position: relative;
-    padding-bottom: $s6;
+    padding-bottom: space(6);
 
     &::after {
       background-image: url(/images/drums/logo.png);
@@ -41,7 +41,7 @@ $aspectRatio: $height / $width;
     width: css-min(100%, $full-width-medium);
 
     height: 150px;
-    margin: 0 auto $s6;
+    margin: 0 auto space(6);
     // background: linear-gradient(180deg, $palette--primary-grey, darken($palette--primary-color-dark, 10));
     background: linear-gradient(90deg, $palette--primary-color-dark, $palette--primary-color-light);
     display: flex;
@@ -59,7 +59,7 @@ $aspectRatio: $height / $width;
   }
 
   .video-container {
-    margin-bottom: $s6;
+    margin-bottom: space(6);
     @include content-width;
 
     @include mq($content-max-width) {
@@ -69,11 +69,11 @@ $aspectRatio: $height / $width;
   }
 
   .social-icon {
-    margin-bottom: $s2;
+    margin-bottom: space(2);
     width: 100px;
     height: 100px;
     border-radius: 50%;
-    padding: $s3;
+    padding: space(3);
     box-shadow: inset 0 0 0 1px #{$palette--primary-white}, 0 0 0 3px #{$palette--primary-color-dark};
     display: flex;
     justify-content: center;
@@ -93,17 +93,17 @@ $aspectRatio: $height / $width;
     align-items: center;
     justify-content: center;
     flex-direction: column;
-    margin: $s2;
+    margin: space(2);
     width: 150px;
-    padding-top: $s3;
-    padding-bottom: $s2;
+    padding-top: space(3);
+    padding-bottom: space(2);
   }
 
   .video-grid {
     display: grid;
     grid-template-columns: 1fr;
     gap: 12px;
-    @include sixHundred;
+    @include readingWidth;
 
     @include mq(700px) {
       grid-template-columns: repeat(2, 1fr);
@@ -115,7 +115,7 @@ $aspectRatio: $height / $width;
     }
 
     img {
-      margin-bottom: $s2;
+      margin-bottom: space(2);
     }
   }
 }

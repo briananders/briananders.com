@@ -50,23 +50,10 @@ module.exports = (dir, pageMappingData) => ({
   },
 
   formattedDate(dateString) {
-    const monthName = [
-      'January',
-      'February',
-      'March',
-      'April',
-      'May',
-      'June',
-      'July',
-      'August',
-      'September',
-      'October',
-      'November',
-      'December'
-    ];
     const date = new Date(dateString);
-    const month = monthName[date.getMonth()];
-    return `${month} ${date.getFullYear()}`;
+    const month = `00${date.getMonth() + 1}`.slice(-2);
+    const day = `00${date.getDate()}`.slice(-2);
+    return `${date.getFullYear()}-${month}-${day}`;
   },
 
   noWidows(str) {

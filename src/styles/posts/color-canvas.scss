@@ -20,7 +20,7 @@ input {
 .form {
   display: flex;
   max-width: $squareSize + px;
-  margin: $s12 auto 0;
+  margin: space(12) auto 0;
   align-items: center;
 }
 

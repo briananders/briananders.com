@@ -17,69 +17,35 @@ scripts:
 <%- partial('head/styles', {...locals, path: 'homepage', inlineStyles: true, }) %>
 
 
-<section class="intro">
-  <div class="content">
-    <header>
-      <h2>
-        <%- noWidows(`Who am I?`); %>
-      </h2>
-    </header>
-    <p>
-      I am Brian Anders, an Engineer Manager in the tech industry. My specialty is in building enterprise level e-commerce websites.
-    </p>
-    <p>
-      I cohost a podcast and YouTube channel about Batman with my friend <%- inlineLink('Alex Cash', { href: 'https://alex.cash' }) %>, called <%- inlineLink('Bat Lessons', { href: locals.batLessons }) %>. I also record drum covers for my YouTube channel, <%- inlineLink('Banders Drums', { href: locals.bandersDrums.youtube }) %>.
-    </p>
-    <p>
-      I have a strong passion for music.  In my free time, I listen to a lot of music, play some other instruments, and try to keep up with a lot of different podcasts.
-    </p>
-    <p>
-      You can find me on the internet in some other places.
-      <% const contactLinks = [
-          { copy: 'Github',    href: locals.github,              },
-          { copy: 'Instagram', href: locals.instagram,           },
-          { copy: 'Last.fm',   href: locals.lastfm,              },
-          { copy: 'LinkedIn',  href: locals.linkedin,            },
-          { copy: 'Mastodon',  href: locals.mastodon, rel: 'me', },
-          { copy: 'Blue Sky',  href: locals.bluesky,             },
-          { copy: 'Twitter',   href: locals.twitter,             },
-          { copy: 'YouTube',   href: locals.bandersDrums.youtube },
-        ].map(item => inlineLink(item.copy, item));
-      %>
-      <%- contactLinks.join(', '); %>.
-    </p>
-  </div>
-</section>
-
-
 <section class="contributions">
   <div class="content">
-    <h2>
-      <%- noWidows(`Shows and other fun stuff`); %>
-    </h2>
     <div class="deck">
     <%
       const model = [
         {
-          heading: "Podcast & Youtube channel: Bat Lessons",
+          heading: "Bat Lessons",
           image: "/images/about/contributions/batlessons.webp",
-          copyBlock: `My friend ${inlineLink('Alex Cash', { href: 'https://alex.cash' })} and I cohost a show about Batman. It focuses on the context around the development of the characters, the history of the Batman universe, and the impact that our world had on it.`,
+          copyBlock: `${inlineLink('Alex Cash', { href: 'https://alex.cash', external: true })} and I cohost a show about Batman.`,
           links: [
             {
-              label: "Bat Lessons website",
+              label: "Website",
               url: locals.batLessons,
+            },
+            {
+              label: "YouTube",
+              url: locals.batLessonsYT,
             }
           ]
         }, {
-          heading: "YouTube channel: Banders Drums",
+          heading: "Banders Drums",
           image: "/images/drums/logo.png",
-          copyBlock: "I have a YouTube channel where I post recordings of me playing drum covers. I plan to compose my own music someday.",
+          copyBlock: "I have a YouTube channel where I post recordings of me playing drum covers.",
           links: [
             {
-              label: "Main Web Page",
+              label: "Website",
               path: locals.bandersDrums.path,
             }, {
-              label: "YouTube Channel",
+              label: "YouTube",
               url: locals.bandersDrums.youtube,
             }
           ]
@@ -91,26 +57,24 @@ scripts:
       <% }); %>
     </div>
   </div>
-  <div class="content center">
-    <%- buttonLink('More about me', {
+  <div class="content">
+    <%- blockLink('More', {
       href: '/about/',
-      class: 'mega-button',
     }); %>
   </div>
 </section>
 
 
 <section class="posts">
-  <div class="content center">
+  <div class="content">
     <header>
       <h2>
-        <%- noWidows(`Recent posts.`); %>
+        <%- noWidows(`Recent posts`); %>
       </h2>
     </header>
     <%- partial('posts-list', Object.assign(locals, { postCount: 6 })); %>
-    <%- buttonLink('More posts', {
+    <%- blockLink('More posts', {
       href: '/posts/',
-      class: 'mega-button',
     }); %>
   </div>
 </section>
@@ -120,11 +84,8 @@ scripts:
   <div class="content">
     <header>
       <h2>
-        <%- noWidows(`What I have been listening to.`); %>
+        <%- noWidows(`Music that I have been listening to`); %>
       </h2>
-      <p>
-        Music is a big deal to me. I am always looking for my next favorite album. Last.fm is a tool that I use to track my listening habits. Here is some of the music that I’ve been listening to recently.
-      </p>
     </header>
     <link rel="preconnect" href="https://ws.audioscrobbler.com" crossorigin />
     <div class="last-fm-module p" data-type="albums" src="/images/posts/last-fm/default.webp">
@@ -133,9 +94,8 @@ scripts:
       <% } %>
     </div>
     <div class="center">
-      <%- buttonLink('More music details', {
+      <%- blockLink('More music details', {
         href: '/posts/last-fm/',
-        class: 'mega-button',
       }); %>
     </div>
   </div>

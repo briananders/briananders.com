@@ -100,7 +100,7 @@ ol {
 
 ol:not(.default) {
   list-style: decimal;
-  padding-left: $s4;
+  padding-left: space(4);
 }
 
 item,
@@ -147,10 +147,10 @@ input[type=checkbox].toggle {
   appearance: none;
   position: relative;
   display: inline-block;
-  width: $s8;
-  height: $s3;
+  width: space(8);
+  height: space(3);
   background-color: $palette--primary-white;
-  border-radius: $s2;
+  border-radius: space(2);
   border: none;
 
   &:focus {
@@ -162,14 +162,14 @@ input[type=checkbox].toggle {
   &::before {
     content: '';
     position: absolute;
-    width: $s4;
-    height: $s4;
-    border-radius: $s2;
+    width: space(4);
+    height: space(4);
+    border-radius: space(2);
     background-color: $palette--accent-color;
-    top: -#{$s1 / 2};
-    left:-#{$s1 / 2};
+    top: -#{space(1) / 2};
+    left:-#{space(1) / 2};
     transition: left $transition-speed, background-color $transition-speed;
-    box-shadow: 0 0 $s1 $color--grey-900;
+    box-shadow: 0 0 space(1) $color--grey-900;
   }
 
   /* Checkbox checked toggle label bg color */
@@ -178,7 +178,7 @@ input[type=checkbox].toggle {
 
     /* Checkbox checked effect */
     &::before {
-      left: calc(100% - #{$s4 - ($s1 / 2)});
+      left: calc(100% - #{space(4) - (space(1) / 2)});
     }
 
     &:focus {

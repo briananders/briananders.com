@@ -13,7 +13,7 @@
 row {
   grid-template-columns: 1fr 120px;
   display: grid;
-  text-align: center;
+  text-align: left;
 
   label {
     grid-column: 1 / span 2;
@@ -24,7 +24,7 @@ row {
 
 .buttons {
   display: grid;
-  gap: $s2;
+  gap: space(2);
   justify-content: center;
   grid-template-columns: 1fr 120px 120px 1fr;
 
@@ -45,11 +45,11 @@ row {
     width: 100%;
     display: grid;
     grid-template-columns: 1fr 1fr;
-    grid-template-rows: auto $s4;
-    gap: $s2;
+    grid-template-rows: auto space(4);
+    gap: space(2);
 
     * {
-      padding: 0 $s1;
+      padding: 0 space(1);
     }
 
     :nth-child(odd) {
@@ -59,6 +59,6 @@ row {
 
   button {
     display: block;
-    margin: $s2 auto 0;
+    margin: space(2) auto 0;
   }
 }

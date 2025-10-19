@@ -24,7 +24,7 @@ main.posts.using-canvas-to-make-patterns-with-circles {
   }
 
   form {
-    margin-bottom: $s6;
+    margin-bottom: space(6);
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
@@ -39,12 +39,12 @@ main.posts.using-canvas-to-make-patterns-with-circles {
     }
 
     input[type=checkbox] {
-      margin-right: $s1;
+      margin-right: space(1);
     }
 
     > * {
       display: block;
-      margin: 0 $s2 $s2;
+      margin: 0 space(2) space(2);
     }
   }
 }

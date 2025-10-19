@@ -6,7 +6,7 @@
   grid-template-rows: repeat(2, 1fr);
   width: css-min(80vh, 80vw);
   margin: auto;
-  gap: $s1;
+  gap: space(1);
   justify-content: center;
   align-items: center;
 
@@ -20,7 +20,7 @@
   }
 
   span {
-    margin: 0 $s2;
+    margin: 0 space(2);
     width: 36px;
     text-align: left;
   }

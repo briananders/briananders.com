@@ -9,9 +9,9 @@
 
     &.default-styles {
       width: 100%;
-      padding: $s1 $s2;
+      padding: space(1) space(2);
       @include palette--header;
-      text-align: center;
+      text-align: left;
 
       transition-duration: 0s;
     }

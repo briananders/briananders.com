@@ -1,21 +1,14 @@
 @import "system/variables/defaults";
 
-$s1:  $base-unit *  1;
-$s2:  $base-unit *  2;
-$s3:  $base-unit *  3;
-$s4:  $base-unit *  4;
-$s6:  $base-unit *  6;
-$s8:  $base-unit *  8;
-$s10: $base-unit * 10;
-$s12: $base-unit * 12;
-$s16: $base-unit * 16;
-$s20: $base-unit * 20;
+@function space($size) {
+  @return $base-unit * $size;
+}
 
-$section-spacer: $s20;
-$paragraph-bottom: $s6;
-$content-max-width: 170 * $s1;
+$section-spacer: space(20);
+$paragraph-bottom: space(6);
+$content-max-width: 1024px;
 
 
 $full-bleed: $content-max-width;
-$full-width-small: $content-max-width - (2 * $s2);
-$full-width-medium: $content-max-width - (2 * $s6);
+$full-width-small: $content-max-width - (2 * space(2));
+$full-width-medium: $content-max-width - (2 * space(6));

@@ -62,7 +62,7 @@ section.minesweeper {
 
   .header-second-row {
     justify-content: center;
-    margin: $s6 auto $s4;
+    margin: space(6) auto space(4);
   }
 
   .mine-sweeper-tile {

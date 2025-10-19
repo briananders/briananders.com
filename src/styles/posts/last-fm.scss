@@ -2,16 +2,18 @@
 
 .last-fm-module {
   display: grid;
-  grid-gap: $s6;
+  grid-gap: space(6);
 
   .item {
     display: grid;
     grid-template-columns: 1fr;
-    grid-gap: $s1 / 2;
-    grid-gap: $s3;
+    grid-gap: space(1) / 2;
+    grid-gap: space(3);
     border: none;
-    padding: $s1;
+    padding: space(1);
     text-decoration: none;
+    margin-left: -#{space(1)};
+    margin-right: -#{space(1)};
 
     @include palette--base;
 
@@ -38,8 +40,8 @@
 
     bar {
       display: block;
-      height: $s2;
-      margin-top: $s1;
+      height: space(2);
+      margin-top: space(1);
       transition-property: background-color;
       @include orange-gradient;
     }
