@@ -6,6 +6,12 @@ const path = require('path');
 const merge = require('merge');
 const ejs = require('ejs');
 const matter = require('gray-matter');
+const notifier = require('node-notifier');
+const util = require('util');
+const readFile = util.promisify(fs.readFile);
+
+const { log } = console;
+
 // Simple markdown parser - basic implementation
 const marked = {
   parse: (markdown) => {
@@ -82,18 +88,11 @@ const marked = {
     return processedLines.join('\n');
   }
 };
-const notifier = require('node-notifier');
-const util = require('util');
-const readFile = util.promisify(fs.readFile);
 
-const { log } = console;
-
-// Simple markdown parser configuration
-
-function handleTemplateError(e) {
+function handleTemplateError(e, fileType = 'Template') {
   console.error(e.message.red);
   notifier.notify({
-    title: 'Markdown Template Error',
+    title: `${fileType} Error`,
     message: e.message,
   });
   return `
@@ -117,7 +116,7 @@ function handleTemplateError(e) {
     </html>`;
 }
 
-async function renderMarkdownTemplate({
+async function renderTemplate({
   templatePath,
   ejsFunctions,
   siteData,
@@ -126,6 +125,7 @@ async function renderMarkdownTemplate({
   ejsOptions,
   pagePath,
   frontMatter,
+  fileType = 'EJS',
   isMdEjs = false,
 }) {
   return new Promise((resolve, reject) => {
@@ -157,18 +157,24 @@ async function renderMarkdownTemplate({
       try {
         let content = frontMatter.content;
         
-        // For .md.ejs files, process through EJS first, then markdown
-        if (isMdEjs) {
-          const renderedEjs = ejs.render(content, templateData, ejsOptions);
-          content = marked.parse(renderedEjs);
+        // Process content based on file type
+        if (fileType === 'Markdown' || fileType === 'Markdown+EJS') {
+          // For .md.ejs files, process through EJS first, then markdown
+          if (isMdEjs) {
+            const renderedEjs = ejs.render(content, templateData, ejsOptions);
+            content = marked.parse(renderedEjs);
+          } else {
+            // For .md files, just process through markdown
+            content = marked.parse(content);
+          }
         } else {
-          // For .md files, just process through markdown
-          content = marked.parse(content);
+          // For .ejs files, process through EJS
+          content = ejs.render(content, templateData, ejsOptions);
         }
         
         html = ejs.render(fileData, merge({ content }, templateData), ejsOptions);
       } catch (e) {
-        html = handleTemplateError(e);
+        html = handleTemplateError(e, fileType);
       }
 
       // Handle nested frontmatter (frontmatter within rendered content)
@@ -176,7 +182,7 @@ async function renderMarkdownTemplate({
         const nextFrontMatter = matter(html);
         frontMatter.content = nextFrontMatter.content;
         frontMatter.data = merge({}, frontMatter.data, nextFrontMatter.data);
-        html = await renderMarkdownTemplate({
+        html = await renderTemplate({
           templatePath,
           ejsFunctions,
           siteData,
@@ -185,6 +191,7 @@ async function renderMarkdownTemplate({
           ejsOptions,
           pagePath,
           frontMatter,
+          fileType,
           isMdEjs,
         });
       }
@@ -193,7 +200,7 @@ async function renderMarkdownTemplate({
   });
 }
 
-module.exports = async function bundleMarkdown({
+module.exports = async function bundleTemplates({
   dir, buildEvents, pageMappingData, debug,
 }) {
   const BUILD_EVENTS = require(`${dir.build}constants/build-events`);
@@ -201,17 +208,28 @@ module.exports = async function bundleMarkdown({
   const timestamp = require(`${dir.build}helpers/timestamp`);
   const production = require(`${dir.build}helpers/production`);
 
-  // Find both .md and .md.ejs files
-  const markdownGlob = glob.sync(`${dir.src}templates/**/[^_]*.{md,md.ejs}`);
+  // Find all template files: .ejs, .md, and .md.ejs
+  const templateGlob = glob.sync(`${dir.src}templates/**/[^_]*.{ejs,md,md.ejs}`);
   
-  log(`${timestamp.stamp()} bundleMarkdown()`);
+  log(`${timestamp.stamp()} bundleTemplates()`);
 
   let processed = 0;
 
-  for (let index = 0; index < markdownGlob.length; index++) {
-    const templatePath = markdownGlob[index];
-    const isMdEjs = templatePath.endsWith('.md.ejs');
-    const fileType = isMdEjs ? 'Markdown+EJS' : 'Markdown';
+  for (let index = 0; index < templateGlob.length; index++) {
+    const templatePath = templateGlob[index];
+    
+    // Determine file type and processing method
+    let fileType, isMdEjs;
+    if (templatePath.endsWith('.md.ejs')) {
+      fileType = 'Markdown+EJS';
+      isMdEjs = true;
+    } else if (templatePath.endsWith('.md')) {
+      fileType = 'Markdown';
+      isMdEjs = false;
+    } else {
+      fileType = 'EJS';
+      isMdEjs = false;
+    }
     
     if (debug) log(`${timestamp.stamp()} ${'REQUEST'.magenta} - Compiling ${fileType} - ${templatePath.split(/templates/)[1]}`);
     
@@ -222,20 +240,23 @@ module.exports = async function bundleMarkdown({
       root: `${dir.src}templates/`,
     };
     
-    // Determine output path
+    // Determine output path based on file type
     let outputPath;
-    if (isMdEjs) {
+    if (fileType === 'Markdown+EJS') {
       // .md.ejs files become .html
       outputPath = templatePath.replace(`${dir.src}templates/`, dir.package).replace(/\.md\.ejs$/, '/index.html');
-    } else {
+    } else if (fileType === 'Markdown') {
       // .md files become .html
       outputPath = templatePath.replace(`${dir.src}templates/`, dir.package).replace(/\.md$/, '/index.html');
+    } else {
+      // .ejs files become .html
+      outputPath = templatePath.replace(`${dir.src}templates/`, dir.package).replace(/\.ejs$/, (templatePath.includes('.html.ejs')) ? '' : '/index.html');
     }
     
     const pagePath = outputPath.replace(dir.package, '').replace('index.html', '');
     const frontMatter = matter.read(templatePath);
 
-    const html = await renderMarkdownTemplate({
+    const html = await renderTemplate({
       templatePath,
       ejsFunctions,
       siteData,
@@ -244,13 +265,14 @@ module.exports = async function bundleMarkdown({
       ejsOptions,
       pagePath,
       frontMatter,
+      fileType,
       isMdEjs,
     }).catch((err) => {
       if (err && production) throw err;
       else if (err) {
         console.error(err.message.red);
         notifier.notify({
-          title: 'Markdown Template Error',
+          title: `${fileType} Template Error`,
           message: err.message,
         });
       }
@@ -266,8 +288,8 @@ module.exports = async function bundleMarkdown({
         if (debug) log(`${timestamp.stamp()} ${'SUCCESS'.bold.green} - Compiled ${fileType} - ${outputPath.split(/package/)[1]}`);
         processed++;
 
-        if (processed >= markdownGlob.length) {
-          log(`${timestamp.stamp()} bundleMarkdown(): ${'DONE'.bold.green}`);
+        if (processed >= templateGlob.length) {
+          log(`${timestamp.stamp()} bundleTemplates(): ${'DONE'.bold.green}`);
           buildEvents.emit(BUILD_EVENTS.templatesMoved);
         }
       });

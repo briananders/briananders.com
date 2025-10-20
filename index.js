@@ -20,9 +20,8 @@ const dir = require('./build/constants/directories')(__dirname, isGoldenBuild);
 const timestamp = require(`${dir.build}helpers/timestamp`);
 const production = require(`${dir.build}helpers/production`);
 
-const bundleEJS = require(`${dir.build}bundlers/bundle-ejs`);
+const bundleTemplates = require(`${dir.build}bundlers/bundle-templates`);
 const bundleJS = require(`${dir.build}bundlers/bundle-js`);
-const bundleMarkdown = require(`${dir.build}bundlers/bundle-markdown`);
 const bundleSCSS = require(`${dir.build}bundlers/bundle-scss`);
 const clean = require(`${dir.build}helpers/clean`);
 const compilePageMappingData = require(`${dir.build}page-mapping-data`);
@@ -59,8 +58,7 @@ function shouldBundleTemplates(configs) {
 
   if (completionFlags.IMAGES_ARE_MOVED &&
       completionFlags.VIDEOS_ARE_MOVED) {
-    bundleEJS(configs);
-    bundleMarkdown(configs);
+    bundleTemplates(configs);
   }
 }
 
