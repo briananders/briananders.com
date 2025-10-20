@@ -1,0 +1,120 @@
+{
+  "sources": {
+    "artist": "https://www.last.fm/user/imbanders/library/artists?from=2023-01-01&rangetype=year",
+    "album": "https://www.last.fm/user/imbanders/library/albums?from=2023-01-01&rangetype=year"
+  },
+  "artists": [
+    {
+      "name": "Paul McCartney",
+      "img": "/images/last-fm/artist/paul-mccartney.webp",
+      "count": 3336
+    },
+    {
+      "name": "Paul McCartney & Wings",
+      "img": "/images/last-fm/artist/paul-mccartney--wings.webp",
+      "count": 1824
+    },
+    {
+      "name": "Wings",
+      "img": "/images/last-fm/artist/wings.webp",
+      "count": 1534
+    },
+    {
+      "name": "He Is Legend",
+      "img": "/images/last-fm/artist/he-is-legend.webp",
+      "count": 1169
+    },
+    {
+      "name": "Pink Floyd",
+      "img": "/images/last-fm/artist/pink-floyd.webp",
+      "count": 1032
+    },
+    {
+      "name": "Elton John",
+      "img": "/images/last-fm/artist/elton-john.webp",
+      "count": 888
+    },
+    {
+      "name": "The Beatles",
+      "img": "/images/last-fm/artist/the-beatles.webp",
+      "count": 839
+    },
+    {
+      "name": "Paul Simon",
+      "img": "/images/last-fm/artist/paul-simon.webp",
+      "count": 807
+    },
+    {
+      "name": "George Harrison",
+      "img": "/images/last-fm/artist/george-harrison.webp",
+      "count": 776
+    },
+    {
+      "name": "The Used",
+      "img": "/images/last-fm/artist/the-used.webp",
+      "count": 712
+    }
+  ],
+  "albums": [
+    {
+      "name": "Venus and Mars",
+      "artist": "Paul McCartney",
+      "img": "/images/last-fm/album/paul-mccartney+venus-and-mars.webp",
+      "count": 527
+    },
+    {
+      "name": "The 7” Singles",
+      "artist": "Paul McCartney",
+      "img": "/images/last-fm/album/paul-mccartney+the-7-inch-singles.webp",
+      "count": 495
+    },
+    {
+      "name": "London Town (Expanded Edition)",
+      "artist": "Paul McCartney",
+      "img": "/images/last-fm/album/paul-mccartney+london-town.webp",
+      "count": 452
+    },
+    {
+      "name": "Tug of War",
+      "artist": "Paul McCartney",
+      "img": "/images/last-fm/album/paul-mccartney+tug-of-war.webp",
+      "count": 448
+    },
+    {
+      "name": "At The Speed Of Sound",
+      "artist": "Paul McCartney",
+      "img": "/images/last-fm/album/paul-mccartney+at-the-speed-of-sound.webp",
+      "count": 419
+    },
+    {
+      "name": "Pipes of Peace",
+      "artist": "Paul McCartney",
+      "img": "/images/last-fm/album/paul-mccartney+pipes-of-peace.webp",
+      "count": 398
+    },
+    {
+      "name": "ENDLESS HALLWAY",
+      "artist": "He Is Legend",
+      "img": "/images/last-fm/album/he-is-legend+endless-hallway.webp",
+      "count": 383
+    },
+    {
+      "name": "Press to Play",
+      "artist": "Paul McCartney",
+      "img": "/images/last-fm/album/paul-mccartney+press-to-play.webp",
+      "count": 340
+    },
+    {
+      "name": "Back to the Egg",
+      "artist": "Paul McCartney",
+      "img": "/images/last-fm/album/paul-mccartney+back-to-the-egg.webp",
+      "count": 337
+    },
+    {
+      "name": "Toxic Positivity",
+      "artist": "The Used",
+      "img": "/images/last-fm/album/the-used+toxic-positivity.webp",
+      "count": 331
+    }
+  ]
+}

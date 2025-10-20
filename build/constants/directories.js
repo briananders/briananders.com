@@ -1,8 +1,7 @@
-module.exports = (appRoot) => ({
+module.exports = (appRoot, isGoldenBuild = false) => ({
   root: `${appRoot}/`,
   src: `${appRoot}/src/`,
-  package: `${appRoot}/package/`,
+  package: isGoldenBuild ? `${appRoot}/golden/` : `${appRoot}/package/`,
   build: `${appRoot}/build/`,
-  jsOutputPath: `${appRoot}/package/scripts/`,
   nodeModules: `${appRoot}/node_modules/`,
 });

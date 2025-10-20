@@ -18,7 +18,7 @@ module.exports = function minifyHTML({
   let processed = 0;
 
   htmlGlob.forEach((htmlFileName, index, array) => {
-    if (debug) log(`${timestamp.stamp()} minifyHTML - ${htmlFileName.split('/package/')[1]}`);
+    if (debug) log(`${timestamp.stamp()} minifyHTML - ${htmlFileName.split(dir.package)[1]}`);
 
     fs.readFile(htmlFileName, (error, data) => {
       if (error) throw error;

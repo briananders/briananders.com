@@ -1,0 +1,120 @@
+{
+  "sources": {
+    "artist": "https://www.last.fm/user/imbanders/library/artists?from=2013-01-01&rangetype=year",
+    "album": "https://www.last.fm/user/imbanders/library/albums?from=2013-01-01&rangetype=year"
+  },
+  "artists": [
+    {
+      "name": "Red Hot Chili Peppers",
+      "img": "/images/last-fm/artist/red-hot-chili-peppers.webp",
+      "count": 2109
+    },
+    {
+      "name": "The Used",
+      "img": "/images/last-fm/artist/the-used.webp",
+      "count": 1761
+    },
+    {
+      "name": "Queens of the Stone Age",
+      "img": "/images/last-fm/artist/queens-of-the-stone-age.webp",
+      "count": 1311
+    },
+    {
+      "name": "The Beatles",
+      "img": "/images/last-fm/artist/the-beatles.webp",
+      "count": 1177
+    },
+    {
+      "name": "Muse",
+      "img": "/images/last-fm/artist/muse.webp",
+      "count": 1112
+    },
+    {
+      "name": "Panic! at the Disco",
+      "img": "/images/last-fm/artist/panic!-at-the-disco.webp",
+      "count": 775
+    },
+    {
+      "name": "The Strokes",
+      "img": "/images/last-fm/artist/the-strokes.webp",
+      "count": 727
+    },
+    {
+      "name": "Fall Out Boy",
+      "img": "/images/last-fm/artist/fall-out-boy.webp",
+      "count": 641
+    },
+    {
+      "name": "Emery",
+      "img": "/images/last-fm/artist/emery.webp",
+      "count": 625
+    },
+    {
+      "name": "blink-182",
+      "img": "/images/last-fm/artist/blink-182.webp",
+      "count": 568
+    }
+  ],
+  "albums": [
+    {
+      "name": "Stadium Arcadium",
+      "artist": "Red Hot Chili Peppers",
+      "img": "/images/last-fm/album/red-hot-chili-peppers+stadium-arcadium.webp",
+      "count": 1393
+    },
+    {
+      "name": "Vulnerable",
+      "artist": "The Used",
+      "img": "/images/last-fm/album/the-used+vulnerable.webp",
+      "count": 772
+    },
+    {
+      "name": "Let It Be",
+      "artist": "The Beatles",
+      "img": "/images/last-fm/album/the-beatles+let-it-be.webp",
+      "count": 641
+    },
+    {
+      "name": "Artwork",
+      "artist": "The Used",
+      "img": "/images/last-fm/album/the-used+artwork.webp",
+      "count": 634
+    },
+    {
+      "name": "The 2nd Law",
+      "artist": "Muse",
+      "img": "/images/last-fm/album/muse+the-2nd-law.webp",
+      "count": 607
+    },
+    {
+      "name": "Volcano",
+      "artist": "Gatsby's American Dream",
+      "img": "/images/last-fm/album/gatsby's-american-dream+volcano.webp",
+      "count": 494
+    },
+    {
+      "name": "Vices & Virtues",
+      "artist": "Panic! at the Disco",
+      "img": "/images/last-fm/album/panic!-at-the-disco+vices--virtues.webp",
+      "count": 383
+    },
+    {
+      "name": "Save Rock and Roll",
+      "artist": "Fall Out Boy",
+      "img": "/images/last-fm/album/fall-out-boy+save-rock-and-roll.webp",
+      "count": 370
+    },
+    {
+      "name": "Songs for the Deaf",
+      "artist": "Queens of the Stone Age",
+      "img": "/images/last-fm/album/queens-of-the-stone-age+songs-for-the-deaf.webp",
+      "count": 324
+    },
+    {
+      "name": "Rated R",
+      "artist": "Queens of the Stone Age",
+      "img": "/images/last-fm/album/queens-of-the-stone-age+rated-r.webp",
+      "count": 322
+    }
+  ]
+}
