@@ -12,6 +12,59 @@ const readFile = util.promisify(fs.readFile);
 
 const { log } = console;
 
+function processMarkdownInContent(content) {
+  // This function processes text content and converts markdown to HTML
+  // while preserving existing HTML structure
+  
+  let processedContent = content;
+  
+  // Process unordered lists (- item or * item)
+  // First, find all list items
+  const listItems = processedContent.match(/^[\s]*[-*]\s+(.+)$/gm);
+  if (listItems) {
+    // Replace list items with <li> tags
+    processedContent = processedContent.replace(/^[\s]*[-*]\s+(.+)$/gm, '<li>$1</li>');
+    // Wrap consecutive <li> tags in <ul>
+    processedContent = processedContent.replace(/(<li>.*<\/li>)/s, '<ul>\n$1\n</ul>');
+  }
+  
+  // Process ordered lists (1. item)
+  const orderedListItems = processedContent.match(/^[\s]*\d+\.\s+(.+)$/gm);
+  if (orderedListItems) {
+    // Replace ordered list items with <li> tags
+    processedContent = processedContent.replace(/^[\s]*\d+\.\s+(.+)$/gm, '<li>$1</li>');
+    // Wrap consecutive <li> tags in <ol>
+    processedContent = processedContent.replace(/(<li>.*<\/li>)/s, '<ol>\n$1\n</ol>');
+  }
+  
+  // Process bold text (**text** or __text__)
+  processedContent = processedContent.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+  processedContent = processedContent.replace(/__(.*?)__/g, '<strong>$1</strong>');
+  
+  // Process italic text (*text* or _text_)
+  processedContent = processedContent.replace(/\*([^*]+)\*/g, '<em>$1</em>');
+  processedContent = processedContent.replace(/_([^_]+)_/g, '<em>$1</em>');
+  
+  // Process code (`code`)
+  processedContent = processedContent.replace(/`([^`]+)`/g, '<code>$1</code>');
+  
+  // Process links [text](url)
+  processedContent = processedContent.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2">$1</a>');
+  
+  // Process line breaks (double space + newline)
+  processedContent = processedContent.replace(/  \n/g, '<br>\n');
+  
+  // Process paragraphs (double newline)
+  processedContent = processedContent.replace(/\n\n/g, '</p>\n<p>');
+  
+  // Wrap in paragraph tags if content doesn't start with HTML and isn't a list
+  if (!processedContent.trim().startsWith('<') && !processedContent.includes('<ul>') && !processedContent.includes('<ol>')) {
+    processedContent = '<p>' + processedContent + '</p>';
+  }
+  
+  return processedContent;
+}
+
 function handleTemplateError(e) {
   console.error(e.message.red);
   notifier.notify({
@@ -76,7 +129,9 @@ async function renderTemplate({
       const fileData = fileBuffer.toString();
       let html;
       try {
-        const renderedTemplate = ejs.render(frontMatter.content, templateData, ejsOptions);
+        // Process the front matter content with markdown conversion
+        const processedContent = processMarkdownInContent(frontMatter.content);
+        const renderedTemplate = ejs.render(processedContent, templateData, ejsOptions);
         html = ejs.render(fileData, merge({ content: renderedTemplate }, templateData), ejsOptions);
       } catch (e) {
         html = handleTemplateError(e);
@@ -101,6 +156,9 @@ async function renderTemplate({
     });
   });
 }
+
+// Export the markdown processing function for testing
+module.exports.processMarkdownInContent = processMarkdownInContent;
 
 module.exports = async function bundleEJS({
   dir, buildEvents, pageMappingData, debug,
