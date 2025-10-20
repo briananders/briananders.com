@@ -15,7 +15,9 @@ To build and launch the dev site at [localhost:3000](http://localhost:3000): `np
 
 To build the site for production, compress and gzip files: `npm run build`
 
-The site is built into the `/package` folder.
+To build the site for golden (skips gzip compression and asset hashing): `npm run build:golden`
+
+The site is built into the `/package` folder (production) or `/golden` folder (golden build).
 
 ## Deploy the static site
 My website uses AWS as the host, and the deploy uses aws-cli. For this to work you need credentials saved as bash variables. `CLOUDFRONT_ID`, `AWS_ACCESS_KEY`, and `AWS_SECRET_ACCESS_KEY`. The deploy library uses these credentials for authentication.

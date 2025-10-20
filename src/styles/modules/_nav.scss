@@ -81,7 +81,7 @@ nav.main {
     z-index: 0;
     position: absolute;
     top: calc(100% + 12px);
-    transform-origin: calc(100% - #{$s2 + 20px}) -$s2;
+    transform-origin: calc(100% - (#{$s2} + 20px)) calc(-1 * #{$s2});
     transform: rotateY(90deg);
     display: grid;
     right: $s2;

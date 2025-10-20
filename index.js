@@ -7,7 +7,13 @@ const fs = require('fs-extra');
 const express = require('express');
 const serve = require('express-static');
 const EventEmitter = require('events');
-const dir = require('./build/constants/directories')(__dirname);
+/* ///////////////////////////// local variables //////////////////////////// */
+
+const { log } = console;
+const debug = process.argv.includes('--verbose');
+const isGoldenBuild = process.argv.includes('--golden');
+
+const dir = require('./build/constants/directories')(__dirname, isGoldenBuild);
 
 /* //////////////////////////// local packages ////////////////////////////// */
 
@@ -23,15 +29,11 @@ const compilePageMappingData = require(`${dir.build}page-mapping-data`);
 const { moveAssets } = require(`${dir.build}move-assets`);
 const previewBuilder = require(`${dir.build}preview-builder`);
 const prodBuilder = require(`${dir.build}prod-builder`);
+const goldenBuilder = require(`${dir.build}golden-builder`);
 const compileSitemap = require(`${dir.build}bundlers/sitemap`);
 
 const completionFlagsSource = require(`${dir.build}constants/completion-flags`);
 const BUILD_EVENTS = require(`${dir.build}constants/build-events`);
-
-/* ///////////////////////////// local variables //////////////////////////// */
-
-const { log } = console;
-const debug = process.argv.includes('--verbose');
 
 const app = express();
 const buildEvents = new EventEmitter();
@@ -47,6 +49,7 @@ const configs = {
   dir,
   hashingFileNameList,
   pageMappingData,
+  isGoldenBuild,
 };
 
 /* ////////////////////////////// event listeners /////////////////////////// */
@@ -69,6 +72,8 @@ buildEvents.on(BUILD_EVENTS.previewReady, log.bind(this, `${timestamp.stamp()} $
 
 if (!production) {
   previewBuilder(configs);
+} else if (isGoldenBuild) {
+  goldenBuilder(configs);
 } else {
   prodBuilder(configs);
 }

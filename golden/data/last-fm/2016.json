@@ -1,0 +1,120 @@
+{
+  "sources": {
+    "artist": "https://www.last.fm/user/imbanders/library/artists?from=2016-01-01&rangetype=year",
+    "album": "https://www.last.fm/user/imbanders/library/albums?from=2016-01-01&rangetype=year"
+  },
+  "artists": [
+    {
+      "name": "The Last Shadow Puppets",
+      "img": "/images/last-fm/artist/the-last-shadow-puppets.webp",
+      "count": 1998
+    },
+    {
+      "name": "The Millennium",
+      "img": "/images/last-fm/artist/the-millennium.webp",
+      "count": 761
+    },
+    {
+      "name": "The Beatles",
+      "img": "/images/last-fm/artist/the-beatles.webp",
+      "count": 664
+    },
+    {
+      "name": "Gerard Way",
+      "img": "/images/last-fm/artist/gerard-way.webp",
+      "count": 550
+    },
+    {
+      "name": "The Beach Boys",
+      "img": "/images/last-fm/artist/the-beach-boys.webp",
+      "count": 386
+    },
+    {
+      "name": "Billy Joel",
+      "img": "/images/last-fm/artist/billy-joel.webp",
+      "count": 358
+    },
+    {
+      "name": "John Lennon",
+      "img": "/images/last-fm/artist/john-lennon.webp",
+      "count": 340
+    },
+    {
+      "name": "My Chemical Romance",
+      "img": "/images/last-fm/artist/my-chemical-romance.webp",
+      "count": 313
+    },
+    {
+      "name": "Panic! at the Disco",
+      "img": "/images/last-fm/artist/panic!-at-the-disco.webp",
+      "count": 305
+    },
+    {
+      "name": "George Harrison",
+      "img": "/images/last-fm/artist/george-harrison.webp",
+      "count": 300
+    }
+  ],
+  "albums": [
+    {
+      "name": "The Age of the Understatement",
+      "artist": "The Last Shadow Puppets",
+      "img": "/images/last-fm/album/the-last-shadow-puppets+the-age-of-the-understatement.webp",
+      "count": 1185
+    },
+    {
+      "name": "Everything You've Come to Expect",
+      "artist": "The Last Shadow Puppets",
+      "img": "/images/last-fm/album/the-last-shadow-puppets+everything-you've-come-to-expect.webp",
+      "count": 778
+    },
+    {
+      "name": "Begin",
+      "artist": "The Millennium",
+      "img": "/images/last-fm/album/the-millennium+begin.webp",
+      "count": 750
+    },
+    {
+      "name": "Hesitant Alien",
+      "artist": "Gerard Way",
+      "img": "/images/last-fm/album/gerard-way+hesitant-alien.webp",
+      "count": 550
+    },
+    {
+      "name": "Pet Sounds",
+      "artist": "The Beach Boys",
+      "img": "/images/last-fm/album/the-beach-boys+pet-sounds.webp",
+      "count": 337
+    },
+    {
+      "name": "Danger Days: The True Lives of the Fabulous Killjoys",
+      "artist": "My Chemical Romance",
+      "img": "/images/last-fm/album/my-chemical-romance+danger-days-the-true-lives-of-the-fabulous-killjoys.webp",
+      "count": 308
+    },
+    {
+      "name": "Death of a Bachelor",
+      "artist": "Panic! at the Disco",
+      "img": "/images/last-fm/album/panic!-at-the-disco+death-of-a-bachelor.webp",
+      "count": 181
+    },
+    {
+      "name": "SMiLE",
+      "artist": "Brian Wilson",
+      "img": "/images/last-fm/album/brian-wilson+smile.webp",
+      "count": 118
+    },
+    {
+      "name": "Pure McCartney",
+      "artist": "Paul McCartney",
+      "img": "/images/last-fm/album/paul-mccartney+pure-mccartney.webp",
+      "count": 117
+    },
+    {
+      "name": "The Best Of",
+      "artist": "Simon & Garfunkel",
+      "img": "/images/last-fm/album/simon--garfunkel+the-best-of.webp",
+      "count": 115
+    }
+  ]
+}

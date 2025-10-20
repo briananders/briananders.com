@@ -8,6 +8,7 @@ const glob = require('glob');
 const buffer = require('vinyl-buffer');
 const browserify = require('browserify');
 const babelify = require('babelify');
+const path = require('path');
 
 const { log } = console;
 
@@ -16,13 +17,15 @@ module.exports = function bundleJS({ dir, buildEvents, debug }) {
   const timestamp = require(`${dir.build}helpers/timestamp`);
   const production = require(`${dir.build}helpers/production`);
 
+  const jsOutputPath = path.join(dir.package, 'scripts');
+
   const scriptGlob = glob.sync(`${dir.src}js/**/[^_]*.js`);
   let processed = 0;
 
   log(`${timestamp.stamp()} bundleJS()`);
 
   scriptGlob.forEach((jsFilename, index, array) => {
-    const outFile = jsFilename.replace(`${dir.src}js/`, dir.jsOutputPath);
+    const outFile = jsFilename.replace(`${dir.src}js/`, jsOutputPath);
     if (debug) log(`${timestamp.stamp()} ${'REQUEST'.magenta} - Compiling JS - ${outFile.split(/scripts/)[1]}`);
 
     browserify({
@@ -47,8 +50,8 @@ module.exports = function bundleJS({ dir, buildEvents, debug }) {
       })
       .pipe(source(jsFilename))
       .pipe(buffer())
-      .pipe(rename(outFile.replace(dir.jsOutputPath, '')))
-      .pipe(gulp.dest(dir.jsOutputPath))
+      .pipe(rename(outFile.replace(jsOutputPath, '')))
+      .pipe(gulp.dest(jsOutputPath))
       .on('end', (err) => {
         if (err) throw err;
         if (debug) log(`${timestamp.stamp()} ${'SUCCESS'.bold.green} - Compiled JS  - ${outFile.split(/scripts/)[1]}`);

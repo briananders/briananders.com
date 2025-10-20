@@ -1,0 +1,120 @@
+{
+  "sources": {
+    "artist": "https://www.last.fm/user/imbanders/library/artists?from=2024-01-01&rangetype=year",
+    "album": "https://www.last.fm/user/imbanders/library/albums?from=2024-01-01&rangetype=year"
+  },
+  "artists": [
+    {
+      "name": "Paul McCartney",
+      "img": "/images/last-fm/artist/paul-mccartney.webp",
+      "count": 1176
+    },
+    {
+      "name": "He Is Legend",
+      "img": "/images/last-fm/artist/he-is-legend.webp",
+      "count": 742
+    },
+    {
+      "name": "George Harrison",
+      "img": "/images/last-fm/artist/george-harrison.webp",
+      "count": 718
+    },
+    {
+      "name": "Pixies",
+      "img": "/images/last-fm/artist/pixies.webp",
+      "count": 714
+    },
+    {
+      "name": "The Beatles",
+      "img": "/images/last-fm/artist/the-beatles.webp",
+      "count": 698
+    },
+    {
+      "name": "Pink Floyd",
+      "img": "/images/last-fm/artist/pink-floyd.webp",
+      "count": 682
+    },
+    {
+      "name": "Bad Religion",
+      "img": "/images/last-fm/artist/bad-religion.webp",
+      "count": 584
+    },
+    {
+      "name": "David Bowie",
+      "img": "/images/last-fm/artist/david-bowie.webp",
+      "count": 571
+    },
+    {
+      "name": "Falling in Reverse",
+      "img": "/images/last-fm/artist/falling-in-reverse.webp",
+      "count": 542
+    },
+    {
+      "name": "Bring Me the Horizon",
+      "img": "/images/last-fm/artist/bring-me-the-horizon.webp",
+      "count": 536
+    }
+  ],
+  "albums": [
+    {
+      "name": "The Wall",
+      "artist": "Pink Floyd",
+      "img": "/images/last-fm/album/pink-floyd+the-wall.webp",
+      "count": 224
+    },
+    {
+      "name": "Legacy (The Very Best Of David Bowie)",
+      "artist": "David Bowie",
+      "img": "/images/last-fm/album/david-bowie+legacy.webp",
+      "count": 210
+    },
+    {
+      "name": "POST HUMAN: Nex Gen",
+      "artist": "Bring Me the Horizon",
+      "img": "/images/last-fm/album/bring-me-the-horizon+posthuman-nex-gen.webp",
+      "count": 200
+    },
+    {
+      "name": "There Are Worse Things Than Being Alive",
+      "artist": "Bayside",
+      "img": "/images/last-fm/album/bayside+there-are-worse-things-than-being-alive.webp",
+      "count": 191
+    },
+    {
+      "name": "The Beatles 1967-1970",
+      "artist": "The Beatles",
+      "img": "/images/last-fm/album/the-beatles+the-beatles-1967-1970.webp",
+      "count": 180
+    },
+    {
+      "name": "I Am Hollywood",
+      "artist": "He Is Legend",
+      "img": "/images/last-fm/album/he-is-legend+i-am-hollywood.webp",
+      "count": 164
+    },
+    {
+      "name": "Just Like You",
+      "artist": "Falling in Reverse",
+      "img": "/images/last-fm/album/falling-in-reverse+just-like-you.webp",
+      "count": 163
+    },
+    {
+      "name": "New",
+      "artist": "Paul McCartney",
+      "img": "/images/last-fm/album/paul-mccartney+new.webp",
+      "count": 159
+    },
+    {
+      "name": "The Beautiful Dark of Life",
+      "artist": "Atreyu",
+      "img": "/images/last-fm/album/atreyu+the-beautiful-dark-of-life.webp",
+      "count": 150
+    },
+    {
+      "name": "Coming Home",
+      "artist": "Falling in Reverse",
+      "img": "/images/last-fm/album/falling-in-reverse+coming-home.webp",
+      "count": 150
+    }
+  ]
+}
