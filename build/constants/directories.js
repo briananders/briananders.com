@@ -1,7 +1,7 @@
-module.exports = (appRoot, isComparisonBuild = false) => ({
+module.exports = (appRoot, isGoldenBuild = false) => ({
   root: `${appRoot}/`,
   src: `${appRoot}/src/`,
-  package: isComparisonBuild ? `${appRoot}/comparison/` : `${appRoot}/package/`,
+  package: isGoldenBuild ? `${appRoot}/golden/` : `${appRoot}/package/`,
   build: `${appRoot}/build/`,
   nodeModules: `${appRoot}/node_modules/`,
 });
