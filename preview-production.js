@@ -2,7 +2,7 @@
 
 require('colors');
 
-const dir = require('./build/constants/directories')(__dirname, isGoldenBuild);
+const dir = require('./build/constants/directories')(__dirname);
 
 const timestamp = require(`${dir.build}helpers/timestamp`);
 const express = require('express');
