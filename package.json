@@ -6,7 +6,7 @@
   "scripts": {
     "build": "NODE_ENV=production node index.js",
     "build:golden": "NODE_ENV=production node index.js --golden",
-    "clean": "rm -rf node_modules tmp dist package golden && npm cache clean --force",
+    "clean": "rm -rf node_modules tmp dist && npm cache clean --force",
     "debug:start": "node index.js --verbose",
     "debug:build": "NODE_ENV=production node index.js --verbose",
     "debug:build:golden": "NODE_ENV=production node index.js --verbose --golden",
