@@ -1,53 +1,53 @@
 module.exports = (configs) => {
-  const { buildEvents, dir } = configs;
+  const { buildEvents, dir, completionFlags } = configs;
 
   const checkDone = require(`${dir.build}helpers/check-done`);
+  const minifyHTML = require(`${dir.build}optimize/minify-html`);
+  const minifyJS = require(`${dir.build}optimize/minify-js`);
+
+  completionFlags.ASSET_HASH.IMAGES = true;
+  completionFlags.ASSET_HASH.CSS = true;
+  completionFlags.ASSET_HASH.JS = true;
+  completionFlags.ASSET_HASH.DONE = true;
+  completionFlags.GZIP = true;
+
   const BUILD_EVENTS = require(`${dir.build}constants/build-events`);
 
-  // For comparison builds, we skip gzip and asset hashing
-  // but still need to handle the completion flow
-  buildEvents.on(BUILD_EVENTS.imagesMoved, () => {
-    // Skip asset hashing for comparison builds
-    buildEvents.emit(BUILD_EVENTS.assetHashImagesListed);
-  });
-  
-  buildEvents.on(BUILD_EVENTS.stylesMoved, () => {
-    // Skip asset hashing for comparison builds
-    buildEvents.emit(BUILD_EVENTS.assetHashCssListed);
-  });
-  
-  buildEvents.on(BUILD_EVENTS.jsMoved, () => {
-    // Skip asset hashing for comparison builds
-    buildEvents.emit(BUILD_EVENTS.assetHashJsListed);
-  });
-  
-  buildEvents.on(BUILD_EVENTS.templatesMoved, () => {
-    // Skip asset hashing for comparison builds
-    buildEvents.emit(BUILD_EVENTS.assetHashJsListed);
-  });
+  buildEvents.on(BUILD_EVENTS.jsMoved,
+    minifyJS.bind(this, configs));
+  buildEvents.on(BUILD_EVENTS.templatesMoved,
+    minifyHTML.bind(this, configs));
 
-  buildEvents.on(BUILD_EVENTS.assetHashImagesListed, () => {
-    // Skip CSS hash updating for comparison builds
-    buildEvents.emit(BUILD_EVENTS.assetHashCssListed);
-  });
-  
-  buildEvents.on(BUILD_EVENTS.assetHashCssListed, () => {
-    // Skip finishing hashing for comparison builds
-    buildEvents.emit(BUILD_EVENTS.assetHashJsListed);
-  });
-  
-  buildEvents.on(BUILD_EVENTS.assetHashJsListed, () => {
-    // Mark hashing as done without actually doing it
-    configs.completionFlags.ASSET_HASH.DONE = true;
-    buildEvents.emit(BUILD_EVENTS.hashingDone);
-  });
-  
-  buildEvents.on(BUILD_EVENTS.hashingDone, () => {
-    // Skip gzip for comparison builds
-    configs.completionFlags.GZIP = true;
-    buildEvents.emit(BUILD_EVENTS.gzipDone);
-  });
-  
-  buildEvents.on(BUILD_EVENTS.gzipDone, checkDone.bind(this, configs));
-  buildEvents.on(BUILD_EVENTS.sitemapDone, checkDone.bind(this, configs));
+  buildEvents.on(BUILD_EVENTS.assetHashCssListed,
+    checkDone.bind(this, configs));
+  buildEvents.on(BUILD_EVENTS.assetHashImagesListed,
+    checkDone.bind(this, configs));
+  buildEvents.on(BUILD_EVENTS.assetHashJsListed,
+    checkDone.bind(this, configs));
+  buildEvents.on(BUILD_EVENTS.gzipDone,
+    checkDone.bind(this, configs));
+  buildEvents.on(BUILD_EVENTS.hashingDone,
+    checkDone.bind(this, configs));
+  buildEvents.on(BUILD_EVENTS.htmlMinified,
+    checkDone.bind(this, configs));
+  buildEvents.on(BUILD_EVENTS.imagesMoved,
+    checkDone.bind(this, configs));
+  buildEvents.on(BUILD_EVENTS.indexCssForHashing,
+    checkDone.bind(this, configs));
+  buildEvents.on(BUILD_EVENTS.jsMinified,
+    checkDone.bind(this, configs));
+  buildEvents.on(BUILD_EVENTS.jsMoved,
+    checkDone.bind(this, configs));
+  buildEvents.on(BUILD_EVENTS.pageMappingDataCompiled,
+    checkDone.bind(this, configs));
+  buildEvents.on(BUILD_EVENTS.previewReady,
+    checkDone.bind(this, configs));
+  buildEvents.on(BUILD_EVENTS.sitemapDone,
+    checkDone.bind(this, configs));
+  buildEvents.on(BUILD_EVENTS.stylesMoved,
+    checkDone.bind(this, configs));
+  buildEvents.on(BUILD_EVENTS.templatesMoved,
+    checkDone.bind(this, configs));
+  buildEvents.on(BUILD_EVENTS.videosMoved,
+    checkDone.bind(this, configs));
 };
