@@ -19,9 +19,9 @@ function logCompletionFlags({ dir, completionFlags }) {
   log(`--------------------------------`);
 }
 
-module.exports = function checkDone({ dir, debug, completionFlags, isComparisonBuild }) {
+module.exports = function checkDone({ dir, debug, completionFlags }) {
 
-  if (debug || isComparisonBuild) {
+  if (debug) {
     logCompletionFlags({ dir, completionFlags });
   }
 

@@ -82,7 +82,7 @@ if (!production) {
 
 log(`production: ${production}`.toUpperCase().brightBlue.bold);
 
-clean({ ...configs, isComparisonBuild }).then(() => {
+clean(configs).then(() => {
   if (debug) log(`${timestamp.stamp()} clean().then()`);
   fs.mkdirp(dir.package);
   compilePageMappingData(configs);

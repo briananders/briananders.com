@@ -2,13 +2,7 @@
 
 require('colors');
 
-const dir = {
-  root: `${__dirname}/`,
-  src: `${__dirname}/src/`,
-  package: `${__dirname}/package/`,
-  build: `${__dirname}/build/`,
-  jsOutputPath: `${__dirname}/package/scripts/`,
-};
+const dir = require('./build/constants/directories')(__dirname, isComparisonBuild);
 
 const timestamp = require(`${dir.build}helpers/timestamp`);
 const express = require('express');
