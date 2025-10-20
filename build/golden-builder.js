@@ -4,6 +4,7 @@ module.exports = (configs) => {
   const checkDone = require(`${dir.build}helpers/check-done`);
   const minifyHTML = require(`${dir.build}optimize/minify-html`);
   const minifyJS = require(`${dir.build}optimize/minify-js`);
+  const processExternalLinks = require(`${dir.build}optimize/process-external-links`);
 
   completionFlags.ASSET_HASH.IMAGES = true;
   completionFlags.ASSET_HASH.CSS = true;
@@ -24,12 +25,14 @@ module.exports = (configs) => {
     checkDone.bind(this, configs));
   buildEvents.on(BUILD_EVENTS.assetHashJsListed,
     checkDone.bind(this, configs));
+  buildEvents.on(BUILD_EVENTS.externalLinksProcessed,
+    checkDone.bind(this, configs));
   buildEvents.on(BUILD_EVENTS.gzipDone,
     checkDone.bind(this, configs));
   buildEvents.on(BUILD_EVENTS.hashingDone,
     checkDone.bind(this, configs));
   buildEvents.on(BUILD_EVENTS.htmlMinified,
-    checkDone.bind(this, configs));
+    processExternalLinks.bind(this, configs));
   buildEvents.on(BUILD_EVENTS.imagesMoved,
     checkDone.bind(this, configs));
   buildEvents.on(BUILD_EVENTS.indexCssForHashing,

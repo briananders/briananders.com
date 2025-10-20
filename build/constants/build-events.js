@@ -2,6 +2,7 @@ module.exports = {
   assetHashCssListed: 'asset-hashing/hash-css-listed',
   assetHashImagesListed: 'asset-hash-images-listed',
   assetHashJsListed: 'asset-hash-js-listed',
+  externalLinksProcessed: 'external-links-processed',
   gzipDone: 'gzip-done',
   hashingDone: 'hashing-done',
   htmlMinified: 'html-minified',
