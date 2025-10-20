@@ -9,7 +9,7 @@ const express = require('express');
 const serve = require('express-static');
 const app = express();
 
-/* ---------------------------- event listeners ---------------------------- */
+/* ---------------------------- Event listeners ---------------------------- */
 
 app.use(serve(dir.package));
 
