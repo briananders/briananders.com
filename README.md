@@ -29,3 +29,26 @@ DO NOT COMMIT THEM TO A PUBLIC REPO.
 To deploy to staging: `npm run stage`
 
 To deploy to production: `npm run deploy`
+
+## Testing
+
+### Unit Tests
+Run the existing unit tests: `npm test`
+
+### Screenshot Testing
+Compare the local build against the live website at https://briananders.net:
+
+```bash
+# Run all screenshot tests
+npm run test:screenshots
+
+# Generate comparison report
+npm run test:screenshots:html
+```
+
+The screenshot tests will:
+- Take screenshots of key pages from both local and live versions
+- Compare visual differences across multiple viewports (desktop, tablet, mobile)
+- Generate HTML reports for easy comparison
+
+For more details, see [test/screenshots/README.md](test/screenshots/README.md).
