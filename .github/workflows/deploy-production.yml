@@ -32,3 +32,15 @@ jobs:
 
       - name: Deploy to Production
         run: npm run deploy
+
+      - name: Configure Git
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+
+      - name: Create and Push Tag
+        run: |
+          TIMESTAMP=$(date +%s)
+          TAG_NAME="deploy/${TIMESTAMP}"
+          git tag -a "${TAG_NAME}" -m "Production deployment at ${TAG_NAME}"
+          git push origin "${TAG_NAME}"
