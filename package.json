@@ -7,6 +7,7 @@
     "build": "NODE_ENV=production node index.js",
     "build:golden": "NODE_ENV=production node index.js --golden",
     "clean": "rm -rf node_modules tmp dist && npm cache clean --force",
+    "convert:images": "node scripts/convert-images.js",
     "debug:start": "node index.js --verbose",
     "debug:build": "NODE_ENV=production node index.js --verbose",
     "debug:build:golden": "NODE_ENV=production node index.js --verbose --golden",
