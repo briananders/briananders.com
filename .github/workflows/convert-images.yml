@@ -33,6 +33,9 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y imagemagick webp libavif-tools
+          # Verify tools are installed
+          cwebp -version
+          avifenc --version
 
       - name: Run image conversion
         run: npm run convert:images
@@ -142,10 +145,12 @@ jobs:
       - name: No changes detected
         if: steps.check-changes.outputs.changes == 0 || steps.check-changes.outputs.no-git-changes == 'true'
         run: |
-          echo "No image conversions needed or no changes detected"
+          echo "No new image conversions needed or no changes detected"
           if [ -f conversion-results.json ]; then
             echo "Conversion results:"
-            cat conversion-results.json | jq '.summary'
+            echo "Total images found: $(cat conversion-results.json | grep -o '"totalImages":[0-9]*' | cut -d: -f2)"
+            echo "Images with new conversions: $(cat conversion-results.json | grep -o '"convertedImages":[0-9]*' | cut -d: -f2)"
+            echo "New files created: $(cat conversion-results.json | grep -o '"newFiles":[0-9]*' | cut -d: -f2)"
           fi
 
       - name: Upload conversion results

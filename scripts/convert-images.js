@@ -9,6 +9,7 @@ const webp = require('webp-converter');
 const { webpCandidates } = require('../build/constants/file-formats');
 
 const imageExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.bmp', '.tiff'];
+const svgExtensions = ['.svg'];
 const convertedFiles = [];
 const modifiedFiles = [];
 
@@ -30,7 +31,7 @@ function findImageFiles(dir) {
       files.push(...findImageFiles(fullPath));
     } else if (stat.isFile()) {
       const ext = path.extname(item).toLowerCase();
-      if (imageExtensions.includes(ext)) {
+      if (imageExtensions.includes(ext) && !svgExtensions.includes(ext)) {
         files.push(fullPath);
       }
     }
@@ -42,14 +43,10 @@ function findImageFiles(dir) {
 function convertToWebP(inputPath) {
   const outputPath = inputPath.replace(/\.[^.]+$/, '.webp');
   
-  // Skip if output already exists and is newer
+  // Skip if output already exists
   if (fs.existsSync(outputPath)) {
-    const inputStat = fs.statSync(inputPath);
-    const outputStat = fs.statSync(outputPath);
-    if (outputStat.mtime > inputStat.mtime) {
-      console.log(`WebP already exists and is newer: ${outputPath}`);
-      return outputPath;
-    }
+    console.log(`WebP already exists, skipping: ${outputPath}`);
+    return null;
   }
   
   try {
@@ -67,19 +64,15 @@ function convertToWebP(inputPath) {
 function convertToAVIF(inputPath) {
   const outputPath = inputPath.replace(/\.[^.]+$/, '.avif');
   
-  // Skip if output already exists and is newer
+  // Skip if output already exists
   if (fs.existsSync(outputPath)) {
-    const inputStat = fs.statSync(inputPath);
-    const outputStat = fs.statSync(outputPath);
-    if (outputStat.mtime > inputStat.mtime) {
-      console.log(`AVIF already exists and is newer: ${outputPath}`);
-      return outputPath;
-    }
+    console.log(`AVIF already exists, skipping: ${outputPath}`);
+    return null;
   }
   
   try {
     console.log(`Converting to AVIF: ${inputPath} -> ${outputPath}`);
-    // Use avifenc if available, otherwise fall back to sharp
+    // Use avifenc with optimized settings
     execSync(`avifenc --min 0 --max 63 --speed 4 --yuv 420 "${inputPath}" "${outputPath}"`, { 
       stdio: 'pipe' 
     });
@@ -87,6 +80,12 @@ function convertToAVIF(inputPath) {
     return outputPath;
   } catch (error) {
     console.error(`Failed to convert ${inputPath} to AVIF:`, error.message);
+    // Check if avifenc is available
+    try {
+      execSync('avifenc --version', { stdio: 'pipe' });
+    } catch (versionError) {
+      console.error('AVIF encoder (avifenc) is not available. Please install libavif-tools.');
+    }
     return null;
   }
 }
@@ -138,6 +137,7 @@ function main() {
       modifiedFiles.push(avifPath);
     }
     
+    // Only add to converted files if we actually created new files
     if (result.webp || result.avif) {
       convertedFiles.push(result);
     }
@@ -159,7 +159,7 @@ function main() {
   
   console.log('\n=== Conversion Summary ===');
   console.log(`Total images found: ${results.summary.totalImages}`);
-  console.log(`Images processed: ${results.summary.convertedImages}`);
+  console.log(`Images with new conversions: ${results.summary.convertedImages}`);
   console.log(`New files created: ${results.summary.newFiles}`);
   console.log(`Results saved to: conversion-results.json`);
   
