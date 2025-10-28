@@ -113,7 +113,7 @@ function preventFormSubmit() {
 
 ready.document(() => {
   preventFormSubmit();
-  setupNavEvents(analytics);
+  setupNavEvents();
   testForTouch();
   // navScrollWatcher();
   setMainMinHeight();

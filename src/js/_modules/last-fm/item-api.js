@@ -40,7 +40,7 @@ module.exports = {
     }
 
     function serialize(data) {
-      data.defaultImage = containerElement.getAttribute('src');
+      data.defaultImage = containerElement ? containerElement.getAttribute('src') : '';
       const items = opts.customSerialize(data);
       const maxPlayCount = Math.max(...items.map((item) => Number(item.playcount)));
       items.forEach((item) => {
