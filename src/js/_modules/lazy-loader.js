@@ -16,6 +16,7 @@ function watchVideoSizes(element) {
     mobileHeight, mobileWidth, mobilePoster, desktopHeight, desktopWidth, desktopPoster,
   } = element.dataset;
   const sourceElement = element.querySelector('source');
+  if (!sourceElement) return;
   const { mobileSrc, desktopSrc } = sourceElement.dataset;
   const matchMediaQuery = `(min-width: ${mobileWidth}px)`;
   const mediaQuery = window.matchMedia(matchMediaQuery);

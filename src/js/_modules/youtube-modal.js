@@ -97,11 +97,11 @@ module.exports = function YoutubeModal({ triggerScope } = { triggerScope: '.yt-m
   };
 
   const addEventListeners = () => {
-    triggerElements.forEach((element) => { element.addEventListener('click', openModal.bind(this, element)); });
+    triggerElements.forEach((element) => { element.addEventListener('click', () => openModal(element)); });
   };
 
   const removeEventListeners = () => {
-    triggerElements.forEach((element) => { element.addEventListener('click', openModal.bind(this, element)); });
+    triggerElements.forEach((element) => { element.removeEventListener('click', () => openModal(element)); });
   };
 
   this.init = () => {

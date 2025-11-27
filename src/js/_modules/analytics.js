@@ -7,7 +7,9 @@ const pushEvent = ({ category, action, label } = {}) => {
     gaAction: action,
     gaLabel: label,
   };
-  dataLayer.push(eventObject);
+  if (typeof dataLayer !== 'undefined') {
+    dataLayer.push(eventObject);
+  }
   log(eventObject);
 };
 
