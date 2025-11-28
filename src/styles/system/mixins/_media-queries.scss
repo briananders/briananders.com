@@ -1,4 +1,4 @@
-@import "system/variables/all";
+@use "system/variables/all";
 
 // MEDIA QUERY MIXINS
 @mixin mq($query) {

@@ -1,6 +1,6 @@
-@import "system/utilities";
+@use "system/utilities";
 
 
 main.posts {
-  @import "modules/code";
+  @use "modules/code";
 }

@@ -1,5 +1,5 @@
-@import "system/variables/all";
-@import "./media-queries";
+@use "system/variables/all";
+@use "./media-queries";
 
 // Base size rules
 @mixin font-size($size: 2) {

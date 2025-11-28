@@ -1,4 +1,4 @@
-@import "system/utilities";
+@use "system/utilities";
 
 .h1 {
   @include type--heading-1;

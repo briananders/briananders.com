@@ -1,9 +1,10 @@
-@import "system/utilities";
-@import "./modules/youtube-modal";
+@use "sass:math";
+@use "system/utilities";
+@use "./modules/youtube-modal";
 
 $width: 560;
 $height: 315;
-$aspectRatio: $height / $width;
+$aspectRatio: math.div($height, $width);
 
 .drums {
   &.main-header {

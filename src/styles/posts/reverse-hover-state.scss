@@ -1,5 +1,5 @@
-@import "system/utilities";
-@import "modules/code";
+@use "system/utilities";
+@use "modules/code";
 
 .cards-container {
   display: flex;

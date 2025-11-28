@@ -3,7 +3,7 @@ const glob = require('glob');
 
 const { log } = console;
 
-module.exports = function updateCSSwithImageHashes({
+module.exports = async function updateCSSwithImageHashes({
   dir, buildEvents, hashingFileNameList, debug,
 }) {
   const BUILD_EVENTS = require(`${dir.build}constants/build-events`);
@@ -11,13 +11,11 @@ module.exports = function updateCSSwithImageHashes({
 
   log(`${timestamp.stamp()} hashingUpdateCSS()`);
 
-  const cssGlob = glob.sync(`${dir.package}**/*.css`);
-  let processedCss = 0;
-  cssGlob.forEach((file, index, array) => {
+  const cssGlob = glob.globSync(`${dir.package}**/*.css`);
+  const promises = cssGlob.map(async (file) => {
     const fileBuffer = fs.readFileSync(file);
     let fileContents = fileBuffer.toString();
-    let keysProcessed = 0;
-    (Object.keys(hashingFileNameList)).forEach((key, keyIndex, keyArray) => {
+    (Object.keys(hashingFileNameList)).forEach((key) => {
       const fileName = key.split(dir.package)[1];
       const fileNameHash = hashingFileNameList[key].split(dir.package)[1];
       if (debug) log(`${timestamp.stamp()} hashingUpdateCSS():: ${fileName}`);
@@ -25,18 +23,11 @@ module.exports = function updateCSSwithImageHashes({
       if (~fileContents.indexOf(fileName)) {
         fileContents = fileContents.split(fileName).join(fileNameHash);
       }
-      keysProcessed++;
-      if (keysProcessed >= keyArray.length) {
-        fs.writeFile(file, fileContents, (err) => {
-          if (err) throw err;
-          if (debug) log(`${timestamp.stamp()} hashingUpdateCSS()::: ${file}: ${'DONE'.bold.green}`);
-          processedCss++;
-          if (processedCss >= array.length) {
-            log(`${timestamp.stamp()} hashingUpdateCSS(): ${'DONE'.bold.green}`);
-            buildEvents.emit(BUILD_EVENTS.indexCssForHashing);
-          }
-        });
-      }
     });
+    await fs.writeFile(file, fileContents);
+    if (debug) log(`${timestamp.stamp()} hashingUpdateCSS()::: ${file}: ${'DONE'.bold.green}`);
   });
+  await Promise.all(promises);
+  log(`${timestamp.stamp()} hashingUpdateCSS(): ${'DONE'.bold.green}`);
+  buildEvents.emit(BUILD_EVENTS.indexCssForHashing);
 };

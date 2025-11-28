@@ -1,4 +1,4 @@
-@import "system/utilities";
+@use "system/utilities";
 
 #canvas {
   width: css-min(90vw, $content-max-width);

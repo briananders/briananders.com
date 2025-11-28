@@ -77,12 +77,12 @@ if (!production) {
 
 log(`production: ${production}`.toUpperCase().brightBlue.bold);
 
-clean(configs).then(() => {
+clean(configs).then(async () => {
   if (debug) log(`${timestamp.stamp()} clean().then()`);
-  fs.mkdirp(dir.package);
+  await fs.mkdirp(dir.package);
   compilePageMappingData(configs);
   bundleJS(configs);
-  bundleSCSS(configs);
+  await bundleSCSS(configs);
   moveAssets(configs);
 });
 

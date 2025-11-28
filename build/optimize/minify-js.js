@@ -4,7 +4,7 @@ const UglifyJS = require('uglify-js');
 
 const { log } = console;
 
-module.exports = function minifyJS({ dir, completionFlags, buildEvents }) {
+module.exports = async function minifyJS({ dir, completionFlags, buildEvents }) {
   completionFlags.JS_IS_MINIFIED = false;
 
   const BUILD_EVENTS = require(`${dir.build}constants/build-events`);
@@ -12,27 +12,19 @@ module.exports = function minifyJS({ dir, completionFlags, buildEvents }) {
 
   log(`${timestamp.stamp()} minifyJS()`);
 
-  const jsGlob = glob.sync(`${dir.package}**/*.js`);
-  let processed = 0;
+  const jsGlob = glob.globSync(`${dir.package}**/*.js`);
 
-  jsGlob.forEach((jsFileName, index, array) => {
-    fs.readFile(jsFileName, (error, data) => {
-      if (error) throw error;
+  const promises = jsGlob.map(async (jsFileName) => {
+    const data = await fs.readFile(jsFileName);
+    const uglifiedJS = UglifyJS.minify(data.toString());
 
-      const uglifiedJS = UglifyJS.minify(data.toString());
+    if (uglifiedJS.error) throw 'uglifiedJS.error'.red;
 
-      if (uglifiedJS.error) throw 'uglifiedJS.error'.red;
-
-      fs.writeFile(jsFileName, uglifiedJS.code, (err) => {
-        if (err) throw err;
-        processed++;
-
-        if (processed === array.length) {
-          log(`${timestamp.stamp()} minifyJS(): ${'DONE'.bold.green}`);
-          completionFlags.JS_IS_MINIFIED = true;
-          buildEvents.emit(BUILD_EVENTS.jsMinified);
-        }
-      });
-    });
+    await fs.writeFile(jsFileName, uglifiedJS.code);
   });
+
+  await Promise.all(promises);
+  log(`${timestamp.stamp()} minifyJS(): ${'DONE'.bold.green}`);
+  completionFlags.JS_IS_MINIFIED = true;
+  buildEvents.emit(BUILD_EVENTS.jsMinified);
 };

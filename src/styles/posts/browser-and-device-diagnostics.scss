@@ -1,6 +1,6 @@
-@import "system/utilities";
-@import "modules/code/var";
-@import "modules/code/code-container";
+@use "system/utilities";
+@use "modules/code/var";
+@use "modules/code/code-container";
 
 .posts.browser-and-device-diagnostics {
   input {

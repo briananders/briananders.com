@@ -11,16 +11,20 @@ module.exports = (configs) => {
   const updateCSSwithImageHashes = require(`${dir.build}hashing/update-css-with-image-hashes`);
   const BUILD_EVENTS = require(`${dir.build}constants/build-events`);
 
-  buildEvents.on(BUILD_EVENTS.assetHashCssListed, finishHashing.bind(this, configs));
-  buildEvents.on(BUILD_EVENTS.assetHashImagesListed, () => {
-    updateCSSwithImageHashes(configs);
-    finishHashing(configs);
+  buildEvents.on(BUILD_EVENTS.assetHashCssListed, async () => {
+    await finishHashing(configs);
   });
-  buildEvents.on(BUILD_EVENTS.assetHashJsListed, finishHashing.bind(this, configs));
+  buildEvents.on(BUILD_EVENTS.assetHashImagesListed, async () => {
+    await updateCSSwithImageHashes(configs);
+    await finishHashing(configs);
+  });
+  buildEvents.on(BUILD_EVENTS.assetHashJsListed, async () => {
+    await finishHashing(configs);
+  });
   buildEvents.on(BUILD_EVENTS.gzipDone, checkDone.bind(this, configs));
-  buildEvents.on(BUILD_EVENTS.hashingDone, () => {
+  buildEvents.on(BUILD_EVENTS.hashingDone, async () => {
     checkDone(configs);
-    gzipFiles(configs);
+    await gzipFiles(configs);
   });
   buildEvents.on(BUILD_EVENTS.htmlMinified, assetHashing.bind(this, configs));
   buildEvents.on(BUILD_EVENTS.imagesMoved, () => {
@@ -28,8 +32,12 @@ module.exports = (configs) => {
   });
   buildEvents.on(BUILD_EVENTS.indexCssForHashing, hashCSS.bind(this, configs));
   buildEvents.on(BUILD_EVENTS.jsMinified, assetHashing.bind(this, configs));
-  buildEvents.on(BUILD_EVENTS.jsMoved, minifyJS.bind(this, configs));
+  buildEvents.on(BUILD_EVENTS.jsMoved, async () => {
+    await minifyJS(configs);
+  });
   buildEvents.on(BUILD_EVENTS.sitemapDone, checkDone.bind(this, configs));
   buildEvents.on(BUILD_EVENTS.stylesMoved, assetHashing.bind(this, configs));
-  buildEvents.on(BUILD_EVENTS.templatesMoved, minifyHTML.bind(this, configs));
+  buildEvents.on(BUILD_EVENTS.templatesMoved, async () => {
+    await minifyHTML(configs);
+  });
 };

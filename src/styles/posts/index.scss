@@ -1,6 +1,6 @@
-@import "system/utilities";
+@use "system/utilities";
 
-@import "modules/posts-list";
+@use "modules/posts-list";
 
 footer.posts.index {
   margin-top: 0;

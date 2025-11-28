@@ -1,9 +1,9 @@
-@import 'system/utilities';
-@import "./modules/contributions";
+@use 'system/utilities';
+@use "./modules/contributions";
 
 main.home {
-  @import "modules/posts-list";
-  @import "posts/last-fm";
+  @use "modules/posts-list";
+  @use "posts/last-fm";
 
   margin-top: $s12;
 

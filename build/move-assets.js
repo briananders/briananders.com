@@ -91,7 +91,7 @@ function moveAllImages(configs) {
 
   makeFaviconIco({ dir, completionFlags, buildEvents });
 
-  const imagesGlob = glob.sync(`${dir.src}images/**/*.{${images.join(',')}}`);
+  const imagesGlob = glob.globSync(`${dir.src}images/**/*.{${images.join(',')}}`);
   let processed = 0;
 
   for (let i = 0; i < imagesGlob.length; i++) {
@@ -151,7 +151,7 @@ function moveAllVideos(configs) {
 
   fs.mkdirpSync(`${dir.package}videos/`);
 
-  const videoGlob = glob.sync(`${dir.src}videos/**/*.{${videos.join(',')}}`);
+  const videoGlob = glob.globSync(`${dir.src}videos/**/*.{${videos.join(',')}}`);
   let processed = 0;
 
   for (let i = 0; i < videoGlob.length; i++) {
@@ -204,7 +204,7 @@ function moveAllTxtFiles(configs) {
     }
   }
 
-  const txtGlob = glob.sync(`${dir.src}*.txt`);
+  const txtGlob = glob.globSync(`${dir.src}*.txt`);
   let processed = 0;
 
   for (let i = 0; i < txtGlob.length; i++) {
@@ -232,7 +232,7 @@ function moveJSONFiles(configs) {
     }
   }
 
-  const jsonGlob = glob.sync(`${dir.src}data/**/*.json`);
+  const jsonGlob = glob.globSync(`${dir.src}data/**/*.json`);
   let processed = 0;
 
   for (let i = 0; i < jsonGlob.length; i++) {
@@ -287,7 +287,7 @@ function moveAllDownloads(configs) {
 
   fs.mkdirpSync(`${dir.package}downloads/`);
 
-  const downloadsGlob = glob.sync(`${dir.src}downloads/**`);
+  const downloadsGlob = glob.globSync(`${dir.src}downloads/**`);
   let processed = 0;
 
   for (let i = 0; i < downloadsGlob.length; i++) {

@@ -3,7 +3,7 @@ const glob = require('glob');
 
 const { log } = console;
 
-module.exports = function finishHashing({
+module.exports = async function finishHashing({
   dir, completionFlags, buildEvents, hashingFileNameList, debug,
 }) {
   completionFlags.ASSET_HASH.DONE = false;
@@ -23,13 +23,11 @@ module.exports = function finishHashing({
     return false;
   }
   if (debug) log(`${timestamp.stamp()} finishHashing(): ${Object.keys(hashingFileNameList)}`);
-  const htmlGlob = [...glob.sync(`${dir.package}**/*.html`), ...glob.sync(`${dir.package}**/*.json`)];
-  let htmlFilesProcessed = 0;
-  htmlGlob.forEach((file, index, array) => {
+  const htmlGlob = [...glob.globSync(`${dir.package}**/*.html`), ...glob.globSync(`${dir.package}**/*.json`)];
+  const promises = htmlGlob.map(async (file) => {
     const fileBuffer = fs.readFileSync(file);
     let fileContents = fileBuffer.toString();
-    let keysProcessed = 0;
-    (Object.keys(hashingFileNameList)).forEach((key, keyIndex, keyArray) => {
+    (Object.keys(hashingFileNameList)).forEach((key) => {
       const fileName = key.split(dir.package)[1];
       const fileNameHash = hashingFileNameList[key].split(dir.package)[1];
       if (debug) log(`${timestamp.stamp()} finishHashing():: ${fileName}`);
@@ -37,19 +35,12 @@ module.exports = function finishHashing({
       if (~fileContents.indexOf(fileName)) {
         fileContents = fileContents.split(fileName).join(fileNameHash);
       }
-      keysProcessed++;
-      if (keysProcessed >= keyArray.length) {
-        fs.writeFile(file, fileContents, (err) => {
-          if (err) throw err;
-          if (debug) log(`${timestamp.stamp()} finishHashing()::: ${file}: ${'DONE'.bold.green}`);
-          htmlFilesProcessed++;
-          if (htmlFilesProcessed >= array.length) {
-            log(`${timestamp.stamp()} finishHashing(): ${'DONE'.bold.green}`);
-            completionFlags.ASSET_HASH.DONE = true;
-            buildEvents.emit(BUILD_EVENTS.hashingDone);
-          }
-        });
-      }
     });
+    await fs.writeFile(file, fileContents);
+    if (debug) log(`${timestamp.stamp()} finishHashing()::: ${file}: ${'DONE'.bold.green}`);
   });
+  await Promise.all(promises);
+  log(`${timestamp.stamp()} finishHashing(): ${'DONE'.bold.green}`);
+  completionFlags.ASSET_HASH.DONE = true;
+  buildEvents.emit(BUILD_EVENTS.hashingDone);
 };

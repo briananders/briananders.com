@@ -1,10 +1,11 @@
-@import "system/utilities";
+@use "sass:math";
+@use "system/utilities";
 
 $yt-video-width: 560;
 $yt-video-height: 315;
 
-$width-in-vh: $yt-video-width/$yt-video-height * 90vh;
-$height-in-vw: $yt-video-height/$yt-video-width * 90vw;
+$width-in-vh: math.div($yt-video-width, $yt-video-height) * 90vh;
+$height-in-vw: math.div($yt-video-height, $yt-video-width) * 90vw;
 
 html.youtube-modal-open,
 html.youtube-modal-open body {

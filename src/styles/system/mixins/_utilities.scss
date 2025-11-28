@@ -1,4 +1,4 @@
-@import "system/variables/all";
+@use "system/variables/all";
 
 @mixin box {
   box-sizing: border-box;
