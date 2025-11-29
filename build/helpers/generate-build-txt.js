@@ -30,8 +30,9 @@ module.exports = function generateBuildTxt(configs) {
 Commit Hash: ${commitHash}
 `;
 
-    // Write to src/build.txt (will be copied to package/ by moveAllTxtFiles)
-    const buildTxtPath = `${dir.src}build.txt`;
+    // Write directly to package/build.txt
+    const buildTxtPath = `${dir.package}build.txt`;
+    fs.ensureDirSync(dir.package);
     fs.writeFileSync(buildTxtPath, buildTxtContent);
 
     log(`${timestamp.stamp()} generateBuildTxt(): ${'DONE'.bold.green}`);
