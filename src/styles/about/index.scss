@@ -1,6 +1,6 @@
-@use "system/utilities";
-@use "modules/youtube-modal";
-@use "modules/contributions";
+@use "system/utilities" as *;
+@use "modules/youtube-modal" as *;
+@use "modules/contributions" as *;
 
 .about-content {
   position: relative;

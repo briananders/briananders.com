@@ -1,5 +1,5 @@
-@use "./phone-shared";
-@use "./float-iphone";
+@use "./phone-shared" as *;
+@use "./float-iphone" as *;
 
 @keyframes jiggle {
   0% {

@@ -1,7 +1,7 @@
-@use "system/utilities";
+@use "system/utilities" as *;
 
-@use "modules/nav";
-@use "modules/skip-nav";
+@use "modules/nav" as *;
+@use "modules/skip-nav" as *;
 
 header.main-header {
   @include palette--base;

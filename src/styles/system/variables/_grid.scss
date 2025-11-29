@@ -1,10 +1,10 @@
 @use "sass:math";
-@use "system/variables/defaults";
-@use "system/variables/spaces";
-@use "system/variables/viewports";
+@use "system/variables/defaults" as *;
+@use "system/variables/spaces" as *;
+@use "system/variables/viewports" as *;
 
-$grid--gutter: percentage(math.div($s3, $large));
-$grid--column: percentage(math.div($s12, $large));
+$grid--gutter: math.percentage(math.div($s3, $large));
+$grid--column: math.percentage(math.div($s12, $large));
 $grid--start-break-point: $medium;
 $grid--copy-max-width: $s1 * 100; // 600px
 $grid--max-width: $s1 * 220; // 1320px

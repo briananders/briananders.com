@@ -1,5 +1,5 @@
 @use "sass:math";
-@use "system/utilities";
+@use "system/utilities" as *;
 
 $yt-video-width: 560;
 $yt-video-height: 315;

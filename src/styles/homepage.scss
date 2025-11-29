@@ -1,10 +1,9 @@
-@use 'system/utilities';
-@use "./modules/contributions";
+@use 'system/utilities' as *;
+@use "./modules/contributions" as *;
+@use "modules/posts-list" as *;
+@use "posts/last-fm" as *;
 
 main.home {
-  @use "modules/posts-list";
-  @use "posts/last-fm";
-
   margin-top: $s12;
 
   .last-fm-module {

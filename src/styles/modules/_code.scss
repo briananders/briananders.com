@@ -1,4 +1,4 @@
 @use "highlight.js/scss/a11y-dark";
-@use "./code/var";
-@use "./code/code-container";
-@use "./code/code-element";
+@use "./code/var" as *;
+@use "./code/code-container" as *;
+@use "./code/code-element" as *;

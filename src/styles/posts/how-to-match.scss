@@ -1,8 +1,7 @@
-@use "system/utilities";
-
+@use "system/utilities" as *;
+@use "modules/code" as *;
 
 main.posts.how-to-match {
-  @use "modules/code";
 
   .example-container {
     overflow: hidden;

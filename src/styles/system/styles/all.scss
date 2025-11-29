@@ -1,5 +1,5 @@
-@use "system/utilities";
+@use "system/utilities" as *;
 
-@use "./defaults";
-@use "./attributes";
-@use "./elements";
+@use "./defaults" as *;
+@use "./attributes" as *;
+@use "./elements" as *;

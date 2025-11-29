@@ -1,4 +1,4 @@
-@use "system/utilities";
+@use "system/utilities" as *;
 
-@use "./elements";
-@use "./type";
+@use "./elements" as *;
+@use "./type" as *;

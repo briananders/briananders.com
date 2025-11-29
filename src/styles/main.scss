@@ -1,5 +1,5 @@
-@use "./vendor/normalize";
-@use "./system/utilities";
-@use "./system/styles";
+@use "./vendor/normalize" as *;
+@use "./system/utilities" as *;
+@use "./system/styles" as *;
 
-@use "./four-oh-four";
+@use "./four-oh-four" as *;

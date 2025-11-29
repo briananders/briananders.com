@@ -1,4 +1,4 @@
-@use "./utilities";
+@use "./utilities" as *;
 
-@use "./styles/all";
-@use "./classes/all";
+@use "./styles/all" as *;
+@use "./classes/all" as *;

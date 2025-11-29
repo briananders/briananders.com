@@ -1,5 +1,5 @@
 @use "sass:math";
-@use "./phone-shared";
+@use "./phone-shared" as *;
 
 phone {
   overflow: hidden;

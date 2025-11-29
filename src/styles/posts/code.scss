@@ -1,6 +1,5 @@
-@use "system/utilities";
-
+@use "system/utilities" as *;
+@use "modules/code" as *;
 
 main.posts {
-  @use "modules/code";
 }
