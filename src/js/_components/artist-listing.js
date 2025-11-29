@@ -61,12 +61,12 @@ const artistTemplate = `
   </a>
 `;
 
-const attributes = ["name", "count", "max", 'img'];
+const attributes = ['name', 'count', 'max', 'img'];
 
 class ArtistListing extends HTMLElement {
   constructor() {
     super();
-    const shadow = this.attachShadow({ mode: "open" });
+    const shadow = this.attachShadow({ mode: 'open' });
     shadow.innerHTML = artistTemplate;
   }
 
@@ -86,12 +86,12 @@ class ArtistListing extends HTMLElement {
       const length = count / max * 100;
       this.shadowRoot.getElementById('bar').style.width = `${length}%`;
     }
-    if (name === "name") {
+    if (name === 'name') {
       const imgElement = this.shadowRoot.querySelector('img');
       imgElement.setAttribute('alt', newValue);
       this.shadowRoot.querySelector('a').setAttribute('href', `https://www.last.fm/music/${newValue.replace(/\s/g, '+')}`);
     }
-    if (name === "img") {
+    if (name === 'img') {
       const imgElement = this.shadowRoot.querySelector('img');
       imgElement.setAttribute('src', newValue);
     }

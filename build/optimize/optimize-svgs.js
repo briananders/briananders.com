@@ -11,7 +11,7 @@ const plugins = [
         removeDoctype: false,
       },
     },
-  },
+  }
 ];
 
 function getSVG(filePath) {

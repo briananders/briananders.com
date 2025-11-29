@@ -1,7 +1,7 @@
 class CSRSquare extends HTMLElement {
   constructor() {
     super();
-    const shadow = this.attachShadow({ mode: "open" });
+    const shadow = this.attachShadow({ mode: 'open' });
 
     shadow.innerHTML = `
       <style>
@@ -43,7 +43,6 @@ class CSRSquare extends HTMLElement {
 
     return `rgb(${randomRed},${randomGreen},${randomBlue})`;
   }
-
 }
 
 module.exports.init = () => {

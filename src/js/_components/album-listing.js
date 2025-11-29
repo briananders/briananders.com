@@ -61,12 +61,12 @@ const albumTemplate = `
   </a>
 `;
 
-const attributes = ["name", "artist", "count", "max", 'img'];
+const attributes = ['name', 'artist', 'count', 'max', 'img'];
 
 class AlbumListing extends HTMLElement {
   constructor() {
     super();
-    const shadow = this.attachShadow({ mode: "open" });
+    const shadow = this.attachShadow({ mode: 'open' });
     shadow.innerHTML = albumTemplate;
   }
 
@@ -76,8 +76,8 @@ class AlbumListing extends HTMLElement {
 
   attributeChangedCallback(name, oldValue, newValue) {
     // console.log(name, oldValue, newValue);
-    if (name === "name") {
-      this.shadowRoot.querySelector(`slot`).innerText = newValue;
+    if (name === 'name') {
+      this.shadowRoot.querySelector('slot').innerText = newValue;
     }
     if (['count', 'artist'].includes(name)) {
       this.shadowRoot.querySelector(`[slot="${name}"]`).innerText = newValue;
@@ -89,15 +89,15 @@ class AlbumListing extends HTMLElement {
       const length = count / max * 100;
       this.shadowRoot.getElementById('bar').style.width = `${length}%`;
     }
-    if (["name", 'artist'].includes(name)) {
+    if (['name', 'artist'].includes(name)) {
       const albumName = this.getAttribute('name');
-      const artistName = this.getAttribute('artist') || "";
+      const artistName = this.getAttribute('artist') || '';
       this.shadowRoot.querySelector('a').setAttribute('href', `https://www.last.fm/music/${artistName.replace(/\s/g, '+')}/${albumName.replace(/\s/g, '+')}`);
 
       const imgElement = this.shadowRoot.querySelector('img');
       imgElement.setAttribute('alt', `${albumName} album cover`);
     }
-    if (name === "img") {
+    if (name === 'img') {
       const imgElement = this.shadowRoot.querySelector('img');
       imgElement.setAttribute('src', newValue);
     }

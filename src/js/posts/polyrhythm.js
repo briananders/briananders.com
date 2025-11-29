@@ -9,7 +9,7 @@ const circles = [];
 const WIDTH = 1000;
 const numberOfCircles = 20;
 const tones = [
-  65.40639, //C2
+  65.40639, // C2
   82.40689, // E2
   97.99886, // G2
   110.0000, // A2
@@ -28,7 +28,7 @@ const tones = [
   1046.502, // C6
   1318.510, // E6
   1567.982, // G6
-  1760.000, // A6
+  1760.000 // A6
 ];
 
 let AudioContext;
@@ -37,9 +37,9 @@ let audioCtx;
 function ColorObject(position) {
   // rgb(205 72 0) dark
   // rgb(245 127 23) light
-  const red = (x) => { return 205 + (((245 - 205) / numberOfCircles) * x); };
-  const green = (x) => { return 72 + (((127 - 72) / numberOfCircles) * x); };
-  const blue = (x) => { return 0 + (((23 - 0) / numberOfCircles) * x); };
+  const red = (x) => 205 + (((245 - 205) / numberOfCircles) * x);
+  const green = (x) => 72 + (((127 - 72) / numberOfCircles) * x);
+  const blue = (x) => 0 + (((23 - 0) / numberOfCircles) * x);
 
   const whiteRed = (x, step) => {
     const white = 255;
@@ -47,26 +47,23 @@ function ColorObject(position) {
     const delta = white - noWhite;
 
     return noWhite + (delta * step);
-  }
+  };
   const whiteGreen = (x, step) => {
     const white = 255;
     const noWhite = green(x);
     const delta = white - noWhite;
 
     return noWhite + (delta * step);
-  }
+  };
   const whiteBlue = (x, step) => {
     const white = 255;
     const noWhite = blue(x);
     const delta = white - noWhite;
 
     return noWhite + (delta * step);
-  }
+  };
 
-  this.rgb = (white) => {
-    return `rgba(${whiteRed(position, white)},${whiteGreen(position, white)},${whiteBlue(position, white)},1)`;
-  }
-
+  this.rgb = (white) => `rgba(${whiteRed(position, white)},${whiteGreen(position, white)},${whiteBlue(position, white)},1)`;
 }
 
 function velocityFunction(x, width) {
@@ -98,9 +95,8 @@ function Circle(position = 0) {
 
     if (timeDelta > 1000) {
       return 0;
-    } else {
-      return 1 - (timeDelta / 1000);
     }
+    return 1 - (timeDelta / 1000);
   }
 
   this.draw = () => {
@@ -223,9 +219,9 @@ function setUpEvents() {
     audioCtx = new AudioContext();
     draw();
     // audioCtx.resume().then(() => {
-      // console.log('Playback resumed successfully');
+    // console.log('Playback resumed successfully');
     // }).catch(error => {
-      // document.querySelector('debug').innerText += `\n\n${error.toString()}`;
+    // document.querySelector('debug').innerText += `\n\n${error.toString()}`;
     // });
 
     playButton.style.display = 'none';

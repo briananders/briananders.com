@@ -1,5 +1,5 @@
 const ready = require('../_modules/document-ready');
-let urlParams = new URLSearchParams(window.location.search);
+const urlParams = new URLSearchParams(window.location.search);
 
 ready.document(() => {
   const iframeElement = document.getElementById('minesweeper-iframe');
@@ -9,7 +9,7 @@ ready.document(() => {
   //   iframeElement.contentWindow.postMessage(`difficulty=${newDifficulty}`, '*');
   // }
 
-  window.addEventListener('message', ({data}) => {
+  window.addEventListener('message', ({ data }) => {
     if (data.indexOf('difficulty') === 0) {
       const [key, value] = data.split('=');
       const newDifficulty = value.toString();

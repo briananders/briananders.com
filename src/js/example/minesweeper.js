@@ -358,8 +358,8 @@ function play() {
 }
 
 function destroyGame() {
-  for(let i = 0; i < game.length; i++) {
-    for(let j = 0; j < game[i].length; j++) {
+  for (let i = 0; i < game.length; i++) {
+    for (let j = 0; j < game[i].length; j++) {
       game[i][j].destroy();
       game[i][j] = undefined;
     }
