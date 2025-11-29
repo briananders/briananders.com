@@ -22,33 +22,45 @@ module.exports = function compileSitemap({
   }
 
   log(`${timestamp.stamp()} compileSitemap()`);
-  ejs.renderFile(`${dir.src}sitemap.json.ejs`, {
-    pages: pageMappingData,
-    siteData,
-  }, {
-    compileDebug: true,
-  }, (error, str) => {
-    if (error) throw error;
-    fs.writeFile(`${dir.package}sitemap.json`, str, (err) => {
-      if (err) throw err;
-
+  (async () => {
+    try {
+      const jsonStr = await new Promise((resolve, reject) => {
+        ejs.renderFile(`${dir.src}sitemap.json.ejs`, {
+          pages: pageMappingData,
+          siteData,
+        }, {
+          compileDebug: true,
+        }, (error, str) => {
+          if (error) reject(error);
+          else resolve(str);
+        });
+      });
+      await fs.writeFile(`${dir.package}sitemap.json`, jsonStr);
       doneCount++;
       checkForDone();
-    });
-  });
+    } catch (error) {
+      throw error;
+    }
+  })();
 
-  ejs.renderFile(`${dir.src}sitemap.xml.ejs`, {
-    pages: pageMappingData,
-    siteData,
-  }, {
-    compileDebug: true,
-  }, (error, str) => {
-    if (error) throw error;
-    fs.writeFile(`${dir.package}sitemap.xml`, str, (err) => {
-      if (err) throw err;
-
+  (async () => {
+    try {
+      const xmlStr = await new Promise((resolve, reject) => {
+        ejs.renderFile(`${dir.src}sitemap.xml.ejs`, {
+          pages: pageMappingData,
+          siteData,
+        }, {
+          compileDebug: true,
+        }, (error, str) => {
+          if (error) reject(error);
+          else resolve(str);
+        });
+      });
+      await fs.writeFile(`${dir.package}sitemap.xml`, xmlStr);
       doneCount++;
       checkForDone();
-    });
-  });
+    } catch (error) {
+      throw error;
+    }
+  })();
 };

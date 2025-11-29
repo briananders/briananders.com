@@ -1,4 +1,4 @@
-@import "highlight.js/scss/a11y-dark";
-@import "./code/var";
-@import "./code/code-container";
-@import "./code/code-element";
+@use "highlight.js/scss/a11y-dark";
+@use "./code/var" as *;
+@use "./code/code-container" as *;
+@use "./code/code-element" as *;

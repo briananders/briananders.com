@@ -1,5 +1,5 @@
-@import "system/utilities";
-@import "modules/code";
+@use "system/utilities" as *;
+@use "modules/code" as *;
 
 $sprite-width: 1024px;
 $sprite-height: 1024px;

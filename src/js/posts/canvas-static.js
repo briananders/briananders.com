@@ -13,7 +13,7 @@ function Graph() {
     for (let i = 0; i < STEPS; i++) {
       const columnElement = document.createElement('column');
       columnElement.dataset.value = 0;
-      columnElement.style.width = `${1/(STEPS)*100}%`;
+      columnElement.style.width = `${1 / (STEPS) * 100}%`;
       graphElement.appendChild(columnElement);
     }
   }
@@ -22,7 +22,7 @@ function Graph() {
     const columnElements = Array.from(graphElement.children);
     columnElements.forEach((columnElement) => {
       const value = Number(columnElement.dataset.value);
-      const percent = Math.round(((value/count) + Number.EPSILON) * 10000) / 100
+      const percent = Math.round(((value / count) + Number.EPSILON) * 10000) / 100;
       columnElement.style.paddingBottom = `${percent}%`;
       columnElement.innerHTML = `<span>${percent}%</span>`;
     });
@@ -55,7 +55,7 @@ ready.document(() => {
   function setCanvasDimensions() {
     const rect = canvas.getClientRects()[0];
     cellWidth = rect.width / STEPS;
-    canvas.width = rect.width
+    canvas.width = rect.width;
     canvas.height = rect.width;
   }
 
@@ -76,7 +76,7 @@ ready.document(() => {
       cellWidth * 0,
       cellWidth * STEPS,
       cellWidth * STEPS
-    )
+    );
   }
 
   function play() {
@@ -85,7 +85,7 @@ ready.document(() => {
     draw(x, y);
 
     // window.requestAnimationFrame(play);
-    setTimeout(play, 1000/480);
+    setTimeout(play, 1000 / 480);
   }
 
   function firstDraw() {
@@ -96,7 +96,7 @@ ready.document(() => {
       cellWidth * 0,
       cellWidth * STEPS,
       cellWidth * STEPS
-    )
+    );
 
     context.fillStyle = BACKGROUND_STYLE;
     context.strokeStyle = BACKGROUND_STYLE;
@@ -105,7 +105,7 @@ ready.document(() => {
       cellWidth * 0,
       cellWidth * STEPS,
       cellWidth * STEPS
-    )
+    );
   }
 
   setCanvasDimensions();

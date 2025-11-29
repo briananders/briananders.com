@@ -98,9 +98,7 @@ ready.document(() => {
 
     lines.forEach((lineElement, index) => {
       const lineInputs = Array.from(lineElement.querySelectorAll('input[type=text]'));
-      const lineValue = lineInputs.map((input) => {
-        return input.value;
-      }).join('');
+      const lineValue = lineInputs.map((input) => input.value).join('');
 
       if (lineValue === '' && firstEmpty === undefined) {
         firstEmpty = index;
@@ -148,7 +146,7 @@ ready.document(() => {
       wrongLetters,
       correctLetters,
       cannotBeLetters,
-      allLetters
+      allLetters,
     };
   }
 
@@ -290,7 +288,7 @@ ready.document(() => {
         unsortedLetters.push([key, lets[key]]);
       });
 
-      return unsortedLetters.sort((a,b) => {
+      return unsortedLetters.sort((a, b) => {
         if (a[1] < b[1]) return 1;
         return -1;
       });
@@ -302,7 +300,7 @@ ready.document(() => {
       word.split('').forEach((letter, index) => {
         if (word.indexOf(letter) !== index) {
           // console.log(word);
-          return;
+
         } else if (letters[letter]) {
           letters[letter]++;
         } else {

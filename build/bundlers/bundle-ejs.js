@@ -108,7 +108,7 @@ module.exports = async function bundleEJS({
   const BUILD_EVENTS = require(`${dir.build}constants/build-events`);
   const siteData = require(`${dir.build}constants/site-data`)(dir);
   const timestamp = require(`${dir.build}helpers/timestamp`);
-  const templateGlob = glob.sync(`${dir.src}templates/**/[^_]*.ejs`);
+  const templateGlob = glob.globSync(`${dir.src}templates/**/[^_]*.ejs`);
   const production = require(`${dir.build}helpers/production`);
 
   log(`${timestamp.stamp()} bundleEJS()`);
@@ -149,20 +149,19 @@ module.exports = async function bundleEJS({
       processed++;
     });
 
-    fs.mkdirp(path.dirname(outputPath), (err) => {
-      if (err) throw err;
+    try {
+      await fs.mkdirp(path.dirname(outputPath));
+      await fs.writeFile(outputPath, html);
 
-      fs.writeFile(outputPath, html, (e) => {
-        if (e) throw e;
+      if (debug) log(`${timestamp.stamp()} ${'SUCCESS'.bold.green} - Compiled Template - ${outputPath.split(/package/)[1]}`);
+      processed++;
 
-        if (debug) log(`${timestamp.stamp()} ${'SUCCESS'.bold.green} - Compiled Template - ${outputPath.split(/package/)[1]}`);
-        processed++;
-
-        if (processed >= templateGlob.length) {
-          log(`${timestamp.stamp()} bundleEJS(): ${'DONE'.bold.green}`);
-          buildEvents.emit(BUILD_EVENTS.templatesMoved);
-        }
-      });
-    });
+      if (processed >= templateGlob.length) {
+        log(`${timestamp.stamp()} bundleEJS(): ${'DONE'.bold.green}`);
+        buildEvents.emit(BUILD_EVENTS.templatesMoved);
+      }
+    } catch (err) {
+      throw err;
+    }
   }
 };

@@ -66,7 +66,9 @@ module.exports = (configs) => {
         bundleJS(configs);
         break;
       case filePath.includes(`${dir.src}styles/`):
-        bundleSCSS(configs);
+        (async () => {
+          await bundleSCSS(configs);
+        })();
         compilePageMappingData(configs);
         break;
       case filePath.includes(`${dir.src}templates/`):

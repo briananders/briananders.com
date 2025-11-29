@@ -1,4 +1,5 @@
-@import "system/variables/colors";
+@use "sass:color";
+@use "system/variables/colors" as *;
 
 
 $palette--primary-white:  $color--white;
@@ -8,6 +9,6 @@ $palette--secondary-grey: $color--grey-600;
 $palette--divider-color:  $color--yellow-900;
 $palette--error: $color--red-400;
 
-$palette--primary-color-dark:  darken($color--orange-900, 5);
+$palette--primary-color-dark:  color.adjust($color--orange-900, $lightness: -5%);
 $palette--primary-color-light: $color--yellow-900;
 $palette--accent-color:        $color--green-a200;

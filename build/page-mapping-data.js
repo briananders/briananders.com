@@ -6,7 +6,7 @@ const { log } = console;
 module.exports = ({ dir, buildEvents, pageMappingData }) => {
   const BUILD_EVENTS = require(`${dir.build}constants/build-events`);
   const timestamp = require(`${dir.build}helpers/timestamp`);
-  const templateGlob = glob.sync(`${dir.src}templates/**/[^_]*.ejs`);
+  const templateGlob = glob.globSync(`${dir.src}templates/**/[^_]*.ejs`);
 
   // clean it out before compiling. No dupes.
   pageMappingData.splice(0, pageMappingData.length);

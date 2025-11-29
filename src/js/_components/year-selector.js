@@ -1,4 +1,4 @@
-const yearTemplate = document.createElement("year-template");
+const yearTemplate = document.createElement('year-template');
 yearTemplate.innerHTML = `
 <style>
   div {
@@ -80,10 +80,10 @@ yearTemplate.innerHTML = `
 class YearSelector extends HTMLElement {
   constructor() {
     super();
-    const shadow = this.attachShadow({ mode: "open" });
+    const shadow = this.attachShadow({ mode: 'open' });
     shadow.append(yearTemplate.cloneNode(true));
 
-    ["min", "max", "value"].forEach((id) => {
+    ['min', 'max', 'value'].forEach((id) => {
       this[id] = Number(this.getAttribute(id));
     });
 
@@ -97,15 +97,15 @@ class YearSelector extends HTMLElement {
   }
 
   static get observedAttributes() {
-    return ["min", "max", "value"];
+    return ['min', 'max', 'value'];
   }
 
   attributeChangedCallback(name, oldValue, newValue) {
     // console.log(name, oldValue, newValue);
 
-    if(Date.now() - this.debounceDate < 10) return;
+    if (Date.now() - this.debounceDate < 10) return;
 
-    if (["min", "max", "value"].includes(name)) {
+    if (['min', 'max', 'value'].includes(name)) {
       this[name] = Number(this.getAttribute(name));
     }
 
@@ -123,7 +123,7 @@ class YearSelector extends HTMLElement {
   update() {
     this.checkDisabled();
     this.debounceDate = Date.now();
-    ["min", "max", "value"].forEach((id) => {
+    ['min', 'max', 'value'].forEach((id) => {
       this.setAttribute(id, this[id]);
     });
     this.shadowRoot.querySelector('slot').innerText = this.value;
@@ -157,7 +157,7 @@ class YearSelector extends HTMLElement {
   }
 
   updateSelect() {
-    this.selectElement.innerHTML = "";
+    this.selectElement.innerHTML = '';
     for (let i = this.max; i >= this.min; i--) {
       const optionElement = document.createElement('option');
       optionElement.value = i;

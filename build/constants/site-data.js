@@ -10,7 +10,7 @@ module.exports = (dir) => {
     try {
       commitHash = execSync('git rev-parse HEAD', {
         encoding: 'utf8',
-        cwd: dir.root
+        cwd: dir.root,
       }).trim();
     } catch (error) {
       console.warn('Could not get git commit hash:', error.message);

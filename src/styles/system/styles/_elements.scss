@@ -1,4 +1,5 @@
-@import "system/utilities";
+@use "sass:math";
+@use "system/utilities" as *;
 
 i {
   @include italic;
@@ -166,8 +167,8 @@ input[type=checkbox].toggle {
     height: $s4;
     border-radius: $s2;
     background-color: $palette--accent-color;
-    top: -#{$s1 / 2};
-    left:-#{$s1 / 2};
+    top: -#{math.div($s1, 2)};
+    left:-#{math.div($s1, 2)};
     transition: left $transition-speed, background-color $transition-speed;
     box-shadow: 0 0 $s1 $color--grey-900;
   }
@@ -178,7 +179,7 @@ input[type=checkbox].toggle {
 
     /* Checkbox checked effect */
     &::before {
-      left: calc(100% - #{$s4 - ($s1 / 2)});
+      left: calc(100% - #{$s4 - math.div($s1, 2)});
     }
 
     &:focus {

@@ -1,5 +1,5 @@
-@import "system/utilities";
-@import "modules/code";
+@use "system/utilities" as *;
+@use "modules/code" as *;
 
 canvas {
   width: 100vw;

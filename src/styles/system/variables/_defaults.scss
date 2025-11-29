@@ -1,6 +1,8 @@
+@use "sass:math";
+
 $base-unit: 6px;
 
 $transition-speed: 500ms;
 $transition-timing: ease;
 
-$border-radius: $base-unit / 2;
+$border-radius: math.div($base-unit, 2);

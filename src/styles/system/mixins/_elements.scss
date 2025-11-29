@@ -1,4 +1,5 @@
-@import "system/variables/all";
+@use "sass:math";
+@use "system/variables/all" as *;
 
 @mixin html {
   mixin: html;
@@ -64,8 +65,8 @@
   @include type--body;
   @include palette--base;
   border-radius: $border-radius;
-  height: $s6 + $s1 / 2;
-  padding: $s1/3 $s1 0;
+  height: $s6 + math.div($s1, 2);
+  padding: math.div($s1, 3) $s1 0;
   border: 1px solid $palette--divider-color;
 }
 
@@ -77,7 +78,7 @@
 
   min-width: $s12;
   border-radius: $border-radius;
-  height: $s6 + $s1 / 2;
+  height: $s6 + math.div($s1, 2);
   padding: 0 $s1;
   border: 1px solid $palette--secondary-grey;
 }
@@ -85,7 +86,7 @@
 @mixin input-range {
   mixin: input-range;
 
-  height: $s6 + $s1 / 2;
+  height: $s6 + math.div($s1, 2);
   cursor: pointer;
 
   @include link-focus;
@@ -99,7 +100,7 @@
 
   appearance: menulist;
   border-radius: $border-radius;
-  height: $s6 + $s1 / 2;
+  height: $s6 + math.div($s1, 2);
   padding: 0 $s1;
   border: 1px solid $palette--secondary-grey;
   cursor: pointer;

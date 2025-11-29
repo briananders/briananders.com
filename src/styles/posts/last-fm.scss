@@ -1,4 +1,5 @@
-@import "system/utilities";
+@use "sass:math";
+@use "system/utilities" as *;
 
 .last-fm-module {
   display: grid;
@@ -7,7 +8,7 @@
   .item {
     display: grid;
     grid-template-columns: 1fr;
-    grid-gap: $s1 / 2;
+    grid-gap: math.div($s1, 2);
     grid-gap: $s3;
     border: none;
     padding: $s1;

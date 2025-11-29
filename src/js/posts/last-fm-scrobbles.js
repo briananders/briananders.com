@@ -36,8 +36,8 @@ ready.document(() => {
     const year = yearSelector.getAttribute('value');
 
     getData(year, (data) => {
-      const sortedAlbums = data.albums.sort((a, b) => { a.count > b.count ? -1 : 1 });
-      const sortedArtists = data.artists.sort((a, b) => { a.count > b.count ? -1 : 1 });
+      const sortedAlbums = data.albums.sort((a, b) => { a.count > b.count ? -1 : 1; });
+      const sortedArtists = data.artists.sort((a, b) => { a.count > b.count ? -1 : 1; });
       const maxAlbum = sortedAlbums.at(0).count;
       const maxArtist = sortedArtists.at(0).count;
 

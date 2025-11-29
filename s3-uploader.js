@@ -190,7 +190,7 @@ const alwaysSwapFiles = (fileName) => [
 getS3Objects().then((data) => {
   const s3FileList = data.Contents.map(({ Key }) => Key);
 
-  const packageGlob = glob.sync(`${dir.package}**/*`);
+  const packageGlob = glob.globSync(`${dir.package}**/*`);
 
   const s3DeleteList = s3FileList.filter((s3File) => !packageGlob.includes(dir.package + s3File)
       || alwaysSwapFiles(s3File));

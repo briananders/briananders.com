@@ -25,10 +25,10 @@ ready.document(() => {
 
     const matches = [];
 
-    dictionary.forEach(word => {
+    dictionary.forEach((word) => {
       let testWord = word;
 
-      inputLetters.forEach(letter => {
+      inputLetters.forEach((letter) => {
         testWord = testWord.replace(letter, '');
       });
 
@@ -37,18 +37,18 @@ ready.document(() => {
       }
     });
 
-    if(matches.length > 0) {
+    if (matches.length > 0) {
       formatResults(matches);
     }
   }
 
   function formatResults(results) {
     // sort results by the length
-    const resultsByLength = results.sort((a, b) => (a.length > b.length) ? -1 : 1);
+    const resultsByLength = results.sort((a, b) => ((a.length > b.length) ? -1 : 1));
     // get the longest result length
     const longestLength = resultsByLength[0].length;
     // HTML formatting
-    let htmlSections = [];
+    const htmlSections = [];
     // setup splitting data
     const splitResults = {};
 
@@ -58,7 +58,7 @@ ready.document(() => {
     }
 
     // split the data by length
-    resultsByLength.forEach(word => {
+    resultsByLength.forEach((word) => {
       splitResults[word.length].push(word);
     });
 
