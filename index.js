@@ -92,6 +92,7 @@ clean(configs).then(() => {
 });
 
 if (!production) {
+  app.use('/last-fm-history', serve(dir.lastFmDataSource));
   app.use(serve(dir.package));
 
   const server = app.listen(3000, () => {

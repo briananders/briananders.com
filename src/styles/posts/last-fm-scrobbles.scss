@@ -34,3 +34,11 @@ p {
   gap: $s6;
   margin-bottom: $s12;
 }
+
+#selector-container {
+  display: inline-block;
+}
+
+#filters-container {
+  @include sixHundred;
+}

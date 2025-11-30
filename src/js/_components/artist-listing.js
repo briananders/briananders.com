@@ -61,7 +61,11 @@ const artistTemplate = `
   </a>
 `;
 
-const attributes = ["name", "count", "max", 'img'];
+const attributes = ['name', 'count', 'max', 'img'];
+
+function formatNumber(number) {
+  return Number(number).toLocaleString();
+}
 
 class ArtistListing extends HTMLElement {
   constructor() {
@@ -77,7 +81,7 @@ class ArtistListing extends HTMLElement {
   attributeChangedCallback(name, oldValue, newValue) {
     // console.log(name, oldValue, newValue);
     if (['count'].includes(name)) {
-      this.shadowRoot.querySelector(`[slot="${name}"]`).innerText = newValue;
+      this.shadowRoot.querySelector(`[slot="${name}"]`).innerText = formatNumber(newValue);
     }
     if (['count', 'max'].includes(name)) {
       const count = Number(this.getAttribute('count'));
@@ -86,12 +90,12 @@ class ArtistListing extends HTMLElement {
       const length = count / max * 100;
       this.shadowRoot.getElementById('bar').style.width = `${length}%`;
     }
-    if (name === "name") {
+    if (name === 'name') {
       const imgElement = this.shadowRoot.querySelector('img');
       imgElement.setAttribute('alt', newValue);
       this.shadowRoot.querySelector('a').setAttribute('href', `https://www.last.fm/music/${newValue.replace(/\s/g, '+')}`);
     }
-    if (name === "img") {
+    if (name === 'img') {
       const imgElement = this.shadowRoot.querySelector('img');
       imgElement.setAttribute('src', newValue);
     }
