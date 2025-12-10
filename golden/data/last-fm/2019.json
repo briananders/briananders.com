@@ -1,0 +1,120 @@
+{
+  "sources": {
+    "artist": "https://www.last.fm/user/imbanders/library/artists?from=2019-01-01&rangetype=year",
+    "album": "https://www.last.fm/user/imbanders/library/albums?from=2019-01-01&rangetype=year"
+  },
+  "artists": [
+    {
+      "name": "Pink Floyd",
+      "img": "/images/last-fm/artist/pink-floyd.webp",
+      "count": 1284
+    },
+    {
+      "name": "David Bowie",
+      "img": "/images/last-fm/artist/david-bowie.webp",
+      "count": 456
+    },
+    {
+      "name": "Paul McCartney",
+      "img": "/images/last-fm/artist/paul-mccartney.webp",
+      "count": 451
+    },
+    {
+      "name": "Electric Light Orchestra",
+      "img": "/images/last-fm/artist/electric-light-orchestra.webp",
+      "count": 423
+    },
+    {
+      "name": "Neil Diamond",
+      "img": "/images/last-fm/artist/neil-diamond.webp",
+      "count": 410
+    },
+    {
+      "name": "Pixies",
+      "img": "/images/last-fm/artist/pixies.webp",
+      "count": 406
+    },
+    {
+      "name": "Supertramp",
+      "img": "/images/last-fm/artist/supertramp.webp",
+      "count": 400
+    },
+    {
+      "name": "Bad Religion",
+      "img": "/images/last-fm/artist/bad-religion.webp",
+      "count": 368
+    },
+    {
+      "name": "He Is Legend",
+      "img": "/images/last-fm/artist/he-is-legend.webp",
+      "count": 356
+    },
+    {
+      "name": "blink-182",
+      "img": "/images/last-fm/artist/blink-182.webp",
+      "count": 336
+    }
+  ],
+  "albums": [
+    {
+      "name": "Hamilton",
+      "artist": "Various Artists",
+      "img": "/images/last-fm/album/various-artists+hamilton.webp",
+      "count": 499
+    },
+    {
+      "name": "The Wall",
+      "artist": "Pink Floyd",
+      "img": "/images/last-fm/album/pink-floyd+the-wall.webp",
+      "count": 411
+    },
+    {
+      "name": "50th Anniversary Collection",
+      "artist": "Neil Diamond",
+      "img": "/images/last-fm/album/neil-diamond+50th-anniversary-collection.webp",
+      "count": 373
+    },
+    {
+      "name": "Legacy",
+      "artist": "David Bowie",
+      "img": "/images/last-fm/album/david-bowie+legacy.webp",
+      "count": 250
+    },
+    {
+      "name": "The Essential Paul Simon",
+      "artist": "Paul Simon",
+      "img": "/images/last-fm/album/paul-simon+the-essential-paul-simon.webp",
+      "count": 246
+    },
+    {
+      "name": "Greatest Hits",
+      "artist": "Fleetwood Mac",
+      "img": "/images/last-fm/album/fleetwood-mac+greatest-hits.webp",
+      "count": 219
+    },
+    {
+      "name": "Breakfast in America",
+      "artist": "Supertramp",
+      "img": "/images/last-fm/album/supertramp+breakfast-in-america.webp",
+      "count": 214
+    },
+    {
+      "name": "The Final Cut",
+      "artist": "Pink Floyd",
+      "img": "/images/last-fm/album/pink-floyd+the-final-cut.webp",
+      "count": 208
+    },
+    {
+      "name": "The Dark Side of the Moon",
+      "artist": "Pink Floyd",
+      "img": "/images/last-fm/album/pink-floyd+the-dark-side-of-the-moon.webp",
+      "count": 204
+    },
+    {
+      "name": "Egypt Station",
+      "artist": "Paul McCartney",
+      "img": "/images/last-fm/album/paul-mccartney+egypt-station.webp",
+      "count": 191
+    }
+  ]
+}

@@ -1,0 +1,1 @@
+iframe#minesweeper-iframe{width:100vw;height:calc(100vw + 170px)}iframe#minesweeper-iframe[data-difficulty=beginner]{max-height:570px}iframe#minesweeper-iframe[data-difficulty=intermediate]{max-height:970px}iframe#minesweeper-iframe[data-difficulty=expert]{max-height:1370px}

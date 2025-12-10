@@ -1,0 +1,120 @@
+{
+  "sources": {
+    "artist": "https://www.last.fm/user/imbanders/library/artists?from=2014-01-01&rangetype=year",
+    "album": "https://www.last.fm/user/imbanders/library/albums?from=2014-01-01&rangetype=year"
+  },
+  "artists": [
+    {
+      "name": "Billy Joel",
+      "img": "/images/last-fm/artist/billy-joel.webp",
+      "count": 377
+    },
+    {
+      "name": "Elton John",
+      "img": "/images/last-fm/artist/elton-john.webp",
+      "count": 297
+    },
+    {
+      "name": "John Williams",
+      "img": "/images/last-fm/artist/john-williams.webp",
+      "count": 235
+    },
+    {
+      "name": "Fall Out Boy",
+      "img": "/images/last-fm/artist/fall-out-boy.webp",
+      "count": 198
+    },
+    {
+      "name": "Every Time I Die",
+      "img": "/images/last-fm/artist/every-time-i-die.webp",
+      "count": 186
+    },
+    {
+      "name": "Simon & Garfunkel",
+      "img": "/images/last-fm/artist/simon-&-garfunkel.webp",
+      "count": 182
+    },
+    {
+      "name": "He Is Legend",
+      "img": "/images/last-fm/artist/he-is-legend.webp",
+      "count": 177
+    },
+    {
+      "name": "Muse",
+      "img": "/images/last-fm/artist/muse.webp",
+      "count": 166
+    },
+    {
+      "name": "Ben Folds",
+      "img": "/images/last-fm/artist/ben-folds.webp",
+      "count": 156
+    },
+    {
+      "name": "OK Go",
+      "img": "/images/last-fm/artist/ok-go.webp",
+      "count": 154
+    }
+  ],
+  "albums": [
+    {
+      "name": "The Greatest Hits 1970-2002",
+      "artist": "Elton John",
+      "img": "/images/last-fm/album/elton-john+the-greatest-hits-1970-2002.webp",
+      "count": 188
+    },
+    {
+      "name": "Hesitant Alien",
+      "artist": "Gerard Way",
+      "img": "/images/last-fm/album/gerard-way+hesitant-alien.webp",
+      "count": 127
+    },
+    {
+      "name": "Heavy Fruit",
+      "artist": "He Is Legend",
+      "img": "/images/last-fm/album/he-is-legend+heavy-fruit.webp",
+      "count": 126
+    },
+    {
+      "name": "The Essential Billy Joel",
+      "artist": "Billy Joel",
+      "img": "/images/last-fm/album/billy-joel+the-essential-billy-joel.webp",
+      "count": 116
+    },
+    {
+      "name": "Folie à deux",
+      "artist": "Fall Out Boy",
+      "img": "/images/last-fm/album/fall-out-boy+folie-à-deux.webp",
+      "count": 116
+    },
+    {
+      "name": "Hungry Ghosts",
+      "artist": "OK Go",
+      "img": "/images/last-fm/album/ok-go+hungry-ghosts.webp",
+      "count": 77
+    },
+    {
+      "name": "Indie Cindy",
+      "artist": "Pixies",
+      "img": "/images/last-fm/album/pixies+indie-cindy.webp",
+      "count": 77
+    },
+    {
+      "name": "The Best Of",
+      "artist": "Simon & Garfunkel",
+      "img": "/images/last-fm/album/simon--garfunkel+the-best-of.webp",
+      "count": 76
+    },
+    {
+      "name": "Greatest Hits",
+      "artist": "Billy Joel",
+      "img": "/images/last-fm/album/billy-joel+greatest-hits.webp",
+      "count": 68
+    },
+    {
+      "name": "My Lives",
+      "artist": "Billy Joel",
+      "img": "/images/last-fm/album/billy-joel+my-lives.webp",
+      "count": 67
+    }
+  ]
+}
