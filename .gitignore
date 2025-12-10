@@ -40,3 +40,7 @@
 .Trashes
 ehthumbs.db
 Thumbs.db
+
+# Screenshot test artifacts #
+#############################
+/test/screenshots
