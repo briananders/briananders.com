@@ -1,0 +1,120 @@
+{
+  "sources": {
+    "artist": "https://www.last.fm/user/imbanders/library/artists?from=2018-01-01&rangetype=year",
+    "album": "https://www.last.fm/user/imbanders/library/albums?from=2018-01-01&rangetype=year"
+  },
+  "artists": [
+    {
+      "name": "Pink Floyd",
+      "img": "/images/last-fm/artist/pink-floyd.webp",
+      "count": 1130
+    },
+    {
+      "name": "The Beatles",
+      "img": "/images/last-fm/artist/the-beatles.webp",
+      "count": 1100
+    },
+    {
+      "name": "The Beach Boys",
+      "img": "/images/last-fm/artist/the-beach-boys.webp",
+      "count": 439
+    },
+    {
+      "name": "Electric Light Orchestra",
+      "img": "/images/last-fm/artist/electric-light-orchestra.webp",
+      "count": 332
+    },
+    {
+      "name": "John Lennon",
+      "img": "/images/last-fm/artist/john-lennon.webp",
+      "count": 311
+    },
+    {
+      "name": "Panic! at the Disco",
+      "img": "/images/last-fm/artist/panic!-at-the-disco.webp",
+      "count": 271
+    },
+    {
+      "name": "Fall Out Boy",
+      "img": "/images/last-fm/artist/fall-out-boy.webp",
+      "count": 262
+    },
+    {
+      "name": "Led Zeppelin",
+      "img": "/images/last-fm/artist/led-zeppelin.webp",
+      "count": 240
+    },
+    {
+      "name": "Underoath",
+      "img": "/images/last-fm/artist/underoath.webp",
+      "count": 227
+    },
+    {
+      "name": "Emery",
+      "img": "/images/last-fm/artist/emery.webp",
+      "count": 222
+    }
+  ],
+  "albums": [
+    {
+      "name": "The Dark Side of the Moon",
+      "artist": "Pink Floyd",
+      "img": "/images/last-fm/album/pink-floyd+the-dark-side-of-the-moon.webp",
+      "count": 427
+    },
+    {
+      "name": "The Beatles",
+      "artist": "The Beatles",
+      "img": "/images/last-fm/album/the-beatles+the-beatles.webp",
+      "count": 339
+    },
+    {
+      "name": "The Wall",
+      "artist": "Pink Floyd",
+      "img": "/images/last-fm/album/pink-floyd+the-wall.webp",
+      "count": 306
+    },
+    {
+      "name": "The Best Of Pink Floyd: A Foot In The Door",
+      "artist": "Pink Floyd",
+      "img": "/images/last-fm/album/pink-floyd+the-best-of-pink-floyd-a-foot-in-the-door.webp",
+      "count": 229
+    },
+    {
+      "name": "Pray for the Wicked",
+      "artist": "Panic! at the Disco",
+      "img": "/images/last-fm/album/panic!-at-the-disco+pray-for-the-wicked.webp",
+      "count": 220
+    },
+    {
+      "name": "50 Big Ones",
+      "artist": "The Beach Boys",
+      "img": "/images/last-fm/album/the-beach-boys+50-big-ones.webp",
+      "count": 215
+    },
+    {
+      "name": "M A N I A",
+      "artist": "Fall Out Boy",
+      "img": "/images/last-fm/album/fall-out-boy+m-a-n-i-a.webp",
+      "count": 189
+    },
+    {
+      "name": "Eve",
+      "artist": "Emery",
+      "img": "/images/last-fm/album/emery+eve.webp",
+      "count": 177
+    },
+    {
+      "name": "50th Anniversary Collection",
+      "artist": "Neil Diamond",
+      "img": "/images/last-fm/album/neil-diamond+50th-anniversary-collection.webp",
+      "count": 151
+    },
+    {
+      "name": "All Over the World: The Very Best of ELO",
+      "artist": "Electric Light Orchestra",
+      "img": "/images/last-fm/album/electric-light-orchestra+all-over-the-world-the-very-best-of-elo.webp",
+      "count": 148
+    }
+  ]
+}

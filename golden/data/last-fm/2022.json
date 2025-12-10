@@ -1,0 +1,120 @@
+{
+  "sources": {
+    "artist": "https://www.last.fm/user/imbanders/library/artists?from=2022-01-01&rangetype=year",
+    "album": "https://www.last.fm/user/imbanders/library/albums?from=2022-01-01&rangetype=year"
+  },
+  "artists": [
+    {
+      "name": "The Beatles",
+      "img": "/images/last-fm/artist/the-beatles.webp",
+      "count": 1958
+    },
+    {
+      "name": "Red Hot Chili Peppers",
+      "img": "/images/last-fm/artist/red-hot-chili-peppers.webp",
+      "count": 1818
+    },
+    {
+      "name": "Bad Religion",
+      "img": "/images/last-fm/artist/bad-religion.webp",
+      "count": 1587
+    },
+    {
+      "name": "Pink Floyd",
+      "img": "/images/last-fm/artist/pink-floyd.webp",
+      "count": 1412
+    },
+    {
+      "name": "He Is Legend",
+      "img": "/images/last-fm/artist/he-is-legend.webp",
+      "count": 1143
+    },
+    {
+      "name": "Electric Light Orchestra",
+      "img": "/images/last-fm/artist/electric-light-orchestra.webp",
+      "count": 1003
+    },
+    {
+      "name": "Underoath",
+      "img": "/images/last-fm/artist/underoath.webp",
+      "count": 916
+    },
+    {
+      "name": "Emery",
+      "img": "/images/last-fm/artist/emery.webp",
+      "count": 879
+    },
+    {
+      "name": "Coheed and Cambria",
+      "img": "/images/last-fm/artist/coheed-and-cambria.webp",
+      "count": 831
+    },
+    {
+      "name": "Bring Me the Horizon",
+      "img": "/images/last-fm/artist/bring-me-the-horizon.webp",
+      "count": 818
+    }
+  ],
+  "albums": [
+    {
+      "name": "The Wall",
+      "artist": "Pink Floyd",
+      "img": "/images/last-fm/album/pink-floyd+the-wall.webp",
+      "count": 581
+    },
+    {
+      "name": "Voyeurist",
+      "artist": "Underoath",
+      "img": "/images/last-fm/album/underoath+voyeurist.webp",
+      "count": 371
+    },
+    {
+      "name": "amo",
+      "artist": "Bring Me the Horizon",
+      "img": "/images/last-fm/album/bring-me-the-horizon+amo.webp",
+      "count": 303
+    },
+    {
+      "name": "Past Lives",
+      "artist": "L.S. Dunes",
+      "img": "/images/last-fm/album/ls-dunes+past-lives.webp",
+      "count": 298
+    },
+    {
+      "name": "Abbey Road",
+      "artist": "The Beatles",
+      "img": "/images/last-fm/album/the-beatles+abbey-road.webp",
+      "count": 258
+    },
+    {
+      "name": "Out of the Blue",
+      "artist": "Electric Light Orchestra",
+      "img": "/images/last-fm/album/electric-light-orchestra+out-of-the-blue.webp",
+      "count": 250
+    },
+    {
+      "name": "Blood Sugar Sex Magik",
+      "artist": "Red Hot Chili Peppers",
+      "img": "/images/last-fm/album/red-hot-chili-peppers+blood-sugar-sex-magik.webp",
+      "count": 250
+    },
+    {
+      "name": "Vaxis II: A Window of the Waking Mind",
+      "artist": "Coheed and Cambria",
+      "img": "/images/last-fm/album/coheed-and-cambria+vaxis-ii-a-window-of-the-waking-mind.webp",
+      "count": 249
+    },
+    {
+      "name": "The Dark Side of the Moon",
+      "artist": "Pink Floyd",
+      "img": "/images/last-fm/album/pink-floyd+the-dark-side-of-the-moon.webp",
+      "count": 245
+    },
+    {
+      "name": "Breakfast in America",
+      "artist": "Supertramp",
+      "img": "/images/last-fm/album/supertramp+breakfast-in-america.webp",
+      "count": 244
+    }
+  ]
+}

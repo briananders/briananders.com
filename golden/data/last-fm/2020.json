@@ -1,0 +1,120 @@
+{
+  "sources": {
+    "artist": "https://www.last.fm/user/imbanders/library/artists?from=2020-01-01&rangetype=year",
+    "album": "https://www.last.fm/user/imbanders/library/albums?from=2020-01-01&rangetype=year"
+  },
+  "artists": [
+    {
+      "name": "Emery",
+      "img": "/images/last-fm/artist/emery.webp",
+      "count": 792
+    },
+    {
+      "name": "The Beatles",
+      "img": "/images/last-fm/artist/the-beatles.webp",
+      "count": 671
+    },
+    {
+      "name": "Bad Religion",
+      "img": "/images/last-fm/artist/bad-religion.webp",
+      "count": 625
+    },
+    {
+      "name": "The Used",
+      "img": "/images/last-fm/artist/the-used.webp",
+      "count": 592
+    },
+    {
+      "name": "Billy Joel",
+      "img": "/images/last-fm/artist/billy-joel.webp",
+      "count": 555
+    },
+    {
+      "name": "Billy Talent",
+      "img": "/images/last-fm/artist/billy-talent.webp",
+      "count": 434
+    },
+    {
+      "name": "Pink Floyd",
+      "img": "/images/last-fm/artist/pink-floyd.webp",
+      "count": 426
+    },
+    {
+      "name": "blink-182",
+      "img": "/images/last-fm/artist/blink-182.webp",
+      "count": 381
+    },
+    {
+      "name": "Bring Me the Horizon",
+      "img": "/images/last-fm/artist/bring-me-the-horizon.webp",
+      "count": 375
+    },
+    {
+      "name": "Queens of the Stone Age",
+      "img": "/images/last-fm/artist/queens-of-the-stone-age.webp",
+      "count": 324
+    }
+  ],
+  "albums": [
+    {
+      "name": "Heartwork",
+      "artist": "The Used",
+      "img": "/images/last-fm/album/the-used+heartwork.webp",
+      "count": 500
+    },
+    {
+      "name": "Eve",
+      "artist": "Emery",
+      "img": "/images/last-fm/album/emery+eve.webp",
+      "count": 258
+    },
+    {
+      "name": "White Line Fever",
+      "artist": "Emery",
+      "img": "/images/last-fm/album/emery+white-line-fever.webp",
+      "count": 221
+    },
+    {
+      "name": "The Wall",
+      "artist": "Pink Floyd",
+      "img": "/images/last-fm/album/pink-floyd+the-wall.webp",
+      "count": 205
+    },
+    {
+      "name": "Angel Miners & the Lightning Riders",
+      "artist": "AWOLNATION",
+      "img": "/images/last-fm/album/awolnation+angel-miners--the-lightning-riders.webp",
+      "count": 191
+    },
+    {
+      "name": "Afraid of Heights",
+      "artist": "Billy Talent",
+      "img": "/images/last-fm/album/billy-talent+afraid-of-heights.webp",
+      "count": 177
+    },
+    {
+      "name": "amo",
+      "artist": "Bring Me the Horizon",
+      "img": "/images/last-fm/album/bring-me-the-horizon+amo.webp",
+      "count": 162
+    },
+    {
+      "name": "All Ages",
+      "artist": "Bad Religion",
+      "img": "/images/last-fm/album/bad-religion+all-ages.webp",
+      "count": 147
+    },
+    {
+      "name": "POST HUMAN: SURVIVAL HORROR",
+      "artist": "Bring Me the Horizon",
+      "img": "/images/last-fm/album/bring-me-the-horizon+post-human-survival-horror.webp",
+      "count": 129
+    },
+    {
+      "name": "Hamilton",
+      "artist": "Various Artists",
+      "img": "/images/last-fm/album/various-artists+hamilton.webp",
+      "count": 113
+    }
+  ]
+}

@@ -1,0 +1,1 @@
+.canvas-container{position:relative}.canvas-container button{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%)}canvas{width:768px;height:768px;margin:auto;border:2px solid #f57f17;max-width:90vw;max-height:90vw;display:block}

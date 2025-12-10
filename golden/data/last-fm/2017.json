@@ -1,0 +1,120 @@
+{
+  "sources": {
+    "artist": "https://www.last.fm/user/imbanders/library/artists?from=2017-01-01&rangetype=year",
+    "album": "https://www.last.fm/user/imbanders/library/albums?from=2017-01-01&rangetype=year"
+  },
+  "artists": [
+    {
+      "name": "The Beatles",
+      "img": "/images/last-fm/artist/the-beatles.webp",
+      "count": 2278
+    },
+    {
+      "name": "Electric Light Orchestra",
+      "img": "/images/last-fm/artist/electric-light-orchestra.webp",
+      "count": 949
+    },
+    {
+      "name": "Neil Diamond",
+      "img": "/images/last-fm/artist/neil-diamond.webp",
+      "count": 925
+    },
+    {
+      "name": "Alkaline Trio",
+      "img": "/images/last-fm/artist/alkaline-trio.webp",
+      "count": 800
+    },
+    {
+      "name": "Queens of the Stone Age",
+      "img": "/images/last-fm/artist/queens-of-the-stone-age.webp",
+      "count": 581
+    },
+    {
+      "name": "John Lennon",
+      "img": "/images/last-fm/artist/john-lennon.webp",
+      "count": 430
+    },
+    {
+      "name": "Elton John",
+      "img": "/images/last-fm/artist/elton-john.webp",
+      "count": 339
+    },
+    {
+      "name": "Paul McCartney",
+      "img": "/images/last-fm/artist/paul-mccartney.webp",
+      "count": 337
+    },
+    {
+      "name": "Emery",
+      "img": "/images/last-fm/artist/emery.webp",
+      "count": 309
+    },
+    {
+      "name": "George Harrison",
+      "img": "/images/last-fm/artist/george-harrison.webp",
+      "count": 254
+    }
+  ],
+  "albums": [
+    {
+      "name": "50th Anniversary Collection",
+      "artist": "Neil Diamond",
+      "img": "/images/last-fm/album/neil-diamond+50th-anniversary-collection.webp",
+      "count": 647
+    },
+    {
+      "name": "All Over the World: The Very Best of ELO",
+      "artist": "Electric Light Orchestra",
+      "img": "/images/last-fm/album/electric-light-orchestra+all-over-the-world-the-very-best-of-elo.webp",
+      "count": 573
+    },
+    {
+      "name": "The Beatles",
+      "artist": "The Beatles",
+      "img": "/images/last-fm/album/the-beatles+the-beatles.webp",
+      "count": 516
+    },
+    {
+      "name": "Live at the BBC",
+      "artist": "The Beatles",
+      "img": "/images/last-fm/album/the-beatles+live-at-the-bbc.webp",
+      "count": 310
+    },
+    {
+      "name": "Villains",
+      "artist": "Queens of the Stone Age",
+      "img": "/images/last-fm/album/queens-of-the-stone-age+villains.webp",
+      "count": 292
+    },
+    {
+      "name": "Good Mourning",
+      "artist": "Alkaline Trio",
+      "img": "/images/last-fm/album/alkaline-trio+good-mourning.webp",
+      "count": 233
+    },
+    {
+      "name": "Agony & Irony",
+      "artist": "Alkaline Trio",
+      "img": "/images/last-fm/album/alkaline-trio+agony--irony.webp",
+      "count": 210
+    },
+    {
+      "name": "All-Time Greatest Hits",
+      "artist": "Neil Diamond",
+      "img": "/images/last-fm/album/neil-diamond+all-time-greatest-hits.webp",
+      "count": 209
+    },
+    {
+      "name": "The Knife",
+      "artist": "Goldfinger",
+      "img": "/images/last-fm/album/goldfinger+the-knife.webp",
+      "count": 198
+    },
+    {
+      "name": "Time",
+      "artist": "Electric Light Orchestra",
+      "img": "/images/last-fm/album/electric-light-orchestra+time.webp",
+      "count": 191
+    }
+  ]
+}
