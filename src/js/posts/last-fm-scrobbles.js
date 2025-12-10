@@ -1,11 +1,11 @@
 const ready = require('../_modules/document-ready');
+const TrendsBarChart = require('../_modules/trends-bar-chart');
 require('../_components/album-listing').init();
 require('../_components/artist-listing').init();
 require('../_components/year-listing').init();
 
-// const reportsDirUrl = 'http://staging.briananders.com.s3-website-us-east-1.amazonaws.com/last-fm-history/reports/';
-const reportsDirUrl = '/last-fm-history/reports/';
-const imageUrl = '/last-fm-history/images/';
+const lastFmHistoryUrl = '/last-fm-history/';
+const imageUrl = `${lastFmHistoryUrl}/images/`;
 const imageExtensions = ['jpg', 'avif', 'png', 'gif', 'webp'];
 const LIST_LENGTH = 20;
 
@@ -32,7 +32,7 @@ function getImage(name) {
 
 function getData(fileName, callback) {
   const request = new XMLHttpRequest();
-  const url = `${reportsDirUrl}${fileName}`;
+  const url = `${lastFmHistoryUrl}${fileName}`;
 
   request.open('GET', url, true);
 
@@ -105,7 +105,7 @@ function updateSelects() {
 }
 
 function renderReport(fileName) {
-  getData(fileName, (data) => {
+  getData(`reports/${fileName}`, (data) => {
 
     artistsContainer.innerHTML = '';
     albumsContainer.innerHTML = '';
@@ -146,6 +146,28 @@ function renderReport(fileName) {
   });
 }
 
+function updateTrends() {
+  const artistTrendsContainer = document.getElementById('artist-trends-container');
+  const albumTrendsContainer = document.getElementById('album-trends-container');
+
+  const artist = artistTrendsContainer.dataset.artist;
+  const album = albumTrendsContainer.dataset.album;
+
+  console.log(artist, album);
+
+  getData(`trends/artists/${artist}.json`, (data) => {
+    artistTrendsContainer.querySelector('.trend-name').innerText = data.artist;
+    artistTrendsContainer.querySelector('.total-scrobbles').innerText = formatNumber(data.totalScrobbles);
+    new TrendsBarChart(artistTrendsContainer.querySelector('.trend-list'), data.months);
+  });
+
+  getData(`trends/albums/${album}.json`, (data) => {
+    albumTrendsContainer.querySelector('.trend-name').innerText = `${data.album} by ${data.artist}`;
+    albumTrendsContainer.querySelector('.total-scrobbles').innerText = formatNumber(data.totalScrobbles);
+    new TrendsBarChart(albumTrendsContainer.querySelector('.trend-list'), data.months);
+  });
+}
+
 ready.document(() => {
   typeSelector = document.getElementById('type-selector');
   selectorContainer = document.getElementById('selector-container');
@@ -153,12 +175,14 @@ ready.document(() => {
   albumsContainer = document.getElementById('albums');
   yearContainer = document.getElementById('yearly-scrobbles');
 
-  getData('index.json', (data) => {
+  updateTrends();
+
+  getData('reports/index.json', (data) => {
     reportsData = data.reports;
     initSelects();
   });
 
-  getData('year_totals.json', (data) => {
+  getData('reports/year_totals.json', (data) => {
     const years = data.years.sort((a,b) => a.year > b.year);
     const yearMax = Math.max(...years.map(year => Number(year.total)));
 

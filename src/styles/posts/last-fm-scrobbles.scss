@@ -42,3 +42,7 @@ p {
 #filters-container {
   @include sixHundred;
 }
+
+.trend-list-container {
+  overflow: auto;
+}
