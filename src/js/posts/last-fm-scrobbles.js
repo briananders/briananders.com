@@ -28,19 +28,41 @@ function getImageUrl(name, extension) {
   return `${imageUrl}${name}.${extension}`;
 }
 
-function getData(fileName, callback) {
+function getData(fileName, callback, { _cacheBusted = false } = {}) {
   const request = new XMLHttpRequest();
   const url = `${lastFmHistoryUrl}${fileName}`;
 
   request.open('GET', url, true);
+  // Encourage fresh responses (some servers return 304s that provide no body to XHR).
+  try {
+    request.setRequestHeader('Cache-Control', 'no-cache');
+    request.setRequestHeader('Pragma', 'no-cache');
+  } catch (e) {
+    // ignore
+  }
 
   request.onload = () => {
     if (request.status >= 200 && request.status < 400) {
       // Success!
       try {
+        const raw = (request.response || '').toString();
+        if (!raw.trim()) {
+          if (!_cacheBusted) {
+            const sep = fileName.includes('?') ? '&' : '?';
+            getData(`${fileName}${sep}cb=${Date.now()}`, callback, { _cacheBusted: true });
+            return;
+          }
+          if (callback) callback(null);
+          return;
+        }
         const data = JSON.parse(request.response);
         if (callback) callback(data);
       } catch (e) {
+        if (!_cacheBusted) {
+          const sep = fileName.includes('?') ? '&' : '?';
+          getData(`${fileName}${sep}cb=${Date.now()}`, callback, { _cacheBusted: true });
+          return;
+        }
         if (callback) callback(null);
       }
     } else {
@@ -245,6 +267,31 @@ const TrendsModal = (() => {
     state.statusEl.innerText = msg;
   };
 
+  const normalizeMonths = (months) => {
+    if (!months) return [];
+    if (Array.isArray(months)) {
+      // Already in expected format: [{ month: 'YYYY-MM', count: N }, ...]
+      if (months.length && typeof months[0] === 'object' && months[0] !== null) {
+        if ('month' in months[0] && ('count' in months[0] || 'value' in months[0])) {
+          return months.map((m) => ({
+            month: m.month,
+            count: ('count' in m) ? m.count : m.value,
+          })).filter((m) => m.month);
+        }
+      }
+      // Tuple format: [['YYYY-MM', N], ...]
+      if (months.length && Array.isArray(months[0]) && months[0].length >= 2) {
+        return months.map(([month, count]) => ({ month, count }));
+      }
+      return months;
+    }
+    // Object map format: { 'YYYY-MM': N, ... }
+    if (typeof months === 'object') {
+      return Object.entries(months).map(([month, count]) => ({ month, count }));
+    }
+    return [];
+  };
+
   const render = (trendsValue) => {
     const clean = sanitizeTrendsValue(trendsValue);
     if (!clean) return;
@@ -260,7 +307,8 @@ const TrendsModal = (() => {
     state.totalEl.querySelector('.total-scrobbles').innerText = '';
 
     getData(`trends/${clean}.json`, (data) => {
-      if (!data || !Array.isArray(data.months) || data.months.length === 0) {
+      const months = normalizeMonths(data && data.months);
+      if (!data || months.length === 0) {
         setError('history data retrieval error');
         return;
       }
@@ -279,7 +327,7 @@ const TrendsModal = (() => {
 
       const chartContainer = document.createElement('div');
       state.chartEl.appendChild(chartContainer);
-      new TrendsBarChart(chartContainer, data.months, { openInModal: false });
+      new TrendsBarChart(chartContainer, months, { openInModal: false });
     });
   };
 
