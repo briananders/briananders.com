@@ -5,8 +5,7 @@ require('../_components/artist-listing').init();
 require('../_components/year-listing').init();
 
 const lastFmHistoryUrl = '/last-fm-history/';
-const imageUrl = `${lastFmHistoryUrl}/images/`;
-const imageExtensions = ['jpg', 'avif', 'png', 'gif', 'webp'];
+const imageUrl = `${lastFmHistoryUrl}images/`;
 const LIST_LENGTH = 20;
 
 let reportsData;
@@ -16,18 +15,17 @@ let artistsContainer;
 let albumsContainer;
 let yearContainer;
 
+const EVENTS = {
+  locationChange: 'ba:locationchange',
+  trendsChange: 'ba:lastfm:trendschange',
+};
+
 function formatNumber(number) {
   return number.toLocaleString();
 }
 
 function getImageUrl(name, extension) {
   return `${imageUrl}${name}.${extension}`;
-}
-
-function getImage(name) {
-  const imageElement = document.createElement('img');
-  imageElement.setAttribute('src', getImageUrl(name, 'avif'));
-  return imageElement;
 }
 
 function getData(fileName, callback) {
@@ -39,19 +37,287 @@ function getData(fileName, callback) {
   request.onload = () => {
     if (request.status >= 200 && request.status < 400) {
       // Success!
-      const data = JSON.parse(request.response);
-      if (callback) callback(data);
+      try {
+        const data = JSON.parse(request.response);
+        if (callback) callback(data);
+      } catch (e) {
+        if (callback) callback(null);
+      }
     } else {
       // We reached our target server, but it returned an error
       // log(`${url} returned ${request.status}`);
+      if (callback) callback(null);
     }
   };
 
   request.onerror = () => {
     // There was a connection error of some sort
+    if (callback) callback(null);
   };
 
   request.send();
+}
+
+function getTrendsParamValue() {
+  return new URLSearchParams(window.location.search).get('trends');
+}
+
+function sanitizeTrendsValue(trendsValue) {
+  if (!trendsValue) return null;
+  // We only support "artists/<slug>" and "albums/<artistSlug>/<albumSlug>"
+  const clean = String(trendsValue)
+    .trim()
+    .replace(/^\//, '')
+    .replace(/\.\./g, '')
+    .replace(/\/{2,}/g, '/');
+
+  if (clean.startsWith('artists/')) return clean;
+  if (clean.startsWith('albums/')) return clean;
+  return null;
+}
+
+function installLocationChangeEvent() {
+  // Emit a synthetic event for history API updates, plus back/forward.
+  const emit = () => window.dispatchEvent(new Event(EVENTS.locationChange));
+
+  ['pushState', 'replaceState'].forEach((method) => {
+    const original = history[method];
+    if (typeof original !== 'function') return;
+    history[method] = function (...args) {
+      const result = original.apply(this, args);
+      emit();
+      return result;
+    };
+  });
+
+  window.addEventListener('popstate', emit);
+}
+
+const TrendsModal = (() => {
+  const state = {
+    isOpen: false,
+    trendsValue: null,
+    overlay: null,
+    overlayUi: null,
+    container: null,
+    content: null,
+    closeButton: null,
+    titleEl: null,
+    totalEl: null,
+    chartEl: null,
+    statusEl: null,
+    keydownHandler: null,
+  };
+
+  const OVERLAY_STYLE = `
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    z-index: 10000;
+  `;
+
+  const OVERLAY_UI_STYLE = `
+    position: fixed;
+    inset: 0;
+    background: transparent;
+    z-index: 10002;
+    pointer-events: none;
+  `;
+
+  const CONTAINER_STYLE = `
+    position: fixed;
+    inset: 0;
+    z-index: 10001;
+    display: grid;
+    place-items: center;
+  `;
+
+  const CONTENT_STYLE = `
+    position: relative;
+    width: min(960px, calc(100vw - 40px));
+    max-height: calc(100vh - 40px);
+    overflow: auto;
+    background: var(--palette--primary-grey);
+    border-radius: 6px;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.4);
+    box-sizing: border-box;
+    padding: 20px 0;
+  `;
+
+  const CLOSE_STYLE = `
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    z-index: 10002;
+    pointer-events: auto;
+  `;
+
+  const buildDom = () => {
+    state.overlay = document.createElement('div');
+    state.overlay.style.cssText = OVERLAY_STYLE;
+
+    state.overlayUi = document.createElement('div');
+    state.overlayUi.style.cssText = OVERLAY_UI_STYLE;
+
+    state.container = document.createElement('div');
+    state.container.style.cssText = CONTAINER_STYLE;
+
+    state.content = document.createElement('div');
+    state.content.style.cssText = CONTENT_STYLE;
+
+    state.closeButton = document.createElement('button');
+    state.closeButton.style.cssText = CLOSE_STYLE;
+    state.closeButton.type = 'button';
+    state.closeButton.innerText = 'Close';
+
+    state.titleEl = document.createElement('h2');
+    state.titleEl.innerText = 'Trends';
+    state.titleEl.style.padding = '0 20px';
+
+    state.totalEl = document.createElement('div');
+    state.totalEl.innerHTML = `Total Scrobbles: <span class="total-scrobbles"></span>`;
+    state.totalEl.style.padding = '0 20px';
+
+    state.statusEl = document.createElement('div');
+    state.statusEl.style.marginBottom = '10px';
+
+    state.chartEl = document.createElement('div');
+
+    state.overlayUi.appendChild(state.closeButton);
+    state.content.appendChild(state.titleEl);
+    state.content.appendChild(state.totalEl);
+    state.content.appendChild(state.statusEl);
+    state.content.appendChild(state.chartEl);
+    state.container.appendChild(state.content);
+  };
+
+  const setUrlWithoutTrends = () => {
+    const url = new URL(window.location.href);
+    url.searchParams.delete('trends');
+    history.replaceState(history.state, '', url.toString());
+    // Close immediately (and also keep URL-change listeners in sync).
+    close();
+    window.dispatchEvent(new Event(EVENTS.locationChange));
+  };
+
+  const close = () => {
+    if (!state.isOpen) return;
+    state.isOpen = false;
+    state.trendsValue = null;
+
+    if (state.keydownHandler) {
+      document.removeEventListener('keydown', state.keydownHandler);
+      state.keydownHandler = null;
+    }
+
+    state.overlay?.remove();
+    state.container?.remove();
+    state.overlayUi?.remove();
+  };
+
+  const open = () => {
+    if (!state.overlay) buildDom();
+
+    document.body.appendChild(state.overlay);
+    document.body.appendChild(state.container);
+    document.body.appendChild(state.overlayUi);
+
+    state.closeButton.onclick = () => setUrlWithoutTrends();
+    // Clicking outside the content area should close the modal.
+    state.container.onclick = (evt) => {
+      if (evt.target === state.container) setUrlWithoutTrends();
+    };
+    // Prevent clicks inside the content from bubbling to the container.
+    state.content.onclick = (evt) => evt.stopPropagation();
+    state.keydownHandler = (evt) => {
+      if (evt.key === 'Escape') setUrlWithoutTrends();
+    };
+    document.addEventListener('keydown', state.keydownHandler);
+
+    state.isOpen = true;
+  };
+
+  const setLoading = (msg = 'Loading…') => {
+    state.statusEl.innerText = msg;
+  };
+
+  const setError = (msg = 'Unable to load trends data.') => {
+    state.statusEl.innerText = msg;
+  };
+
+  const render = (trendsValue) => {
+    const clean = sanitizeTrendsValue(trendsValue);
+    if (!clean) return;
+
+    // Avoid re-rendering if already open for this item.
+    if (state.isOpen && state.trendsValue === clean) return;
+    state.trendsValue = clean;
+
+    open();
+    setLoading();
+    state.chartEl.innerHTML = '';
+    state.titleEl.innerText = 'Trends';
+    state.totalEl.querySelector('.total-scrobbles').innerText = '';
+
+    getData(`trends/${clean}.json`, (data) => {
+      if (!data || !Array.isArray(data.months) || data.months.length === 0) {
+        setError('history data retrieval error');
+        return;
+      }
+
+      if (data.album && data.artist) {
+        state.titleEl.innerText = `History: ${data.album} by ${data.artist}`;
+      } else if (data.artist) {
+        state.titleEl.innerText = `History: ${data.artist}`;
+      }
+
+      if (typeof data.totalScrobbles !== 'undefined') {
+        state.totalEl.querySelector('.total-scrobbles').innerText = formatNumber(Number(data.totalScrobbles));
+      }
+
+      state.statusEl.innerText = '';
+
+      const chartContainer = document.createElement('div');
+      state.chartEl.appendChild(chartContainer);
+      new TrendsBarChart(chartContainer, data.months, { openInModal: false });
+    });
+  };
+
+  const syncToUrl = () => {
+    const trendsValue = getTrendsParamValue();
+    if (!trendsValue) {
+      close();
+      return;
+    }
+    render(trendsValue);
+  };
+
+  return { syncToUrl };
+})();
+
+function installTrendsLinkInterceptor() {
+  // Intercept clicks on "?trends=..." links (including inside shadow DOM)
+  // and convert them to history updates so we can open the modal without reload.
+  document.addEventListener('click', (evt) => {
+    if (evt.defaultPrevented) return;
+    if (evt.button !== 0) return; // left click only
+    if (evt.metaKey || evt.ctrlKey || evt.shiftKey || evt.altKey) return;
+
+    const path = (typeof evt.composedPath === 'function') ? evt.composedPath() : [];
+    const anchor = path.find((node) => node && node.nodeType === 1 && node.tagName === 'A');
+    if (!anchor) return;
+
+    const href = anchor.getAttribute('href');
+    if (!href) return;
+
+    const url = new URL(href, window.location.href);
+    if (url.origin !== window.location.origin) return;
+    if (url.pathname !== window.location.pathname) return;
+    if (!url.searchParams.has('trends')) return;
+
+    evt.preventDefault();
+    history.pushState(history.state, '', url.toString());
+  }, { capture: true });
 }
 
 function initSelects() {
@@ -147,6 +413,21 @@ function renderReport(fileName) {
 }
 
 function updateTrends() {
+  /* <div class="container" id="artist-trends-container" data-artist="the-beatles">
+    <h2>Trends For <span class="trend-name"></span></h2>
+    <h3>Total Scrobbles: <span class="total-scrobbles"></span></h3>
+    <div class="trend-list-container">
+      <div class="trend-list"></div>
+    </div>
+  </div>
+
+  <div class="container" id="album-trends-container" data-album="the-beatles/1">
+    <h2>Trends For <span class="trend-name"></span></h2>
+    <h3>Total Scrobbles: <span class="total-scrobbles"></span></h3>
+    <div class="trend-list-container">
+      <div class="trend-list"></div>
+    </div>
+  </div> */
   const artistTrendsContainer = document.getElementById('artist-trends-container');
   const albumTrendsContainer = document.getElementById('album-trends-container');
 
@@ -175,14 +456,33 @@ ready.document(() => {
   albumsContainer = document.getElementById('albums');
   yearContainer = document.getElementById('yearly-scrobbles');
 
-  updateTrends();
+  installLocationChangeEvent();
+  installTrendsLinkInterceptor();
+
+  window.addEventListener(EVENTS.locationChange, () => {
+    const trendsValue = sanitizeTrendsValue(getTrendsParamValue());
+    if (trendsValue) {
+      window.dispatchEvent(new CustomEvent(EVENTS.trendsChange, { detail: { trendsValue } }));
+    } else {
+      window.dispatchEvent(new CustomEvent(EVENTS.trendsChange, { detail: { trendsValue: null } }));
+    }
+  });
+
+  window.addEventListener(EVENTS.trendsChange, () => {
+    TrendsModal.syncToUrl();
+  });
+
+  // Initial sync (in case the page loads with ?trends=...)
+  window.dispatchEvent(new Event(EVENTS.locationChange));
 
   getData('reports/index.json', (data) => {
+    if (!data) return;
     reportsData = data.reports;
     initSelects();
   });
 
   getData('reports/year_totals.json', (data) => {
+    if (!data) return;
     const years = data.years.sort((a,b) => a.year > b.year);
     const yearMax = Math.max(...years.map(year => Number(year.total)));
 

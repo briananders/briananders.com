@@ -1,3 +1,5 @@
+const { dasherize } = require('underscore.string');
+
 const albumTemplate = `
   <style>
     a {
@@ -99,7 +101,7 @@ class AlbumListing extends HTMLElement {
     if (['name', 'artist'].includes(name)) {
       const albumName = this.getAttribute('name');
       const artistName = this.getAttribute('artist') || '';
-      this.shadowRoot.querySelector('a').setAttribute('href', `https://www.last.fm/music/${artistName.replace(/\s/g, '+')}/${albumName.replace(/\s/g, '+')}`);
+      this.shadowRoot.querySelector('a').setAttribute('href', `?trends=albums/${dasherize(artistName.trim().toLowerCase())}/${dasherize(albumName.trim().toLowerCase())}`);
 
       const imgElement = this.shadowRoot.querySelector('img');
       imgElement.setAttribute('alt', `${albumName} album cover`);

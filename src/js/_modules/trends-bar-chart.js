@@ -1,18 +1,18 @@
 class TrendsBarChart {
   static monthNames = [
     'Unknown',
-    'Jan',
-    'Feb',
-    'Mar',
-    'Apr',
-    'May',
-    'Jun',
-    'Jul',
-    'Aug',
-    'Sep',
-    'Oct',
-    'Nov',
-    'Dec',
+    'J', // 'Jan',
+    'F', // 'Feb',
+    'M', // 'Mar',
+    'A', // 'Apr',
+    'M', // 'May',
+    'J', // 'Jun',
+    'J', // 'Jul',
+    'A', // 'Aug',
+    'S', // 'Sep',
+    'O', // 'Oct',
+    'N', // 'Nov',
+    'D', // 'Dec',
   ];
 
   containerStyles(count) {
@@ -22,6 +22,10 @@ class TrendsBarChart {
       grid-template-columns: repeat(${count}, 40px);
       justify-content: center;
       width: ${count * 40 + 4 * (count - 1)}px;
+      max-width: 100%;
+      overflow: auto;
+      justify-content: start;
+      align-items: end;
     `;
   }
 
@@ -63,12 +67,12 @@ class TrendsBarChart {
     return columnElement;
   }
 
-  constructor(domElement, monthsData) {
+  constructor(domElement, monthsData, { openInModal = true } = {}) {
     this.containerElement = domElement;
     this.monthsData = this.adaptData(monthsData);
     this.maximum = Math.max(...this.monthsData.map(item => item.value));
-
-    this.modal = new Modal();
+    this.openInModal = openInModal;
+    this.modal = this.openInModal ? new Modal() : null;
 
     this.containerElement.style.cssText = this.containerStyles(this.monthsData.length);
     const style = document.createElement('style');
@@ -123,8 +127,9 @@ class TrendsBarChart {
         containerElement.appendChild(yearElement);
       }
     });
-
-    this.modal.open(containerElement);
+    if (this.modal) {
+      this.modal.open(containerElement);
+    }
   }
 }
 
@@ -135,18 +140,22 @@ class Modal {
     position: fixed;
     top: 0;
     left: 0;
-    width: 100%;
-    height: 100%;
+    width: 100vw;
+    height: 100vh;
     background-color: rgba(0, 0, 0, 0.5);
     z-index: 1000;
   `;
 
   static CONTAINER_STYLE = `
     position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+    top: 0;
+    left: 0;
+    display: grid;
     z-index: 1001;
+    width: 100vw;
+    height: 100vh;
+    justify-content: center;
+    align-items: center;
   `;
 
   static CLOSE_BUTTON_STYLE = `
@@ -165,10 +174,14 @@ class Modal {
     this.closeButton.style.cssText = Modal.CLOSE_BUTTON_STYLE;
     this.closeButton.innerHTML = 'Close';
     this.containerElement.appendChild(this.closeButton);
+
+    this.boundClose = this.close.bind(this);
   }
 
   open(domElement) {
-    this.closeButton.addEventListener('click', this.close.bind(this));
+    this.closeButton.addEventListener('click', this.boundClose);
+    this.overlayElement.addEventListener('click', this.boundClose);
+
     this.containerElement.appendChild(domElement);
 
     document.body.appendChild(this.overlayElement);
@@ -176,9 +189,10 @@ class Modal {
   }
 
   close() {
-    this.closeButton.removeEventListener('click', this.close.bind(this));
+    this.closeButton.removeEventListener('click', this.boundClose);
+    this.overlayElement.removeEventListener('click', this.boundClose);
     this.containerElement.innerHTML = '';
-    document.body.removeChild(this.containerElement);
-    document.body.removeChild(this.overlayElement);
+    this.containerElement.remove();
+    this.overlayElement.remove();
   }
 }
