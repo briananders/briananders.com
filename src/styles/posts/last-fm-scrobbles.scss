@@ -34,3 +34,15 @@ p {
   gap: space(6);
   margin-bottom: space(12);
 }
+
+#selector-container {
+  display: inline-block;
+}
+
+#filters-container {
+  @include sixHundred;
+}
+
+.trend-list-container {
+  overflow: auto;
+}

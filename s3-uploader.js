@@ -3,11 +3,7 @@ const AWS = require('aws-sdk');
 const glob = require('glob');
 const path = require('path');
 
-const dir = {
-  root: `${__dirname}/`,
-  build: `${__dirname}/build/`,
-  package: `${__dirname}/package/`,
-};
+const dir = require('./build/constants/directories')(__dirname);
 
 const production = require(`${dir.build}helpers/production`);
 
