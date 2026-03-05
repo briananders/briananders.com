@@ -1,0 +1,52 @@
+@import "system/utilities";
+
+.d-block       { display: block; }
+.d-inline      { display: inline; }
+.d-inline-block { display: inline-block; }
+.d-flex        { display: flex; }
+.d-inline-flex { display: inline-flex; }
+.d-grid        { display: grid; }
+.d-none        { display: none; }
+
+.flex-row       { flex-direction: row; }
+.flex-column    { flex-direction: column; }
+.flex-wrap      { flex-wrap: wrap; }
+.flex-nowrap    { flex-wrap: nowrap; }
+
+.justify-start   { justify-content: flex-start; }
+.justify-end     { justify-content: flex-end; }
+.justify-center  { justify-content: center; }
+.justify-between { justify-content: space-between; }
+.justify-around  { justify-content: space-around; }
+
+.align-start   { align-items: flex-start; }
+.align-end     { align-items: flex-end; }
+.align-center  { align-items: center; }
+.align-stretch { align-items: stretch; }
+
+.gap-1  { gap: $s1; }
+.gap-2  { gap: $s2; }
+.gap-3  { gap: $s3; }
+.gap-4  { gap: $s4; }
+.gap-6  { gap: $s6; }
+.gap-8  { gap: $s8; }
+.gap-12 { gap: $s12; }
+
+.text-left   { text-align: left; }
+.text-center { text-align: center; }
+.text-right  { text-align: right; }
+
+.w-100 { width: 100%; }
+.h-100 { height: 100%; }
+
+.visible    { visibility: visible; }
+.invisible  { visibility: hidden; }
+
+.overflow-hidden  { overflow: hidden; }
+.overflow-auto    { overflow: auto; }
+.overflow-x-auto  { overflow-x: auto; }
+
+.relative { position: relative; }
+.absolute { position: absolute; }
+.fixed    { position: fixed; }
+.sticky   { position: sticky; }
