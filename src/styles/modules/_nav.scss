@@ -24,7 +24,7 @@ nav.main {
   border-radius: 0;
   margin: 0;
   transition-property: opacity;
-  z-index: 1000;
+  z-index: $z-index--sticky;
   width: 100%;
   position: relative;
   @include palette--base;
@@ -87,7 +87,7 @@ nav.main {
     right: $s2;
     transition-property: transform;
     @include palette--base;
-    box-shadow: 0 0 0 2px $palette--primary-color-light;
+    box-shadow: $shadow--nav-tray;
     padding: $s1;
 
     &.slide-in {

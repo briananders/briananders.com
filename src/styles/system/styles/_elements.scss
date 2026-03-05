@@ -169,7 +169,7 @@ input[type=checkbox].toggle {
     top: -#{$s1 / 2};
     left:-#{$s1 / 2};
     transition: left $transition-speed, background-color $transition-speed;
-    box-shadow: 0 0 $s1 $color--grey-900;
+    box-shadow: $shadow--toggle;
   }
 
   /* Checkbox checked toggle label bg color */

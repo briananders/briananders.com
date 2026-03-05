@@ -67,7 +67,7 @@
   @include type--bold-sans-serif;
 
   text-align: center;
-  text-shadow: 0px 2px 4px black;
+  text-shadow: $shadow--text;
 }
 
 @mixin type--title {
