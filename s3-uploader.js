@@ -7,6 +7,8 @@ const dir = require('./build/constants/directories')(__dirname);
 
 const production = require(`${dir.build}helpers/production`);
 
+const deleteAllowlist = require('./s3-upload-allowlist.json');
+
 const awsCreds = {
   accessKeyId: process.env.AWS_ACCESS_KEY,
   secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
@@ -188,8 +190,11 @@ getS3Objects().then((data) => {
 
   const packageGlob = glob.sync(`${dir.package}**/*`);
 
-  const s3DeleteList = s3FileList.filter((s3File) => !packageGlob.includes(dir.package + s3File)
-      || alwaysSwapFiles(s3File));
+  const isAllowlisted = (filePath) => deleteAllowlist.some((dir) => filePath.startsWith(dir) || filePath.startsWith(dir.substring(1)));
+
+  const s3DeleteList = s3FileList.filter((s3File) => !isAllowlisted(s3File)
+      && (!packageGlob.includes(dir.package + s3File)
+      || alwaysSwapFiles(s3File)));
 
   const toUploadList = packageGlob.filter((packageFile) => !fs.lstatSync(packageFile).isDirectory()
     && (
