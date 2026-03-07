@@ -1,0 +1,97 @@
+@import "system/utilities";
+
+#articles-list {
+  display: grid;
+  grid-template-columns: 1fr;
+  justify-content: space-around;
+  column-gap: $s6;
+  row-gap: $s12;
+  align-items: stretch;
+  justify-items: stretch;
+  margin-bottom: $s6;
+  text-align: left;
+
+  .article-card {
+    display: grid;
+    border-radius: $border-radius;
+    color: $palette--primary-white;
+    box-shadow: 0px 10px 90px 0px #111;
+    padding: $s3;
+    text-decoration: none;
+    position: relative;
+    background-color: transparent;
+    overflow: hidden;
+    transition-property: background-color;
+
+    @include sixHundred;
+    margin: 0 auto;
+
+    &:hover {
+      background-color: $palette--hover-grey;
+    }
+
+    &:focus {
+      box-shadow: 0px 0px 0px 2px $palette--primary-grey, 0px 0px 0px 4px $palette--secondary-grey;
+    }
+  }
+
+  .article-title {
+    @include type--heading-5;
+    text-align: left;
+    margin-bottom: $s2;
+    color: $palette--primary-color-light;
+  }
+
+  .article-summary {
+    @include type--body;
+    margin-bottom: $s2;
+    flex-grow: 1;
+    text-align: left;
+  }
+
+  .article-bands {
+    margin-bottom: $s2;
+    display: flex;
+    flex-wrap: wrap;
+    gap: $s1;
+
+    .band-tag {
+      @include type--body-small;
+      @include type--bold-sans-serif;
+      background-color: $palette--primary-color-dark;
+      color: $palette--primary-white;
+      padding: $s1 / 2 $s2;
+      border-radius: $border-radius;
+      white-space: nowrap;
+    }
+  }
+
+  .article-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: $s2;
+    @include type--body-small;
+    color: $palette--secondary-grey;
+
+    .article-source {
+      @include type--bold-sans-serif;
+    }
+  }
+}
+
+.articles .meta {
+  @include sixHundred;
+  @include type--body-small;
+  color: $palette--secondary-grey;
+  text-align: center;
+  margin-bottom: $s6;
+}
+
+.articles .empty {
+  @include sixHundred;
+  text-align: center;
+  @include type--body;
+  color: $palette--secondary-grey;
+}
