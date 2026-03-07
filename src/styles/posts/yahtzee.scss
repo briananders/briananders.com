@@ -11,7 +11,7 @@ ul li {
   justify-content: center;
 
   .game-container {
-    @include margin-center;
+    @include default-margins;
     display: grid;
     justify-content: center;
     grid-gap: space(2);

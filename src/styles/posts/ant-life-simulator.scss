@@ -57,7 +57,7 @@
   border: 2px solid $palette--divider-color;
   margin-bottom: $paragraph-bottom;
   width: css-min(100vh, 100vw, var(--window-height), 100%);
-  @include margin-center;
+  @include default-margins;
   margin-top: $paragraph-bottom;
 
 

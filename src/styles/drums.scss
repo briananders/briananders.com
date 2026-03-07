@@ -111,7 +111,7 @@ $aspectRatio: $height / $width;
 
     button {
       width: css-min(100%, 400px);
-      @include margin-center;
+      @include default-margins;
     }
 
     img {

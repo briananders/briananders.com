@@ -29,7 +29,7 @@
     flex-wrap: wrap;
     justify-content: center;
     align-items: center;
-    @include margin-center;
+    @include default-margins;
 
     label {
       white-space: nowrap;

@@ -5,5 +5,5 @@
 $grid--gutter: percentage(space(3) / $large);
 $grid--column: percentage(space(12) / $large);
 $grid--start-break-point: $medium;
-$grid--copy-max-width: 800px;
 $grid--max-width: 1440px;
+$grid--copy-max-width: $grid--max-width / 2;

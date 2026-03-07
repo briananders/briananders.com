@@ -77,6 +77,14 @@ nav.main {
     @include link-focus;
   }
 
+  #activate-menu {
+    border-width: 0px;
+    border-color: rgba(0, 0, 0, 0);
+    border-image: none;
+    border-style: none;
+    background-color: rgba(50, 50, 50, 1);
+  }
+
   #nav-tray {
     z-index: 0;
     position: absolute;

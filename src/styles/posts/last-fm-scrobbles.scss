@@ -40,7 +40,7 @@ p {
 }
 
 #filters-container {
-  @include sixHundred;
+  @include readingWidth;
 }
 
 .trend-list-container {

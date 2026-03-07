@@ -8,7 +8,7 @@ article {
   justify-items: center;
   text-align: left;
   gap: space(4);
-  @include margin-center;
+  @include default-margins;
 
   width: 240px;
   grid-template-columns: repeat(1, 1fr);

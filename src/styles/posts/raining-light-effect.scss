@@ -5,5 +5,5 @@
   height: 80vh;
   border: 2px solid $palette--divider-color;
   display: block;
-  @include margin-center;
+  @include default-margins;
 }

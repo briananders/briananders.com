@@ -39,7 +39,7 @@
   mixin: section;
 
   width: css-min($grid--max-width, 100%);
-  @include margin-center;
+  @include default-margins;
   margin-bottom: $section-spacer;
 
   &:last-child {
@@ -222,8 +222,8 @@
 @mixin content-width {
   mixin: content-width;
 
-  max-width: $content-max-width;
-  @include margin-center;
+  width: css-min(100%, #{$content-max-width});
+  @include left-margins;
 }
 
 @mixin content {

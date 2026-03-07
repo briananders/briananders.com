@@ -52,7 +52,7 @@
 }
 
 .block-center {
-  @include margin-center;
+  @include default-margins;
 }
 
 .p,
