@@ -9,5 +9,22 @@
   },
   "[javascript]": {
     "editor.defaultFormatter": "vscode.typescript-language-features"
-  }
+  },
+  "files.watcherExclude": {
+    "**/golden/**": true,
+    "**/package/**": true,
+    "**/node_modules/**": true,
+    "**/src/images/**": true,
+    "**/src/videos/**": true
+  },
+  "search.exclude": {
+    "**/golden/**": true,
+    "**/package/**": true,
+    "**/src/images/**": true,
+    "**/src/videos/**": true
+  },
+  "gitlens.advanced.blame.delayAfterEdit": 5000,
+  "gitlens.codeLens.enabled": false,
+  "gitlens.hovers.currentLine.over": "line",
+  "gitlens.currentLine.enabled": false
 }
