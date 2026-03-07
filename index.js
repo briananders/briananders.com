@@ -6,6 +6,7 @@ require('colors');
 const fs = require('fs-extra');
 const express = require('express');
 const serve = require('express-static');
+const { createProxyMiddleware } = require('http-proxy-middleware');
 const EventEmitter = require('events');
 /* ///////////////////////////// local variables //////////////////////////// */
 
@@ -92,6 +93,14 @@ clean(configs).then(() => {
 });
 
 if (!production) {
+  app.use('/last-fm-history', createProxyMiddleware({
+    target: 'https://briananders.com/last-fm-history',
+    changeOrigin: true,
+  }));
+  app.use('/band-news', createProxyMiddleware({
+    target: 'https://briananders.com/band-news',
+    changeOrigin: true,
+  }));
   app.use(serve(dir.package));
 
   const server = app.listen(3000, () => {
