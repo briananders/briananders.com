@@ -3,7 +3,7 @@ const ready = require('../_modules/document-ready');
 function escapeHTML(str) {
   const tempElement = document.createElement('temp');
   tempElement.innerHTML = str;
-  return tempElement.innerText.replace(/\s+([\.,)])/g, '$0').replace(/\(\s+/g, '(');
+  return tempElement.innerText;
 }
 
 function articleLink(link, content, classes = '') {
