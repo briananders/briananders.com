@@ -1,6 +1,7 @@
 # Build output
 golden/
 package/
+visual-diffs/test/
 
 # Dependencies
 node_modules/
