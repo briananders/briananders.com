@@ -4,5 +4,4 @@ module.exports = (appRoot, isGoldenBuild = false) => ({
   package: isGoldenBuild ? `${appRoot}/golden/` : `${appRoot}/package/`,
   build: `${appRoot}/build/`,
   nodeModules: `${appRoot}/node_modules/`,
-  lastFmDataSource: `${appRoot}/../last-fm-scrobbles/`,
 });
