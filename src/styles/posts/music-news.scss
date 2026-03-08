@@ -3,23 +3,21 @@
 .band-tag {
   background-color: $palette--accent-color;
   color: $palette--primary-grey;
-  padding: $s1 $s2;
+  padding: space(1) space(2);
   border-radius: 100px;
   @include type--body-tiny;
   @include type--bold-sans-serif;
 }
 
 .article-card {
-  border-radius: $border-radius;
   text-align: left;
-  background-color: $palette--primary-black;
-  padding: $s2;
+  @include card;
 }
 
 .article-image {
   border-radius: 200px;
   box-shadow: 0 0 20px $palette--primary-color-dark;
-  margin-bottom: $s2;
+  margin-bottom: space(2);
 }
 
 .article-title {
@@ -40,15 +38,15 @@
 .article-bands {
   display: flex;
   flex-wrap: wrap;
-  gap: $s1;
-  margin-bottom: $s2;
+  gap: space(1);
+  margin-bottom: space(2);
 }
 
 .article-metadata {
   display: flex;
-  gap: $s1;
+  gap: space(1);
   @include type--body-tiny;
-  margin-bottom: $s2;
+  margin-bottom: space(2);
 }
 
 .article-source {

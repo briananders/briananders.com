@@ -52,7 +52,7 @@
 }
 
 .block-center {
-  @include default-margins;
+  @include left-margins;
 }
 
 .p,
@@ -105,4 +105,8 @@
 
 .card-link {
   @include card-link;
+}
+
+.card {
+  @include card;
 }

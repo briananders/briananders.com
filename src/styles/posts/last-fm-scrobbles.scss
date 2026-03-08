@@ -40,7 +40,7 @@ p {
 }
 
 #filters-container {
-  @include readingWidth;
+  @include paragraph-margin;
 }
 
 .trend-list-container {

@@ -4,6 +4,7 @@
   display: block;
   height: 200px;
   @include paragraph;
+  margin-left: 0;
 }
 
 .table {

@@ -4,7 +4,7 @@
 
   canvas {
     width: 100vw;
-    border: 2px solid $palette--divider-color;
+    border: 2px solid rgba($palette--divider-color, 0.2);
     box-sizing: border-box;
     height: calc(100vh - 66px);
   }
@@ -29,7 +29,7 @@
     flex-wrap: wrap;
     justify-content: center;
     align-items: center;
-    @include default-margins;
+    @include left-margins;
 
     label {
       white-space: nowrap;

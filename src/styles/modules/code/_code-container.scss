@@ -1,14 +1,13 @@
 .code-container {
   @include type--body-small;
   @include readingWidth;
-  margin: auto auto space(6);
-  margin-bottom: space(6);
+  margin: 0 0 space(6);
   max-width: 100%;
   overflow: hidden;
   position: relative;
   text-align: left;
   display: flex;
-  border: 2px solid $palette--secondary-grey;
+  border: 2px solid rgba($palette--divider-color, 0.2);
 
   &::before,
   &::after {

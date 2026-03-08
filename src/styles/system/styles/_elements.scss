@@ -9,7 +9,7 @@ section {
 }
 
 main {
-  @include default-margins;
+  @include left-margins;
   z-index: 1;
   position: relative;
   transition-property: right, min-height;

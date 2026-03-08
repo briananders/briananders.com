@@ -2,13 +2,13 @@
 @import "modules/code";
 
 canvas {
-  width: 100vw;
+  width: 100%;
   max-width: 100vh;
   height: 100vh;
   max-height: 100vw;
   display: block;
-  border: 2px solid $palette--divider-color;
-  margin: space(6) auto 0;
+  border: 2px solid rgba($palette--divider-color, 0.2);
+  margin-top: space(6);
 }
 
 td {

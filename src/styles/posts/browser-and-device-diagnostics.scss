@@ -1,6 +1,7 @@
 @import "system/utilities";
 @import "modules/code/var";
 @import "modules/code/code-container";
+@import "modules/code/code-element";
 
 .posts.browser-and-device-diagnostics {
   input {
@@ -21,17 +22,8 @@
   }
 
   code {
-    @include type--body-small;
-    @include paragraph;
-    border: 2px solid $palette--divider-color;
-    display: block;
-    font-family: monospace;
-    margin-bottom: space(6);
-    margin: auto auto space(6);
-    @include readingWidth;
-    padding: space(4);
-    text-align: left;
-    word-wrap: break-word;
+    white-space: unset;
+    margin: 0;
 
     ul {
       margin-left: space(4);

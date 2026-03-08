@@ -4,7 +4,7 @@
 
 .about-content {
   position: relative;
-  @include default-margins;
+  @include left-margins;
   padding: 0 space(2);
   max-width: 624px;
 }

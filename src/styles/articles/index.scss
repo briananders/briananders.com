@@ -4,11 +4,11 @@
   display: grid;
   grid-template-columns: 1fr;
   justify-content: space-around;
-  column-gap: $s6;
-  row-gap: $s12;
+  column-gap: space(6);
+  row-gap: space(12);
   align-items: stretch;
   justify-items: stretch;
-  margin-bottom: $s6;
+  margin-bottom: space(6);
   text-align: left;
 
   .article-card {
@@ -16,15 +16,15 @@
     border-radius: $border-radius;
     color: $palette--primary-white;
     box-shadow: 0px 10px 90px 0px #111;
-    padding: $s3;
+    padding: space(3);
     text-decoration: none;
     position: relative;
     background-color: transparent;
     overflow: hidden;
     transition-property: background-color;
 
-    @include sixHundred;
-    margin: 0 auto;
+    @include readingWidth;
+    margin: 0;
 
     &:hover {
       background-color: $palette--hover-grey;
@@ -38,29 +38,29 @@
   .article-title {
     @include type--heading-5;
     text-align: left;
-    margin-bottom: $s2;
+    margin-bottom: space(2);
     color: $palette--primary-color-light;
   }
 
   .article-summary {
     @include type--body;
-    margin-bottom: $s2;
+    margin-bottom: space(2);
     flex-grow: 1;
     text-align: left;
   }
 
   .article-bands {
-    margin-bottom: $s2;
+    margin-bottom: space(2);
     display: flex;
     flex-wrap: wrap;
-    gap: $s1;
+    gap: space(1);
 
     .band-tag {
       @include type--body-small;
       @include type--bold-sans-serif;
       background-color: $palette--primary-color-dark;
       color: $palette--primary-white;
-      padding: $s1 / 2 $s2;
+      padding: space(1) / 2 space(2);
       border-radius: $border-radius;
       white-space: nowrap;
     }
@@ -71,7 +71,7 @@
     justify-content: space-between;
     align-items: baseline;
     flex-wrap: wrap;
-    gap: $s2;
+    gap: space(2);
     @include type--body-small;
     color: $palette--secondary-grey;
 
@@ -82,16 +82,16 @@
 }
 
 .articles .meta {
-  @include sixHundred;
+  @include readingWidth;
   @include type--body-small;
   color: $palette--secondary-grey;
-  text-align: center;
-  margin-bottom: $s6;
+  text-align: left;
+  margin-bottom: space(6);
 }
 
 .articles .empty {
-  @include sixHundred;
-  text-align: center;
+  @include readingWidth;
+  text-align: left;
   @include type--body;
   color: $palette--secondary-grey;
 }

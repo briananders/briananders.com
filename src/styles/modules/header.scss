@@ -6,7 +6,7 @@
 header.main-header {
   @include palette--base;
   margin-top: space(6);
-  @include default-margins;
+  @include left-margins;
 
   h1.name {
     @include type--title;

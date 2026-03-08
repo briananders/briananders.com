@@ -18,8 +18,7 @@ scripts:
 
 
 <section class="contributions">
-  <div class="content">
-    <div class="deck">
+  <div class="content deck">
     <%
       const model = [
         {
@@ -55,7 +54,6 @@ scripts:
     %>
         <%- partial('contributions-card', Object.assign(locals, { copyBlock, image, heading, links })); %>
       <% }); %>
-    </div>
   </div>
   <div class="content">
     <%- blockLink('More', {

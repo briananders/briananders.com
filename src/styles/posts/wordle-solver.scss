@@ -76,7 +76,6 @@
 .line {
   display: grid;
   grid-template-columns: repeat(5, 60px);
-  justify-content: center;
   align-items: center;
   padding: space(2) 0;
 
@@ -144,7 +143,7 @@ fieldset {
 
 input.letter {
   @include type--heading-1;
-  text-align: left;
+  text-align: center;
   width: space(10);
   height: space(10);
   line-height: space(10);

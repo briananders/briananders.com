@@ -27,7 +27,7 @@ nav.main {
   z-index: 1000;
   width: 100%;
   position: relative;
-  @include palette--base;
+  @include palette--header;
 
   * {
     position: relative;
@@ -56,13 +56,11 @@ nav.main {
     display: flex;
     justify-content: space-between;
     min-height: $nav-height;
-    @include palette--base;
 
     &::after {
       display: block;
       content: "";
       position: absolute;
-      @include palette--base;
       top: 0;
       bottom: 0;
       left: 100%;
@@ -145,7 +143,6 @@ nav.main {
     display: flex;
     justify-content: flex-start;
     align-items: middle;
-    @include palette--base;
     border: none;
 
     &::after {

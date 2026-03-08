@@ -2,8 +2,8 @@
 @import "system/variables/spaces";
 @import "system/variables/viewports";
 
-$grid--gutter: percentage(space(3) / $large);
-$grid--column: percentage(space(12) / $large);
+$grid--gutter: space(2);
+$grid--gap: space(1);
 $grid--start-break-point: $medium;
 $grid--max-width: 1440px;
 $grid--copy-max-width: $grid--max-width / 2;

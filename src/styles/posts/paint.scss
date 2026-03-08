@@ -2,7 +2,8 @@
 
 canvas {
   width: 100vw;
-  border: 2px solid $palette--divider-color;
+  max-width: 100%;
+  border: 2px solid rgba($palette--divider-color, 0.2);
   height: calc(90vh - 66px);
   background-color: white;
   cursor: crosshair;

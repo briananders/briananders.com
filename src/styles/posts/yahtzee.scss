@@ -8,15 +8,13 @@ ul li {
 .posts.yahtzee {
   display: grid;
   align-items: center;
-  justify-content: center;
 
   .game-container {
-    @include default-margins;
+    @include left-margins;
     display: grid;
-    justify-content: center;
+    justify-content: start;
     grid-gap: space(2);
     margin-top: space(6);
-    width: css-min(100%, 360px);
 
     label {
       @include type--body;
@@ -110,7 +108,7 @@ ul li {
   .score {
     @include button-link;
     min-width: 72px;
-    text-align: left;
+    text-align: center;
     margin-left: space(2);
     display: inline-block;
     padding: 0 space(3);
@@ -123,9 +121,10 @@ ul li {
     justify-content: space-between;
     padding-top: space(1);
     border-top: space(1)/3 solid;
+    border-radius: 0;
 
     @include mq($medium) {
-      width: calc(50% - #{space(6)});
+      width: calc(50% - #{space(3)});
     }
   }
 

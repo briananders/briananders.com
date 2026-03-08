@@ -2,8 +2,7 @@
 
 button[value=add] {
   display: block;
-  margin: auto;
-  margin-bottom: space(6);
+  margin: 0 0 space(6);
 }
 
 .sound-slider {
@@ -15,7 +14,7 @@ button[value=add] {
   position: relative;
   padding: space(2);
   border-radius: var(--border-radius, $border-radius);
-  border: 2px solid $palette--divider-color;
+  border: 2px solid rgba($palette--divider-color, 0.2);
   @include paragraph;
 
   input[type=range] {

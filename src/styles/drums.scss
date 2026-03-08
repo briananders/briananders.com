@@ -16,21 +16,6 @@ $aspectRatio: $height / $width;
   .videos {
     position: relative;
     padding-bottom: space(6);
-
-    &::after {
-      background-image: url(/images/drums/logo.png);
-      background-repeat: no-repeat;
-      background-position: center center;
-      background-size: contain;
-      opacity: 0.05;
-      content: '';
-      position: absolute;
-      left: 0;
-      top: 0;
-      width: 100%;
-      height: 100%;
-      z-index: -1;
-    }
   }
 
   .content.description {
@@ -83,26 +68,22 @@ $aspectRatio: $height / $width;
   .social-profiles {
     display: flex;
     align-items: center;
-    justify-content: center;
     flex-wrap: wrap;
+    gap: $grid--gap;
   }
 
   .social-profile {
-    @include block-link;
     display: flex;
     align-items: center;
     justify-content: center;
     flex-direction: column;
-    margin: space(2);
     width: 150px;
-    padding-top: space(3);
-    padding-bottom: space(2);
   }
 
   .video-grid {
     display: grid;
     grid-template-columns: 1fr;
-    gap: 12px;
+    gap: $grid--gap;
     @include readingWidth;
 
     @include mq(700px) {
@@ -111,11 +92,20 @@ $aspectRatio: $height / $width;
 
     button {
       width: css-min(100%, 400px);
-      @include default-margins;
+      @include left-margins;
     }
 
     img {
       margin-bottom: space(2);
+    }
+  }
+
+  .video-list {
+    @include grid;
+    @include readingWidth;
+
+    .card-link {
+      @include columns(12);
     }
   }
 }

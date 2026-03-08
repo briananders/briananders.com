@@ -1,6 +1,7 @@
 #posts-list {
   display: grid;
   grid-template-columns: 1fr;
+  gap: $grid--gap;
   justify-content: space-around;
   align-items: stretch;
   justify-items: stretch;

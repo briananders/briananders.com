@@ -39,8 +39,7 @@
   mixin: section;
 
   width: css-min($grid--max-width, 100%);
-  @include default-margins;
-  margin-bottom: $section-spacer;
+  margin: 0 auto $section-spacer;
 
   &:last-child {
     margin-bottom: 0;
@@ -209,21 +208,20 @@
   border-radius: var(--border-radius, $border-radius);
 
   color: $palette--primary-white;
-  padding: space(2);
-  margin-left: -#{space(2)};
-  margin-right: -#{space(2)};
-  box-sizing: content-box;
   width: 100%;
 
   @include link-hover;
   @include link-focus;
+
+  @include card;
 }
 
 @mixin content-width {
   mixin: content-width;
 
   width: css-min(100%, #{$content-max-width});
-  @include left-margins;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 @mixin content {
@@ -276,11 +274,11 @@
 
   @include paragraph-margin;
 
-  padding: space(4) space(4);
+  @include card;
+
   overflow: hidden;
   max-width: 500px;
-  background-color: transparent;
-  border: 2px solid $palette--divider-color;
+  border: 2px solid rgba($palette--divider-color, 0.2);
   color: $palette--primary-white;
 
   p {
@@ -322,4 +320,12 @@
   mixin: mega-button;
 
   padding: space(2) space(4);
+}
+
+@mixin card {
+  mixin: card;
+
+  padding: $grid--gutter;
+  border-radius: var(--border-radius, $border-radius);
+  @include surface;
 }
