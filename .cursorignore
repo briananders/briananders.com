@@ -1,7 +1,7 @@
 # Build output
 golden/
 package/
-visual-diffs/test/
+visual-diffs/
 
 # Dependencies
 node_modules/
@@ -11,8 +11,7 @@ src/images/
 src/videos/
 
 # Large data files
-src/data/wordscapes-words.json
-src/data/five-letter-words.json
+src/data/
 
 # Git internals
 .git/
