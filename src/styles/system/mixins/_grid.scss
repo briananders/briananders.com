@@ -1,7 +1,29 @@
 @import "system/variables/all";
 
+@mixin grid($no-padding: false) {
+  mixin: grid;
+
+  display: grid;
+  gap: $grid--gap;
+  grid-template-columns: repeat(4, 1fr);
+
+  @if not $no-padding {
+    padding-left: $grid--gutter;
+    padding-right: $grid--gutter;
+  }
+
+  @include mq($grid--start-break-point) {
+    grid-template-columns: repeat(12, 1fr);
+  }
+}
+
 @mixin columns($count:1) {
-  width: ($grid--column * $count) + ($grid--gutter * ($count - 1));
+  grid-column: span $count;
+}
+
+@mixin default-margins {
+  margin-left: auto;
+  margin-right: auto;
 }
 
 @mixin margin-center {
@@ -9,13 +31,17 @@
   margin-right: auto;
 }
 
-@mixin sixHundred {
-  @include margin-center;
+@mixin left-margins {
+  margin-left: 0;
+  margin-right: auto;
+}
+
+@mixin readingWidth {
   width: css-min($grid--copy-max-width, 100%);
 }
 
 @mixin text-center {
-  text-align: center;
+  text-align: left;
 }
 
 @mixin text-left {

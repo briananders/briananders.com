@@ -3,7 +3,7 @@
 .key {
   display: grid;
   row-gap: 3px;
-  @include sixHundred;
+  @include readingWidth;
   margin-bottom: $paragraph-bottom;
 
   > div {

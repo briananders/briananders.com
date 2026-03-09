@@ -1,7 +1,7 @@
 ---
-title: "Last.fm Scrobble History"
-description: "After comparing my scrobbles, I thought it would be enjoyable to create a simple way to review my top albums and artists of the year. In pursuit of this goal, I developed a custom JSON API to gather the necessary data and used native web components to design the interface."
-date: 2025-01-02
+title: "Music Listening History"
+description: "I use an app to track my music listening history. I thought it would be fun to make my own interface for it, to let you do your own deep dives into my music taste. Why? Because I can."
+date: 2025-12-24
 priority: 0.8
 pageClasses:
   - 'posts last-fm-scrobbles'
@@ -13,50 +13,37 @@ scripts:
   - 'posts/last-fm-scrobbles'
 ---
 
-<blockquote>
-  <p>To 'scrobble' a song means that when you listen to it, the name of the song is sent to a Web site (for example, Last.fm) and added to your music profile. Here’s how it works: Once you've signed up and downloaded Last.fm, you can scrobble songs you listen to on your computer or iPod automatically.</p>
-  <cite>
-    <%- blockLink('Netlingo.com', { href: "https://www.netlingo.com/word/scrobble.php" })%>
-  </cite>
-</blockquote>
-
 <div class="container">
   <p>
-    In a <%- inlineLink('separate post', { href: '/posts/last-fm' }) %>, you can peruse my top albums and artists for various timeframes, all going back from the present. For example, you can view my top listens from the last 3 months. It's been fascinating to observe how my listening habits have evolved over time, as well as how they've remained consistent.
+    In a <%- inlineLink('separate post', { href: '/posts/last-fm' }) %>, you can look through the data in a slightly different way, with links to the last.fm entries for each item. But here, you can break down the history by year, quarter, month, and even week. Click on an item to see the monthly breakdown.
+    <cite>
+      <%- blockLink('Netlingo.com', { href: "https://www.netlingo.com/word/scrobble.php" })%>
+    </cite>
   </p>
 </div>
 
 <div class="container">
-  <div class="year-selector-container">
-    <year-selector id="year-selector" min="2013" max="2024" value="2024"></year-selector>
-  </div>
+  <p>
+    This app is pretty experimental, and I'm not sure how long it will last. But it's a fun project to work on, and I'm glad I did it. There will be errors. Enjoy!
+  </p>
+</div>
+
+<div id="filters-container" class="container">
+  <select id="type-selector" name=type></select>
+  <div id="selector-container"></div>
 </div>
 
 <section>
   <div class="container">
     <h2>Artists</h2>
-    <div id="artists">
-      <% for (let i = 0; i < 10; i++) { %>
-        <artist-listing></artist-listing>
-      <% } %>
-    </div>
-    <div class="center">
-      <%- buttonLink("More", { href: "#", class: "more artists", external: true }) %>
-    </div>
+    <div id="artists"></div>
   </div>
 </section>
 
 <section>
   <div class="container">
     <h2>Albums</h2>
-    <div id="albums">
-      <% for (let i = 0; i < 10; i++) { %>
-        <album-listing></album-listing>
-      <% } %>
-    </div>
-    <div class="center">
-      <%- buttonLink("More", { href: "#", class: "more albums", external: true }) %>
-    </div>
+    <div id="albums"></div>
   </div>
 </section>
 
@@ -64,41 +51,6 @@ scripts:
   <div class="container">
     <h2>Yearly Scrobbles</h2>
     <div id="yearly-scrobbles">
-      <year-listing year=2024 value=24001 maximum=37568 ></year-listing>
-      <year-listing year=2023 value=30567 maximum=37568 ></year-listing>
-      <year-listing year=2022 value=37568 maximum=37568 ></year-listing>
-      <year-listing year=2021 value=12942 maximum=37568 ></year-listing>
-      <year-listing year=2020 value=14540 maximum=37568 ></year-listing>
-      <year-listing year=2019 value=14022 maximum=37568 ></year-listing>
-      <year-listing year=2018 value=11876 maximum=37568 ></year-listing>
-      <year-listing year=2017 value=16750 maximum=37568 ></year-listing>
-      <year-listing year=2016 value=10785 maximum=37568 ></year-listing>
-      <year-listing year=2015 value=13656 maximum=37568 ></year-listing>
-      <year-listing year=2014 value=8797  maximum=37568 ></year-listing>
-      <year-listing year=2013 value=23652 maximum=37568 ></year-listing>
     </div>
-  </div>
-</section>
-
-<section class="resources">
-  <div class="container">
-    <h2>Additional Resources</h2>
-
-    <ul>
-      <li>
-        <%- blockLink("My Last FM profile", {
-          href: "https://www.last.fm/user/imbanders"
-        }); %>
-      </li>
-      <li>
-        <%
-          const date = new Date();
-          const thisYear = date.getFullYear();
-        %>
-        <%- blockLink(`${thisYear}'s data`, {
-          href: `https://www.last.fm/user/imbanders/library?from=${thisYear}-01-01&rangetype=year`
-        }); %>
-      </li>
-    </ul>
   </div>
 </section>

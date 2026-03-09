@@ -4,21 +4,23 @@ $squareSize: 768;
 
 .canvas-container {
   position: relative;
+  width: $squareSize + px;
+  max-width: 100%;
 
   button {
     position: absolute;
     left: 50%;
     top: 50%;
     transform: translate(-50%, -50%);
+    margin: 0;
   }
 }
 
 canvas {
   width: $squareSize + px;
   height: $squareSize + px;
-  margin: auto;
-  border: 2px solid $palette--divider-color;
-  max-width: 90vw;
+  border: 2px solid rgba($palette--divider-color, 0.2);
+  max-width: 100%;
   max-height: 90vw;
   display: block;
 }
