@@ -32,7 +32,7 @@ jobs:
 
       - name: Run Claude Code
         id: claude
-        uses: anthropics/claude-code-action@v1
+        uses: anthropics/claude-code-action@v1.0.23
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
 
@@ -41,7 +41,18 @@ jobs:
             actions: read
 
           # Optional: Give a custom prompt to Claude. If this is not specified, Claude will perform the instructions specified in the comment that tagged it.
-          # prompt: 'Update the pull request description to include a summary of changes.'
+          prompt: |
+            Update the pull request description to include a summary of changes.
+
+            Then review the code changes and provide feedback on:
+              - Code quality and best practices
+              - Potential bugs or issues
+              - Performance considerations
+              - Security concerns
+              - Test coverage
+
+              Be constructive and helpful in your feedback.
+
 
           # Optional: Add claude_args to customize behavior and configuration
           # See https://github.com/anthropics/claude-code-action/blob/main/docs/usage.md

@@ -1,11 +1,12 @@
 @import "system/utilities";
 @import "modules/code/var";
 @import "modules/code/code-container";
+@import "modules/code/code-element";
 
 .posts.browser-and-device-diagnostics {
   input {
     width: 100%;
-    margin: $s2 auto;
+    margin: space(2) auto;
   }
 
   #error {
@@ -21,20 +22,11 @@
   }
 
   code {
-    @include type--body-small;
-    @include paragraph;
-    border: 2px solid $palette--divider-color;
-    display: block;
-    font-family: monospace;
-    margin-bottom: $s6;
-    margin: auto auto $s6;
-    @include sixHundred;
-    padding: $s4;
-    text-align: left;
-    word-wrap: break-word;
+    white-space: unset;
+    margin: 0;
 
     ul {
-      margin-left: $s4;
+      margin-left: space(4);
     }
 
     li {

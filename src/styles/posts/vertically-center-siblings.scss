@@ -10,8 +10,8 @@
     width: 100%;
     display: block;
     overflow-x: auto;
-    margin-top: $s6;
-    margin-bottom: $s6;
+    margin-top: space(6);
+    margin-bottom: space(6);
     border: 2px solid $palette--divider-color;
   }
 
@@ -19,22 +19,22 @@
     vertical-align: middle;
 
     &:nth-child(1) {
-      padding-right: $s2;
+      padding-right: space(2);
     }
     &:nth-child(2) {
-      padding-left: $s1;
-      padding-right: $s1;
+      padding-left: space(1);
+      padding-right: space(1);
     }
     &:nth-child(3) {
-      padding-left: $s2;
+      padding-left: space(2);
     }
   }
 
   .shadow {
     border: 1px solid $palette--divider-color;
-    padding: $s2;
-    padding-bottom: $s2;
-    text-align: center;
+    padding: space(2);
+    padding-bottom: space(2);
+    text-align: left;
   }
 
   .display-table {
@@ -73,14 +73,14 @@
   .display-table, .inline-block, .flex {
     cell {
       &:nth-child(1) {
-        padding-right: $s2;
+        padding-right: space(2);
       }
       &:nth-child(2) {
-        padding-left: $s1;
-        padding-right: $s1;
+        padding-left: space(1);
+        padding-right: space(1);
       }
       &:nth-child(3) {
-        padding-left: $s2;
+        padding-left: space(2);
       }
     }
   }
@@ -90,7 +90,7 @@
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       align-items: center;
-      grid-gap: $s3;
+      grid-gap: space(3);
     }
   }
 }
