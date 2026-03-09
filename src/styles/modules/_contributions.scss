@@ -1,13 +1,15 @@
+@import "system/utilities";
+@import "system/variables/all";
+
 section.contributions {
   .deck {
-    display: grid;
-    gap: $s12;
-    @include sixHundred;
-    margin: 0 auto;
+    @include grid($no-padding: true);
   }
+
   .card {
     text-align: left;
     display: grid;
+    align-content: start;
     grid-template-columns: 1fr;
     grid-template-rows: auto;
     grid-template-areas:
@@ -15,14 +17,20 @@ section.contributions {
       "title"
       "description"
       "links";
-    column-gap: $s12;
+    column-gap: space(4);
+
+    @include columns(12);
 
     @include mq($medium) {
-      grid-template-columns: css-min(25%, 200px) 1fr;
+      grid-template-columns: css-min(25%, 100px) 1fr;
       grid-template-areas:
         "image title"
         "image description"
         "image links";
+    }
+
+    @include mq($large) {
+      @include columns(6);
     }
 
     img {
@@ -31,20 +39,20 @@ section.contributions {
       margin-top: 9px;
 
       @include mq-max($medium) {
-        width: css-min(100%, 200px);
-        margin: 0 auto #{$s4};
+        width: css-min(100%, 100px);
+        margin: 0 auto #{space(4)};
       }
     }
 
     h5 {
       text-align: left;
       grid-area: title;
-      margin-bottom: $s1;
+      margin-bottom: space(1);
     }
 
     p {
       grid-area: description;
-      margin-bottom: $s1;
+      margin-bottom: space(1);
     }
 
     .links {

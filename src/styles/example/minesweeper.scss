@@ -35,7 +35,7 @@ section.minesweeper {
   .header-first-row,
   .header-second-row {
     transition-property: width, max-width;
-    @include margin-center;
+    @include default-margins;
 
     &[data-difficulty=beginner] {
       max-width: 400px;
@@ -62,7 +62,7 @@ section.minesweeper {
 
   .header-second-row {
     justify-content: center;
-    margin: $s6 auto $s4;
+    margin: space(6) auto space(4);
   }
 
   .mine-sweeper-tile {

@@ -1,14 +1,13 @@
 .code-container {
   @include type--body-small;
-  @include sixHundred;
-  margin: auto auto $s6;
-  margin-bottom: $s6;
+  @include readingWidth;
+  margin: 0 0 space(6);
   max-width: 100%;
   overflow: hidden;
   position: relative;
-  text-align: center;
+  text-align: left;
   display: flex;
-  border: 2px solid $palette--secondary-grey;
+  border: 2px solid rgba($palette--divider-color, 0.2);
 
   &::before,
   &::after {
@@ -16,7 +15,7 @@
     position: absolute;
     top: 0px;
     bottom: 0px;
-    width: $s6;
+    width: space(6);
   }
 
   &::before {
