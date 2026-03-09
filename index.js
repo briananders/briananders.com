@@ -96,11 +96,15 @@ clean(configs).then(() => {
 
 if (!production) {
   app.use('/last-fm-history', createProxyMiddleware({
-    target: 'https://briananders.com/last-fm-history',
+    target: 'http://staging.briananders.com.s3-website-us-east-1.amazonaws.com/last-fm-history',
     changeOrigin: true,
   }));
   app.use('/band-news', createProxyMiddleware({
-    target: 'https://briananders.com/band-news',
+    target: 'http://staging.briananders.com.s3-website-us-east-1.amazonaws.com/band-news',
+    changeOrigin: true,
+  }));
+  app.use('/data', createProxyMiddleware({
+    target: 'http://staging.briananders.com.s3-website-us-east-1.amazonaws.com/data',
     changeOrigin: true,
   }));
   app.use(serve(dir.package));
