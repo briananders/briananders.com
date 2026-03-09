@@ -5,9 +5,8 @@ $squareSize: 768;
 canvas {
   width: $squareSize + px;
   height: $squareSize + px;
-  margin: auto;
-  border: 2px solid $palette--divider-color;
-  max-width: 90vw;
+  @include canvas-border;
+  max-width: 100%;
   max-height: 90vw;
   display: block;
 }
@@ -20,17 +19,15 @@ input {
 .form {
   display: flex;
   max-width: $squareSize + px;
-  margin: $s12 auto 0;
+  margin: space(12) auto 0;
   align-items: center;
 }
 
 #play-pause {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-right: 12px;
-  width: 40px;
-  height: 40px;
+  @include flex-center;
+  margin-right: $s2;
+  width: space(7);
+  height: space(7);
   padding-top: 0;
 
   img {

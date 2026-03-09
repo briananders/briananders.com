@@ -12,7 +12,7 @@ $frame-height: $sprite-height / $y-max;
   width: round($frame-width);
   height: round($frame-height);
   margin: auto;
-  border-radius: 100%;
+  border-radius: $border-radius--circle;
 
   @for $frame from 0 to ($y-max * $x-max) {
     &[data-number="#{$frame}"] {

@@ -4,9 +4,9 @@ main.posts.using-canvas-to-make-patterns-with-circles {
 
   canvas {
     width: 100vw;
-    border: 2px solid $palette--divider-color;
+    @include canvas-border;
     box-sizing: border-box;
-    height: calc(100vh - 66px);
+    height: var(--window-height);
   }
 
   #pause-button.paused {
@@ -24,12 +24,10 @@ main.posts.using-canvas-to-make-patterns-with-circles {
   }
 
   form {
-    margin-bottom: $s6;
-    display: flex;
+    margin-bottom: space(6);
+    @include flex-center;
     flex-wrap: wrap;
-    justify-content: center;
-    align-items: center;
-    @include margin-center;
+    @include left-margins;
 
     label {
       white-space: nowrap;
@@ -39,12 +37,12 @@ main.posts.using-canvas-to-make-patterns-with-circles {
     }
 
     input[type=checkbox] {
-      margin-right: $s1;
+      margin-right: space(1);
     }
 
     > * {
       display: block;
-      margin: 0 $s2 $s2;
+      margin: 0 space(2) space(2);
     }
   }
 }

@@ -30,7 +30,7 @@
 
 .error {
   color: $color--red-500;
-  text-align: center;
+  text-align: left;
 }
 
 .block {
@@ -38,7 +38,7 @@
 }
 
 .center {
-  text-align: center;
+  text-align: left;
   justify-content: center;
 }
 
@@ -47,12 +47,12 @@
 }
 
 .center {
-  text-align: center;
+  text-align: left;
   justify-content: center;
 }
 
 .block-center {
-  @include margin-center;
+  @include left-margins;
 }
 
 .p,
@@ -105,4 +105,8 @@
 
 .card-link {
   @include card-link;
+}
+
+.card {
+  @include card;
 }

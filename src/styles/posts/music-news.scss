@@ -1,0 +1,52 @@
+@import "system/utilities";
+
+.band-tag {
+  background-color: $palette--accent-color;
+  color: $palette--primary-grey;
+  padding: space(1) space(2);
+  border-radius: 100px;
+  @include type--body-tiny;
+  @include type--bold-sans-serif;
+}
+
+.article-card {
+  text-align: left;
+  @include card;
+}
+
+.article-image {
+  border-radius: 200px;
+  box-shadow: 0 0 20px $palette--primary-color-dark;
+  margin-bottom: space(2);
+}
+
+.article-title {
+  @include type--heading-5;
+  text-align: left;
+  text-transform: capitalize;
+}
+
+.article-title-link {
+  color: unset;
+  text-decoration: unset;
+}
+
+.article-summary {
+  @include type--body;
+}
+
+.article-bands {
+  @include flex-wrap-gap($s1);
+  margin-bottom: space(2);
+}
+
+.article-metadata {
+  display: flex;
+  gap: space(1);
+  @include type--body-tiny;
+  margin-bottom: space(2);
+}
+
+.article-source {
+  @include type--body-tiny;
+}

@@ -5,7 +5,7 @@
 }
 
 @mixin ds-code-label {
-  font-family: courier, monospace;
+  @include type--monospace;
   @include font-size(0);
   word-break: break-all;
 }
@@ -21,9 +21,7 @@
 .palette,
 .palette-combos {
   ul {
-    display: flex;
-    flex-wrap: wrap;
-    gap: $s4;
+    @include flex-wrap-gap($s4);
     justify-content: center;
   }
 
@@ -32,7 +30,7 @@
     display: flex;
     flex-flow: column;
     align-items: center;
-    gap: $s1;
+    gap: space(1);
   }
 
   span {
@@ -70,7 +68,7 @@
     background-color: $palette--accent-color;
   }
   [class^="palette--"] {
-    padding: $s1;
+    padding: space(1);
     @include ds-box-shadow;
   }
   .palette--base {
@@ -94,8 +92,8 @@
   .container div {
     @include palette--base--inverted;
     @include ds-box-shadow;
-    text-align: center;
-    padding: $s1 0;
+    text-align: left;
+    padding: space(1) 0;
     margin: 0 auto $paragraph-bottom;
   }
   .content-max-width {
@@ -116,8 +114,8 @@
   .container div {
     @include palette--base--inverted;
     @include ds-box-shadow;
-    text-align: center;
-    padding: $s1 0;
+    text-align: left;
+    padding: space(1) 0;
     margin: 0 auto $paragraph-bottom;
   }
   .small {
@@ -187,9 +185,7 @@
 
 .ds-spacing-demo {
   ul {
-    display: flex;
-    flex-wrap: wrap;
-    gap: $s4;
+    @include flex-wrap-gap($s4);
     justify-content: center;
     list-style: none;
   }
@@ -220,9 +216,7 @@
 
 .ds-shadow-demo {
   ul {
-    display: flex;
-    flex-wrap: wrap;
-    gap: $s6;
+    @include flex-wrap-gap($s6);
     justify-content: center;
     list-style: none;
   }
@@ -240,10 +234,8 @@
   .swatch {
     @include palette--base;
     width: 100px;
-    height: 60px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    height: $s10;
+    @include flex-center;
   }
 
   .shadow--text .swatch     { text-shadow: $shadow--text; }
@@ -303,9 +295,7 @@
 
 .ds-component-demo {
   .demo-row {
-    display: flex;
-    flex-wrap: wrap;
-    gap: $s4;
+    @include flex-wrap-gap($s4);
     align-items: center;
     justify-content: center;
     margin-bottom: $s6;
@@ -364,7 +354,7 @@
   @include margin-center;
 
   .file-tree {
-    font-family: courier, monospace;
+    @include type--monospace;
     @include font-size(0);
     border: 1px solid $palette--secondary-grey;
     padding: $s4;
@@ -402,7 +392,7 @@
   }
 
   td:first-child {
-    font-family: courier, monospace;
+    @include type--monospace;
     color: $palette--divider-color;
     white-space: nowrap;
   }

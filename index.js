@@ -6,6 +6,7 @@ require('colors');
 const fs = require('fs-extra');
 const express = require('express');
 const serve = require('express-static');
+const { createProxyMiddleware } = require('http-proxy-middleware');
 const EventEmitter = require('events');
 /* ///////////////////////////// local variables //////////////////////////// */
 
@@ -30,6 +31,7 @@ const previewBuilder = require(`${dir.build}preview-builder`);
 const prodBuilder = require(`${dir.build}prod-builder`);
 const goldenBuilder = require(`${dir.build}golden-builder`);
 const compileSitemap = require(`${dir.build}bundlers/sitemap`);
+const generateBuildTxt = require(`${dir.build}helpers/generate-build-txt`);
 
 const completionFlagsSource = require(`${dir.build}constants/completion-flags`);
 const BUILD_EVENTS = require(`${dir.build}constants/build-events`);
@@ -85,6 +87,7 @@ log(`production: ${production}`.toUpperCase().brightBlue.bold);
 clean(configs).then(() => {
   if (debug) log(`${timestamp.stamp()} clean().then()`);
   fs.mkdirp(dir.package);
+  generateBuildTxt(configs);
   compilePageMappingData(configs);
   bundleJS(configs);
   bundleSCSS(configs);
@@ -92,6 +95,18 @@ clean(configs).then(() => {
 });
 
 if (!production) {
+  app.use('/last-fm-history', createProxyMiddleware({
+    target: 'http://staging.briananders.com.s3-website-us-east-1.amazonaws.com/last-fm-history',
+    changeOrigin: true,
+  }));
+  app.use('/band-news', createProxyMiddleware({
+    target: 'http://staging.briananders.com.s3-website-us-east-1.amazonaws.com/band-news',
+    changeOrigin: true,
+  }));
+  app.use('/data', createProxyMiddleware({
+    target: 'http://staging.briananders.com.s3-website-us-east-1.amazonaws.com/data',
+    changeOrigin: true,
+  }));
   app.use(serve(dir.package));
 
   const server = app.listen(3000, () => {

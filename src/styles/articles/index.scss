@@ -1,0 +1,95 @@
+@import "system/utilities";
+
+#articles-list {
+  display: grid;
+  grid-template-columns: 1fr;
+  justify-content: space-around;
+  column-gap: space(6);
+  row-gap: space(12);
+  align-items: stretch;
+  justify-items: stretch;
+  margin-bottom: space(6);
+  text-align: left;
+
+  .article-card {
+    display: grid;
+    border-radius: $border-radius;
+    color: $palette--primary-white;
+    box-shadow: $shadow--card;
+    padding: space(3);
+    text-decoration: none;
+    position: relative;
+    background-color: transparent;
+    overflow: hidden;
+    transition-property: background-color;
+
+    @include readingWidth;
+    margin: 0;
+
+    &:hover {
+      background-color: $palette--hover-grey;
+    }
+
+    &:focus {
+      box-shadow: $shadow--focus;
+    }
+  }
+
+  .article-title {
+    @include type--heading-5;
+    text-align: left;
+    margin-bottom: space(2);
+    color: $palette--primary-color-light;
+  }
+
+  .article-summary {
+    @include type--body;
+    margin-bottom: space(2);
+    flex-grow: 1;
+    text-align: left;
+  }
+
+  .article-bands {
+    margin-bottom: space(2);
+    @include flex-wrap-gap($s1);
+
+    .band-tag {
+      @include type--body-small;
+      @include type--bold-sans-serif;
+      background-color: $palette--primary-color-dark;
+      color: $palette--primary-white;
+      padding: space(1) / 2 space(2);
+      border-radius: $border-radius;
+      white-space: nowrap;
+    }
+  }
+
+  .article-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: space(2);
+    @include type--body-small;
+    color: $palette--secondary-grey;
+
+    .article-source {
+      @include type--bold-sans-serif;
+    }
+  }
+}
+
+.articles .meta {
+  @include readingWidth;
+  @include type--body-small;
+  color: $palette--secondary-grey;
+  text-align: left;
+  margin-bottom: space(6);
+}
+
+.articles .empty {
+  @include readingWidth;
+  text-align: left;
+  @include type--body;
+  color: $palette--secondary-grey;
+}

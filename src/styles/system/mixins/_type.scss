@@ -53,6 +53,13 @@
   font-weight: $bold;
 }
 
+@mixin type--monospace {
+  mixin: type--monospace;
+
+  font-family: $monospace;
+  font-weight: $regular;
+}
+
 @mixin italic {
   mixin: italic;
 
@@ -66,7 +73,7 @@
 
   @include type--bold-sans-serif;
 
-  text-align: center;
+  text-align: left;
   text-shadow: $shadow--text;
 }
 
@@ -76,7 +83,7 @@
   @include type--headings;
 
   @include font-size(9);
-  margin-bottom: $s6;
+  margin-bottom: space(6);
 }
 
 @mixin type--heading-1 {
@@ -85,7 +92,7 @@
   @include type--headings;
 
   @include font-size(8);
-  margin-bottom: $s6;
+  margin-bottom: space(6);
 }
 
 @mixin type--heading-2 {
@@ -94,7 +101,7 @@
   @include type--headings;
 
   @include font-size(7);
-  margin-bottom: $s6;
+  margin-bottom: space(6);
 }
 
 @mixin type--heading-3 {
@@ -103,7 +110,7 @@
   @include type--headings;
 
   @include font-size(6);
-  margin-bottom: $s4;
+  margin-bottom: space(4);
 }
 
 @mixin type--heading-4 {
@@ -112,7 +119,7 @@
   @include type--headings;
 
   @include font-size(5);
-  margin-bottom: $s3;
+  margin-bottom: space(3);
 }
 
 @mixin type--heading-5 {
@@ -121,7 +128,7 @@
   @include type--headings;
 
   @include font-size(4);
-  margin-bottom: $s3;
+  margin-bottom: space(3);
 }
 
 @mixin type--heading-6 {
@@ -130,7 +137,7 @@
   @include type--headings;
 
   @include font-size(3);
-  margin-bottom: $s3;
+  margin-bottom: space(3);
 }
 
 @mixin type--body {

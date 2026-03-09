@@ -6,7 +6,7 @@
   grid-template-rows: repeat(2, 1fr);
   width: css-min(80vh, 80vw);
   margin: auto;
-  gap: $s1;
+  gap: space(1);
   justify-content: center;
   align-items: center;
 
@@ -20,19 +20,17 @@
   }
 
   span {
-    margin: 0 $s2;
-    width: 36px;
+    margin: 0 space(2);
+    width: $s6;
     text-align: left;
   }
 }
 
 #play-pause {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-right: 12px;
-  width: 40px;
-  height: 40px;
+  @include flex-center;
+  margin-right: $s2;
+  width: space(7);
+  height: space(7);
   padding-top: 0;
 
   img {
@@ -56,7 +54,7 @@
   position: relative;
   width: css-min(80vh, 80vw);
   height: css-min(80vh, 80vw);
-  margin: $section-spacer auto 0;
+  margin-top: $section-spacer;
   background: $palette--primary-white;
 
   .line {
@@ -68,13 +66,9 @@
 
   &::after {
     content: '';
-    z-index: 0;
+    z-index: $z-index--below;
     display: block;
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
+    @include absolute-cover;
     background: $palette--primary-white;
     transform-origin: center center;
     transform: rotate(var(--rotation));
@@ -82,17 +76,13 @@
 }
 
 #control, #variant {
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 100%;
-  width: 100%;
+  @include absolute-cover;
 
   display: grid;
   gap: var(--thickness, 1px);
   grid-template-rows: repeat(var(--height), var(--thickness, 1px));
   grid-template-columns: 1fr;
-  z-index: 1;
+  z-index: $z-index--base;
 }
 
 #variant {

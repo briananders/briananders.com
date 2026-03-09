@@ -4,8 +4,8 @@
 
 .about-content {
   position: relative;
-  @include margin-center;
-  padding: 0 $s2;
+  @include left-margins;
+  padding: 0 space(2);
   max-width: 624px;
 }
 
@@ -40,10 +40,8 @@ section {
 
 section.resources {
   ul {
-    text-align: center;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    text-align: left;
+    @include flex-center;
     flex-wrap: wrap;
   }
   li {

@@ -2,8 +2,9 @@
 
 canvas {
   width: 100vw;
-  border: 2px solid $palette--divider-color;
-  height: calc(90vh - 66px);
+  max-width: 100%;
+  @include canvas-border;
+  height: calc(90vh - var(--nav-height));
   background-color: white;
   cursor: crosshair;
 }
@@ -22,12 +23,12 @@ main-stroke {
 .color-palette {
   display: grid;
   justify-content: center;
-  grid-template-columns: repeat(8, 36px);
-  grid-template-rows: repeat(3, 36px);
+  grid-template-columns: repeat(8, $s6);
+  grid-template-rows: repeat(3, $s6);
 
   @include mq($medium) {
-    grid-template-columns: repeat(12, 36px);
-    grid-template-rows: repeat(2, 36px);
+    grid-template-columns: repeat(12, $s6);
+    grid-template-rows: repeat(2, $s6);
   }
 
   main-color {
@@ -53,9 +54,9 @@ main-stroke {
 }
 
 main-stroke {
-  min-width: 72px;
-  min-height: 72px;
-  padding: $s1;
+  min-width: $s12;
+  min-height: $s12;
+  padding: space(1);
   display: flex;
   flex-flow: column;
 
@@ -63,9 +64,9 @@ main-stroke {
     content: '';
     display: block;
     background-color: black;
-    border-radius: 100%;
-    height: var(--stroke, #{$s2});
-    width: var(--stroke, #{$s2});
+    border-radius: $border-radius--circle;
+    height: var(--stroke, #{space(2)});
+    width: var(--stroke, #{space(2)});
     margin: auto;
     box-shadow: 0 0 0px 1px currentColor;
   }
@@ -73,7 +74,7 @@ main-stroke {
   span {
     width: 100%;
     display: block;
-    text-align: center;
+    text-align: left;
     align-self: flex-end;
   }
 }
@@ -86,7 +87,7 @@ $slider-height: 20px;
   position: relative;
   width: $slider-height;
   height: $slider-width;
-  margin-right: $s4;
+  margin-right: space(4);
 }
 
 #stroke-slider {

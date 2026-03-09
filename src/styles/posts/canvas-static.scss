@@ -2,16 +2,11 @@
 
 $squareSize: 768;
 
-.posts.canvas-static {
-
-}
-
 canvas {
   width: $squareSize + px;
   height: $squareSize + px;
-  margin: auto;
-  border: 2px solid $palette--divider-color;
-  max-width: 90vw;
+  @include canvas-border;
+  max-width: 100%;
   max-height: 90vw;
   display: block;
   background-color: #2f2f2f;
@@ -19,11 +14,10 @@ canvas {
 
 #graph {
   width: $squareSize + px;
-  max-width: 90vw;
+  max-width: 100%;
   display: block;
   height: auto;
   overflow: hidden;
-  margin: 0 auto;
 
   column {
     display: block;

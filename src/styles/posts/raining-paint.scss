@@ -3,8 +3,9 @@
 
 canvas {
   width: 100vw;
+  max-width: 100%;
   height: calc(100vh - 100px);
-  border: 2px solid $palette--divider-color;
+  @include canvas-border;
 }
 
 form {
@@ -12,10 +13,13 @@ form {
   label {
     display: flex;
     align-items: center;
-    justify-content: center;
+  }
+
+  label {
+    padding: 0;
   }
 
   input {
-    margin-right: $s2;
+    margin-right: space(2);
   }
 }

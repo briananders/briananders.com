@@ -50,6 +50,7 @@ module.exports = (configs) => {
   const {
     moveOneImage, moveOneVideo, moveOneTxtFile, moveOneDownload,
   } = require(`${dir.build}move-assets`);
+  const generateBuildTxt = require(`${dir.build}helpers/generate-build-txt`);
 
   watchForPreviewReady(configs);
 
@@ -58,6 +59,11 @@ module.exports = (configs) => {
     log(`${timestamp.stamp()} ${`File modified: ${filePath.split('briananders.com')[1]}`.yellow}`);
 
     const extn = path.extname(filePath);
+
+    // Regenerate build.txt on any source file change
+    if (filePath.startsWith(dir.src) && !filePath.includes('build.txt')) {
+      generateBuildTxt(configs);
+    }
 
     switch (true) {
       case filePath.includes('.DS_Store'):

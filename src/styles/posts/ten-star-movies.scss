@@ -1,47 +1,33 @@
 @import "system/utilities";
 
 
-article {
-  display: grid;
-  align-content: center;
-  justify-content: center;
-  justify-items: center;
-  text-align: center;
-  gap: $s4;
-  @include margin-center;
-
-  width: 240px;
-  grid-template-columns: repeat(1, 1fr);
-
-  @include mq((240px*2) + ($s4*3)) {
-    width: (240px*2) + ($s4*1);
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  @include mq((240px*3) + ($s4*4)) {
-    width: (240px*3) + ($s4*2);
-    grid-template-columns: repeat(3, 1fr);
-  }
-
-  @include mq((240px*4) + ($s4*5)) {
-    width: (240px*4) + ($s4*3);
-    grid-template-columns: repeat(4, 1fr);
-  }
+.movies-container {
+  @include grid($no-padding: true);
 }
 
 a.movie {
-  width: 240px;
+  @include columns(4);
+
   display: flex;
   flex-wrap: wrap;
-  align-content: space-between;
-  gap: $s2;
+  align-content: flex-start;
+  gap: space(2);
 
-  transition-property: color;
-  background-color: transparent;
-  color: $palette--primary-white;
+  @include mq(400px) {
+    @include columns(2);
+  }
+
+  @include mq($medium) {
+    @include columns(4);
+  }
+
+  @include mq($large) {
+    @include columns(3);
+  }
 
   img {
     display: block;
+    border-radius: $s1;
   }
 
   h2 {

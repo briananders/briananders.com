@@ -10,7 +10,7 @@
   border: 2px solid $palette--divider-color;
 
   div {
-    border-radius: 100%;
+    border-radius: $border-radius--circle;
 
     background-size: cover;
     background-repeat: no-repeat;
@@ -35,9 +35,7 @@
   height: css-min(100vh, 100vw, var(--window-height));
   margin: auto;
   transform: translateY(-100%);
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  @include flex-center;
   clip-path: circle(100% at center);
 
   transition: clip-path $transition-speed $transition-timing;
@@ -57,7 +55,7 @@
   border: 2px solid $palette--divider-color;
   margin-bottom: $paragraph-bottom;
   width: css-min(100vh, 100vw, var(--window-height), 100%);
-  @include margin-center;
+  @include left-margins;
   margin-top: $paragraph-bottom;
 
 

@@ -2,11 +2,11 @@ code {
   white-space: pre;
   overflow: hidden;
   font-family: monospace, serif;
-  padding: $s6;
+  padding: space(6);
   display: inline-block;
   overflow-x: auto;
   max-width: 100%;
   text-align: left;
-  margin: auto;
+  margin: 0;
   color: $palette--primary-white;
 }
