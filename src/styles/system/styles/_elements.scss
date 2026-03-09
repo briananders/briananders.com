@@ -10,7 +10,7 @@ section {
 
 main {
   @include left-margins;
-  z-index: 1;
+  z-index: $z-index--base;
   position: relative;
   transition-property: right, min-height;
   right: 0;

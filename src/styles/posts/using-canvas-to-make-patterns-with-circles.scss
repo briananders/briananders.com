@@ -4,9 +4,9 @@ main.posts.using-canvas-to-make-patterns-with-circles {
 
   canvas {
     width: 100vw;
-    border: 2px solid rgba($palette--divider-color, 0.2);
+    @include canvas-border;
     box-sizing: border-box;
-    height: calc(100vh - 66px);
+    height: var(--window-height);
   }
 
   #pause-button.paused {
@@ -25,10 +25,8 @@ main.posts.using-canvas-to-make-patterns-with-circles {
 
   form {
     margin-bottom: space(6);
-    display: flex;
+    @include flex-center;
     flex-wrap: wrap;
-    justify-content: center;
-    align-items: center;
     @include left-margins;
 
     label {

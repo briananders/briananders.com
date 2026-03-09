@@ -7,7 +7,7 @@ canvas {
   height: 100vh;
   max-height: 100vw;
   display: block;
-  border: 2px solid rgba($palette--divider-color, 0.2);
+  @include canvas-border;
   margin-top: space(6);
 }
 
@@ -31,7 +31,7 @@ form {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
-  font-family: $sans-serif;
+  @include type--regular-sans-serif;
 
   > * {
     margin: 0 space(1);

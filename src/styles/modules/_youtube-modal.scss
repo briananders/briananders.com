@@ -59,11 +59,7 @@ html.youtube-modal-open {
 }
 
 .youtube-modal-overlay {
-  position: fixed;
-  width: 100vw;
-  height: 100vh;
-  left: 0;
-  top: 0;
+  @include fullscreen-overlay;
   background-color: rgba(0, 0, 0, 0.7);
   z-index: $z-index--modal - 2;
   cursor: pointer;

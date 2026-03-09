@@ -280,7 +280,7 @@
 
   overflow: hidden;
   max-width: 500px;
-  border: 2px solid rgba($palette--divider-color, 0.2);
+  @include canvas-border;
   color: $palette--primary-white;
 
   p {

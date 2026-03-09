@@ -5,7 +5,7 @@
 }
 
 @mixin ds-code-label {
-  font-family: courier, monospace;
+  @include type--monospace;
   @include font-size(0);
   word-break: break-all;
 }
@@ -240,10 +240,8 @@
   .swatch {
     @include palette--base;
     width: 100px;
-    height: 60px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    height: $s10;
+    @include flex-center;
   }
 
   .shadow--text .swatch     { text-shadow: $shadow--text; }
@@ -364,7 +362,7 @@
   @include margin-center;
 
   .file-tree {
-    font-family: courier, monospace;
+    @include type--monospace;
     @include font-size(0);
     border: 1px solid $palette--secondary-grey;
     padding: $s4;
@@ -402,7 +400,7 @@
   }
 
   td:first-child {
-    font-family: courier, monospace;
+    @include type--monospace;
     color: $palette--divider-color;
     white-space: nowrap;
   }

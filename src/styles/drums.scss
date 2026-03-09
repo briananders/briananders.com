@@ -29,9 +29,7 @@ $aspectRatio: $height / $width;
     margin: 0 auto space(6);
     // background: linear-gradient(180deg, $palette--primary-grey, darken($palette--primary-color-dark, 10));
     background: linear-gradient(90deg, $palette--primary-color-dark, $palette--primary-color-light);
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    @include flex-center;
 
     img {
       width: css-min(100%, 400px);
@@ -57,25 +55,18 @@ $aspectRatio: $height / $width;
     margin-bottom: space(2);
     width: 100px;
     height: 100px;
-    border-radius: 50%;
+    border-radius: $border-radius--circle;
     padding: space(3);
     box-shadow: inset 0 0 0 1px #{$palette--primary-white}, 0 0 0 3px #{$palette--primary-color-dark};
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    @include flex-center;
   }
 
   .social-profiles {
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: $grid--gap;
+    @include flex-wrap-gap($grid--gap);
   }
 
   .social-profile {
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    @include flex-center;
     flex-direction: column;
     width: 150px;
   }

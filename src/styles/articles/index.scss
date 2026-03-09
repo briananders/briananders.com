@@ -15,7 +15,7 @@
     display: grid;
     border-radius: $border-radius;
     color: $palette--primary-white;
-    box-shadow: 0px 10px 90px 0px #111;
+    box-shadow: $shadow--card;
     padding: space(3);
     text-decoration: none;
     position: relative;
@@ -31,7 +31,7 @@
     }
 
     &:focus {
-      box-shadow: 0px 0px 0px 2px $palette--primary-grey, 0px 0px 0px 4px $palette--secondary-grey;
+      box-shadow: $shadow--focus;
     }
   }
 

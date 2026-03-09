@@ -42,8 +42,7 @@
 
 #untried-letters,
 #options {
-  display: flex;
-  flex-wrap: wrap;
+  @include flex-wrap-gap(0);
 
   span {
     position: relative;
@@ -65,9 +64,7 @@
       background: $palette--accent-color;
       color: $palette--primary-grey;
       @include type--heading-5;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      @include flex-center;
       clip-path: inset(50% 50%);
     }
 
@@ -139,9 +136,7 @@ fieldset {
     &:checked::before {
       content: '✓';
       height: 100%;
-      display: flex;
-      justify-content: center;
-      align-items: center;
+      @include flex-center;
       background-color: inherit;
       color: inherit;
     }
@@ -176,7 +171,7 @@ toast-notification {
   display: block;
   width: 100%;
   opacity: 0;
-  z-index: 10;
+  z-index: $z-index--toast;
   transition-property: bottom, opacity;
 
   &.animate {

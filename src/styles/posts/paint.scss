@@ -3,8 +3,8 @@
 canvas {
   width: 100vw;
   max-width: 100%;
-  border: 2px solid rgba($palette--divider-color, 0.2);
-  height: calc(90vh - 66px);
+  @include canvas-border;
+  height: calc(90vh - var(--nav-height));
   background-color: white;
   cursor: crosshair;
 }
@@ -23,12 +23,12 @@ main-stroke {
 .color-palette {
   display: grid;
   justify-content: center;
-  grid-template-columns: repeat(8, 36px);
-  grid-template-rows: repeat(3, 36px);
+  grid-template-columns: repeat(8, $s6);
+  grid-template-rows: repeat(3, $s6);
 
   @include mq($medium) {
-    grid-template-columns: repeat(12, 36px);
-    grid-template-rows: repeat(2, 36px);
+    grid-template-columns: repeat(12, $s6);
+    grid-template-rows: repeat(2, $s6);
   }
 
   main-color {
@@ -54,8 +54,8 @@ main-stroke {
 }
 
 main-stroke {
-  min-width: 72px;
-  min-height: 72px;
+  min-width: $s12;
+  min-height: $s12;
   padding: space(1);
   display: flex;
   flex-flow: column;
@@ -64,7 +64,7 @@ main-stroke {
     content: '';
     display: block;
     background-color: black;
-    border-radius: 100%;
+    border-radius: $border-radius--circle;
     height: var(--stroke, #{space(2)});
     width: var(--stroke, #{space(2)});
     margin: auto;
