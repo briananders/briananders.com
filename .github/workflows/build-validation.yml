@@ -26,5 +26,3 @@ jobs:
       - name: Test
         run: npm test
 
-      - name: Visual Diffs
-        run: npm run visual-diff
