@@ -35,37 +35,39 @@ ready.document(() => {
 
     // Random outcome
     const isHeads = Math.random() < 0.5;
-    
+
     // Calculate rotation - always do at least 3 full rotations for effect
     const minRotations = 3;
     const extraRotation = Math.floor(Math.random() * 3); // 0-2 extra rotations
     const totalRotations = minRotations + extraRotation;
-    
+
     // If heads, end on 0 or 360, if tails end on 180
     const finalPosition = isHeads ? 0 : 180;
     const totalDegrees = (totalRotations * 360) + finalPosition;
 
     // Apply the animation
-    coin.style.transform = `rotateX(${totalDegrees}deg)`;
+    coin.style.transform = `rotateX(${totalDegrees * 360}deg)`;
 
     // Wait for animation to complete
     setTimeout(() => {
       // Update stats
       if (isHeads) {
         heads++;
+        coin.style.transform = '';
         result.textContent = '🎉 HEADS!';
         result.classList.add('heads-result');
         result.classList.remove('tails-result');
       } else {
         tails++;
+        coin.style.transform = '';
         result.textContent = '🎉 TAILS!';
         result.classList.add('tails-result');
         result.classList.remove('heads-result');
       }
-      
+
       result.classList.add('show');
       updateStats();
-      
+
       isFlipping = false;
       flipButton.disabled = false;
     }, 1000);
@@ -80,7 +82,7 @@ ready.document(() => {
     updateStats();
     result.textContent = 'Stats reset! Click "Flip Coin" to start';
     result.classList.remove('show', 'heads-result', 'tails-result');
-    
+
     // Reset coin to initial position
     coin.style.transform = 'rotateX(0deg)';
   }

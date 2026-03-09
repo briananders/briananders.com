@@ -1,9 +1,6 @@
 @import "system/utilities";
 
 .posts.coin-flip {
-  display: grid;
-  align-items: center;
-  justify-content: center;
 
   .coin-container {
     display: flex;
@@ -124,8 +121,8 @@
     width: 100%;
     padding: space(3);
     border-radius: space(2);
-    border: 2px solid;
     margin-top: space(2);
+    border: 2px solid rgba($palette--divider-color, 0.2);
 
     @include mq-max($small) {
       grid-template-columns: 1fr;
