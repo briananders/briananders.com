@@ -5,21 +5,21 @@ date: 2024-08-21
 priority: 0.9
 layout: base
 styles:
-  - 'main'
-  - 'about/index'
+- 'main'
+- 'about/index'
 scripts:
-  - 'about'
+- 'about'
 ---
 
 
 <section class="contributions">
   <div class="content deck">
-      <%
+    <%
         const model = [
           {
             heading: "Podcast & YouTube channel: Bat Lessons",
             image: "/images/about/contributions/batlessons.webp",
-            copyBlock: `My friend ${inlineLink('Alex Cash', { href: 'https://alex.cash' })} and I cohost a show about Batman. It focuses on the context around the development of the characters, the history of the Batman universe, and the impact that our world had on it.`,
+            copyBlock: `Batman history, presented by ${inlineLink('Alex Cash', { href: 'https://alex.cash', external: true })} and myself. It focuses on the context around the development of the characters, the history of the Batman universe, and the impact that our world had on it.`,
             links: [
               {
                 label: "Podcast site",
@@ -29,7 +29,7 @@ scripts:
           }, {
             heading: "YouTube channel: Banders Drums",
             image: "/images/drums/logo.png",
-            copyBlock: "I have a YouTube channel where I post recordings of me playing drum covers. I plan to compose my own music someday.",
+            copyBlock: "A YouTube channel with videos of me playing drum covers.",
             links: [
               {
                 label: "Main Site",
@@ -199,7 +199,7 @@ scripts:
         ]
         model.forEach(({ copyBlock, image, heading, links }) => {
       %>
-        <%- partial('contributions-card', Object.assign(locals, { copyBlock, image, heading, links })); %>
-      <% }); %>
+    <%- partial('contributions-card', Object.assign(locals, { copyBlock, image, heading, links })); %>
+    <% }); %>
   </div>
 </section>
