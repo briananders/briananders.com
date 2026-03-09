@@ -28,9 +28,8 @@ td {
 }
 
 form {
-  display: flex;
+  @include flex-wrap-gap(0);
   align-items: center;
-  flex-wrap: wrap;
   @include type--regular-sans-serif;
 
   > * {

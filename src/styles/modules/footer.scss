@@ -23,9 +23,7 @@ footer {
   }
 
   .links {
-    display: flex;
-    gap: space(2);
-    flex-wrap: wrap;
+    @include flex-wrap-gap($s2);
     margin-top: space(4);
     margin-bottom: space(4);
   }

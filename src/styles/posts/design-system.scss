@@ -21,9 +21,7 @@
 .palette,
 .palette-combos {
   ul {
-    display: flex;
-    flex-wrap: wrap;
-    gap: space(4);
+    @include flex-wrap-gap($s4);
     justify-content: center;
   }
 
@@ -187,9 +185,7 @@
 
 .ds-spacing-demo {
   ul {
-    display: flex;
-    flex-wrap: wrap;
-    gap: $s4;
+    @include flex-wrap-gap($s4);
     justify-content: center;
     list-style: none;
   }
@@ -220,9 +216,7 @@
 
 .ds-shadow-demo {
   ul {
-    display: flex;
-    flex-wrap: wrap;
-    gap: $s6;
+    @include flex-wrap-gap($s6);
     justify-content: center;
     list-style: none;
   }
@@ -301,9 +295,7 @@
 
 .ds-component-demo {
   .demo-row {
-    display: flex;
-    flex-wrap: wrap;
-    gap: $s4;
+    @include flex-wrap-gap($s4);
     align-items: center;
     justify-content: center;
     margin-bottom: $s6;
