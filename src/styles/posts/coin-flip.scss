@@ -6,13 +6,12 @@
   justify-content: center;
 
   .coin-container {
-    @include margin-center;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: $s4;
-    margin-top: $s6;
-    padding: $s6;
+    gap: space(4);
+    margin-top: space(6);
+    padding: space(6);
     max-width: 500px;
   }
 
@@ -47,7 +46,7 @@
   }
 
   .coin-face {
-    font-size: $s4;
+    font-size: space(4);
     font-weight: bold;
     font-family: $sans-serif;
     text-align: center;
@@ -68,7 +67,7 @@
   }
 
   .result {
-    font-size: $s4;
+    font-size: space(4);
     font-weight: bold;
     font-family: $sans-serif;
     min-height: 2em;
@@ -98,7 +97,7 @@
     max-width: 250px;
     height: 3em;
     margin: unset;
-    font-size: $s3;
+    font-size: space(3);
 
     &:disabled {
       opacity: 0.5;
@@ -110,8 +109,8 @@
     @include button-link;
     background: transparent;
     border: 2px solid;
-    font-size: $s2;
-    padding: $s2 $s3;
+    font-size: space(2);
+    padding: space(2) space(3);
     
     &:hover {
       opacity: 0.8;
@@ -121,16 +120,16 @@
   .stats {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: $s3;
+    gap: space(3);
     width: 100%;
-    padding: $s3;
-    border-radius: $s2;
+    padding: space(3);
+    border-radius: space(2);
     border: 2px solid;
-    margin-top: $s2;
+    margin-top: space(2);
 
     @include mq-max($small) {
       grid-template-columns: 1fr;
-      gap: $s2;
+      gap: space(2);
     }
   }
 
@@ -138,17 +137,17 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: $s1;
+    gap: space(1);
   }
 
   .stat-label {
-    font-size: $s2;
+    font-size: space(2);
     font-family: $sans-serif;
     opacity: 0.7;
   }
 
   .stat-value {
-    font-size: $s4;
+    font-size: space(4);
     font-weight: bold;
     font-family: $sans-serif;
   }

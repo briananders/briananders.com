@@ -52,5 +52,6 @@ module.exports = (dir) => {
       path: '/drums',
     },
     batLessons: 'https://batlessons.com',
+    batLessonsYT: 'https://www.youtube.com/@batlessons',
   };
 };

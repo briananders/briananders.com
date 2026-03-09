@@ -13,8 +13,7 @@ scripts:
 
 
 <section class="contributions">
-  <div class="content">
-    <div class="deck">
+  <div class="content deck">
       <%
         const model = [
           {
@@ -54,9 +53,22 @@ scripts:
               },
             ],
           }, {
+            heading: "NPM package: Pageweight",
+            image: "/images/about/contributions/npm-logo.svg",
+            copyBlock: "A Node.js CLI tool that measures the total weight of a webpage on initial load. It catalogues every asset the browser fetches — scripts, stylesheets, images, fonts, and more — and presents a formatted breakdown grouped by type and sorted by size.",
+            links: [
+            {
+            label: "NPM Package",
+            url: "https://www.npmjs.com/package/@briananders/pageweight",
+            }, {
+            label: "Github",
+            url: "https://github.com/briananders/pageweight",
+            },
+            ],
+            },{
             heading: "NPM package: Two Way Merge",
             image: "/images/about/contributions/npm-logo.svg",
-            copyBlock: "I built an NPM module and published it to the global package library. The module is a command line action that takes two directories and merges them into each other.",
+            copyBlock: "A CLI tool that performs a two-way sync between two directories, making both sides mirror each other. It is designed to be run repeatedly — as a cron job, for example — to keep two locations in sync.",
             links: [
               {
                 label: "NPM Package",
@@ -189,6 +201,5 @@ scripts:
       %>
         <%- partial('contributions-card', Object.assign(locals, { copyBlock, image, heading, links })); %>
       <% }); %>
-    </div>
   </div>
 </section>

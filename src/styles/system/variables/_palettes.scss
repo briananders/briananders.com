@@ -2,6 +2,7 @@
 
 
 $palette--primary-white:  $color--white;
+$palette--primary-black:  #191919;
 $palette--primary-grey:   $color--grey-900;
 $palette--hover-grey:   $color--grey-800;
 $palette--secondary-grey: $color--grey-600;
@@ -11,3 +12,5 @@ $palette--error: $color--red-400;
 $palette--primary-color-dark:  darken($color--orange-900, 5);
 $palette--primary-color-light: $color--yellow-900;
 $palette--accent-color:        $color--green-a200;
+
+$palette--surface-color: rgba(0, 0, 0, 0.1);
