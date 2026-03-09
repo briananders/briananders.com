@@ -53,6 +53,13 @@
   font-weight: $bold;
 }
 
+@mixin type--monospace {
+  mixin: type--monospace;
+
+  font-family: $monospace;
+  font-weight: $regular;
+}
+
 @mixin italic {
   mixin: italic;
 
