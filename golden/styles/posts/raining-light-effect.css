@@ -1,1 +1,1 @@
-#canvas{width:min(90vw,1024px);height:80vh;border:2px solid #f57f17;display:block;margin-left:0;margin-right:auto}
+#canvas{width:100%;height:calc(100vh - 120px);border:2px solid rgba(245,127,23,.2);display:block;margin-left:0;margin-right:auto}
