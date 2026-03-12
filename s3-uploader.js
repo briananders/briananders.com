@@ -123,33 +123,53 @@ function uploadFile(fileName, index, fileList) {
   const fileLocation = fileName.replace(dir.package, '');
 
   const uploadPromise = new Promise((resolve, reject) => {
-    if (fs.lstatSync(fileName).isDirectory()) resolve(fileLocation);
-    const fileData = fs.readFileSync(fileName);
-    s3.upload({
-      Bucket: bucketName,
-      Key: fileLocation,
-      Body: fileData,
-      ContentType: getContentType(fileName),
-      ACL: 'public-read',
-      Expires: '2034-01-01T00:00:00Z',
-      CacheControl: getCacheControl(fileName),
-      MetadataDirective: 'REPLACE',
-    }, (err, uploadData) => {
-      if (err) reject(err);
-      else {
-        console.log(`File uploaded successfully at ${uploadData.Location}`);
-        resolve(fileLocation);
-      }
+    fs.lstat(fileName, (err, stats) => {
+      if (err) return reject(err);
+      if (stats.isDirectory()) return resolve(fileLocation);
+      
+      const fileStream = fs.createReadStream(fileName);
+      s3.upload({
+        Bucket: bucketName,
+        Key: fileLocation,
+        Body: fileStream,
+        ContentType: getContentType(fileName),
+        ACL: 'public-read',
+        Expires: '2034-01-01T00:00:00Z',
+        CacheControl: getCacheControl(fileName),
+        MetadataDirective: 'REPLACE',
+      }, (err, uploadData) => {
+        if (err) reject(err);
+        else {
+          console.log(`File uploaded successfully at ${uploadData.Location}`);
+          resolve(fileLocation);
+        }
+      });
     });
   });
 
   return uploadPromise;
 };
 
-function uploadFiles(fileList) {
+async function uploadFiles(fileList) {
   fs.chmodSync(dir.package, '0755');
 
-  return Promise.all(fileList.map(uploadFile));
+  const MAX_CONCURRENCY = 50;
+  let index = 0;
+  
+  const worker = async () => {
+    while (index < fileList.length) {
+      const currentIndex = index++;
+      await uploadFile(fileList[currentIndex], currentIndex, fileList);
+    }
+  };
+  
+  const workers = [];
+  for (let i = 0; i < Math.min(MAX_CONCURRENCY, fileList.length); i++) {
+    workers.push(worker());
+  }
+  
+  await Promise.all(workers);
+  return fileList;
 };
 
 function invalidateCloudFront() {
@@ -174,7 +194,7 @@ function invalidateCloudFront() {
   });
 };
 
-const alwaysSwapFiles = (fileName) => [
+const SWAP_FILES_REGEXES = [
   /\.html$/,
   /\.html\.gz$/,
   /\.xml$/,
@@ -183,22 +203,26 @@ const alwaysSwapFiles = (fileName) => [
   /\.json\.gz$/,
   /\.txt$/,
   /\.ico$/
-].filter((regex) => regex.test(fileName)).length;
+];
+
+const alwaysSwapFiles = (fileName) => SWAP_FILES_REGEXES.some((regex) => regex.test(fileName));
 
 getS3Objects().then((data) => {
   const s3FileList = data.Contents.map(({ Key }) => Key);
+  const s3FileSet = new Set(s3FileList);
 
   const packageGlob = glob.sync(`${dir.package}**/*`);
+  const packageSet = new Set(packageGlob);
 
   const isAllowlisted = (filePath) => deleteAllowlist.some((dir) => filePath.startsWith(dir) || filePath.startsWith(dir.substring(1)));
 
   const s3DeleteList = s3FileList.filter((s3File) => !isAllowlisted(s3File)
-      && (!packageGlob.includes(dir.package + s3File)
+      && (!packageSet.has(dir.package + s3File)
       || alwaysSwapFiles(s3File)));
 
   const toUploadList = packageGlob.filter((packageFile) => !fs.lstatSync(packageFile).isDirectory()
     && (
-      !s3FileList.includes(packageFile.replace(dir.package, ''))
+      !s3FileSet.has(packageFile.replace(dir.package, ''))
       || alwaysSwapFiles(packageFile)
     ));
 
