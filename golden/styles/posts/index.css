@@ -1,0 +1,1 @@
+#posts-list{display:grid;grid-template-columns:1fr;gap:6px;justify-content:space-around;align-items:stretch;justify-items:stretch;margin-bottom:36px;text-align:left}#posts-list a{display:grid;width:min(720px,100%);margin-bottom:0;grid-template-columns:1fr 130px;align-items:center}footer.posts.index{margin-top:0}

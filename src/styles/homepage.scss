@@ -5,10 +5,10 @@ main.home {
   @import "modules/posts-list";
   @import "posts/last-fm";
 
-  margin-top: $s12;
+  margin-top: space(12);
 
   .last-fm-module {
-    margin-top: $s6;
+    margin-top: space(6);
   }
 
   .deck {

@@ -19,18 +19,30 @@ p {
 }
 
 .year-selector-container {
-  @include sixHundred;
+  @include readingWidth;
   @include paragraph-margin;
 }
 
 #albums, #artists, #yearly-scrobbles {
-  @include sixHundred;
+  @include readingWidth;
 
   display: grid;
-  gap: $s2;
+  gap: space(2);
 }
 
 #albums, #artists {
-  gap: $s6;
-  margin-bottom: $s12;
+  gap: space(6);
+  margin-bottom: space(12);
+}
+
+#selector-container {
+  display: inline-block;
+}
+
+#filters-container {
+  @include paragraph-margin;
+}
+
+.trend-list-container {
+  overflow: auto;
 }
