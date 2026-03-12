@@ -24,7 +24,7 @@ function deletePackageFile(srcPath, { dir }) {
   fs.removeSync(destPath);
 }
 
-function moveOneImage(imagePath, configs, callback = () => {}) {
+function moveOneImage(imagePath, configs, callback = () => { }) {
   const {
     dir, debug,
   } = configs;
@@ -104,7 +104,7 @@ function moveAllImages(configs) {
   }
 }
 
-function moveOneVideo(videoPath, configs, callback = () => {}) {
+function moveOneVideo(videoPath, configs, callback = () => { }) {
   const {
     dir, debug,
   } = configs;
@@ -156,7 +156,7 @@ function moveAllVideos(configs) {
 
   for (let i = 0; i < videoGlob.length; i++) {
     const videoPath = videoGlob[i];
-    moveOneImage(videoPath, configs, () => {
+    moveOneVideo(videoPath, configs, () => {
       processed++;
       if (debug) log(`${timestamp.stamp()} ${processed}/${videoGlob.length}: ${videoPath}`);
       checkDone(processed, videoGlob.length);
@@ -164,7 +164,7 @@ function moveAllVideos(configs) {
   }
 }
 
-function moveOneTxtFile(filePath, configs, callback = () => {}) {
+function moveOneTxtFile(filePath, configs, callback = () => { }) {
   const {
     dir, debug,
   } = configs;
@@ -245,7 +245,7 @@ function moveJSONFiles(configs) {
   }
 }
 
-function moveOneDownload(filePath, configs, callback = () => {}) {
+function moveOneDownload(filePath, configs, callback = () => { }) {
   const {
     dir, debug,
   } = configs;
