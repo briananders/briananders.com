@@ -1,16 +1,16 @@
 ---
 title: "Home"
-description: "Brian Anders is an Engineer Manager in the tech industry. I'm also a Youtuber, Podcaster, and Musician."
+description: "Brian Anders is an Engineering Manager in the tech industry. I'm also a YouTuber, Podcaster, and Musician."
 priority: 1.0
 homepage: true
 pageClasses:
-  - 'main'
-  - 'home'
+- 'main'
+- 'home'
 layout: base
 styles:
-  - 'main'
+- 'main'
 scripts:
-  - 'homepage'
+- 'homepage'
 ---
 
 
@@ -24,7 +24,7 @@ scripts:
         {
           heading: "Bat Lessons",
           image: "/images/about/contributions/batlessons.webp",
-          copyBlock: `${inlineLink('Alex Cash', { href: 'https://alex.cash', external: true })} and I cohost a show about Batman.`,
+          copyBlock: `Batman history, presented by ${inlineLink('Alex Cash', { href: 'https://alex.cash', external: true })} and myself.`,
           links: [
             {
               label: "Website",
@@ -38,7 +38,7 @@ scripts:
         }, {
           heading: "Banders Drums",
           image: "/images/drums/logo.png",
-          copyBlock: "I have a YouTube channel where I post recordings of me playing drum covers.",
+          copyBlock: "A YouTube channel with videos of me playing drum covers.",
           links: [
             {
               label: "Website",
@@ -52,8 +52,8 @@ scripts:
       ]
       model.forEach(({ copyBlock, image, heading, links }) => {
     %>
-        <%- partial('contributions-card', Object.assign(locals, { copyBlock, image, heading, links })); %>
-      <% }); %>
+    <%- partial('contributions-card', Object.assign(locals, { copyBlock, image, heading, links })); %>
+    <% }); %>
   </div>
   <div class="content">
     <%- blockLink('More', {
@@ -88,7 +88,7 @@ scripts:
     <link rel="preconnect" href="https://ws.audioscrobbler.com" crossorigin />
     <div class="last-fm-module p" data-type="albums" src="/images/posts/last-fm/default.webp">
       <% for (let i = 0; i < 4; i++) { %>
-        <%- defaultLastFMModule(); %>
+      <%- defaultLastFMModule(); %>
       <% } %>
     </div>
     <div class="center">

@@ -19,7 +19,7 @@
   </url>
   <url>
     <loc>https://briananders.com/</loc>
-    <lastmod>2026-03-08</lastmod>
+    <lastmod>2026-03-09</lastmod>
     <priority>1</priority>
     <changefreq>yearly</changefreq>
   </url>
@@ -68,6 +68,12 @@
   <url>
     <loc>https://briananders.com/posts/circle-wave-illusion/</loc>
     <lastmod>2022-06-25</lastmod>
+    <priority>0.8</priority>
+    <changefreq>yearly</changefreq>
+  </url>
+  <url>
+    <loc>https://briananders.com/posts/coin-flip/</loc>
+    <lastmod>2025-12-09</lastmod>
     <priority>0.8</priority>
     <changefreq>yearly</changefreq>
   </url>

@@ -32,7 +32,7 @@ module.exports = (dir) => {
     devBuild: !production,
     version: pkg.version,
     name: 'Brian Anders',
-    description: "Brian Anders is an Engineer Manager in the tech industry. I'm also a Youtuber, Podcaster, and Musician.",
+    description: "Brian Anders is an Engineering Manager in the tech industry. I'm also a YouTuber, Podcaster, and Musician.",
     author: 'Brian Anders',
     contact: twitter,
     domain: 'https://briananders.com/', // set domain
