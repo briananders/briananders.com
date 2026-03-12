@@ -6,9 +6,11 @@ $circle-diameter: css-min(0.75vh, 0.75vw);
   0% {
     left: 0%;
   }
+
   50% {
     left: calc(100% - #{$circle-diameter});
   }
+
   100% {
     left: 0%;
   }
@@ -35,7 +37,8 @@ select {
     z-index: 2;
   }
 
-  span, line {
+  span,
+  line {
     overflow: hidden;
     position: absolute;
     top: 50%;
@@ -44,7 +47,7 @@ select {
     width: 100%;
     transform-origin: center center;
     height: $circle-diameter;
-    border-radius: $circle-diameter / 2;
+    border-radius: calc($circle-diameter / 2);
   }
 
   span {

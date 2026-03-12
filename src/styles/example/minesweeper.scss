@@ -7,7 +7,7 @@ section.minesweeper {
 .minesweeper {
 
   .blog-container {
-    > * {
+    >* {
       max-width: none;
       width: auto;
     }
@@ -22,9 +22,11 @@ section.minesweeper {
     &[data-difficulty=beginner] {
       grid-template-columns: repeat(8, 1fr);
     }
+
     &[data-difficulty=intermediate] {
       grid-template-columns: repeat(16, 1fr);
     }
+
     &[data-difficulty=expert] {
       grid-template-columns: repeat(24, 1fr);
     }
@@ -138,7 +140,7 @@ section.minesweeper {
 
     @for $i from 0 through 9 {
       &[data-number="#{$i}"] {
-        background-position-x: 892px / 90px * $i * 1%;
+        background-position-x: calc(892px / 90px * $i * 1%);
       }
     }
   }

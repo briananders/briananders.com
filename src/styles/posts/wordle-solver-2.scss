@@ -4,10 +4,12 @@
   background: yellow;
   color: $palette--primary-grey;
 }
+
 @mixin correct {
   background: green;
   color: $palette--primary-white;
 }
+
 @mixin wrong {
   background: black;
   color: $palette--primary-white;
@@ -17,12 +19,15 @@
   0% {
     clip-path: inset(50% 50%);
   }
+
   50% {
     clip-path: inset(0% 0%);
   }
+
   99% {
     clip-path: inset(0% 0%);
   }
+
   100% {
     clip-path: inset(50% 50%);
   }
@@ -48,7 +53,7 @@
   span {
     position: relative;
     display: inline-block;
-    padding: #{space(1) / 2} space(1);
+    padding: calc(space(1) / 2) space(1);
     margin: space(1);
     border: 2px solid $palette--divider-color;
     cursor: pointer;
@@ -115,13 +120,16 @@ fieldset {
     &[for^="close"] {
       @include close;
     }
+
     &[for^="correct"] {
       @include correct;
     }
+
     &[for^="wrong"] {
       @include wrong;
     }
   }
+
   input[type=radio] {
     appearance: none;
     padding: 0;
@@ -161,9 +169,11 @@ input.letter {
   &[data-state="wrong"] {
     @include wrong;
   }
+
   &[data-state="close"] {
     @include close;
   }
+
   &[data-state="correct"] {
     @include correct;
   }

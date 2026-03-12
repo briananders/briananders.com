@@ -6,4 +6,4 @@ $grid--gutter: space(2);
 $grid--gap: space(1);
 $grid--start-break-point: $medium;
 $grid--max-width: 1440px;
-$grid--copy-max-width: $grid--max-width / 2;
+$grid--copy-max-width: calc($grid--max-width / 2);

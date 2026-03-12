@@ -60,7 +60,7 @@
       @include type--bold-sans-serif;
       background-color: $palette--primary-color-dark;
       color: $palette--primary-white;
-      padding: space(1) / 2 space(2);
+      padding: calc(space(1) / 2) space(2);
       border-radius: $border-radius;
       white-space: nowrap;
     }

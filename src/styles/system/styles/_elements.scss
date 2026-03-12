@@ -166,8 +166,8 @@ input[type=checkbox].toggle {
     height: space(4);
     border-radius: space(2);
     background-color: $palette--accent-color;
-    top: -#{space(1) / 2};
-    left:-#{space(1) / 2};
+    top: calc(-space(1) / 2);
+    left: calc(-space(1) / 2);
     transition: left $transition-speed, background-color $transition-speed;
     box-shadow: 0 0 space(1) $color--grey-900;
   }
@@ -178,7 +178,7 @@ input[type=checkbox].toggle {
 
     /* Checkbox checked effect */
     &::before {
-      left: calc(100% - #{space(4) - (space(1) / 2)});
+      left: calc(100% - space(4) - (space(1) / 2));
     }
 
     &:focus {
