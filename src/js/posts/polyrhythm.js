@@ -1,5 +1,9 @@
 const ready = require('../_modules/document-ready');
 const windowResize = require('../_modules/window-resize');
+const {
+  unlockAudioContext,
+  installGlobalAudioUnlock,
+} = require('../_modules/audio-context');
 
 let canvasContext;
 let canvas;
@@ -31,7 +35,6 @@ const tones = [
   1760.000, // A6
 ];
 
-let AudioContext;
 let audioCtx;
 
 function ColorObject(position) {
@@ -191,6 +194,7 @@ function createCircles() {
 }
 
 function ding(position) {
+  if (!audioCtx || audioCtx.state !== 'running') return;
   const frequency = tones[position];
 
   const oscillator = audioCtx.createOscillator();
@@ -209,7 +213,9 @@ function ding(position) {
   gainNode.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 2);
 
   setTimeout(() => {
-    oscillator.stop();
+    try { oscillator.stop(); } catch {}
+    try { oscillator.disconnect(); } catch {}
+    try { gainNode.disconnect(); } catch {}
   }, 2100); // 2 seconds fade-out + 100ms buffer
 }
 
@@ -218,16 +224,13 @@ function clear() {
 }
 
 function setUpEvents() {
-  playButton.addEventListener('click', () => {
-    AudioContext = window.AudioContext || window.webkitAudioContext;
-    audioCtx = new AudioContext();
-    draw();
-    // audioCtx.resume().then(() => {
-      // console.log('Playback resumed successfully');
-    // }).catch(error => {
-      // document.querySelector('debug').innerText += `\n\n${error.toString()}`;
-    // });
+  // Ensure iOS has a user-gesture path to unlock audio.
+  installGlobalAudioUnlock();
 
+  playButton.addEventListener('click', async () => {
+    audioCtx = await unlockAudioContext();
+    if (!audioCtx) return;
+    draw();
     playButton.style.display = 'none';
   });
 }
