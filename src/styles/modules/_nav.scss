@@ -1,6 +1,6 @@
 @import "modules/sticky-stacky";
 
-$nav-height: $s12;
+$nav-height: space(12);
 
 html {
   --nav-height: #{$nav-height};
@@ -27,7 +27,7 @@ nav.main {
   z-index: 1000;
   width: 100%;
   position: relative;
-  @include palette--base;
+  @include palette--header;
 
   * {
     position: relative;
@@ -56,13 +56,11 @@ nav.main {
     display: flex;
     justify-content: space-between;
     min-height: $nav-height;
-    @include palette--base;
 
     &::after {
       display: block;
       content: "";
       position: absolute;
-      @include palette--base;
       top: 0;
       bottom: 0;
       left: 100%;
@@ -77,29 +75,37 @@ nav.main {
     @include link-focus;
   }
 
+  #activate-menu {
+    border-width: 0px;
+    border-color: rgba(0, 0, 0, 0);
+    border-image: none;
+    border-style: none;
+    background-color: rgba(50, 50, 50, 1);
+  }
+
   #nav-tray {
     z-index: 0;
     position: absolute;
     top: calc(100% + 12px);
-    transform-origin: calc(100% - (#{$s2} + 20px)) calc(-1 * #{$s2});
+    transform-origin: calc(100% - #{space(2) + 20px}) -#{space(2)};
     transform: rotateY(90deg);
     display: grid;
-    right: $s2;
+    right: space(2);
     transition-property: transform;
     @include palette--base;
     box-shadow: 0 0 0 2px $palette--primary-color-light;
-    padding: $s1;
+    padding: space(1);
 
     &.slide-in {
       transform: rotateY(0deg);
     }
 
     @include mq($medium) {
-      right: $s6;
+      right: space(6);
     }
 
     .block-link {
-      padding: 2px $s1 0;
+      padding: 2px space(1) 0;
       margin-left: 0;
     }
   }
@@ -108,10 +114,10 @@ nav.main {
     &,
     &::after {
       position: absolute;
-      width: $s4;
-      height: $s4;
+      width: space(4);
+      height: space(4);
       border-style: solid;
-      border-width: $s2;
+      border-width: space(2);
       border-radius: 0;
       border-top-color: transparent;
       border-left-color: transparent;
@@ -126,7 +132,7 @@ nav.main {
       transform: translateY(2px);
     }
 
-    top: -$s4;
+    top: -#{space(4)};
     right: 20px;
     border-bottom-color: $palette--primary-color-light;
   }
@@ -137,7 +143,6 @@ nav.main {
     display: flex;
     justify-content: flex-start;
     align-items: middle;
-    @include palette--base;
     border: none;
 
     &::after {

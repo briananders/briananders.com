@@ -8,10 +8,10 @@ main.posts.how-to-match {
     overflow: hidden;
     @include type--heading-4;
     border: 2px solid $palette--divider-color;
-    margin-bottom: $s6;
+    margin-bottom: space(6);
   }
   .tall {
-    border-top: $s3 solid $palette--accent-color;
+    border-top: space(3) solid $palette--accent-color;
   }
   .column-1,
   .column-3 {
@@ -39,10 +39,10 @@ main.posts.how-to-match {
   }
   ul {
     margin: 0;
-    padding-top: $s6;
-    padding-bottom: $s6;
+    padding-top: space(6);
+    padding-bottom: space(6);
     list-style: none;
     padding-left: 0;
-    text-align: center;
+    text-align: left;
   }
 }

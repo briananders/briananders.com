@@ -21,7 +21,8 @@
     "preview": "node index.js",
     "scaffold": "node scaffold.js",
     "stage": "node s3-uploader.js",
-    "start": "node index.js"
+    "start": "node index.js",
+    "visual-diff": "node bin/visual-diff.js"
   },
   "repository": {
     "type": "git",
@@ -37,7 +38,7 @@
   "license": "MIT",
   "devDependencies": {
     "broken-link-checker": "^0.7.8",
-    "eslint": "^8.30.0",
+    "eslint": "^8.57.1",
     "eslint-config-airbnb": "^19.0.4",
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-plugin-ejs": "^0.0.2",
@@ -72,6 +73,7 @@
     "handlebars": "^4.7.7",
     "highlight.js": "^11.7.0",
     "html-minifier": "^4.0.0",
+    "http-proxy-middleware": "^3.0.5",
     "image-size": "^1.0.2",
     "merge": "^2.1.1",
     "node-notifier": "^10.0.1",
