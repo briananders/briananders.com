@@ -5,7 +5,7 @@ $squareSize: 768;
 canvas {
   width: $squareSize + px;
   height: $squareSize + px;
-  border: 2px solid rgba($palette--divider-color, 0.2);
+  @include canvas-border;
   max-width: 100%;
   max-height: 90vw;
   display: block;

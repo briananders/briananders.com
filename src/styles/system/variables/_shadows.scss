@@ -1,0 +1,11 @@
+@import "system/variables/colors";
+@import "system/variables/palettes";
+@import "system/variables/defaults";
+@import "system/variables/spaces";
+
+$shadow--text: 0px 2px 4px black;
+$shadow--focus: 0px 0px 0px 2px $palette--primary-grey, 0px 0px 0px 4px $palette--secondary-grey;
+$shadow--card: 0px 10px 90px 0px #111;
+$shadow--elevated: 0 0 12px black;
+$shadow--toggle: 0 0 $s1 $color--grey-900;
+$shadow--nav-tray: 0 0 0 2px $palette--primary-color-light;

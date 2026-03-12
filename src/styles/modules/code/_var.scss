@@ -1,8 +1,8 @@
 var {
-  font-family: courier;
+  @include type--monospace;
   display: inline-block;
   border: 1px solid $palette--secondary-grey;
-  border-radius: 4px;
+  border-radius: $s1;
   padding: 0 0.5rem;
   background-color: transparent;
   color: $palette--primary-white;

@@ -28,11 +28,11 @@ select {
 
   line {
     background-color: $color--grey-800;
-    z-index: 0;
+    z-index: $z-index--below;
   }
 
   span {
-    z-index: 2;
+    z-index: $z-index--above;
   }
 
   span, line {
@@ -53,13 +53,13 @@ select {
       width: $circle-diameter;
       height: $circle-diameter;
       display: block;
-      border-radius: 100%;
+      border-radius: $border-radius--circle;
       background-color: red;
       position: absolute;
       top: 50%;
       transform: translateY(-50%);
       left: 0%;
-      z-index: 2;
+      z-index: $z-index--above;
 
       animation-name: back-and-forth;
       animation-iteration-count: infinite;

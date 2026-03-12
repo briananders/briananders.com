@@ -4,11 +4,22 @@
   @return $base-unit * $size;
 }
 
+$s1:  space(1);
+$s2:  space(2);
+$s3:  space(3);
+$s4:  space(4);
+$s6:  space(6);
+$s8:  space(8);
+$s10: space(10);
+$s12: space(12);
+
+$border-radius: $s2;
+$border-radius--circle: 50%;
+
 $section-spacer: space(20);
 $paragraph-bottom: space(6);
 $content-max-width: 1024px;
 
-
 $full-bleed: $content-max-width;
-$full-width-small: $content-max-width - (2 * space(2));
-$full-width-medium: $content-max-width - (2 * space(6));
+$full-width-small: $content-max-width - (2 * $s2);
+$full-width-medium: $content-max-width - (2 * $s6);

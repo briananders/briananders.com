@@ -26,6 +26,11 @@
   margin-right: auto;
 }
 
+@mixin margin-center {
+  margin-left: auto;
+  margin-right: auto;
+}
+
 @mixin left-margins {
   margin-left: 0;
   margin-right: auto;

@@ -1,15 +1,27 @@
 @import "system/utilities";
 
 @mixin ds-box-shadow {
-  box-shadow: 0 0 12px black;
+  box-shadow: $shadow--elevated;
+}
+
+@mixin ds-code-label {
+  @include type--monospace;
+  @include font-size(0);
+  word-break: break-all;
+}
+
+.design-system {
+  section {
+    .container {
+      @include content;
+    }
+  }
 }
 
 .palette,
 .palette-combos {
   ul {
-    display: flex;
-    flex-wrap: wrap;
-    gap: space(4);
+    @include flex-wrap-gap($s4);
     justify-content: center;
   }
 
@@ -169,4 +181,227 @@
   .italic {
     @include italic;
   }
+}
+
+.ds-spacing-demo {
+  ul {
+    @include flex-wrap-gap($s4);
+    justify-content: center;
+    list-style: none;
+  }
+
+  li {
+    margin-bottom: 0;
+    display: flex;
+    flex-flow: column;
+    align-items: center;
+    gap: $s1;
+    text-align: center;
+  }
+
+  .swatch {
+    @include palette--base--inverted;
+    display: block;
+  }
+
+  .s1  .swatch { width: $s1;  height: $s1;  }
+  .s2  .swatch { width: $s2;  height: $s2;  }
+  .s3  .swatch { width: $s3;  height: $s3;  }
+  .s4  .swatch { width: $s4;  height: $s4;  }
+  .s6  .swatch { width: $s6;  height: $s6;  }
+  .s8  .swatch { width: $s8;  height: $s8;  }
+  .s10 .swatch { width: $s10; height: $s10; }
+  .s12 .swatch { width: $s12; height: $s12; }
+}
+
+.ds-shadow-demo {
+  ul {
+    @include flex-wrap-gap($s6);
+    justify-content: center;
+    list-style: none;
+  }
+
+  li {
+    margin-bottom: 0;
+    display: flex;
+    flex-flow: column;
+    align-items: center;
+    gap: $s2;
+    text-align: center;
+    width: 140px;
+  }
+
+  .swatch {
+    @include palette--base;
+    width: 100px;
+    height: $s10;
+    @include flex-center;
+  }
+
+  .shadow--text .swatch     { text-shadow: $shadow--text; }
+  .shadow--focus .swatch    { box-shadow: $shadow--focus; }
+  .shadow--card .swatch     { box-shadow: $shadow--card; }
+  .shadow--elevated .swatch { box-shadow: $shadow--elevated; }
+  .shadow--toggle .swatch   { box-shadow: $shadow--toggle; }
+  .shadow--nav-tray .swatch { box-shadow: $shadow--nav-tray; }
+}
+
+.ds-z-index-demo {
+  ul {
+    list-style: none;
+    display: grid;
+    gap: $s2;
+    max-width: $grid--copy-max-width;
+    @include margin-center;
+  }
+
+  li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0;
+    padding: $s1 $s2;
+    border: 1px solid $palette--secondary-grey;
+  }
+
+  .label {
+    @include ds-code-label;
+    padding: 0;
+    text-align: left;
+  }
+
+  .value {
+    @include type--bold-sans-serif;
+  }
+}
+
+.ds-transitions-demo {
+  .demo-box {
+    @include palette--base--inverted;
+    padding: $s3;
+    text-align: center;
+    @include margin-center;
+    margin-bottom: $s4;
+    max-width: 300px;
+    transition-property: background-color, transform;
+    cursor: pointer;
+
+    &:hover {
+      background-color: $palette--divider-color;
+      transform: scale(1.05);
+    }
+  }
+}
+
+.ds-component-demo {
+  .demo-row {
+    @include flex-wrap-gap($s4);
+    align-items: center;
+    justify-content: center;
+    margin-bottom: $s6;
+  }
+
+  .demo-item {
+    text-align: center;
+  }
+}
+
+.ds-grid-demo {
+  .grid-row {
+    display: flex;
+    gap: percentage($s3/$large);
+    margin-bottom: $s4;
+    max-width: $grid--max-width;
+    @include margin-center;
+  }
+
+  .grid-col {
+    @include palette--base--inverted;
+    text-align: center;
+    padding: $s1;
+    @include font-size(0);
+  }
+}
+
+.ds-toc {
+  max-width: $grid--copy-max-width;
+  @include margin-center;
+  margin-bottom: $s12;
+
+  h3 {
+    margin-bottom: $s4;
+  }
+
+  ol {
+    list-style: decimal;
+    padding-left: $s4;
+    columns: 2;
+    column-gap: $s6;
+
+    @include mq-max($medium) {
+      columns: 1;
+    }
+  }
+
+  li {
+    margin-bottom: $s2;
+    break-inside: avoid;
+  }
+}
+
+.ds-anatomy {
+  max-width: $grid--copy-max-width;
+  @include margin-center;
+
+  .file-tree {
+    @include type--monospace;
+    @include font-size(0);
+    border: 1px solid $palette--secondary-grey;
+    padding: $s4;
+    margin-bottom: $s6;
+    overflow-x: auto;
+    white-space: pre;
+
+    .dir {
+      color: $palette--divider-color;
+    }
+  }
+}
+
+.ds-token-table {
+  max-width: $grid--copy-max-width;
+  @include margin-center;
+  overflow-x: auto;
+  margin-bottom: $s6;
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    @include font-size(0);
+  }
+
+  th, td {
+    text-align: left;
+    padding: $s1 $s2;
+    border-bottom: 1px solid $palette--secondary-grey;
+  }
+
+  th {
+    @include type--bold-sans-serif;
+    border-bottom: 2px solid $palette--divider-color;
+  }
+
+  td:first-child {
+    @include type--monospace;
+    color: $palette--divider-color;
+    white-space: nowrap;
+  }
+}
+
+.ds-section-label {
+  @include ds-code-label;
+  color: $palette--secondary-grey;
+  display: block;
+  margin-bottom: $s1;
+  text-align: center;
 }

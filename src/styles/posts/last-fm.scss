@@ -26,12 +26,11 @@
 
     &:focus {
       border: none;
-      box-shadow: 0 0 0 2px $palette--primary-grey, 0 0 0 4px $palette--secondary-grey;
+      box-shadow: $shadow--focus;
     }
 
     .name {
-      font-family: $sans-serif;
-      font-weight: $bold;
+      @include type--bold-sans-serif;
     }
 
     .scrobbles {

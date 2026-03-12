@@ -4,12 +4,12 @@
   left: 50%;
   transform: translateX(-50%);
   width: auto;
-  z-index: 10000000;
-  padding: space(2);
+  z-index: $z-index--skip-nav;
+  padding: $s2;
   margin: auto;
-  border-bottom-left-radius: var(--border-radius, $border-radius);
-  border-bottom-right-radius: var(--border-radius, $border-radius);
-  box-shadow: 0 0 12px black;
+  border-bottom-left-radius: $border-radius;
+  border-bottom-right-radius: $border-radius;
+  box-shadow: $shadow--elevated;
 
   &[data-state=inactive] {
     top: -100%;

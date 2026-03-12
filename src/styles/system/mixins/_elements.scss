@@ -129,7 +129,7 @@
   mixin: link-focus;
 
   &:focus {
-    box-shadow: 0px 0px 0px 2px $palette--primary-grey, 0px 0px 0px 4px $palette--secondary-grey;
+    box-shadow: $shadow--focus;
   }
 }
 
@@ -208,6 +208,8 @@
   border-radius: var(--border-radius, $border-radius);
 
   color: $palette--primary-white;
+  box-shadow: $shadow--card;
+  padding: $s2;
   width: 100%;
 
   @include link-hover;
@@ -278,7 +280,7 @@
 
   overflow: hidden;
   max-width: 500px;
-  border: 2px solid rgba($palette--divider-color, 0.2);
+  @include canvas-border;
   color: $palette--primary-white;
 
   p {

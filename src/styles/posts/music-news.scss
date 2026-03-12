@@ -36,9 +36,7 @@
 }
 
 .article-bands {
-  display: flex;
-  flex-wrap: wrap;
-  gap: space(1);
+  @include flex-wrap-gap($s1);
   margin-bottom: space(2);
 }
 
