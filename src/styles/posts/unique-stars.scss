@@ -1,8 +1,9 @@
 @use "system/utilities" as *;
 
-answer, answer-array {
+answer,
+answer-array {
   display: block;
-  text-align: left;
+  text-align: center;
   margin-top: space(6);
   margin-bottom: space(6);
 }
@@ -18,13 +19,10 @@ answer-array {
 }
 
 canvas#star {
-  width: 90vh;
-  max-width: 90vw;
+  width: css-min(100%, $grid--copy-max-width);
 
-  height: 90vw;
-  max-height: 90vh;
+  aspect-ratio: 1 / 1;
 
-  margin: auto;
   display: block;
   transform: rotate(-90deg);
 }
@@ -36,7 +34,7 @@ form {
   align-items: center;
   flex-wrap: wrap;
 
-  > * {
+  >* {
     padding: 0 space(1);
   }
 

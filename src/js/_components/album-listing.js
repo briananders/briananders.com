@@ -83,7 +83,7 @@ class AlbumListing extends HTMLElement {
   attributeChangedCallback(name, oldValue, newValue) {
     // console.log(name, oldValue, newValue);
     if (name === 'name') {
-      this.shadowRoot.querySelector(`slot`).innerText = newValue;
+      this.shadowRoot.querySelector('slot').innerText = newValue;
     }
     if (['artist'].includes(name)) {
       this.shadowRoot.querySelector(`[slot="${name}"]`).innerText = newValue;

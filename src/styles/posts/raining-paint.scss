@@ -4,11 +4,12 @@
 canvas {
   width: 100vw;
   max-width: 100%;
-  height: calc(100vh - 100px);
+  height: calc(100vh - 120px);
   border: 2px solid rgba($palette--divider-color, 0.2);
 }
 
 form {
+
   &,
   label {
     display: flex;

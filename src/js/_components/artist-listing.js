@@ -72,7 +72,7 @@ function formatNumber(number) {
 class ArtistListing extends HTMLElement {
   constructor() {
     super();
-    const shadow = this.attachShadow({ mode: "open" });
+    const shadow = this.attachShadow({ mode: 'open' });
     shadow.innerHTML = artistTemplate;
   }
 

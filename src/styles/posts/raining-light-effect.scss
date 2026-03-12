@@ -1,9 +1,9 @@
 @use "system/utilities" as *;
 
 #canvas {
-  width: css-min(90vw, $content-max-width);
-  height: 80vh;
-  border: 2px solid $palette--divider-color;
+  width: 100%;
+  height: calc(100vh - 120px);
+  border: 2px solid rgba($palette--divider-color, 0.2);
   display: block;
   @include left-margins;
 }

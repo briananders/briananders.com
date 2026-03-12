@@ -12,7 +12,8 @@
       padding: space(1) space(2);
       @include palette--header;
       text-align: left;
-
+      border-bottom: 1px solid $palette--primary-color-light;
+      border-radius: 0;
       transition-duration: 0s;
     }
   }

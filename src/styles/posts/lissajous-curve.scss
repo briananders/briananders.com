@@ -10,9 +10,15 @@
   max-height: 90vw;
   height: 90vh;
   width: 90vh;
-  margin: auto;
 
-  .ax-line, .ay-line, .bx-line, .by-line, .a-circle, .b-circle, .a-label, .b-label {
+  .ax-line,
+  .ay-line,
+  .bx-line,
+  .by-line,
+  .a-circle,
+  .b-circle,
+  .a-label,
+  .b-label {
     position: absolute;
     z-index: 1;
     opacity: .1;
@@ -20,7 +26,15 @@
   }
 
   &:hover {
-    .ax-line, .ay-line, .bx-line, .by-line, .a-circle, .b-circle, .a-label, .b-label {
+
+    .ax-line,
+    .ay-line,
+    .bx-line,
+    .by-line,
+    .a-circle,
+    .b-circle,
+    .a-label,
+    .b-label {
       opacity: .6;
     }
   }
@@ -45,7 +59,8 @@
     background-color: $b-color;
   }
 
-  .a-circle, .b-circle {
+  .a-circle,
+  .b-circle {
     width: 40%;
     height: 40%;
     border-radius: 100%;
@@ -76,6 +91,11 @@
     left: 5%;
     color: $b-color;
   }
+}
+
+form {
+  @include paragraph-margin;
+  margin-top: $paragraph-bottom;
 }
 
 canvas {

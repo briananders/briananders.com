@@ -94,9 +94,7 @@ ready.document(() => {
 
     lines.forEach((lineElement, index) => {
       const lineInputs = Array.from(lineElement.querySelectorAll('input[type=text]'));
-      const lineValue = lineInputs.map((input) => {
-        return input.value;
-      }).join('');
+      const lineValue = lineInputs.map((input) => input.value).join('');
 
       if (lineValue === '' && firstEmpty === undefined) {
         firstEmpty = index;

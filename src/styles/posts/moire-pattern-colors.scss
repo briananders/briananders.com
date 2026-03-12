@@ -1,23 +1,14 @@
 @use "system/utilities" as *;
 
-.posts.moire-pattern-colors {
-
-}
+.posts.moire-pattern-colors {}
 
 .form {
-  display: grid;
-  grid-template-columns: 1fr;
-  grid-template-rows: repeat(2, 1fr);
-  width: css-min(80vh, 80vw);
-  margin: auto;
+  @include paragraph;
+  margin: 0;
   gap: space(1);
-  justify-content: center;
   align-items: center;
+  display: flex;
 
-  > div {
-    display: flex;
-    align-items: center;
-  }
 
   input {
     flex-grow: 1;
@@ -41,6 +32,7 @@
 
   img {
     border-radius: 0;
+    width: 50%;
   }
 
   &.play {
@@ -58,9 +50,9 @@
 
 .canvas {
   position: relative;
-  width: css-min(80vh, 80vw);
-  height: css-min(80vh, 80vw);
-  margin-top: $section-spacer;
+  @include readingWidth;
+  aspect-ratio: 1 / 1;
+  margin-top: $paragraph-bottom;
   background: $palette--primary-white;
 
   .line {
@@ -84,7 +76,8 @@
   }
 }
 
-#control, [id^="variant-"] {
+#control,
+[id^="variant-"] {
   position: absolute;
   top: 0;
   left: 0;

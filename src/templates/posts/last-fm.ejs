@@ -1,31 +1,33 @@
 ---
 title: "Last.fm Scrobbles"
-description: "Music is a major contributor to my life. I am constantly looking for my next favorite album. He’s one of those nuts that listens to the same thing over and over until he’s sick of it. I use Last.fm to keep track of my listening habits. Here are some of the albums that I have been listening to recently."
+description: "Music is a major contributor to my life. I am constantly looking for my next favorite album. He’s one of
+those nuts that listens to the same thing over and over until he’s sick of it. I use Last.fm to keep track of my
+listening habits. Here are some of the albums that I have been listening to recently."
 date: 2017-09-07
 priority: 0.8
 layout: base
 pageClasses:
-  - 'posts'
-  - 'last-fm'
+- 'posts'
+- 'last-fm'
 styles:
-  - 'main'
-  - 'posts/last-fm'
+- 'main'
+- 'posts/last-fm'
 scripts:
-  - 'posts/last-fm'
+- 'posts/last-fm'
 ---
 
-<section>
-  <div class="container">
-    <blockquote>
-      <p>
-        To 'scrobble' a song means that when you listen to it, the name of the song is sent to a Web site (for example, Last.fm) and added to your music profile. Here’s how it works: Once you've signed up and downloaded Last.fm, you can scrobble songs you listen to on your computer or iPod automatically.
-      </p>
-      <cite>
-        <%- blockLink('Netlingo.com', { href: "https://www.netlingo.com/word/scrobble.php" })%>
-      </cite>
-    </blockquote>
-  </div>
-  </section>
+<div class="container">
+  <blockquote>
+    <p>
+      To 'scrobble' a song means that when you listen to it, the name of the song is sent to a Web site (for example,
+      Last.fm) and added to your music profile. Here’s how it works: Once you've signed up and downloaded Last.fm, you
+      can scrobble songs you listen to on your computer or iPod automatically.
+    </p>
+    <cite>
+      <%- blockLink('Netlingo.com', { href: "https://www.netlingo.com/word/scrobble.php" })%>
+    </cite>
+  </blockquote>
+</div>
 
 <section>
   <form class="content">
@@ -45,17 +47,17 @@ scripts:
   <h2>Top Albums</h2>
   <link rel="preconnect" href="https://ws.audioscrobbler.com" crossorigin />
   <div class='last-fm-module p' data-type="albums" src="/images/posts/last-fm/default.webp">
-    <% for (let i = 0; i < 10; i++) { %>
+    <% for (let i=0; i < 10; i++) { %>
       <%- defaultLastFMModule(); %>
-    <% } %>
+        <% } %>
   </div>
 </section>
 
 <section class="content">
   <h2>Top Artists</h2>
   <div class='last-fm-module p' data-type="artists">
-    <% for (let i = 0; i < 10; i++) { %>
+    <% for (let i=0; i < 10; i++) { %>
       <%- defaultLastFMModule(false); %>
-    <% } %>
+        <% } %>
   </div>
 </section>

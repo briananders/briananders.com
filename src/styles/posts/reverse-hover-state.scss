@@ -5,16 +5,15 @@
   display: flex;
   pointer-events: none;
   flex-wrap: wrap;
-  justify-content: center;
   align-items: center;
   pointer-events: none;
+  gap: space(3);
 
   card {
     display: block;
     width: 100px;
     height: 100px;
     background-color: $palette--primary-color-dark;
-    margin: space(2);
     pointer-events: all;
 
     opacity: 1;

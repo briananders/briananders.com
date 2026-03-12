@@ -306,7 +306,7 @@ module.exports = {
     moveAllVideos(configs);
     moveAllTxtFiles(configs);
     moveAllDownloads(configs);
-    moveJSONFiles(configs);
+    // moveJSONFiles(configs); moved to https://github.com/briananders/briananders.com-data-files
   },
 
   moveOneDownload,

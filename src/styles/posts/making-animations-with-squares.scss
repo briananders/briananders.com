@@ -4,10 +4,10 @@
 .posts.making-animations-with-squares {
 
   canvas {
-    width: 100vw;
+    width: 100%;
     border: 2px solid rgba($palette--divider-color, 0.2);
     box-sizing: border-box;
-    height: calc(100vh - 66px);
+    height: calc(100vh - 120px);
   }
 
   #pause-button.paused {
@@ -43,7 +43,7 @@
       margin-right: space(1);
     }
 
-    > * {
+    >* {
       display: block;
       margin: 0 space(2) space(2);
     }

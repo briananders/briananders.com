@@ -2,7 +2,7 @@
 @use "sass:math";
 @use "system/utilities" as *;
 
-$circle-diameter: 30;
+$circle-count: 30;
 
 $circle-size: 26px;
 $circle-border-width: 3px;
@@ -19,6 +19,7 @@ $rotation-time-step: math.div($rotation-duration, $rotation-steps);
   0% {
     transform: rotate(0deg);
   }
+
   100% {
     transform: rotate(360deg);
   }
@@ -27,8 +28,8 @@ $rotation-time-step: math.div($rotation-duration, $rotation-steps);
 .form {
   display: flex;
   align-items: flex-start;
-  height: 60px;
   @include paragraph;
+  padding-bottom: $paragraph-bottom;
 
   label {
     display: flex;
@@ -64,6 +65,7 @@ $rotation-time-step: math.div($rotation-duration, $rotation-steps);
 
     img {
       border-radius: 0;
+      width: 50%;
     }
 
     &.play {
@@ -82,15 +84,19 @@ $rotation-time-step: math.div($rotation-duration, $rotation-steps);
 
 .circle-container {
   display: grid;
-  grid-template: repeat($circle-diameter, $circle-size) / repeat($circle-diameter, $circle-size);
+  grid-template-columns: repeat($circle-count, calc(75% / $circle-count));
+  grid-template-rows: repeat($circle-count, 1fr);
   background-color: #d6de1d;
   gap: space(1);
   justify-content: center;
   padding: space(6) 0;
+  max-width: 100%;
+  aspect-ratio: 1 / 1;
 }
 
 .circle {
   position: relative;
+  aspect-ratio: 1 / 1;
 
   &::after {
     content: '';
