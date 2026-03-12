@@ -1,4 +1,5 @@
-@import "system/utilities";
+@use "system/utilities" as *;
+@use "sass:math";
 
 @mixin close {
   background: yellow;
@@ -46,7 +47,7 @@
   span {
     position: relative;
     display: inline-block;
-    padding: calc(space(1) / 2) space(1);
+    padding: math.div(space(1), 2) space(1);
     margin: space(1);
     border: 2px solid $palette--divider-color;
     cursor: pointer;

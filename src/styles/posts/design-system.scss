@@ -1,4 +1,4 @@
-@import "system/utilities";
+@use "system/utilities" as *;
 
 @mixin ds-box-shadow {
   box-shadow: 0 0 12px black;

@@ -1,3 +1,5 @@
+@use "system/utilities" as *;
+
 .code-container {
   @include type--body-small;
   @include readingWidth;

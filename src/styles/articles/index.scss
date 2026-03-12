@@ -1,4 +1,5 @@
-@import "system/utilities";
+@use "system/utilities" as *;
+@use "sass:math";
 
 #articles-list {
   display: grid;
@@ -60,7 +61,7 @@
       @include type--bold-sans-serif;
       background-color: $palette--primary-color-dark;
       color: $palette--primary-white;
-      padding: calc(space(1) / 2) space(2);
+      padding: math.div(space(1), 2) space(2);
       border-radius: $border-radius;
       white-space: nowrap;
     }

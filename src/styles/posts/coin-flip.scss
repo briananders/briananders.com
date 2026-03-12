@@ -1,4 +1,4 @@
-@import "system/utilities";
+@use "system/utilities" as *;
 
 // Spin 4 full rotations, land on same side
 @keyframes coin-flip-same {

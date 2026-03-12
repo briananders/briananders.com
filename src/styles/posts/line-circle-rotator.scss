@@ -1,4 +1,4 @@
-@import "system/utilities";
+@use "system/utilities" as *;
 
 $circle-diameter: css-min(0.75vh, 0.75vw);
 

@@ -1,4 +1,6 @@
-@import "./phone-shared";
+@use "./phone-shared" as *;
+@use "system/utilities" as *;
+@use "sass:math";
 
 phone {
   overflow: hidden;
@@ -40,7 +42,7 @@ body {
   @for $px from 48 to 2048 {
     @if($px % 50 == 48) {
       @include mq(#{$px}px) {
-        font-size: percentage($px * 62.5 / 100000);
+        font-size: math.percentage(math.div($px * 62.5, 100000));
       }
     }
   }

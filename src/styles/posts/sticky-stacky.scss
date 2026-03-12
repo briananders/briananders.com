@@ -1,6 +1,6 @@
-@import "system/utilities";
-@import "modules/code";
-@import "modules/sticky-stacky";
+@use "system/utilities" as *;
+@use "modules/code" as *;
+@use "modules/sticky-stacky" as *;
 
 .sticky-container {
 

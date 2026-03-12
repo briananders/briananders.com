@@ -1,4 +1,5 @@
-@import "system/utilities";
+@use "sass:math";
+@use "system/utilities" as *;
 
 i {
   @include italic;

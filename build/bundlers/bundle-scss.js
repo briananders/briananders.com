@@ -25,52 +25,44 @@ module.exports = function bundleSCSS({
 
     if (debug) log(`${timestamp.stamp()} ${'REQUEST'.magenta} - Compiling SASS - ${outFile.split(/styles/)[1]}`);
 
-    sass.render({
-      file: scssFilename,
-      outFile,
-      includePaths: [`${dir.src}styles/`, dir.nodeModules],
-      sourceMap: false,
-    }, (error, result) => { // node-style callback from v3.0.0 onwards
-      if (error) {
-        if (production) throw error;
-        else {
-          const message = (error && (error.formatted || error.message)) || 'SASS error';
-          console.error(message.red);
-          notifier.notify({
-            title: 'SASS Error',
-            message,
-          });
-          processed++;
+    sass.compileAsync(scssFilename, {
+      loadPaths: [`${dir.src}styles/`, dir.nodeModules],
+    }).then((result) => {
+      // No errors during the compilation, write this result on the disk
+      fs.mkdirp(path.dirname(outFile), (err) => {
+        if (err) {
+          if (production) throw err;
+          console.error(err);
         }
-      } else {
-        // No errors during the compilation, write this result on the disk
+        let cssOutput;
 
-        fs.mkdirp(path.dirname(outFile), (err) => {
-          if (err) {
-            if (production) throw err;
-            console.error(err);
+        if (production) {
+          cssOutput = new CleanCSS().minify(result.css).styles;
+        } else {
+          cssOutput = result.css;
+        }
+
+        fs.writeFile(outFile, cssOutput, (e) => {
+          if (e) throw e;
+          if (debug) log(`${timestamp.stamp()} ${'SUCCESS'.bold.green} - Compiled SASS - ${outFile.split(/styles/)[1]}`);
+          processed++;
+
+          if (processed === array.length) {
+            log(`${timestamp.stamp()} bundleSCSS(): ${'DONE'.bold.green}`);
+            completionFlags.CSS_IS_MINIFIED = true;
+            buildEvents.emit(BUILD_EVENTS.stylesMoved);
           }
-          let cssOutput;
-
-          if (production) {
-            cssOutput = new CleanCSS().minify(result.css).styles;
-          } else {
-            cssOutput = result.css;
-          }
-
-          fs.writeFile(outFile, cssOutput, (e) => {
-            if (e) throw e;
-            if (debug) log(`${timestamp.stamp()} ${'SUCCESS'.bold.green} - Compiled SASS - ${outFile.split(/styles/)[1]}`);
-            processed++;
-
-            if (processed === array.length) {
-              log(`${timestamp.stamp()} bundleSCSS(): ${'DONE'.bold.green}`);
-              completionFlags.CSS_IS_MINIFIED = true;
-              buildEvents.emit(BUILD_EVENTS.stylesMoved);
-            }
-          });
         });
-      }
+      });
+    }).catch((error) => {
+      if (production) throw error;
+      const message = (error && error.message) || 'SASS error';
+      console.error(message.red);
+      notifier.notify({
+        title: 'SASS Error',
+        message,
+      });
+      processed++;
     });
   });
 };

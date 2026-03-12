@@ -1,4 +1,4 @@
-@import "system/variables/all";
+@use "system/variables/all" as *;
 
 @mixin palette--base($background-alpha: 1) {
   color: $palette--primary-white;

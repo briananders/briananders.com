@@ -1,4 +1,6 @@
-@import "system/utilities";
+@use "sass:color";
+@use "sass:math";
+@use "system/utilities" as *;
 
 $circle-diameter: 30;
 
@@ -7,10 +9,10 @@ $circle-border-width: 3px;
 $circle-color: #ff9eed;
 
 $rotation-steps: 16;
-$rotation-step: 360deg / $rotation-steps;
+$rotation-step: math.div(360deg, $rotation-steps);
 
 $rotation-duration: 30s;
-$rotation-time-step: $rotation-duration / $rotation-steps;
+$rotation-time-step: math.div($rotation-duration, $rotation-steps);
 
 
 @keyframes rotate {
@@ -97,7 +99,7 @@ $rotation-time-step: $rotation-duration / $rotation-steps;
     height: 100%;
 
     border-radius: 100%;
-    background-color: darken($circle-color, 10%);
+    background-color: color.adjust($circle-color, $lightness: -10%);
     border-width: $circle-border-width;
     border-style: solid;
 

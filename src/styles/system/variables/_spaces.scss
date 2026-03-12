@@ -1,4 +1,4 @@
-@import "system/variables/defaults";
+@use "defaults" as *;
 
 @function space($size) {
   @return $base-unit * $size;

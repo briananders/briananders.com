@@ -1,7 +1,6 @@
-@import "system/utilities";
-
-@import "modules/nav";
-@import "modules/skip-nav";
+@use "system/utilities" as *;
+@use "modules/nav" as *;
+@use "modules/skip-nav" as *;
 
 header.main-header {
   @include palette--base;

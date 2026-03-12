@@ -197,10 +197,9 @@ module.exports = (dir, pageMappingData) => ({
 
   inlineScss(src) {
     const fileData = fs.readFileSync(path.join(dir.src, src)).toString();
-    const results = sass.renderSync({
-      data: fileData,
-      includePaths: [`${dir.src}styles/`, dir.nodeModules],
+    const result = sass.compileString(fileData, {
+      loadPaths: [`${dir.src}styles/`, dir.nodeModules],
     });
-    return results.css;
+    return result.css;
   },
 });

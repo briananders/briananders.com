@@ -1,4 +1,4 @@
-@import "system/utilities";
+@use "system/utilities" as *;
 
 .posts.in-view-text-animation {
   .the-test {

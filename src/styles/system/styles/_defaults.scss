@@ -1,3 +1,5 @@
+@use "system/utilities" as *;
+
 * {
   transition-timing-function: $transition-timing;
   transition-duration: $transition-speed;

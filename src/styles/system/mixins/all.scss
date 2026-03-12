@@ -1,7 +1,7 @@
-@import "./animations";
-@import "./colors";
-@import "./elements";
-@import "./grid";
-@import "./media-queries";
-@import "./type";
-@import "./utilities";
+@forward "./animations";
+@forward "./colors";
+@forward "./elements";
+@forward "./grid";
+@forward "./media-queries";
+@forward "./type";
+@forward "./utilities";
