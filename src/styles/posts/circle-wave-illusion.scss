@@ -40,7 +40,7 @@ $rotation-time-step: $rotation-duration / $rotation-steps;
   }
 
   span {
-    margin-bottom: $s2;
+    margin-bottom: space(2);
   }
 
   input {
@@ -82,9 +82,9 @@ $rotation-time-step: $rotation-duration / $rotation-steps;
   display: grid;
   grid-template: repeat($circle-diameter, $circle-size) / repeat($circle-diameter, $circle-size);
   background-color: #d6de1d;
-  gap: $s1;
+  gap: space(1);
   justify-content: center;
-  padding: $s6 0;
+  padding: space(6) 0;
 }
 
 .circle {

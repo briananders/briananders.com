@@ -5,18 +5,23 @@
   "homepage": "https://briananders.com",
   "scripts": {
     "build": "NODE_ENV=production node index.js",
+    "build:golden": "NODE_ENV=production node index.js --golden",
     "clean": "rm -rf node_modules tmp dist && npm cache clean --force",
     "debug:start": "node index.js --verbose",
     "debug:build": "NODE_ENV=production node index.js --verbose",
+    "debug:build:golden": "NODE_ENV=production node index.js --verbose --golden",
     "inspect:build": "NODE_ENV=production node inspect index.js --verbose",
     "inspect:start": "node inspect index.js --verbose",
+    "test": "node --test",
     "deploy": "NODE_ENV=production node s3-uploader.js",
     "lint:build": "npx eslint build/** --fix",
     "lint:src": "npx eslint src/js/** --fix",
-    "preview-production": "node preview-production.js",
+    "preview:production": "node preview-production.js",
+    "preview": "node index.js",
     "scaffold": "node scaffold.js",
     "stage": "node s3-uploader.js",
-    "start": "node index.js"
+    "start": "node index.js",
+    "visual-diff": "node bin/visual-diff.js"
   },
   "repository": {
     "type": "git",
@@ -32,7 +37,7 @@
   "license": "MIT",
   "devDependencies": {
     "broken-link-checker": "^0.7.8",
-    "eslint": "^8.30.0",
+    "eslint": "^8.57.1",
     "eslint-config-airbnb": "^19.0.4",
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-plugin-ejs": "^0.0.2",
@@ -64,6 +69,7 @@
     "handlebars": "^4.7.7",
     "highlight.js": "^11.7.0",
     "html-minifier": "^4.0.0",
+    "http-proxy-middleware": "^3.0.5",
     "image-size": "^1.0.2",
     "merge": "^2.1.1",
     "node-notifier": "^10.0.1",
@@ -79,7 +85,7 @@
     "xxhash": "^0.3.0"
   },
   "engines": {
-    "node": "^18.12.1",
-    "npm": "^9.2.0"
+    "node": "^18.12.1 || >=20",
+    "npm": ">=9"
   }
 }

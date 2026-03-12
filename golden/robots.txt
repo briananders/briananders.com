@@ -1,0 +1,13 @@
+User-agent: *
+Disallow: /404.html
+Disallow: */example/
+
+
+Disallow: */harming-humans/
+Disallow: */ignoring-human-orders/
+Disallow: */harm-to-self/
+
+
+User-agent: *
+allow: /
+Sitemap: https://briananders.com/sitemap.xml

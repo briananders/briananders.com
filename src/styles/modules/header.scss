@@ -5,8 +5,8 @@
 
 header.main-header {
   @include palette--base;
-  margin-top: $s6;
-  @include margin-center;
+  margin-top: space(6);
+  @include left-margins;
 
   h1.name {
     @include type--title;

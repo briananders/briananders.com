@@ -166,7 +166,7 @@ scripts:
         Videos
       </h2>
     </header>
-    <div class="video-grid">
+    <div class="video-list">
       <% videos.forEach(({ artist, title, id }) => { %>
         <button class="card-link yt-modal-trigger" data-video-id="<%- id %>"><%- videoTitle(title, artist); %></button>
       <% }); %>

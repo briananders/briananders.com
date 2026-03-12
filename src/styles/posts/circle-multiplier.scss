@@ -4,7 +4,7 @@
 
   canvas {
     width: 100vw;
-    border: 2px solid $palette--divider-color;
+    border: 2px solid rgba($palette--divider-color, 0.2);
     box-sizing: border-box;
     height: calc(100vh - 66px);
   }
@@ -24,12 +24,12 @@
   }
 
   form {
-    margin-bottom: $s6;
+    margin-bottom: space(6);
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
     align-items: center;
-    @include margin-center;
+    @include left-margins;
 
     label {
       white-space: nowrap;
@@ -39,12 +39,12 @@
     }
 
     input[type=checkbox] {
-      margin-right: $s1;
+      margin-right: space(1);
     }
 
     > * {
       display: block;
-      margin: 0 $s2 $s2;
+      margin: 0 space(2) space(2);
     }
   }
 }
