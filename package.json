@@ -13,6 +13,7 @@
     "inspect:build": "NODE_ENV=production node inspect index.js --verbose",
     "inspect:start": "node inspect index.js --verbose",
     "test": "node --test",
+    "test:screenshot": "node --test test/screenshot.test.mjs",
     "deploy": "NODE_ENV=production node s3-uploader.js",
     "lint:build": "npx eslint build/** --fix",
     "lint:src": "npx eslint src/js/** --fix",
@@ -44,7 +45,10 @@
     "eslint-plugin-import": "^2.26.0",
     "eslint-plugin-jsx-a11y": "^6.6.1",
     "eslint-plugin-react": "^7.31.11",
-    "jshint": "^2.13.6"
+    "jshint": "^2.13.6",
+    "pixelmatch": "^7.1.0",
+    "playwright": "^1.57.0",
+    "pngjs": "^7.0.0"
   },
   "dependencies": {
     "@babel/core": "^7.20.7",
