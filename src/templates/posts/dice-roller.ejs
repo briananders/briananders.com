@@ -1,0 +1,51 @@
+---
+title: "Dice Roller"
+description: "An interactive dice rolling widget that lets you customize the number of dice and sides for your tabletop gaming needs."
+date: 2024-12-10
+priority: 0.8
+pageClasses:
+  - 'posts dice-roller'
+layout: base
+styles:
+  - 'main'
+  - 'posts/dice-roller'
+scripts:
+  - 'posts/dice-roller'
+---
+
+<section>
+  <div class="content">
+    <p>Need to roll some dice for your tabletop game? This interactive dice roller lets you customize the number of dice and the number of sides on each die. Whether you're playing D&D with 20-sided dice or Yahtzee with standard 6-sided dice, this tool has you covered.</p>
+
+    <div class="dice-roller-container">
+      <div class="controls">
+        <div class="control-group">
+          <label for="num-dice">Number of Dice:</label>
+          <input type="number" id="num-dice" min="1" max="20" value="2" />
+        </div>
+        
+        <div class="control-group">
+          <label for="num-sides">Sides per Die:</label>
+          <select id="num-sides">
+            <option value="4">d4</option>
+            <option value="6" selected>d6</option>
+            <option value="8">d8</option>
+            <option value="10">d10</option>
+            <option value="12">d12</option>
+            <option value="20">d20</option>
+            <option value="100">d100</option>
+          </select>
+        </div>
+
+        <button id="roll-button" class="button">Roll Dice</button>
+      </div>
+
+      <div class="results">
+        <div id="dice-display" class="dice-display"></div>
+        <div id="total-display" class="total-display"></div>
+      </div>
+    </div>
+
+    <p>Select your configuration and click "Roll Dice" to see the results. The widget will show each individual die result as well as the total sum. Perfect for quick rolls when you don't have physical dice handy!</p>
+  </div>
+</section>
