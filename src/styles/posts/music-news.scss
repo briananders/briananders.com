@@ -1,5 +1,86 @@
 @use "system/utilities" as *;
 
+.music-news-bands-block {
+  margin-bottom: space(4);
+}
+
+.music-news-bands-heading {
+  @include type--heading-6;
+  margin-bottom: space(1);
+  text-align: left;
+}
+
+.music-news-bands-intro {
+  @include type--body-small;
+  color: $palette--primary-color-light;
+  margin-bottom: space(2);
+  text-align: left;
+}
+
+.music-news-bands-marquee {
+  margin-top: space(2);
+  margin-left: calc(50% - 50vw);
+  margin-right: calc(50% - 50vw);
+  width: 100vw;
+  max-width: 100vw;
+}
+
+.music-news-marquee-viewport {
+  display: flex;
+  flex-direction: column;
+  gap: space(1);
+  overflow: hidden;
+  width: 100%;
+}
+
+.music-news-marquee-viewport--static {
+  gap: space(2);
+}
+
+.music-news-marquee-row {
+  overflow: hidden;
+  width: 100%;
+  min-height: calc(#{space(2)} + 1.6em);
+}
+
+.music-news-marquee-row--static {
+  overflow: visible;
+  min-height: unset;
+}
+
+.music-news-marquee-track {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  width: max-content;
+  will-change: transform;
+}
+
+.music-news-marquee-segment {
+  display: inline-flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: space(1);
+  padding-right: space(3);
+  flex-shrink: 0;
+}
+
+.music-news-marquee-static-inner {
+  display: flex;
+  flex-wrap: wrap;
+  gap: space(1);
+  justify-content: flex-start;
+  text-align: left;
+}
+
+.music-news-bands-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: space(1);
+  text-align: left;
+}
+
 .band-tag {
   background-color: $palette--accent-color;
   color: $palette--primary-grey;
@@ -7,6 +88,49 @@
   border-radius: 100px;
   @include type--body-tiny;
   @include type--bold-sans-serif;
+}
+
+.band-tag--queried {
+  background-color: $palette--primary-color-dark;
+  color: $palette--primary-grey;
+}
+
+.band-filter {
+  @include type--body-tiny;
+  @include type--bold-sans-serif;
+  display: inline-flex;
+  align-items: center;
+  gap: space(1);
+  padding: space(1) space(2);
+  border-radius: 100px;
+  border: 2px solid $palette--accent-color;
+  background: transparent;
+  color: $palette--primary-grey;
+  cursor: pointer;
+  font-family: inherit;
+
+  &:hover,
+  &:focus-visible {
+    background-color: rgba($palette--accent-color, 0.15);
+    outline: none;
+  }
+}
+
+.band-filter--selected {
+  background-color: $palette--accent-color;
+  color: $palette--primary-grey;
+}
+
+.band-filter__count {
+  min-width: 1.25em;
+  padding: 0 space(1);
+  border-radius: 100px;
+  background-color: rgba($palette--primary-grey, 0.2);
+  text-align: center;
+
+  .band-filter--selected & {
+    background-color: rgba($palette--primary-grey, 0.25);
+  }
 }
 
 .article-card {

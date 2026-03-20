@@ -16,6 +16,16 @@ scripts:
 <section>
   <div class="container">
     <p id="music-news-meta" class="meta"></p>
+    <div id="music-news-bands-queried-wrap" class="music-news-bands-block" hidden>
+      <h2 class="music-news-bands-heading">Artists searched</h2>
+      <p class="music-news-bands-intro">These names are included when aggregating feeds. Scroll horizontally (trackpad or shift+scroll) to nudge the motion.</p>
+      <div id="music-news-bands-marquee" class="music-news-bands-marquee" aria-label="Scrolling list of artist names queried for news"></div>
+    </div>
+    <div id="music-news-bands-hits-wrap" class="music-news-bands-block" hidden>
+      <h2 class="music-news-bands-heading">Artists with matching articles</h2>
+      <p class="music-news-bands-intro">Select an artist to filter the list. Select again to show all articles.</p>
+      <div id="music-news-bands-hits" class="music-news-bands-filters" role="group" aria-label="Filter articles by artist"></div>
+    </div>
     <div id="music-news-list" role="list"></div>
     <div id="music-news-empty" class="empty" style="display: none;">
       <p>No matches found at this time.</p>
