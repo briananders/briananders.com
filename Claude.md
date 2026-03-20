@@ -48,7 +48,7 @@ The site also calls the **Last.fm API** directly from the browser for the real-t
 | Styles | SCSS (node-sass), minified with CleanCSS |
 | JavaScript | CommonJS modules bundled with Browserify + Babel (preset-env, preset-react) |
 | Hosting | AWS S3 + CloudFront |
-| Deployment | Custom `s3-uploader.js` using aws-sdk |
+| Deployment | Custom `s3-uploader.js` using AWS SDK for JavaScript v3 (`@aws-sdk/client-s3`, `@aws-sdk/lib-storage`, `@aws-sdk/client-cloudfront`) |
 | Dev server | Express with express-static and http-proxy-middleware |
 | Linting | ESLint (airbnb-base config) |
 | Build optimization | HTML minification (html-minifier), JS minification (uglify-js), SVG optimization (svgo), WebP conversion, gzip compression, asset hashing |

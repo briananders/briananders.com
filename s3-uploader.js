@@ -1,7 +1,17 @@
 const fs = require('fs-extra');
-const AWS = require('aws-sdk');
-const glob = require('glob');
+const http = require('http');
+const https = require('https');
+const { glob } = require('glob');
 const path = require('path');
+
+const { CloudFrontClient, CreateInvalidationCommand } = require('@aws-sdk/client-cloudfront');
+const {
+  S3Client,
+  DeleteObjectsCommand,
+  ListObjectsV2Command,
+} = require('@aws-sdk/client-s3');
+const { Upload } = require('@aws-sdk/lib-storage');
+const { NodeHttpHandler } = require('@smithy/node-http-handler');
 
 const dir = require('./build/constants/directories')(__dirname);
 
@@ -9,13 +19,30 @@ const production = require(`${dir.build}helpers/production`);
 
 const deleteAllowlist = require('./s3-upload-allowlist.json');
 
-const awsCreds = {
+const awsRegion = process.env.AWS_REGION || 'us-east-1';
+
+const awsCredentials = {
   accessKeyId: process.env.AWS_ACCESS_KEY,
   secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
 };
 
-const s3 = new AWS.S3(awsCreds);
-const cloudfront = new AWS.CloudFront(awsCreds);
+const maxSockets = Math.max(128, Number(process.env.S3_UPLOAD_MAX_SOCKETS) || 128);
+const requestHandler = new NodeHttpHandler({
+  httpAgent: new http.Agent({ keepAlive: true, maxSockets }),
+  httpsAgent: new https.Agent({ keepAlive: true, maxSockets }),
+});
+
+const s3Client = new S3Client({
+  region: awsRegion,
+  credentials: awsCredentials,
+  requestHandler,
+});
+
+const cloudfrontClient = new CloudFrontClient({
+  region: 'us-east-1',
+  credentials: awsCredentials,
+  requestHandler,
+});
 
 const bucketName = (production) ? 'www.briananders.com' : 'staging.briananders.com';
 
@@ -62,40 +89,73 @@ const getContentType = (fileName) => {
   }
 };
 
-function getS3Objects() {
-  const uploadPromise = new Promise((resolve, reject) => {
-    s3.listObjectsV2({
+function objectPublicUrl(key) {
+  const host = awsRegion === 'us-east-1'
+    ? `${bucketName}.s3.amazonaws.com`
+    : `${bucketName}.s3.${awsRegion}.amazonaws.com`;
+  const encodedKey = key.split('/').map(encodeURIComponent).join('/');
+  return `https://${host}/${encodedKey}`;
+}
+
+/** Every object key in the bucket (paginated; required for correct sync decisions). */
+async function listAllS3Keys() {
+  const keys = [];
+  let ContinuationToken;
+
+  do {
+    // eslint-disable-next-line no-await-in-loop
+    const data = await s3Client.send(new ListObjectsV2Command({
       Bucket: bucketName,
       MaxKeys: 1000,
-    }, (err, data) => {
-      if (err) reject(err);
-      else resolve(data);
-    });
-  });
+      ContinuationToken,
+    }));
 
-  return uploadPromise;
-};
+    if (data.Contents) {
+      for (let i = 0; i < data.Contents.length; i += 1) {
+        keys.push(data.Contents[i].Key);
+      }
+    }
 
-function deleteS3Files(fileList) {
-  const deletePromise = new Promise((resolve, reject) => {
-    if (fileList.length === 0) {
-      resolve([]);
-    } else {
-      s3.deleteObjects({
+    ContinuationToken = data.IsTruncated ? data.NextContinuationToken : undefined;
+  } while (ContinuationToken);
+
+  return keys;
+}
+
+const S3_DELETE_BATCH_SIZE = 1000;
+const DELETE_BATCH_CONCURRENCY = 8;
+
+async function deleteS3Files(fileList) {
+  if (fileList.length === 0) {
+    return;
+  }
+
+  const batches = [];
+  for (let i = 0; i < fileList.length; i += S3_DELETE_BATCH_SIZE) {
+    batches.push(fileList.slice(i, i + S3_DELETE_BATCH_SIZE));
+  }
+
+  let batchIndex = 0;
+
+  const worker = async () => {
+    while (batchIndex < batches.length) {
+      const sliceStart = batchIndex;
+      batchIndex += 1;
+      const chunk = batches[sliceStart];
+      // eslint-disable-next-line no-await-in-loop
+      await s3Client.send(new DeleteObjectsCommand({
         Bucket: bucketName,
         Delete: {
-          Objects: fileList,
+          Objects: chunk,
           Quiet: false,
         },
-      }, (err, data) => {
-        if (err) reject(err);
-        else resolve(data); // successful response
-      });
+      }));
     }
-  });
+  };
 
-  return deletePromise;
-};
+  const pool = Math.min(DELETE_BATCH_CONCURRENCY, batches.length);
+  await Promise.all(Array.from({ length: pool }, () => worker()));
+}
 
 function getCacheControl(fileName) {
   const extn = path.extname(fileName);
@@ -113,86 +173,86 @@ function getCacheControl(fileName) {
     default:
       return 'max-age=15552000,public';
   }
-};
+}
 
-function uploadFile(fileName, index, fileList) {
-  if (!(index % 10)) {
-    console.log(`${index}/${fileList.length}: ${Math.floor((index / fileList.length) * 100)}%`);
-  }
+const MAX_UPLOAD_CONCURRENCY = Math.min(
+  50,
+  Math.max(1, Number(process.env.S3_UPLOAD_CONCURRENCY) || 50),
+);
 
-  const fileLocation = fileName.replace(dir.package, '');
+const expiresHeader = new Date('2034-01-01T00:00:00.000Z');
 
-  const uploadPromise = new Promise((resolve, reject) => {
-    fs.lstat(fileName, (err, stats) => {
-      if (err) return reject(err);
-      if (stats.isDirectory()) return resolve(fileLocation);
-      
-      const fileStream = fs.createReadStream(fileName);
-      s3.upload({
+async function uploadFiles(fileList) {
+  fs.chmodSync(dir.package, '0755');
+
+  const total = fileList.length;
+  let completed = 0;
+
+  const logProgress = () => {
+    if (completed % 10 === 0 || completed === total) {
+      const pct = total ? Math.floor((completed / total) * 100) : 100;
+      console.log(`${completed}/${total}: ${pct}%`);
+    }
+  };
+
+  const uploadOne = async (fileName) => {
+    const fileLocation = fileName.replace(dir.package, '');
+    const fileStream = fs.createReadStream(fileName);
+
+    const upload = new Upload({
+      client: s3Client,
+      params: {
         Bucket: bucketName,
         Key: fileLocation,
         Body: fileStream,
         ContentType: getContentType(fileName),
         ACL: 'public-read',
-        Expires: '2034-01-01T00:00:00Z',
+        Expires: expiresHeader,
         CacheControl: getCacheControl(fileName),
-        MetadataDirective: 'REPLACE',
-      }, (err, uploadData) => {
-        if (err) reject(err);
-        else {
-          console.log(`File uploaded successfully at ${uploadData.Location}`);
-          resolve(fileLocation);
-        }
-      });
+      },
     });
-  });
 
-  return uploadPromise;
-};
+    await upload.done();
+    console.log(`File uploaded successfully at ${objectPublicUrl(fileLocation)}`);
+    completed += 1;
+    logProgress();
+    return fileLocation;
+  };
 
-async function uploadFiles(fileList) {
-  fs.chmodSync(dir.package, '0755');
+  let fileIndex = 0;
 
-  const MAX_CONCURRENCY = 50;
-  let index = 0;
-  
   const worker = async () => {
-    while (index < fileList.length) {
-      const currentIndex = index++;
-      await uploadFile(fileList[currentIndex], currentIndex, fileList);
+    while (fileIndex < fileList.length) {
+      const i = fileIndex;
+      fileIndex += 1;
+      // eslint-disable-next-line no-await-in-loop
+      await uploadOne(fileList[i]);
     }
   };
-  
-  const workers = [];
-  for (let i = 0; i < Math.min(MAX_CONCURRENCY, fileList.length); i++) {
-    workers.push(worker());
-  }
-  
-  await Promise.all(workers);
-  return fileList;
-};
 
-function invalidateCloudFront() {
+  const pool = Math.min(MAX_UPLOAD_CONCURRENCY, Math.max(1, fileList.length));
+  await Promise.all(Array.from({ length: pool }, () => worker()));
+  return fileList;
+}
+
+async function invalidateCloudFront() {
   console.log('Invalidate Cache');
 
-  const params = {
+  const data = await cloudfrontClient.send(new CreateInvalidationCommand({
     DistributionId: process.env.CLOUDFRONT_ID,
-    InvalidationBatch: { /* required */
-      CallerReference: Date.now().toString(), /* required */
-      Paths: { /* required */
-        Quantity: '1', /* required */
+    InvalidationBatch: {
+      CallerReference: Date.now().toString(),
+      Paths: {
+        Quantity: 1,
         Items: [
           '/*'
         ],
       },
     },
-  };
+  }));
 
-  cloudfront.createInvalidation(params, (err, data) => {
-    if (err) console.log(err, err.stack); // an error occurred
-    else console.log(data); // successful response
-  });
-};
+  console.log(data);
+}
 
 const SWAP_FILES_REGEXES = [
   /\.html$/,
@@ -207,18 +267,22 @@ const SWAP_FILES_REGEXES = [
 
 const alwaysSwapFiles = (fileName) => SWAP_FILES_REGEXES.some((regex) => regex.test(fileName));
 
-getS3Objects().then((data) => {
-  const s3FileList = data.Contents.map(({ Key }) => Key);
-  const s3FileSet = new Set(s3FileList);
+async function main() {
+  const [s3FileList, packageGlob] = await Promise.all([
+    listAllS3Keys(),
+    glob(`${dir.package}**/*`)
+  ]);
 
-  const packageGlob = glob.sync(`${dir.package}**/*`);
+  const s3FileSet = new Set(s3FileList);
   const packageSet = new Set(packageGlob);
 
-  const isAllowlisted = (filePath) => deleteAllowlist.some((dir) => filePath.startsWith(dir) || filePath.startsWith(dir.substring(1)));
+  const isAllowlisted = (filePath) => deleteAllowlist.some(
+    (d) => filePath.startsWith(d) || filePath.startsWith(d.substring(1)),
+  );
 
   const s3DeleteList = s3FileList.filter((s3File) => !isAllowlisted(s3File)
-      && (!packageSet.has(dir.package + s3File)
-      || alwaysSwapFiles(s3File)));
+    && (!packageSet.has(dir.package + s3File)
+    || alwaysSwapFiles(s3File)));
 
   const toUploadList = packageGlob.filter((packageFile) => !fs.lstatSync(packageFile).isDirectory()
     && (
@@ -230,13 +294,19 @@ getS3Objects().then((data) => {
 
   const s3DeleteListTranslate = s3DeleteList.map((file) => ({ Key: file }));
 
-  return deleteS3Files(s3DeleteListTranslate).then(() => uploadFiles(toUploadList));
-}).then(() => {
+  await deleteS3Files(s3DeleteListTranslate);
+  await uploadFiles(toUploadList);
+
   console.log('Upload Complete');
 
   if (production) {
-    invalidateCloudFront();
+    await invalidateCloudFront();
   }
 
   console.log('Run `blc https://briananders.com -ro` to check for broken links');
+}
+
+main().catch((err) => {
+  console.error(err);
+  process.exit(1);
 });
