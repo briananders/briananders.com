@@ -37,5 +37,13 @@
     <%# End Google Tag Manager (noscript); %>
   <% } %>
   <%- content %>
+  <% if(locals.devBuild) { %>
+    <script>
+      (function() {
+        var es = new EventSource('/livereload');
+        es.onmessage = function() { location.reload(); };
+      })();
+    </script>
+  <% } %>
 </body>
 </html>

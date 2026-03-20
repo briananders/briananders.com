@@ -8,6 +8,7 @@ const express = require('express');
 const serve = require('express-static');
 const { createProxyMiddleware } = require('http-proxy-middleware');
 const EventEmitter = require('events');
+const chokidar = require('chokidar');
 /* ///////////////////////////// local variables //////////////////////////// */
 
 const { log } = console;
@@ -58,8 +59,8 @@ const configs = {
 function shouldBundleEjs(configs) {
   const { completionFlags } = configs;
 
-  if (completionFlags.IMAGES_ARE_MOVED &&
-      completionFlags.VIDEOS_ARE_MOVED) {
+  if (completionFlags.IMAGES_ARE_MOVED
+    && completionFlags.VIDEOS_ARE_MOVED) {
     bundleEJS(configs);
   }
 }
@@ -95,6 +96,22 @@ clean(configs).then(() => {
 });
 
 if (!production) {
+  const liveReloadClients = [];
+
+  app.get('/livereload', (req, res) => {
+    res.setHeader('Content-Type', 'text/event-stream');
+    res.setHeader('Cache-Control', 'no-cache');
+    res.setHeader('Connection', 'keep-alive');
+    res.flushHeaders();
+    liveReloadClients.push(res);
+    req.on('close', () => {
+      const i = liveReloadClients.indexOf(res);
+      if (i !== -1) liveReloadClients.splice(i, 1);
+    });
+  });
+
+  app.use('/.well-known', (req, res) => res.sendStatus(404));
+
   app.use('/last-fm-history', createProxyMiddleware({
     target: 'http://staging.briananders.com.s3-website-us-east-1.amazonaws.com/last-fm-history',
     changeOrigin: true,
@@ -107,9 +124,19 @@ if (!production) {
     target: 'http://staging.briananders.com.s3-website-us-east-1.amazonaws.com/data',
     changeOrigin: true,
   }));
+  app.use('/movies', createProxyMiddleware({
+    target: 'http://staging.briananders.com.s3-website-us-east-1.amazonaws.com/movies',
+    changeOrigin: true,
+  }));
   app.use(serve(dir.package));
 
   const server = app.listen(3000, () => {
     log(`${timestamp.stamp()} server is running at http://localhost:%s`, server.address().port);
+  });
+
+  buildEvents.on(BUILD_EVENTS.previewReady, () => {
+    chokidar.watch(dir.package, { ignoreInitial: true })
+      .on('change', () => liveReloadClients.forEach((client) => client.write('data: reload\n\n')))
+      .on('add', () => liveReloadClients.forEach((client) => client.write('data: reload\n\n')));
   });
 }
