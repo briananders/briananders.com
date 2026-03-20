@@ -1,5 +1,5 @@
 const fs = require('fs-extra');
-const glob = require('glob');
+const { globSync } = require('glob');
 const XXHash = require('xxhash');
 
 const { log } = console;
@@ -30,8 +30,8 @@ module.exports = function assetHashing({
     log(`completionFlags.VIDEOS_ARE_MOVED     :${completionFlags.VIDEOS_ARE_MOVED}`);
   }
 
-  const jsGlob = glob.sync(`${dir.package}**/*.js`);
-  const assetGlob = glob.sync(`${dir.package}{images,videos}/**/*.{${[...images, ...videos].join(',')}}`);
+  const jsGlob = globSync(`${dir.package}**/*.js`);
+  const assetGlob = globSync(`${dir.package}{images,videos}/**/*.{${[...images, ...videos].join(',')}}`);
 
   let processedJs = 0;
   jsGlob.forEach((file, index, array) => {

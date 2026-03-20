@@ -1,6 +1,6 @@
 const fs = require('fs-extra');
-const glob = require('glob');
-const htmlMinify = require('html-minifier');
+const { globSync } = require('glob');
+const { minify: htmlMinify } = require('html-minifier-terser');
 
 const { log } = console;
 
@@ -14,7 +14,7 @@ module.exports = function minifyHTML({
 
   log(`${timestamp.stamp()} minifyHTML()`);
 
-  const htmlGlob = glob.sync(`${dir.package}**/*.html`);
+  const htmlGlob = globSync(`${dir.package}**/*.html`);
   let processed = 0;
 
   htmlGlob.forEach((htmlFileName, index, array) => {
@@ -23,7 +23,7 @@ module.exports = function minifyHTML({
     fs.readFile(htmlFileName, (error, data) => {
       if (error) throw error;
 
-      const minifiedHtml = htmlMinify.minify(data.toString(), {
+      htmlMinify(data.toString(), {
         caseSensitive: true,
         collapseWhitespace: true,
         conservativeCollapse: true,
@@ -37,20 +37,18 @@ module.exports = function minifyHTML({
         removeComments: true,
         sortClassName: true,
         useShortDoctype: true,
-      });
+      }).then((minifiedHtml) => {
+        fs.writeFile(htmlFileName, minifiedHtml, (err) => {
+          if (err) throw err;
+          processed++;
 
-      // add more minifiers
-
-      fs.writeFile(htmlFileName, minifiedHtml, (err) => {
-        if (err) throw err;
-        processed++;
-
-        if (processed === array.length) {
-          log(`${timestamp.stamp()} minifyHTML(): ${'DONE'.bold.green}`);
-          completionFlags.HTML_IS_MINIFIED = true;
-          buildEvents.emit(BUILD_EVENTS.htmlMinified);
-        }
-      });
+          if (processed === array.length) {
+            log(`${timestamp.stamp()} minifyHTML(): ${'DONE'.bold.green}`);
+            completionFlags.HTML_IS_MINIFIED = true;
+            buildEvents.emit(BUILD_EVENTS.htmlMinified);
+          }
+        });
+      }).catch((err) => { throw err; });
     });
   });
 };

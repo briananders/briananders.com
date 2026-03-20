@@ -5,12 +5,6 @@ const { readFileSync, writeFile, mkdirpSync } = require('fs-extra');
 const plugins = [
   {
     name: 'preset-default',
-    params: {
-      overrides: {
-        removeViewBox: false,
-        removeDoctype: false,
-      },
-    },
   },
 ];
 

@@ -4,7 +4,7 @@ const source = require('vinyl-source-stream');
 const rename = require('gulp-rename');
 const notifier = require('node-notifier');
 const gulp = require('gulp');
-const glob = require('glob');
+const { globSync } = require('glob');
 const buffer = require('vinyl-buffer');
 const browserify = require('browserify');
 const babelify = require('babelify');
@@ -19,7 +19,7 @@ module.exports = function bundleJS({ dir, buildEvents, debug }) {
 
   const jsOutputPath = path.join(dir.package, 'scripts');
 
-  const scriptGlob = glob.sync(`${dir.src}js/**/[^_]*.js`);
+  const scriptGlob = globSync(`${dir.src}js/**/[^_]*.js`);
   let processed = 0;
 
   log(`${timestamp.stamp()} bundleJS()`);

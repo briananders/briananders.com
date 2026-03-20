@@ -7,7 +7,12 @@
       "Bash(grep border-radius:12px\\\\|border-radius: 12px\\\\|border-radius:space:*)",
       "Bash(grep:*)",
       "Bash(npm test:*)",
-      "Bash(xargs:*)"
+      "Bash(xargs:*)",
+      "Bash(npm outdated:*)",
+      "Bash(nvm ls:*)",
+      "Bash(nvm ls-remote:*)",
+      "Bash(npm info:*)",
+      "Bash(nvm use:*)"
     ],
     "deny": [],
     "ask": []

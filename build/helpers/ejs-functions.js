@@ -3,7 +3,7 @@ const fs = require('fs');
 const hljs = require('highlight.js');
 const merge = require('merge');
 const sass = require('sass');
-const sizeOf = require('image-size');
+const { imageSize: sizeOf } = require('image-size');
 const path = require('path');
 const { camelize, dasherize } = require('underscore.string');
 
@@ -78,7 +78,7 @@ module.exports = (dir, pageMappingData) => ({
     if (!src) {
       throw new Error('img is missing src attribute');
     }
-    const dimensions = sizeOf(path.join(dir.package, src));
+    const dimensions = sizeOf(fs.readFileSync(path.join(dir.package, src)));
     return `<img src="${src}" alt="${alt}" height="${height || dimensions.height}" width="${width || dimensions.width}" ${classes.length ? `class="${classes.join(' ')}"` : ''} />`;
   },
 
@@ -88,7 +88,7 @@ module.exports = (dir, pageMappingData) => ({
     if (!src) {
       throw new Error('lazyImage is missing src attribute');
     }
-    const dimensions = sizeOf(path.join(dir.package, src));
+    const dimensions = sizeOf(fs.readFileSync(path.join(dir.package, src)));
     return `
       <link rel="preload" href="${src}" as="image" />
       <img lazy src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 ${width || dimensions.width} ${height || dimensions.height}'%3E%3C/svg%3E" data-src="${src}" alt="${alt}" height="${height || dimensions.height}" width="${width || dimensions.width}" ${classes.length ? `class="${classes.join(' ')}"` : ''} />
@@ -99,8 +99,8 @@ module.exports = (dir, pageMappingData) => ({
     if (!srcs) {
       throw new Error('lazyVideo is missing srcs attribute');
     }
-    const desktopDimensions = sizeOf(path.join(dir.package, placeholders.desktop));
-    const mobileDimensions = sizeOf(path.join(dir.package, placeholders.mobile));
+    const desktopDimensions = sizeOf(fs.readFileSync(path.join(dir.package, placeholders.desktop)));
+    const mobileDimensions = sizeOf(fs.readFileSync(path.join(dir.package, placeholders.mobile)));
     const videoType = path.extname(srcs.mobile).replace('.', '');
     return `
     <link rel="preload" href="${srcs.mobile}" as="video" type="video/${videoType}" />

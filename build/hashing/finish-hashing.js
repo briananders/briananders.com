@@ -1,5 +1,5 @@
 const fs = require('fs-extra');
-const glob = require('glob');
+const { globSync } = require('glob');
 
 const { log } = console;
 
@@ -23,7 +23,7 @@ module.exports = function finishHashing({
     return false;
   }
   if (debug) log(`${timestamp.stamp()} finishHashing(): ${Object.keys(hashingFileNameList)}`);
-  const htmlGlob = [...glob.sync(`${dir.package}**/*.html`), ...glob.sync(`${dir.package}**/*.json`)];
+  const htmlGlob = [...globSync(`${dir.package}**/*.html`), ...globSync(`${dir.package}**/*.json`)];
   let htmlFilesProcessed = 0;
   htmlGlob.forEach((file, index, array) => {
     const fileBuffer = fs.readFileSync(file);

@@ -1,5 +1,5 @@
 const fs = require('fs-extra');
-const glob = require('glob');
+const { globSync } = require('glob');
 const UglifyJS = require('uglify-js');
 
 const { log } = console;
@@ -12,7 +12,7 @@ module.exports = function minifyJS({ dir, completionFlags, buildEvents }) {
 
   log(`${timestamp.stamp()} minifyJS()`);
 
-  const jsGlob = glob.sync(`${dir.package}**/*.js`);
+  const jsGlob = globSync(`${dir.package}**/*.js`);
   let processed = 0;
 
   jsGlob.forEach((jsFileName, index, array) => {

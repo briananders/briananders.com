@@ -1,5 +1,5 @@
 const fs = require('fs-extra');
-const glob = require('glob');
+const { globSync } = require('glob');
 const XXHash = require('xxhash');
 
 const { log } = console;
@@ -14,7 +14,7 @@ module.exports = function hashCSS({
 
   log(`${timestamp.stamp()} assetHashing().css`);
 
-  const cssGlob = glob.sync(`${dir.package}**/*.css`);
+  const cssGlob = globSync(`${dir.package}**/*.css`);
   let processedCss = 0;
   cssGlob.forEach((file, index, array) => {
     const fileContents = fs.readFileSync(file);

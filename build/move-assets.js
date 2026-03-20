@@ -1,5 +1,5 @@
 const fs = require('fs-extra');
-const glob = require('glob');
+const { globSync } = require('glob');
 const path = require('path');
 const pngToIco = require('png-to-ico');
 
@@ -11,7 +11,7 @@ function makeFaviconIco({
   const timestamp = require(`${dir.build}helpers/timestamp`);
   log(`${timestamp.stamp()} makeFaviconIco()`);
   completionFlags.FAVICON_ICO = false;
-  pngToIco(`${dir.src}images/favicon_base.png`)
+  pngToIco.default(`${dir.src}images/favicon_base.png`)
     .then((buffer) => {
       fs.writeFileSync(`${dir.package}favicon.ico`, buffer);
       log(`${timestamp.stamp()} makeFaviconIco(): ${'MOVED'.bold.green}`);
@@ -91,15 +91,15 @@ function moveAllImages(configs) {
 
   makeFaviconIco({ dir, completionFlags, buildEvents });
 
-  const imagesGlob = glob.sync(`${dir.src}images/**/*.{${images.join(',')}}`);
-  let processed = 0;
+  const imagesGlob = globSync(`${dir.src}images/**/*.{${images.join(',')}}`);
+  const progress = { completed: 0 };
 
   for (let i = 0; i < imagesGlob.length; i++) {
     const imagePath = imagesGlob[i];
     moveOneImage(imagePath, configs, () => {
-      processed++;
-      if (debug) log(`${timestamp.stamp()} ${processed}/${imagesGlob.length}: ${imagePath}`);
-      checkDone(processed, imagesGlob.length);
+      progress.completed += 1;
+      if (debug) log(`${timestamp.stamp()} ${progress.completed}/${imagesGlob.length}: ${imagePath}`);
+      checkDone(progress.completed, imagesGlob.length);
     });
   }
 }
@@ -151,15 +151,15 @@ function moveAllVideos(configs) {
 
   fs.mkdirpSync(`${dir.package}videos/`);
 
-  const videoGlob = glob.sync(`${dir.src}videos/**/*.{${videos.join(',')}}`);
-  let processed = 0;
+  const videoGlob = globSync(`${dir.src}videos/**/*.{${videos.join(',')}}`);
+  const progress = { completed: 0 };
 
   for (let i = 0; i < videoGlob.length; i++) {
     const videoPath = videoGlob[i];
     moveOneVideo(videoPath, configs, () => {
-      processed++;
-      if (debug) log(`${timestamp.stamp()} ${processed}/${videoGlob.length}: ${videoPath}`);
-      checkDone(processed, videoGlob.length);
+      progress.completed += 1;
+      if (debug) log(`${timestamp.stamp()} ${progress.completed}/${videoGlob.length}: ${videoPath}`);
+      checkDone(progress.completed, videoGlob.length);
     });
   }
 }
@@ -204,43 +204,15 @@ function moveAllTxtFiles(configs) {
     }
   }
 
-  const txtGlob = glob.sync(`${dir.src}*.txt`);
-  let processed = 0;
+  const txtGlob = globSync(`${dir.src}*.txt`);
+  const progress = { completed: 0 };
 
   for (let i = 0; i < txtGlob.length; i++) {
     const filePath = txtGlob[i];
     moveOneTxtFile(filePath, configs, () => {
-      processed++;
-      if (debug) log(`${timestamp.stamp()} ${processed}/${txtGlob.length}: ${filePath}`);
-      checkDone(processed, txtGlob.length);
-    });
-  }
-}
-
-function moveJSONFiles(configs) {
-  const {
-    dir, debug,
-  } = configs;
-
-  const timestamp = require(`${dir.build}helpers/timestamp`);
-
-  log(`${timestamp.stamp()} moveJSONFiles()`);
-
-  function checkDone(processed, maximum) {
-    if (processed >= maximum) {
-      log(`${timestamp.stamp()} moveJSONFiles(): ${'DONE'.bold.green}`);
-    }
-  }
-
-  const jsonGlob = glob.sync(`${dir.src}data/**/*.json`);
-  let processed = 0;
-
-  for (let i = 0; i < jsonGlob.length; i++) {
-    const filePath = jsonGlob[i];
-    moveOneTxtFile(filePath, configs, () => {
-      processed++;
-      if (debug) log(`${timestamp.stamp()} ${processed}/${jsonGlob.length}: ${filePath}`);
-      checkDone(processed, jsonGlob.length);
+      progress.completed += 1;
+      if (debug) log(`${timestamp.stamp()} ${progress.completed}/${txtGlob.length}: ${filePath}`);
+      checkDone(progress.completed, txtGlob.length);
     });
   }
 }
@@ -287,15 +259,15 @@ function moveAllDownloads(configs) {
 
   fs.mkdirpSync(`${dir.package}downloads/`);
 
-  const downloadsGlob = glob.sync(`${dir.src}downloads/**`);
-  let processed = 0;
+  const downloadsGlob = globSync(`${dir.src}downloads/**`, { nodir: true });
+  const progress = { completed: 0 };
 
   for (let i = 0; i < downloadsGlob.length; i++) {
     const filePath = downloadsGlob[i];
     moveOneDownload(filePath, configs, () => {
-      processed++;
-      if (debug) log(`${timestamp.stamp()} ${processed}/${downloadsGlob.length}: ${filePath}`);
-      checkDone(processed, downloadsGlob.length);
+      progress.completed += 1;
+      if (debug) log(`${timestamp.stamp()} ${progress.completed}/${downloadsGlob.length}: ${filePath}`);
+      checkDone(progress.completed, downloadsGlob.length);
     });
   }
 }
@@ -306,7 +278,6 @@ module.exports = {
     moveAllVideos(configs);
     moveAllTxtFiles(configs);
     moveAllDownloads(configs);
-    // moveJSONFiles(configs); moved to https://github.com/briananders/briananders.com-data-files
   },
 
   moveOneDownload,

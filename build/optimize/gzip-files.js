@@ -1,5 +1,5 @@
 const fs = require('fs-extra');
-const glob = require('glob');
+const { globSync } = require('glob');
 const zlib = require('zlib');
 
 const { log } = console;
@@ -14,7 +14,7 @@ module.exports = function gzipFiles({
 
   log(`${timestamp.stamp()} gzip()`);
 
-  const overallGlob = glob.sync(`${dir.package}**/*.+(html|xml|css|js|txt|json)`);
+  const overallGlob = globSync(`${dir.package}**/*.+(html|xml|css|js|txt|json)`);
 
   let processed = 0;
   if (debug) log(`overallGlob: ${overallGlob.length} \n\n ${overallGlob} \n`);

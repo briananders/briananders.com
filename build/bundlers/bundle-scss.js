@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
 const sass = require('sass');
 const fs = require('fs-extra');
-const glob = require('glob');
+const { globSync } = require('glob');
 const path = require('path');
 const CleanCSS = require('clean-css');
 const notifier = require('node-notifier');
@@ -18,7 +18,7 @@ module.exports = function bundleSCSS({
   const production = require(`${dir.build}helpers/production`);
 
   log(`${timestamp.stamp()} bundleSCSS()`);
-  const stylesGlob = glob.sync(`${dir.src}**/**/[^_]*.scss`);
+  const stylesGlob = globSync(`${dir.src}**/**/[^_]*.scss`);
   let processed = 0;
   stylesGlob.forEach((scssFilename, index, array) => {
     const outFile = scssFilename.replace(dir.src, dir.package).replace(/\.scss$/, '.css');
