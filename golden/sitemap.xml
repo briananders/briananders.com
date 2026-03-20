@@ -19,7 +19,7 @@
   </url>
   <url>
     <loc>https://briananders.com/</loc>
-    <lastmod>2026-03-12</lastmod>
+    <lastmod>2026-03-19</lastmod>
     <priority>1</priority>
     <changefreq>yearly</changefreq>
   </url>
@@ -110,6 +110,12 @@
   <url>
     <loc>https://briananders.com/posts/how-to-match-the-height-of-sibling-elements/</loc>
     <lastmod>2016-11-16</lastmod>
+    <priority>0.8</priority>
+    <changefreq>yearly</changefreq>
+  </url>
+  <url>
+    <loc>https://briananders.com/posts/imdb-ratings/</loc>
+    <lastmod>2026-03-18</lastmod>
     <priority>0.8</priority>
     <changefreq>yearly</changefreq>
   </url>
@@ -254,12 +260,6 @@
   <url>
     <loc>https://briananders.com/posts/sticky-stacky/</loc>
     <lastmod>2022-07-08</lastmod>
-    <priority>0.8</priority>
-    <changefreq>yearly</changefreq>
-  </url>
-  <url>
-    <loc>https://briananders.com/posts/ten-star-movies/</loc>
-    <lastmod>2016-11-15</lastmod>
     <priority>0.8</priority>
     <changefreq>yearly</changefreq>
   </url>
