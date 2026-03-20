@@ -1,0 +1,44 @@
+---
+title: "IMDb Ratings"
+description: "Turns out watching a lot of things and having opinions about them generates a lot of data. Browse my full IMDb catalog by star rating and content type."
+date: 2026-03-19
+priority: 0.8
+layout: base
+styles:
+- 'main'
+- 'posts/imdb-ratings'
+scripts:
+- 'posts/imdb-ratings'
+---
+
+<section itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="movies-container">
+
+    <div class="rating-selector container">
+      <label for="rating-dropdown">Rating:</label>
+      <select id="rating-dropdown">
+        <option value="10" selected>10 stars</option>
+        <option value="9">9 stars</option>
+        <option value="8">8 stars</option>
+        <option value="7">7 stars</option>
+        <option value="6">6 stars</option>
+        <option value="5">5 stars</option>
+        <option value="4">4 stars</option>
+        <option value="3">3 stars</option>
+        <option value="2">2 stars</option>
+        <option value="1">1 star</option>
+      </select>
+      <label for="content-type-dropdown">Content Type:</label>
+      <select id="content-type-dropdown">
+        <option value="" selected>All</option>
+        <option value="movies">Movies</option>
+        <option value="tvSeries">TV Series</option>
+      </select>
+      <span id="movies-count" class="movies-count"></span>
+    </div>
+
+    <div id="movies-loading" class="movies-loading">Loading...</div>
+    <div id="movies-grid" class="movies-grid"></div>
+
+  </div>
+</section>

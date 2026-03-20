@@ -6,7 +6,8 @@
       "Bash(node:*)",
       "Bash(grep border-radius:12px\\\\|border-radius: 12px\\\\|border-radius:space:*)",
       "Bash(grep:*)",
-      "Bash(npm test:*)"
+      "Bash(npm test:*)",
+      "Bash(xargs:*)"
     ],
     "deny": [],
     "ask": []
