@@ -1,13 +1,13 @@
 const ready = require('../_modules/document-ready');
 
-const S3_BASE = 'http://staging.briananders.com.s3-website-us-east-1.amazonaws.com/movies';
+const API_BASE = '/movies';
 
 function getRatingUrl(rating) {
-  return `${S3_BASE}/rating-${rating}.json`;
+  return `${API_BASE}/rating-${rating}.json`;
 }
 
 function getImageUrl(movieId) {
-  return `${S3_BASE}/images/${movieId}.webp`;
+  return `${API_BASE}/images/${movieId}.webp`;
 }
 
 const TV_CONTENT_TYPES = new Set(['tvSeries', 'tvMiniSeries', 'tvMovie']);
