@@ -2,6 +2,13 @@
 
 const { log } = console;
 
+/**
+ * Prints a large ASCII-art "BRIAN ANDERS .COM" banner to the terminal.
+ *
+ * Called by `check-done.js` immediately before `process.exit()` once every
+ * production build stage has completed successfully. The banner provides an
+ * unmistakable visual signal that the build finished without errors.
+ */
 module.exports = () => {
   log('\n\n');
 

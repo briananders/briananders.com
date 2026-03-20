@@ -1,3 +1,12 @@
+/**
+ * Logs the current state of every completion flag to the terminal.
+ *
+ * Only called when `debug` mode is active. Prints a bordered summary block
+ * so developers can see at a glance which stages have and haven't finished
+ * before the gate check runs.
+ *
+ * @param {{ dir: object, completionFlags: object }} params
+ */
 function logCompletionFlags({ dir, completionFlags }) {
   const { log } = console;
   const timestamp = require(`${dir.build}helpers/timestamp`);
@@ -19,12 +28,27 @@ function logCompletionFlags({ dir, completionFlags }) {
   log(`--------------------------------`);
 }
 
+/**
+ * Gate function that exits the process once every production build stage is done.
+ *
+ * Called after each significant build event (e.g. `gzipDone`, `sitemapDone`).
+ * Inspects all the completion flags and calls `process.exit()` only when every
+ * required stage has been marked `true`. Any unfinished stage causes an early
+ * `return false` so the build continues running.
+ *
+ * In production builds this is the terminal step: all flags true → print the
+ * success banner → exit cleanly.
+ *
+ * @param {{ dir: object, debug: boolean, completionFlags: object }} params
+ * @returns {false|undefined} Returns `false` if build stages are still pending; otherwise exits.
+ */
 module.exports = function checkDone({ dir, debug, completionFlags }) {
 
   if (debug) {
     logCompletionFlags({ dir, completionFlags });
   }
 
+  // All flags that must be true before the build is considered complete.
   const flagsToCheck = [
     completionFlags.JS_IS_MINIFIED,
     completionFlags.CSS_IS_MINIFIED,
@@ -39,10 +63,12 @@ module.exports = function checkDone({ dir, debug, completionFlags }) {
     completionFlags.GZIP,
   ];
 
+  // If any flag is still false, the build isn't done yet — bail out early.
   if (flagsToCheck.some((flag) => !flag)) {
     return false;
   }
 
+  // All stages complete: print the success banner and exit.
   require(`${dir.build}helpers/exit-message`)();
 
   process.exit();
