@@ -13,4 +13,28 @@ main.home {
   .deck {
     margin-bottom: $paragraph-bottom;
   }
+
+  .posts {
+    .content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    header {
+      @include readingWidth;
+    }
+  }
+
+  .index-music {
+    .content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    header {
+      @include readingWidth;
+    }
+  }
 }
