@@ -1,0 +1,25 @@
+#!/bin/sh
+# Pre-commit hook: run the golden build and stage any changes to golden/
+
+set -e
+
+echo "[pre-commit] Running golden build..."
+
+# Activate Node 22 via nvm
+export NVM_DIR="$HOME/.nvm"
+if [ -s "$NVM_DIR/nvm.sh" ]; then
+  # shellcheck disable=SC1091
+  . "$NVM_DIR/nvm.sh"
+  nvm use v22.21.0 --silent
+fi
+
+# Run the golden build (exits non-zero on failure, which blocks the commit)
+npm run build:golden
+
+# Stage any changes to the golden directory so they're included in this commit
+if ! git diff --quiet -- golden/ || git ls-files --others --exclude-standard -- golden/ | grep -q .; then
+  echo "[pre-commit] Golden output changed — staging golden/ updates..."
+  git add golden/
+fi
+
+echo "[pre-commit] Golden build passed."

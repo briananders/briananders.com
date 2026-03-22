@@ -12,6 +12,7 @@
     "debug:build:golden": "NODE_ENV=production node index.js --verbose --golden",
     "inspect:build": "NODE_ENV=production node inspect index.js --verbose",
     "inspect:start": "node inspect index.js --verbose",
+    "prepare": "cp bin/pre-commit .git/hooks/pre-commit && chmod +x .git/hooks/pre-commit",
     "test": "node --test",
     "deploy": "NODE_ENV=production node s3-uploader.js",
     "lint:build": "npx eslint build/** --fix",
