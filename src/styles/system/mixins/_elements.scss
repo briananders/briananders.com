@@ -285,7 +285,7 @@
 
   overflow: hidden;
   max-width: 500px;
-  border: 2px solid rgba($palette--divider-color, 0.2);
+  @include border--light;
   color: $palette--primary-white;
 
   p {
@@ -336,4 +336,5 @@
   padding: $grid--gutter;
   border-radius: var(--border-radius, $border-radius);
   @include surface;
+  @include border--light;
 }

@@ -1,6 +1,7 @@
 ---
 title: "Home"
-description: "Brian Anders is an Engineering Manager in the tech industry. I'm also a YouTuber, Podcaster, and Musician."
+description: "Brian Anders is an Engineering Manager in the tech industry. I'm also a YouTuber, Podcaster, and
+Musician."
 priority: 1.0
 homepage: true
 pageClasses:
@@ -14,7 +15,7 @@ scripts:
 ---
 
 
-<%- partial('head/styles', {...locals, path: 'homepage', inlineStyles: true, }) %>
+<%- partial('head/styles', { ...locals, path: 'homepage', inlineStyles: true }) %>
 
 
 <section class="contributions">
@@ -63,38 +64,32 @@ scripts:
 </section>
 
 
-<section class="posts">
-  <div class="content">
-    <header>
-      <h2>
-        <%- noWidows(`Recent posts`); %>
-      </h2>
-    </header>
-    <%- partial('posts-list', Object.assign(locals, { postCount: 6 })); %>
-    <%- blockLink('More posts', {
-      href: '/posts/',
-    }); %>
-  </div>
-</section>
+  <section class="posts">
+    <div class="content">
+      <header>
+        <h2>
+          <%- noWidows(`Recent posts`); %>
+        </h2>
+      </header>
+      <%- partial('posts-list', Object.assign(locals, { postCount: 6 })); %>
+      <%- blockLink('More posts', { href: '/posts/' }); %>
+    </div>
+  </section>
 
 
-<section class="index-music">
-  <div class="content">
-    <header>
-      <h2>
-        <%- noWidows(`Music that I have been listening to`); %>
-      </h2>
-    </header>
-    <link rel="preconnect" href="https://ws.audioscrobbler.com" crossorigin />
-    <div class="last-fm-module p" data-type="albums" src="/images/posts/last-fm/default.webp">
-      <% for (let i = 0; i < 4; i++) { %>
-      <%- defaultLastFMModule(); %>
-      <% } %>
+  <section class="index-music">
+    <div class="content">
+      <header>
+        <h2>
+          <%- noWidows(`Music that I have been listening to`); %>
+        </h2>
+      </header>
+      <link rel="preconnect" href="https://ws.audioscrobbler.com" crossorigin />
+      <div class="last-fm-module p" data-type="albums" src="/images/posts/last-fm/default.webp">
+        <% for (let i=0; i < 4; i++) { %>
+          <%- defaultLastFMModule(); %>
+        <% } %>
+      </div>
+      <%- blockLink('More music details', { href: '/posts/last-fm/' }); %>
     </div>
-    <div class="center">
-      <%- blockLink('More music details', {
-        href: '/posts/last-fm/',
-      }); %>
-    </div>
-  </div>
-</section>
+  </section>

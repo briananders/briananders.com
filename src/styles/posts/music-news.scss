@@ -31,6 +31,30 @@
   gap: space(1);
   overflow: hidden;
   width: 100%;
+  border-radius: 0;
+  position: relative;
+
+  &::before,
+  &::after {
+    content: '';
+    position: absolute;
+    display: block;
+    width: space(4);
+    height: 100%;
+    top: 0;
+    bottom: 0;
+    z-index: 1;
+  }
+
+  &::before {
+    left: 0;
+    background: linear-gradient(to left, rgba($palette--primary-grey, 0), rgba($palette--primary-grey, 1));
+  }
+
+  &::after {
+    right: 0;
+    background: linear-gradient(to right, rgba($palette--primary-grey, 0), rgba($palette--primary-grey, 1));
+  }
 }
 
 .music-news-marquee-viewport--static {
@@ -41,6 +65,7 @@
   overflow: hidden;
   width: 100%;
   min-height: calc(#{space(2)} + 1.6em);
+  border-radius: 0;
 }
 
 .music-news-marquee-row--static {
@@ -54,6 +79,7 @@
   flex-wrap: nowrap;
   width: max-content;
   will-change: transform;
+  border-radius: 0;
 }
 
 .music-news-marquee-segment {
@@ -82,20 +108,16 @@
 }
 
 .band-tag {
-  background-color: $palette--accent-color;
-  color: $palette--primary-grey;
+  color: $palette--accent-color;
+  background-color: rgba($palette--accent-color, 0.1);
   padding: space(1) space(2);
   border-radius: 100px;
   @include type--body-tiny;
   @include type--bold-sans-serif;
 }
 
-.band-tag--queried {
-  background-color: $palette--primary-color-dark;
-  color: $palette--primary-grey;
-}
-
 .band-filter {
+  @include palette--base--inverted(0);
   @include type--body-tiny;
   @include type--bold-sans-serif;
   display: inline-flex;
@@ -104,8 +126,6 @@
   padding: space(1) space(2);
   border-radius: 100px;
   border: 2px solid $palette--accent-color;
-  background: transparent;
-  color: $palette--primary-grey;
   cursor: pointer;
   font-family: inherit;
 
@@ -117,8 +137,8 @@
 }
 
 .band-filter--selected {
+  @include palette--base--inverted;
   background-color: $palette--accent-color;
-  color: $palette--primary-grey;
 }
 
 .band-filter__count {

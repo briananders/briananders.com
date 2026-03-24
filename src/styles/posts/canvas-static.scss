@@ -5,7 +5,7 @@ $squareSize: 768;
 canvas {
   width: $squareSize + px;
   height: $squareSize + px;
-  border: 2px solid rgba($palette--divider-color, 0.2);
+  @include border--light;
   max-width: 100%;
   max-height: 90vw;
   display: block;
@@ -25,6 +25,7 @@ canvas {
     float: left;
     min-height: 1px;
   }
+
   span {
     color: black;
     transform: rotate(90deg);

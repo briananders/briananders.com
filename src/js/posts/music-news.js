@@ -62,9 +62,12 @@ const MARQUEE_BASE_SPEEDS_PX_S = [
 const MARQUEE_USER_BOOST_DECAY_PER_S = 1.8;
 const MARQUEE_USER_BOOST_MAX = 220;
 const MARQUEE_WHEEL_SENSITIVITY = 0.12;
-const MARQUEE_MIN_TAGS_PER_SEGMENT = 14;
-// One loop must be much wider than the clip so the seam never shows empty space.
-const MARQUEE_SEGMENT_TO_VIEWPORT_MIN = 2.4;
+// Initial segment copies per row injected into the HTML before the first measurement.
+const MARQUEE_INITIAL_UNITS = 6;
+// Keep at least this many viewport-widths of content beyond the current scroll position.
+const MARQUEE_AHEAD_BUFFER_VP = 4;
+// Never reduce a row below this many segments (prevents momentary gaps on slow frames).
+const MARQUEE_MIN_SEGMENTS = 4;
 
 function splitBandsIntoMarqueeRows(bandsList) {
   const rows = Array.from({ length: MARQUEE_ROW_COUNT }, () => []);
@@ -79,165 +82,148 @@ function splitBandsIntoMarqueeRows(bandsList) {
   return rows;
 }
 
-function expandRowBandsForWidth(rowBands) {
-  if (rowBands.length === 0) return rowBands;
-  let expanded = [...rowBands];
-  while (expanded.length < MARQUEE_MIN_TAGS_PER_SEGMENT) {
-    expanded = expanded.concat(rowBands);
-  }
-  return expanded;
-}
-
 function renderMarqueeSegmentTags(bands) {
   return bands
     .map((band) => `<span class="band-tag band-tag--queried">${escapeHTML(band)}</span>`)
     .join('');
 }
 
-function renderMarqueeRow(rowBands) {
-  const segmentBands = expandRowBandsForWidth(rowBands);
-  const segmentInner = renderMarqueeSegmentTags(segmentBands);
-  const seg = (ariaHidden) => (
-    `<div class="music-news-marquee-segment"${ariaHidden ? ' aria-hidden="true"' : ''}>${segmentInner}</div>`
-  );
-  return `
-    <div class="music-news-marquee-row">
-      <div class="music-news-marquee-track">
-        ${seg(false)}
-        ${seg(true)}
-        ${seg(true)}
-      </div>
-    </div>`;
+/** Create a single segment element (one full copy of a row's band list). */
+function makeSegmentEl(bands) {
+  const el = document.createElement('div');
+  el.className = 'music-news-marquee-segment';
+  el.innerHTML = renderMarqueeSegmentTags(bands);
+  return el;
 }
 
-function staticQueriedRowHtml(tags) {
-  const row = 'music-news-marquee-row music-news-marquee-row--static';
-  const inner = 'music-news-marquee-static-inner';
-  return `<div class="${row}"><div class="${inner}">${tags}</div></div>`;
-}
-
-function renderQueriedBandsMarquee(bandsList) {
-  const rows = splitBandsIntoMarqueeRows(bandsList);
-  return `
-    <div class="music-news-marquee-viewport">
-      ${rows.map((rowBands) => renderMarqueeRow(rowBands)).join('')}
-    </div>`;
-}
-
-function syncTrackSegmentHtml(track, html) {
-  track.querySelectorAll('.music-news-marquee-segment').forEach((el) => {
-    el.innerHTML = html;
-  });
-}
-
-/**
- * Repeat each row's pattern until one segment is wide enough vs the visible row;
- * avoids empty space in the clip and seams when fonts finish loading.
- */
-function padMarqueeTracksToFillWidth(tracks, rowBandsByTrack, widthHintPx) {
-  const hint = Math.max(widthHintPx || 0, 320);
-  tracks.forEach((track, i) => {
-    const rowEl = track.closest('.music-news-marquee-row');
-    const rowW = rowEl && rowEl.clientWidth > 0 ? rowEl.clientWidth : hint;
-    const target = Math.max(rowW, hint) * MARQUEE_SEGMENT_TO_VIEWPORT_MIN;
-    const base = rowBandsByTrack[i];
-    if (!base || base.length === 0) return;
-
-    let expanded = expandRowBandsForWidth(base);
-    let guard = 0;
-    while (guard < 200) {
-      const seg = track.querySelector('.music-news-marquee-segment');
-      const segW = seg ? seg.getBoundingClientRect().width : 0;
-      if (segW >= target) break;
-      expanded = expanded.concat(base);
-      syncTrackSegmentHtml(track, renderMarqueeSegmentTags(expanded));
-      guard += 1;
-    }
-  });
+function renderQueriedBandsMarquee(rows) {
+  const rowsHtml = rows.map((rowBands) => {
+    // Render MARQUEE_INITIAL_UNITS copies upfront; ensureBuffer() adds more after first measurement.
+    const segsHtml = Array.from({ length: MARQUEE_INITIAL_UNITS }, (_, i) => {
+      // First segment is not aria-hidden so screen readers can read the list once.
+      const ariaAttr = i > 0 ? ' aria-hidden="true"' : '';
+      return `<div class="music-news-marquee-segment"${ariaAttr}>${renderMarqueeSegmentTags(rowBands)}</div>`;
+    }).join('');
+    return `<div class="music-news-marquee-row"><div class="music-news-marquee-track">${segsHtml}</div></div>`;
+  }).join('');
+  return `<div class="music-news-marquee-viewport">${rowsHtml}</div>`;
 }
 
 function initBandsMarquee(marqueeRootEl, bandsList) {
-  if (!marqueeRootEl) return () => {};
+  if (!marqueeRootEl) return () => { };
 
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   if (reduceMotion) {
     const rows = splitBandsIntoMarqueeRows(bandsList);
-    const staticRows = rows
-      .map((rowBands) => staticQueriedRowHtml(
-        renderMarqueeSegmentTags(expandRowBandsForWidth(rowBands)),
-      ))
-      .join('');
-    const vp = 'music-news-marquee-viewport music-news-marquee-viewport--static';
-    marqueeRootEl.innerHTML = `<div class="${vp}">${staticRows}</div>`;
-    return;
+    const staticRows = rows.map((rowBands) => {
+      const inner = renderMarqueeSegmentTags(rowBands);
+      return `<div class="music-news-marquee-row music-news-marquee-row--static"><div class="music-news-marquee-static-inner">${inner}</div></div>`;
+    }).join('');
+    marqueeRootEl.innerHTML = `<div class="music-news-marquee-viewport music-news-marquee-viewport--static">${staticRows}</div>`;
+    return () => { };
   }
 
-  marqueeRootEl.innerHTML = renderQueriedBandsMarquee(bandsList);
+  const rows = splitBandsIntoMarqueeRows(bandsList);
+  marqueeRootEl.innerHTML = renderQueriedBandsMarquee(rows);
 
   const viewport = marqueeRootEl.querySelector('.music-news-marquee-viewport');
-  const tracks = marqueeRootEl.querySelectorAll('.music-news-marquee-track');
-  if (!viewport || !tracks.length) return () => {};
+  const trackEls = [...marqueeRootEl.querySelectorAll('.music-news-marquee-track')];
+  if (!viewport || !trackEls.length) return () => { };
 
-  const state = {
-    positions: [],
-    segmentWidths: [],
-    baseSpeeds: MARQUEE_BASE_SPEEDS_PX_S.slice(),
-    userBoost: 0,
-    lastTs: null,
-    rafId: null,
-  };
-
-  function segmentWidth(track) {
-    const seg = track.querySelector('.music-news-marquee-segment');
-    if (!seg) return 0;
-    const w = seg.getBoundingClientRect().width;
-    return w > 0 ? w : 0;
+  // The full-bleed element's getBoundingClientRect().width can be 0 during first layout.
+  // Fall back to window.innerWidth so we always have a usable viewport width.
+  function getVpWidth() {
+    return Math.max(
+      marqueeRootEl.getBoundingClientRect().width,
+      window.innerWidth || 0,
+      320,
+    );
   }
 
-  function measure() {
-    const prev = state.positions.slice();
-    state.segmentWidths = [];
-    state.positions = [];
-    tracks.forEach((track, i) => {
-      const w = segmentWidth(track);
-      state.segmentWidths.push(w);
-      const pos = prev[i];
-      if (w <= 0) {
-        state.positions[i] = 0;
-      } else if (pos === undefined || Number.isNaN(pos)) {
-        state.positions[i] = Math.random() * w;
-      } else {
-        let wrapped = pos % w;
-        if (wrapped < 0) wrapped += w;
-        state.positions[i] = wrapped;
-      }
-    });
+  /**
+   * Per-track state:
+   *   position  — monotonically increasing px offset (adjusted when segments are removed)
+   *   unitWidth — measured px width of one segment copy (0 until first layout)
+   */
+  const perTrack = trackEls.map((el, i) => ({
+    el,
+    rowBands: rows[i],
+    position: 0,
+    unitWidth: 0,
+  }));
+
+  let userBoost = 0;
+  let lastTs = null;
+  let rafId = null;
+
+  /**
+   * Append segments until there are at least MARQUEE_AHEAD_BUFFER_VP viewport-widths
+   * of content beyond the current scroll position. Called once on measurement and
+   * every tick thereafter to handle resize and user boost.
+   */
+  function ensureBuffer(t, vpWidth) {
+    const needed = t.position + vpWidth * MARQUEE_AHEAD_BUFFER_VP;
+    let totalWidth = t.el.childElementCount * t.unitWidth;
+    while (totalWidth < needed) {
+      t.el.appendChild(makeSegmentEl(t.rowBands));
+      totalWidth += t.unitWidth;
+    }
   }
 
   function tick(ts) {
-    if (state.lastTs == null) state.lastTs = ts;
-    const dt = Math.min((ts - state.lastTs) / 1000, 0.1);
-    state.lastTs = ts;
+    if (lastTs == null) lastTs = ts;
+    const dt = Math.min((ts - lastTs) / 1000, 0.1);
+    lastTs = ts;
 
-    state.userBoost *= Math.exp(-MARQUEE_USER_BOOST_DECAY_PER_S * dt);
-    if (Math.abs(state.userBoost) < 0.5) state.userBoost = 0;
+    userBoost *= Math.exp(-MARQUEE_USER_BOOST_DECAY_PER_S * dt);
+    if (Math.abs(userBoost) < 0.5) userBoost = 0;
 
-    tracks.forEach((track, i) => {
-      let W = state.segmentWidths[i];
-      if (!W) {
-        W = segmentWidth(track);
-        if (W) state.segmentWidths[i] = W;
+    const vpWidth = getVpWidth();
+
+    perTrack.forEach((t, i) => {
+      // Measure segment width on the first frame where layout is ready.
+      if (!t.unitWidth) {
+        const seg = t.el.querySelector('.music-news-marquee-segment');
+        if (seg) {
+          const w = seg.getBoundingClientRect().width;
+          if (w > 0) {
+            t.unitWidth = w;
+            // Randomize starting offset so rows begin at different points in the list.
+            t.position = Math.random() * t.unitWidth;
+            // Fill the lookahead buffer now that unitWidth is known.
+            ensureBuffer(t, vpWidth);
+          }
+        }
+        if (!t.unitWidth) return;
       }
-      if (!W) return;
-      const speed = state.baseSpeeds[i] + state.userBoost;
-      state.positions[i] += speed * dt;
-      while (state.positions[i] >= W) state.positions[i] -= W;
-      while (state.positions[i] < 0) state.positions[i] += W;
-      track.style.transform = `translate3d(${-state.positions[i]}px, 0, 0)`;
+
+      t.position += (MARQUEE_BASE_SPEEDS_PX_S[i] + userBoost) * dt;
+
+      // Backward scroll: if userBoost pushes position negative, prepend a segment.
+      while (t.position < 0) {
+        t.el.prepend(makeSegmentEl(t.rowBands));
+        t.position += t.unitWidth;
+      }
+
+      // Fill: keep enough content ahead of the scroll position.
+      ensureBuffer(t, vpWidth);
+
+      // Cleanup: once position ≥ unitWidth the first segment has completely scrolled
+      // off-screen left. Remove it and subtract its width from position so the visual
+      // is identical — this keeps the DOM from growing without bound.
+      while (t.position >= t.unitWidth && t.el.childElementCount > MARQUEE_MIN_SEGMENTS) {
+        const firstSeg = t.el.firstElementChild;
+        if (!firstSeg) break;
+        const removedWidth = firstSeg.getBoundingClientRect().width || t.unitWidth;
+        t.el.removeChild(firstSeg);
+        t.position -= removedWidth;
+      }
+
+      t.el.style.transform = `translate3d(${-t.position}px, 0, 0)`;
     });
 
-    state.rafId = requestAnimationFrame(tick);
+    rafId = requestAnimationFrame(tick);
   }
 
   function wheelPixels(event) {
@@ -254,64 +240,54 @@ function initBandsMarquee(marqueeRootEl, bandsList) {
       || (Math.abs(dx) > 0.01 && Math.abs(dx) >= Math.abs(dy));
     if (!dominantHorizontal) return;
     if (!event.shiftKey && Math.abs(dx) < 0.01) return;
-    state.userBoost += dx * MARQUEE_WHEEL_SENSITIVITY;
-    state.userBoost = Math.min(
-      MARQUEE_USER_BOOST_MAX,
-      Math.max(-MARQUEE_USER_BOOST_MAX, state.userBoost),
-    );
+    userBoost += dx * MARQUEE_WHEEL_SENSITIVITY;
+    userBoost = Math.min(MARQUEE_USER_BOOST_MAX, Math.max(-MARQUEE_USER_BOOST_MAX, userBoost));
     event.preventDefault();
   }
 
-  const rowBandsByTrack = splitBandsIntoMarqueeRows(bandsList);
-
-  function startAnimation() {
-    measure();
-    state.lastTs = null;
-    if (state.rafId != null) cancelAnimationFrame(state.rafId);
-    state.rafId = requestAnimationFrame(tick);
-  }
-
-  function layoutMarqueeAndRemeasure() {
-    const wHint = marqueeRootEl.getBoundingClientRect().width || window.innerWidth;
-    padMarqueeTracksToFillWidth(tracks, rowBandsByTrack, wHint);
-    measure();
+  function remeasure() {
+    const vpWidth = getVpWidth();
+    perTrack.forEach((t) => {
+      const seg = t.el.querySelector('.music-news-marquee-segment');
+      if (!seg) return;
+      const w = seg.getBoundingClientRect().width;
+      if (w > 0) {
+        t.unitWidth = w;
+        ensureBuffer(t, vpWidth);
+      }
+    });
   }
 
   let resizeDebounce;
-  function onResizePad() {
+  function onResize() {
     clearTimeout(resizeDebounce);
-    resizeDebounce = setTimeout(() => {
-      layoutMarqueeAndRemeasure();
-    }, 150);
+    resizeDebounce = setTimeout(remeasure, 150);
   }
 
-  window.addEventListener('resize', onResizePad);
+  window.addEventListener('resize', onResize);
   marqueeRootEl.addEventListener('wheel', onWheel, { passive: false });
 
   let resizeObserver;
   if (typeof ResizeObserver !== 'undefined' && viewport) {
-    resizeObserver = new ResizeObserver(() => {
-      measure();
-    });
+    resizeObserver = new ResizeObserver(remeasure);
     resizeObserver.observe(viewport);
   }
 
   requestAnimationFrame(() => {
-    layoutMarqueeAndRemeasure();
-    requestAnimationFrame(startAnimation);
+    remeasure();
+    lastTs = null;
+    rafId = requestAnimationFrame(tick);
     if (document.fonts && document.fonts.ready) {
-      document.fonts.ready.then(() => {
-        layoutMarqueeAndRemeasure();
-      });
+      document.fonts.ready.then(remeasure);
     }
   });
 
   return () => {
     clearTimeout(resizeDebounce);
-    window.removeEventListener('resize', onResizePad);
+    window.removeEventListener('resize', onResize);
     marqueeRootEl.removeEventListener('wheel', onWheel);
     if (resizeObserver) resizeObserver.disconnect();
-    if (state.rafId != null) cancelAnimationFrame(state.rafId);
+    if (rafId != null) cancelAnimationFrame(rafId);
   };
 }
 

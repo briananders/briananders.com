@@ -2,14 +2,24 @@
 
 // Spin 4 full rotations, land on same side
 @keyframes coin-flip-same {
-  from { transform: rotateX(var(--coin-start, 0deg)); }
-  to { transform: rotateX(calc(var(--coin-start, 0deg) + 1440deg)); }
+  from {
+    transform: rotateX(var(--coin-start, 0deg));
+  }
+
+  to {
+    transform: rotateX(calc(var(--coin-start, 0deg) + 1440deg));
+  }
 }
 
 // Spin 4.5 rotations, land on opposite side
 @keyframes coin-flip-change {
-  from { transform: rotateX(var(--coin-start, 0deg)); }
-  to { transform: rotateX(calc(var(--coin-start, 0deg) + 1620deg)); }
+  from {
+    transform: rotateX(var(--coin-start, 0deg));
+  }
+
+  to {
+    transform: rotateX(calc(var(--coin-start, 0deg) + 1620deg));
+  }
 }
 
 .posts.coin-flip {
@@ -127,7 +137,7 @@
     border: 2px solid;
     font-size: space(2);
     padding: space(2) space(3);
-    
+
     &:hover {
       opacity: 0.8;
     }
@@ -141,7 +151,7 @@
     padding: space(3);
     border-radius: space(2);
     margin-top: space(2);
-    border: 2px solid rgba($palette--divider-color, 0.2);
+    @include border--light;
 
     @include mq-max($small) {
       grid-template-columns: 1fr;

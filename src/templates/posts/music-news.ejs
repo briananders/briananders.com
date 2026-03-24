@@ -4,13 +4,13 @@ description: "Music news articles matching bands I follow, aggregated from vario
 date: 2026-03-05
 priority: 0.8
 pageClasses:
-  - 'music-news'
+- 'music-news'
 layout: base
 styles:
-  - 'main'
-  - 'posts/music-news'
+- 'main'
+- 'posts/music-news'
 scripts:
-  - 'posts/music-news'
+- 'posts/music-news'
 ---
 
 <section>
@@ -18,13 +18,15 @@ scripts:
     <p id="music-news-meta" class="meta"></p>
     <div id="music-news-bands-queried-wrap" class="music-news-bands-block" hidden>
       <h2 class="music-news-bands-heading">Artists searched</h2>
-      <p class="music-news-bands-intro">These names are included when aggregating feeds. Scroll horizontally (trackpad or shift+scroll) to nudge the motion.</p>
-      <div id="music-news-bands-marquee" class="music-news-bands-marquee" aria-label="Scrolling list of artist names queried for news"></div>
+      <p class="music-news-bands-intro">These names are included when aggregating feeds.</p>
+      <div id="music-news-bands-marquee" class="music-news-bands-marquee"
+        aria-label="Scrolling list of artist names queried for news"></div>
     </div>
     <div id="music-news-bands-hits-wrap" class="music-news-bands-block" hidden>
       <h2 class="music-news-bands-heading">Artists with matching articles</h2>
       <p class="music-news-bands-intro">Select an artist to filter the list. Select again to show all articles.</p>
-      <div id="music-news-bands-hits" class="music-news-bands-filters" role="group" aria-label="Filter articles by artist"></div>
+      <div id="music-news-bands-hits" class="music-news-bands-filters" role="group"
+        aria-label="Filter articles by artist"></div>
     </div>
     <div id="music-news-list" role="list"></div>
     <div id="music-news-empty" class="empty" style="display: none;">

@@ -14,13 +14,14 @@ button[value=add] {
   position: relative;
   padding: space(2);
   border-radius: var(--border-radius, $border-radius);
-  border: 2px solid rgba($palette--divider-color, 0.2);
+  @include border--light;
   @include paragraph;
 
   input[type=range] {
     width: 100%;
     margin: space(2) 0;
   }
+
   input[type=number] {
     width: 150px;
   }
@@ -43,6 +44,7 @@ button[value=add] {
       display: none;
     }
   }
+
   button[value=pause] {
     span.play {
       display: none;
