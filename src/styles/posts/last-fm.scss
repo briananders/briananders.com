@@ -2,7 +2,7 @@
 
 .last-fm-module {
   display: grid;
-  grid-gap: space(6);
+  grid-gap: space(2);
 
   .item {
     display: grid;
@@ -15,6 +15,7 @@
     margin-right: -#{space(1)};
 
     @include palette--base;
+    @include card;
 
     &.album {
       grid-template-columns: 1fr 100px;

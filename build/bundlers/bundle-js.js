@@ -42,6 +42,7 @@ module.exports = function bundleJS({ dir, buildEvents, debug }) {
   const BUILD_EVENTS = require(`${dir.build}constants/build-events`);
   const timestamp = require(`${dir.build}helpers/timestamp`);
   const production = require(`${dir.build}helpers/production`);
+  const scssStringifyTransform = require(`${dir.build}bundlers/scss-stringify-transform`);
 
   const jsOutputPath = path.join(dir.package, 'scripts');
 
@@ -69,6 +70,7 @@ module.exports = function bundleJS({ dir, buildEvents, debug }) {
     }
 
     browserify(browserifyOptions)
+      .transform(scssStringifyTransform)
       .transform(babelify, { presets: ['@babel/preset-env', '@babel/preset-react'] })
       .bundle()
       .on('error', (error) => {
