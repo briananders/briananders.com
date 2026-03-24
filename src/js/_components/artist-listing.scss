@@ -1,0 +1,56 @@
+@use "sass:math";
+@use "system/utilities" as *;
+
+$thumb-width: 90px;
+$bar-height: 6px;
+
+a {
+  color: inherit;
+  text-decoration: none;
+  display: grid;
+  grid-template-columns: $thumb-width 1fr;
+  gap: space(2);
+  border-radius: $border-radius;
+  outline: none;
+  padding: space(1);
+
+  transition-duration: $transition-speed;
+  transition-timing-function: $transition-timing;
+
+  @include link-focus;
+  @include link-hover;
+  @include card;
+
+  transition-property: box-shadow, background-color;
+}
+
+#bar {
+  width: 0%;
+  max-width: 100%;
+  height: $bar-height;
+  border-radius: $border-radius;
+  margin-top: space(1);
+  @include orange-gradient;
+
+  transition-duration: $transition-speed;
+  transition-timing-function: $transition-timing;
+  transition-property: width;
+}
+
+img {
+  display: block;
+  width: $thumb-width;
+}
+
+slot {
+  @include font-size(4);
+  @include type--bold-sans-serif;
+
+  display: block;
+  margin-bottom: space(2);
+}
+
+span.info {
+  padding-top: space(1);
+  display: block;
+}
