@@ -436,7 +436,7 @@ function renderReport(fileName) {
       artistElement.innerHTML = artist.name;
       artistElement.setAttribute('name', artist.name);
       artistElement.setAttribute('count', artist.count);
-      artistElement.setAttribute('img', getImageUrl(artist.image, 'avif'));
+      artistElement.setAttribute('img', getImageUrl(artist.image, 'webp'));
       artistElement.setAttribute('max', artistMax);
 
       artistsContainer.appendChild(artistElement);
@@ -453,7 +453,7 @@ function renderReport(fileName) {
       albumElement.setAttribute('artist', album.artist);
       albumElement.setAttribute('count', album.count);
       albumElement.setAttribute('max', albumMax);
-      albumElement.setAttribute('img', getImageUrl(album.albumImage, 'avif'));
+      albumElement.setAttribute('img', getImageUrl(album.albumImage, 'webp'));
 
       albumsContainer.appendChild(albumElement);
     });
