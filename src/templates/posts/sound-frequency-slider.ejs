@@ -11,22 +11,20 @@ scripts:
   - 'posts/sound-frequency-slider/index'
 ---
 
-<section>
-  <div class="content">
-    <p>
-      Yet, for all my exploration of the digital realm, a particular facet has remained curiously uncharted: the domain of the JavaScript Web Audio API. This omission, despite my deep-rooted enthusiasm for both music and technology, has long piqued my curiosity. This API, I've come to realize, provides a delightful and surprisingly accessible gateway into the captivating universe of sound frequencies and their intricate dance of harmonies and discord.
-    </p>
-    <p>
-      Exploring the JavaScript Web Audio API allows you to embark on a captivating journey into the realm of sound, a realm where you can experiment with frequencies and delve into the mesmerizing interplay of tones. It's a tool that invites you to not only create music but to unlock the secrets of how sound waves interact, and in doing so, enhance your understanding of the auditory world.
-    </p>
-    <p>
-      Moreover, this versatile tool offers a unique opportunity to gauge and evaluate your auditory faculties. Our remarkable human hearing, a remarkable sensory gift, is inherently bounded by a range spanning from the low rumble of 20 Hertz to the high-pitched resonance of 20,000 Hertz. The JavaScript Web Audio API thus becomes a means to test and celebrate the remarkable capabilities of our ears, shedding light on the subtle nuances and subtleties of the auditory experience that often go unnoticed. It's a journey that holds the promise of both discovery and appreciation for the multifaceted world of sound that surrounds us.
-    </p>
-    <p>
-      Experiment and have fun!
-    </p>
-  </div>
-</section>
+<%- partial('section/open', { ...locals }) %>
+  <p>
+    Yet, for all my exploration of the digital realm, a particular facet has remained curiously uncharted: the domain of the JavaScript Web Audio API. This omission, despite my deep-rooted enthusiasm for both music and technology, has long piqued my curiosity. This API, I've come to realize, provides a delightful and surprisingly accessible gateway into the captivating universe of sound frequencies and their intricate dance of harmonies and discord.
+  </p>
+  <p>
+    Exploring the JavaScript Web Audio API allows you to embark on a captivating journey into the realm of sound, a realm where you can experiment with frequencies and delve into the mesmerizing interplay of tones. It's a tool that invites you to not only create music but to unlock the secrets of how sound waves interact, and in doing so, enhance your understanding of the auditory world.
+  </p>
+  <p>
+    Moreover, this versatile tool offers a unique opportunity to gauge and evaluate your auditory faculties. Our remarkable human hearing, a remarkable sensory gift, is inherently bounded by a range spanning from the low rumble of 20 Hertz to the high-pitched resonance of 20,000 Hertz. The JavaScript Web Audio API thus becomes a means to test and celebrate the remarkable capabilities of our ears, shedding light on the subtle nuances and subtleties of the auditory experience that often go unnoticed. It's a journey that holds the promise of both discovery and appreciation for the multifaceted world of sound that surrounds us.
+  </p>
+  <p>
+    Experiment and have fun!
+  </p>
+<%- partial('section/close', { ...locals }) %>
 
 <section>
   <div class="content" id="slider-holder">

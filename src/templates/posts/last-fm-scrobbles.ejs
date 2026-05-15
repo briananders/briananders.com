@@ -35,28 +35,19 @@ scripts:
       <option selected value="all-time">All Time</option>
     </select>
   </div>
-   
+
   <div id="selector-container" class="selector-container"></div>
 </div>
 
-<section>
-  <div class="container">
-    <h2>Artists</h2>
-    <div id="artists"></div>
-  </div>
-</section>
+<%- partial('section/open', { ...locals, kind: 'container', sectionTitle: 'Artists' }) %>
+  <div id="artists"></div>
+<%- partial('section/close', { ...locals, kind: 'container' }) %>
 
-<section>
-  <div class="container">
-    <h2>Albums</h2>
-    <div id="albums"></div>
-  </div>
-</section>
+<%- partial('section/open', { ...locals, kind: 'container', sectionTitle: 'Albums' }) %>
+  <div id="albums"></div>
+<%- partial('section/close', { ...locals, kind: 'container' }) %>
 
-<section>
-  <div class="container">
-    <h2>Yearly Scrobbles</h2>
-    <div id="yearly-scrobbles">
-    </div>
+<%- partial('section/open', { ...locals, kind: 'container', sectionTitle: 'Yearly Scrobbles' }) %>
+  <div id="yearly-scrobbles">
   </div>
-</section>
+<%- partial('section/close', { ...locals, kind: 'container' }) %>

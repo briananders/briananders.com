@@ -3,8 +3,11 @@
   // Consolidates the pattern from wordle-solver, imdb-ratings, and similar
   // solver/calculator pages.
   //
+  // Uses `resultsTitle` (not `title`) to avoid inheriting `frontMatter.title`
+  // via the `...locals` spread.
+  //
   // locals:
-  //   title           — section heading. Default 'Results'.
+  //   resultsTitle    — section heading. Default 'Results'.
   //   level           — heading level (2-6). Default 2.
   //   countId         — id for the count <span>. Default 'results-count'.
   //   countLabel      — label preceding the count. Default 'Results:'.
@@ -17,10 +20,10 @@
   //
   // Usage:
   //   partial('results', { ...locals,
-  //     title: 'Potential Solutions', containerId: 'options',
+  //     resultsTitle: 'Potential Solutions', containerId: 'options',
   //   })
   const level = Math.max(2, Math.min(6, locals.level || 2));
-  const title = locals.title || 'Results';
+  const title = locals.resultsTitle || 'Results';
   const countId = locals.countId || 'results-count';
   const countLabel = locals.countLabel || 'Results:';
   const initialCount = locals.initialCount !== undefined ? locals.initialCount : '-';

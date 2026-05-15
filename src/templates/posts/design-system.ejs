@@ -298,7 +298,7 @@ scripts:
 </section>
 
 <%- partial('section/open', { ...locals,
-  title: 'section/open + section/close',
+  sectionTitle: 'section/open + section/close',
   sectionClass: 'partial-demo',
 }) %>
   <p>
@@ -325,7 +325,7 @@ scripts:
 }) %>
 
 <%- partial('section/open', { ...locals,
-  title: 'blockquote',
+  sectionTitle: 'blockquote',
   sectionClass: 'partial-demo',
 }) %>
   <p>
@@ -342,7 +342,7 @@ scripts:
 <%- partial('section/close', { ...locals }) %>
 
 <%- partial('section/open', { ...locals,
-  title: 'canvas-demo',
+  sectionTitle: 'canvas-demo',
   sectionClass: 'partial-demo',
   kind: 'container',
 }) %>
@@ -369,7 +369,7 @@ scripts:
 }) %>
 
 <%- partial('section/open', { ...locals,
-  title: 'form/field',
+  sectionTitle: 'form/field',
   sectionClass: 'partial-demo',
 }) %>
   <p>
@@ -395,7 +395,7 @@ scripts:
 <%- partial('section/close', { ...locals }) %>
 
 <%- partial('section/open', { ...locals,
-  title: 'form/select',
+  sectionTitle: 'form/select',
   sectionClass: 'partial-demo',
 }) %>
   <%- partial('form/select', { ...locals,
@@ -425,7 +425,7 @@ scripts:
 <%- partial('section/close', { ...locals }) %>
 
 <%- partial('section/open', { ...locals,
-  title: 'form/range',
+  sectionTitle: 'form/range',
   sectionClass: 'partial-demo',
 }) %>
   <p>
@@ -452,7 +452,7 @@ scripts:
 <%- partial('section/close', { ...locals }) %>
 
 <%- partial('section/open', { ...locals,
-  title: 'form/checkbox',
+  sectionTitle: 'form/checkbox',
   sectionClass: 'partial-demo',
 }) %>
   <%- partial('form/checkbox', { ...locals,
@@ -467,7 +467,7 @@ scripts:
 <%- partial('section/close', { ...locals }) %>
 
 <%- partial('section/open', { ...locals,
-  title: 'form/radio-group',
+  sectionTitle: 'form/radio-group',
   sectionClass: 'partial-demo',
 }) %>
   <%- partial('form/radio-group', { ...locals,
@@ -483,14 +483,14 @@ scripts:
 <%- partial('section/close', { ...locals }) %>
 
 <%- partial('results', { ...locals,
-  title: 'results',
+  resultsTitle: 'results',
   containerId: 'ds-results',
   initialCount: 0,
   loadingText: '<em>Results appear here once submitted.</em>',
 }) %>
 
 <%- partial('section/open', { ...locals,
-  title: 'results (above)',
+  sectionTitle: 'results (above)',
   sectionClass: 'partial-demo',
 }) %>
   <p>
@@ -504,7 +504,7 @@ scripts:
 <%- partial('section/close', { ...locals }) %>
 
 <%- partial('section/open', { ...locals,
-  title: 'toast',
+  sectionTitle: 'toast',
   sectionClass: 'partial-demo',
 }) %>
   <p>
@@ -519,7 +519,7 @@ scripts:
 <%- partial('section/close', { ...locals }) %>
 
 <%- partial('section/open', { ...locals,
-  title: 'page-intro',
+  sectionTitle: 'page-intro',
   sectionClass: 'partial-demo',
 }) %>
   <p>

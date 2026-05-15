@@ -13,58 +13,53 @@ scripts:
   - 'posts/wordle-solver-2'
 ---
 
-<section>
-  <div class="container">
-    <p>
-      Let's dive into two key game-changers:
-    </p>
+<%- partial('section/open', { ...locals, kind: 'container' }) %>
+  <p>
+    Let's dive into two key game-changers:
+  </p>
 
-    <h2>
-      Embracing Letter Frequencies:
-    </h2>
-
-    <p>
-      Unveiling the Uneven Alphabet: The 26 letters in the English language aren't evenly distributed across words. Some letters, like S, E, A, R, and O, reign supreme in usage.
-    </p>
-    <p>
-      Harnessing High-Frequency Starters: By strategically choosing your first guess to include these heavy hitters, you can maximize information gain. For instance, "AROSE" covers a whopping 95% of words in the 5-letter dictionary, exponentially increasing your chances of early letter discovery.
-    </p>
-    <p>
-      Adapting to the Narrowing Wordscape: As the game progresses, continue to consider letter frequencies within the remaining possible words. This statistical approach guides you towards guesses that efficiently reveal the hidden word.
-    </p>
-
-    <h2>
-      Delving into the Untapped:
-    </h2>
-
-    <p>
-      Second-Guess Surprises: While logic might suggest choosing a word from the possible solutions list, consider the power of the unexpected. A second guess composed entirely of unused letters can often unveil more letters than a seemingly logical choice.
-    </p>
-    <p>
-      Expanding Your Letter Arsenal: By embracing words like "UNITY" after "AROSE," you cover 100% of letters in the 5-letter dictionary, ensuring a comprehensive exploration of possibilities.
-    </p>
-    <p>
-      Remember: Wordle is a game of both logic and creativity. By understanding letter frequencies and embracing unconventional guesses, you'll unlock a winning strategy that blends statistical prowess with linguistic intuition.
-    </p>
-
-    <h2>
-      Conclusion
-    </h2>
-
-    <p>
-      By integrating these strategies, you'll elevate your Wordle game to new heights, conquering each daily puzzle with confidence and finesse.
-    </p>
-
-    <p>
-      <%- blockLink('Check out the original post', { href: '/posts/wordle-solver/' }) %>
-    </p>
-  </div>
-</section>
-
-<section class="game-board content">
   <h2>
-    Game Board
+    Embracing Letter Frequencies:
   </h2>
+
+  <p>
+    Unveiling the Uneven Alphabet: The 26 letters in the English language aren't evenly distributed across words. Some letters, like S, E, A, R, and O, reign supreme in usage.
+  </p>
+  <p>
+    Harnessing High-Frequency Starters: By strategically choosing your first guess to include these heavy hitters, you can maximize information gain. For instance, "AROSE" covers a whopping 95% of words in the 5-letter dictionary, exponentially increasing your chances of early letter discovery.
+  </p>
+  <p>
+    Adapting to the Narrowing Wordscape: As the game progresses, continue to consider letter frequencies within the remaining possible words. This statistical approach guides you towards guesses that efficiently reveal the hidden word.
+  </p>
+
+  <h2>
+    Delving into the Untapped:
+  </h2>
+
+  <p>
+    Second-Guess Surprises: While logic might suggest choosing a word from the possible solutions list, consider the power of the unexpected. A second guess composed entirely of unused letters can often unveil more letters than a seemingly logical choice.
+  </p>
+  <p>
+    Expanding Your Letter Arsenal: By embracing words like "UNITY" after "AROSE," you cover 100% of letters in the 5-letter dictionary, ensuring a comprehensive exploration of possibilities.
+  </p>
+  <p>
+    Remember: Wordle is a game of both logic and creativity. By understanding letter frequencies and embracing unconventional guesses, you'll unlock a winning strategy that blends statistical prowess with linguistic intuition.
+  </p>
+
+  <h2>
+    Conclusion
+  </h2>
+
+  <p>
+    By integrating these strategies, you'll elevate your Wordle game to new heights, conquering each daily puzzle with confidence and finesse.
+  </p>
+
+  <p>
+    <%- blockLink('Check out the original post', { href: '/posts/wordle-solver/' }) %>
+  </p>
+<%- partial('section/close', { ...locals, kind: 'container' }) %>
+
+<%- partial('section/open', { ...locals, kind: 'none', sectionClass: 'game-board content', sectionTitle: 'Game Board' }) %>
   <p>
     Update the board below so it matches your current game. Mark each letter as a near miss (🟨) or a hit (🟩).
   </p>
@@ -128,31 +123,23 @@ scripts:
     type=button>
     Clear
   </button>
-</section>
+<%- partial('section/close', { ...locals, kind: 'none' }) %>
 
-<section class="content">
-  <h2>Letter frequency in the dictionary</h2>
+<%- partial('section/open', { ...locals, kind: 'none', sectionClass: 'content', sectionTitle: 'Letter frequency in the dictionary' }) %>
   <div class="p" id="letter-frequency">
   </div>
-</section>
+<%- partial('section/close', { ...locals, kind: 'none' }) %>
 
-<section class="content">
-  <h2>Suggested Solutions</h2>
-  <p>Results: <span id="results-count">-</span></p>
-  <div class="p" id="options"></div>
-</section>
+<%- partial('results', { ...locals,
+  resultsTitle: 'Suggested Solutions',
+  containerId: 'options',
+}) %>
 
-<section class="content">
-  <h2>Words made of untried letters</h2>
-  <p>Results: <span id="untried-results-count">-</span></p>
-  <div class="p" id="untried-letters">
-  </div>
-</section>
+<%- partial('results', { ...locals,
+  resultsTitle: 'Words made of untried letters',
+  countId: 'untried-results-count',
+  containerId: 'untried-letters',
+  loadingText: '\n  ',
+}) %>
 
-<toast-notification>
-  <div class="container">
-    <div class="nbar">
-      <span>✔️</span> Copied to clipboard
-    </div>
-  </div>
-</toast-notification>
+<%- partial('toast', { ...locals, message: 'Copied to clipboard' }) %>
