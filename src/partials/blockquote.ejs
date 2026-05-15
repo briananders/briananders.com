@@ -1,0 +1,29 @@
+<%
+  // Renders a <blockquote> with an attributed citation link.
+  // Consolidates the quote + cite + blockLink pattern repeated across ~14 posts.
+  //
+  // locals:
+  //   quote      — the quoted text. May contain HTML (rendered raw).
+  //   citation   — visible text for the cite link (e.g. 'Wikipedia.org').
+  //   href       — URL for the citation link.
+  //   wrap       — 'container' (default) | 'content' | 'none'. Outer wrapper kind.
+  //   wrapClass  — extra classes on the outer wrapper.
+  //
+  // Usage:
+  //   partial('blockquote', { ...locals,
+  //     quote: 'A self-operating machine.',
+  //     citation: 'Wikipedia.org',
+  //     href: 'https://en.wikipedia.org/wiki/Automaton',
+  //   })
+  const wrap = locals.wrap || 'container';
+  const wrapClass = [wrap !== 'none' ? wrap : '', locals.wrapClass || '']
+    .filter(Boolean).join(' ');
+%>
+<% if (wrap !== 'none') { %><div class="<%- wrapClass %>"><% } %>
+<blockquote>
+  <p><%- locals.quote %></p>
+  <% if (locals.citation && locals.href) { %>
+    <cite><%- blockLink(locals.citation, { href: locals.href }) %></cite>
+  <% } %>
+</blockquote>
+<% if (wrap !== 'none') { %></div><% } %>
