@@ -12,97 +12,80 @@ scripts:
 - 'posts/earth-rotating-sprite-animation'
 ---
 
-<section>
-  <div class="content">
-    <p>
-      The setup is pretty basic. I have an event listener on document scroll. Using that event I can see how far you
-      have scrolled (<var>window.scrollY</var>). I add that number to an existing counter. Sprinkle on some math (below)
-      and you have the current frame. Easy peasy.
-    </p>
-    <p>
-      The sprite that I'm using has 16 rows and 16 columns. So I had to add in the math for wrapping around from
-      position <var>0, 15</var> to <var>1, 0</var>. That’s why I use <var>$sprite-height</var> and
-      <var>$frame-height</var> below.
-    </p>
+<%- partial('section/open', { ...locals }) %>
+  <p>
+    The setup is pretty basic. I have an event listener on document scroll. Using that event I can see how far you
+    have scrolled (<var>window.scrollY</var>). I add that number to an existing counter. Sprinkle on some math (below)
+    and you have the current frame. Easy peasy.
+  </p>
+  <p>
+    The sprite that I'm using has 16 rows and 16 columns. So I had to add in the math for wrapping around from
+    position <var>0, 15</var> to <var>1, 0</var>. That’s why I use <var>$sprite-height</var> and
+    <var>$frame-height</var> below.
+  </p>
+<%- partial('section/close', { ...locals }) %>
+
+
+<%- partial('section/open', { ...locals, sectionTitle: 'Demo' }) %>
+  <div class="p">
+    <div lazy
+      style="--background-image: url('/images/posts/earth-rotating-sprite-animation/earth-sprite-color.webp');"
+      data-lazy-style="background-image: var(--background-image);" id="frame-container" data-number="0"></div>
   </div>
-</section>
+<%- partial('section/close', { ...locals }) %>
 
 
-<section>
-  <div class="content">
-    <h2>
-      Demo
-    </h2>
-    <div class="p">
-      <div lazy
-        style="--background-image: url('/images/posts/earth-rotating-sprite-animation/earth-sprite-color.webp');"
-        data-lazy-style="background-image: var(--background-image);" id="frame-container" data-number="0"></div>
-    </div>
-  </div>
-</section>
+<%- partial('section/open', { ...locals, sectionTitle: 'SASS' }) %>
+  <ul class="p">
+    <li>
+      <b>Width of sprite image:</b>
+      <var>$sprite-width</var>
+    </li>
+    <li>
+      <b>Height of sprite image:</b>
+      <var>$sprite-height</var>
+    </li>
+    <li>
+      <b>Number of horizontal frames:</b>
+      <var>$x-max</var>
+    </li>
+    <li>
+      <b>Number of vertical frames:</b>
+      <var>$y-max</var>
+    </li>
+    <li>
+      <b>Frame width:</b>
+      <var>$frame-width = $sprite-width / $x-max</var>
+    </li>
+    <li>
+      <b>Frame height:</b>
+      <var>$frame-height = $sprite-height / $y-max</var>
+    </li>
+  </ul>
+  <%- code(`#frame-container { width: round($frame-width); height: round($frame-height); background-image:
+    url(/path/to/sprite.jpg); @for $frame from 0 to ($y-max * $x-max) { &[data-number="#{$frame}" ] { $x-position: 1 -
+    round(($frame % $x-max) * $frame-width); $y-position: 1 - round(floor($frame / $x-max) * $frame-height);
+    background-position: #{$x-position} #{$y-position}; } } }`); %>
+<%- partial('section/close', { ...locals }) %>
 
 
-<section>
-  <div class="content">
-    <h2>
-      SASS
-    </h2>
-    <ul class="p">
-      <li>
-        <b>Width of sprite image:</b>
-        <var>$sprite-width</var>
-      </li>
-      <li>
-        <b>Height of sprite image:</b>
-        <var>$sprite-height</var>
-      </li>
-      <li>
-        <b>Number of horizontal frames:</b>
-        <var>$x-max</var>
-      </li>
-      <li>
-        <b>Number of vertical frames:</b>
-        <var>$y-max</var>
-      </li>
-      <li>
-        <b>Frame width:</b>
-        <var>$frame-width = $sprite-width / $x-max</var>
-      </li>
-      <li>
-        <b>Frame height:</b>
-        <var>$frame-height = $sprite-height / $y-max</var>
-      </li>
-    </ul>
-    <%- code(`#frame-container { width: round($frame-width); height: round($frame-height); background-image:
-      url(/path/to/sprite.jpg); @for $frame from 0 to ($y-max * $x-max) { &[data-number="#{$frame}" ] { $x-position: 1 -
-      round(($frame % $x-max) * $frame-width); $y-position: 1 - round(floor($frame / $x-max) * $frame-height);
-      background-position: #{$x-position} #{$y-position}; } } }`); %>
-  </div>
-</section>
+<%- partial('section/open', { ...locals, sectionTitle: 'JavaScript' }) %>
+  <p>
+    There’s almost nothing going on here. Set an event listener on the document for scroll. In the caught event, find
+    the scroll movement using <var>scrollY</var>. Add that to the existing frame number and add a large multiple of
+    <var>numberOfFrames</var> to account for negative numbers (you don’t want a negative frame number). Then, find the
+    modulus of that number to get a final frame number between zero and the maximum number of frames. Finally, set
+    that number to the container’s data attribute, and let the CSS do the rendering work.
+  </p>
+  <%- code( `const frameContainer=document.getElementById('frame-container'); const numberOfFrames=16 * 16; let
+    number=0; let lastKnownScrollPosition=0; function updateEarth(value) { number=((number + value) + (numberOfFrames
+    * 100)) % numberOfFrames; frameContainer.dataset.number=number; } document.addEventListener('scroll', (event)=> {
+    const scrollPosition = Math.floor(window.scrollY);
+    const movementY = scrollPosition - lastKnownScrollPosition;
+    lastKnownScrollPosition = scrollPosition;
 
-
-<section>
-  <div class="content">
-    <h2>
-      JavaScript
-    </h2>
-    <p>
-      There’s almost nothing going on here. Set an event listener on the document for scroll. In the caught event, find
-      the scroll movement using <var>scrollY</var>. Add that to the existing frame number and add a large multiple of
-      <var>numberOfFrames</var> to account for negative numbers (you don’t want a negative frame number). Then, find the
-      modulus of that number to get a final frame number between zero and the maximum number of frames. Finally, set
-      that number to the container’s data attribute, and let the CSS do the rendering work.
-    </p>
-    <%- code( `const frameContainer=document.getElementById('frame-container'); const numberOfFrames=16 * 16; let
-      number=0; let lastKnownScrollPosition=0; function updateEarth(value) { number=((number + value) + (numberOfFrames
-      * 100)) % numberOfFrames; frameContainer.dataset.number=number; } document.addEventListener('scroll', (event)=> {
-      const scrollPosition = Math.floor(window.scrollY);
-      const movementY = scrollPosition - lastKnownScrollPosition;
-      lastKnownScrollPosition = scrollPosition;
-
-      window.requestAnimationFrame(() => {
-      updateEarth(movementY);
-      });
-      });`); %>
-  </div>
-</section>
+    window.requestAnimationFrame(() => {
+    updateEarth(movementY);
+    });
+    });`); %>
+<%- partial('section/close', { ...locals }) %>

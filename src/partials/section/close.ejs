@@ -1,0 +1,10 @@
+<%
+  // Closes a <section> opened by section/open.
+  // locals:
+  //   kind — must match the value passed to section/open. Default 'content'.
+  const kind = locals.kind || 'content';
+%>
+<% if (kind !== 'none') { %>
+  </div>
+<% } %>
+</section>

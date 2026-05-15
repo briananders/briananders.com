@@ -12,194 +12,192 @@ scripts:
 ---
 
 
-<section class="contributions">
-  <div class="content deck">
-    <%
-        const model = [
-          {
-            heading: "Podcast & YouTube channel: Bat Lessons",
-            image: "/images/about/contributions/batlessons.webp",
-            copyBlock: `Batman history, presented by ${inlineLink('Alex Cash', { href: 'https://alex.cash', external: true })} and myself. It focuses on the context around the development of the characters, the history of the Batman universe, and the impact that our world had on it.`,
-            links: [
-              {
-                label: "Podcast site",
-                url: locals.batLessons,
-              },
-            ],
-          }, {
-            heading: "YouTube channel: Banders Drums",
-            image: "/images/drums/logo.png",
-            copyBlock: "A YouTube channel with videos of me playing drum covers.",
-            links: [
-              {
-                label: "Main Site",
-                path: locals.bandersDrums.path,
-              }, {
-                label: "YouTube Channel",
-                url: locals.bandersDrums.youtube,
-              },
-            ],
-          }, {
-            heading: "VSCode extension: Sublime Duplicate Text",
-            image: "/images/about/contributions/sublime-duplicate-text-logo.webp",
-            copyBlock: "I built a VSCode extension that duplicates text like Sublime Text does. This makes replicating the keyboard shortcuts in VSCode a bit simpler.",
-            links: [
-              {
-                label: "VSCode Extension Marketplace",
-                url: "https://marketplace.visualstudio.com/items?itemName=brian-anders.sublime-duplicate-text",
-              }, {
-                label: "Github",
-                url: "https://github.com/briananders/sublime-text-dublicate",
-              },
-            ],
-          }, {
-            heading: "NPM package: Pageweight",
-            image: "/images/about/contributions/npm-logo.svg",
-            copyBlock: "A Node.js CLI tool that measures the total weight of a webpage on initial load. It catalogues every asset the browser fetches — scripts, stylesheets, images, fonts, and more — and presents a formatted breakdown grouped by type and sorted by size.",
-            links: [
+<%- partial('section/open', { ...locals, sectionClass: 'contributions', wrapperClass: 'deck' }) %>
+  <%
+      const model = [
+        {
+          heading: "Podcast & YouTube channel: Bat Lessons",
+          image: "/images/about/contributions/batlessons.webp",
+          copyBlock: `Batman history, presented by ${inlineLink('Alex Cash', { href: 'https://alex.cash', external: true })} and myself. It focuses on the context around the development of the characters, the history of the Batman universe, and the impact that our world had on it.`,
+          links: [
             {
-            label: "NPM Package",
-            url: "https://www.npmjs.com/package/@briananders/pageweight",
-            }, {
-            label: "Github",
-            url: "https://github.com/briananders/pageweight",
+              label: "Podcast site",
+              url: locals.batLessons,
             },
-            ],
-            },{
-            heading: "NPM package: Two Way Merge",
-            image: "/images/about/contributions/npm-logo.svg",
-            copyBlock: "A CLI tool that performs a two-way sync between two directories, making both sides mirror each other. It is designed to be run repeatedly — as a cron job, for example — to keep two locations in sync.",
-            links: [
-              {
-                label: "NPM Package",
-                url: "https://www.npmjs.com/package/@briananders/two-way-merge",
-              }, {
-                label: "Github",
-                url: "https://github.com/briananders/two-way-merge",
-              },
-            ],
+          ],
+        }, {
+          heading: "YouTube channel: Banders Drums",
+          image: "/images/drums/logo.png",
+          copyBlock: "A YouTube channel with videos of me playing drum covers.",
+          links: [
+            {
+              label: "Main Site",
+              path: locals.bandersDrums.path,
+            }, {
+              label: "YouTube Channel",
+              url: locals.bandersDrums.youtube,
+            },
+          ],
+        }, {
+          heading: "VSCode extension: Sublime Duplicate Text",
+          image: "/images/about/contributions/sublime-duplicate-text-logo.webp",
+          copyBlock: "I built a VSCode extension that duplicates text like Sublime Text does. This makes replicating the keyboard shortcuts in VSCode a bit simpler.",
+          links: [
+            {
+              label: "VSCode Extension Marketplace",
+              url: "https://marketplace.visualstudio.com/items?itemName=brian-anders.sublime-duplicate-text",
+            }, {
+              label: "Github",
+              url: "https://github.com/briananders/sublime-text-dublicate",
+            },
+          ],
+        }, {
+          heading: "NPM package: Pageweight",
+          image: "/images/about/contributions/npm-logo.svg",
+          copyBlock: "A Node.js CLI tool that measures the total weight of a webpage on initial load. It catalogues every asset the browser fetches — scripts, stylesheets, images, fonts, and more — and presents a formatted breakdown grouped by type and sorted by size.",
+          links: [
+          {
+          label: "NPM Package",
+          url: "https://www.npmjs.com/package/@briananders/pageweight",
           }, {
-            heading: "Ruby Gem: Middleman XML Validator",
-            image: "/images/about/contributions/rubygems-logo.svg",
-            copyBlock: "I built a Ruby Gem and published it to the global library. The gem was an XML validator for Middleman static site generator systems.",
-            links: [
-              {
-                label: "Ruby Gem",
-                url: "https://rubygems.org/gems/middleman-xmlvalidator",
-              }, {
-                label: "Github",
-                url: "https://github.com/briananders/MiddlemanXMLValidator",
-              },
-            ],
-          }, {
-            heading: "Alfred Workflow: Google Meet Code",
-            image: "/images/about/contributions/alfred-logo.png",
-            copyBlock: "I wrote a simple Alfred Workflow to extract the meeting code from a Google Meet URL.",
-            links: [
-              {
-                label: "Alfred App",
-                url: "https://www.alfredapp.com/",
-              }, {
-                label: "Workflow",
-                url: "/downloads/Meet_Code.alfredworkflow",
-              },
-            ],
-          }, {
-            heading: "Speaking: Graceland University ACM Chapter Presentation",
-            image: "/images/about/contributions/graceland-logo.svg",
-            copyBlock: "ACM stands for The Association for Computing Machinery. As a former ACM President of the Graceland University chapter, I try to present at ACM whenever I'm in town. The campus newspaper wrote up a little piece after one of my previous visits.",
-            links: [
-              {
-                label: "Graceland News",
-                url: "https://www.graceland.edu/news/graceland-university-alumnus-brian-anders-shares-real-world-tips-on-campus/",
-              },
-            ],
-          }, {
-            heading: "Podcast Interview: Signed In Ink",
-            image: "/images/about/contributions/signed-in-ink-cover-art.webp",
-            copyBlock: `My brother ${inlineLink('Kevin', { href: 'https://www.instagram.com/kevin_anders/' })} has a podcast about people. People with tattoos. I have been a guest on the show a few times.`,
-            links: [
-              {
-                label: "Oct 12, 2020",
-                url: "https://signedinink.libsyn.com/brian-anders",
-              }, {
-                label: "Dec 14, 2020",
-                url: "https://signedinink.libsyn.com/brian-anders-0",
-              }, {
-                label: "Dec 28, 2020",
-                url: "https://signedinink.libsyn.com/stephanie-brian-anders",
-              }, {
-                label: "Jun 7, 2021",
-                url: "https://signedinink.libsyn.com/brian-anders-1",
-              }, {
-                label: "Nov 9, 2021",
-                url: "https://signedinink.libsyn.com/brian-anders-2",
-              }, {
-                label: "Dec 6, 2021",
-                url: "https://signedinink.libsyn.com/brian-anders-3",
-              },
-            ],
-          }, {
-            heading: "MICS 2013 Robotics contest",
-            image: "/images/about/contributions/lego-logo.svg",
-            copyBlock: `MICS stands for The Midwest Instruction and Computing Symposium. MICS hosts an annual robotics contest and a programming contest. After ${inlineLink('Alex', { href: 'https://alex.cash/Adventures-in-Robotics/' })} graduated, I enhanced the ${inlineLink('code', { href: 'https://github.com/briananders/Robotics-Solutions' })} that we wrote in 2011 to compete in the robotics contest again. I managed to win 2nd place, again.`,
-            links: [
-              {
-                label: "Github",
-                url: "https://github.com/briananders/MICS-Robot-2013",
-              },
-            ],
-          }, {
-            heading: "Fish Tank Computer 2012",
-            image: "/images/about/contributions/youtube-logo.svg",
-            copyBlock: `For a college course, ${inlineLink('Alex Cash', { href: 'https://alex.cash/Adventures-in-Robotics/' })} and I made a fishtank computer using mineral oil. The idea is that the mineral oil will cool the computer. Since mineral oil is non-conductive, the computer components are safe and won't ruin. The downside is that the oil can wick up the cord and into the wall socket. The experiment worked, and was a good learning experience for us.`,
-            links: [
-              {
-                label: "Youtube Video",
-                dataVideoId: 'GNhxvhKoagg',
-              },
-            ],
-          }, {
-            heading: "MICS 2011 Robotics contest",
-            image: "/images/about/contributions/lego-logo.svg",
-            copyBlock: `MICS stands for The Midwest Instruction and Computing Symposium. MICS hosts an annual robotics contest and a programming contest. This is the code that ${inlineLink('Alex Cash', { href: 'https://alex.cash/Adventures-in-Robotics/' })} and I wrote to compete in the robotics contest. We won 2nd place.`,
-            links: [
-              {
-                label: "Github",
-                url: "https://github.com/briananders/Robotics-Solutions",
-              },
-            ],
-          }, {
-            heading: "iTunes JScripts",
-            image: "/images/about/contributions/itunes-logo.svg",
-            copyBlock: "I have been a junkie for iTunes and Apple Music since middle school. For many of my early years, I was a Windows user. My parents wouldn't let me have internet, so I manually managed my library. This means that I typed in everything by hand. When I learned to program, I realized how helpful it would be to automate some library management tasks. I wrote JScripts to interface with my iTunes Library and to do repetitive tasks.",
-            links: [
-              {
-                label: "Github",
-                url: "https://github.com/briananders/iTunes-JavaScript-JScript",
-              },
-            ]
-          }, {
-            heading: "Participated in RAGBRAI 2017",
-            image: "/images/about/contributions/ragbrai-logo.svg",
-            copyBlock: "RAGBRAI stands for The Register’s Annual Great Bike Ride Across Iowa. In 2017, my mom and I rode RAGBRAI together. We joined the Graceland University alumni team for the week. We rode over 400 miles in 7 days.",
-            links: [
-              {
-                label: "Media link",
-                url: "https://graceland.meritpages.com/news/corrected--graceland-university-participates-in-ragbrai-2017-for-a-seventh-year-/816/",
-              }, {
-                label: "RAGBRAI site",
-                url: "https://ragbrai.com/",
-              }, {
-                label: "2017 RAGBRAI Archive",
-                url: "https://ragbrai.com/category/2017-ragbrai/",
-              },
-            ]
-          }
-        ]
-        model.forEach(({ copyBlock, image, heading, links }) => {
-      %>
-    <%- partial('contributions-card', Object.assign(locals, { copyBlock, image, heading, links })); %>
-    <% }); %>
-  </div>
-</section>
+          label: "Github",
+          url: "https://github.com/briananders/pageweight",
+          },
+          ],
+          },{
+          heading: "NPM package: Two Way Merge",
+          image: "/images/about/contributions/npm-logo.svg",
+          copyBlock: "A CLI tool that performs a two-way sync between two directories, making both sides mirror each other. It is designed to be run repeatedly — as a cron job, for example — to keep two locations in sync.",
+          links: [
+            {
+              label: "NPM Package",
+              url: "https://www.npmjs.com/package/@briananders/two-way-merge",
+            }, {
+              label: "Github",
+              url: "https://github.com/briananders/two-way-merge",
+            },
+          ],
+        }, {
+          heading: "Ruby Gem: Middleman XML Validator",
+          image: "/images/about/contributions/rubygems-logo.svg",
+          copyBlock: "I built a Ruby Gem and published it to the global library. The gem was an XML validator for Middleman static site generator systems.",
+          links: [
+            {
+              label: "Ruby Gem",
+              url: "https://rubygems.org/gems/middleman-xmlvalidator",
+            }, {
+              label: "Github",
+              url: "https://github.com/briananders/MiddlemanXMLValidator",
+            },
+          ],
+        }, {
+          heading: "Alfred Workflow: Google Meet Code",
+          image: "/images/about/contributions/alfred-logo.png",
+          copyBlock: "I wrote a simple Alfred Workflow to extract the meeting code from a Google Meet URL.",
+          links: [
+            {
+              label: "Alfred App",
+              url: "https://www.alfredapp.com/",
+            }, {
+              label: "Workflow",
+              url: "/downloads/Meet_Code.alfredworkflow",
+            },
+          ],
+        }, {
+          heading: "Speaking: Graceland University ACM Chapter Presentation",
+          image: "/images/about/contributions/graceland-logo.svg",
+          copyBlock: "ACM stands for The Association for Computing Machinery. As a former ACM President of the Graceland University chapter, I try to present at ACM whenever I'm in town. The campus newspaper wrote up a little piece after one of my previous visits.",
+          links: [
+            {
+              label: "Graceland News",
+              url: "https://www.graceland.edu/news/graceland-university-alumnus-brian-anders-shares-real-world-tips-on-campus/",
+            },
+          ],
+        }, {
+          heading: "Podcast Interview: Signed In Ink",
+          image: "/images/about/contributions/signed-in-ink-cover-art.webp",
+          copyBlock: `My brother ${inlineLink('Kevin', { href: 'https://www.instagram.com/kevin_anders/' })} has a podcast about people. People with tattoos. I have been a guest on the show a few times.`,
+          links: [
+            {
+              label: "Oct 12, 2020",
+              url: "https://signedinink.libsyn.com/brian-anders",
+            }, {
+              label: "Dec 14, 2020",
+              url: "https://signedinink.libsyn.com/brian-anders-0",
+            }, {
+              label: "Dec 28, 2020",
+              url: "https://signedinink.libsyn.com/stephanie-brian-anders",
+            }, {
+              label: "Jun 7, 2021",
+              url: "https://signedinink.libsyn.com/brian-anders-1",
+            }, {
+              label: "Nov 9, 2021",
+              url: "https://signedinink.libsyn.com/brian-anders-2",
+            }, {
+              label: "Dec 6, 2021",
+              url: "https://signedinink.libsyn.com/brian-anders-3",
+            },
+          ],
+        }, {
+          heading: "MICS 2013 Robotics contest",
+          image: "/images/about/contributions/lego-logo.svg",
+          copyBlock: `MICS stands for The Midwest Instruction and Computing Symposium. MICS hosts an annual robotics contest and a programming contest. After ${inlineLink('Alex', { href: 'https://alex.cash/Adventures-in-Robotics/' })} graduated, I enhanced the ${inlineLink('code', { href: 'https://github.com/briananders/Robotics-Solutions' })} that we wrote in 2011 to compete in the robotics contest again. I managed to win 2nd place, again.`,
+          links: [
+            {
+              label: "Github",
+              url: "https://github.com/briananders/MICS-Robot-2013",
+            },
+          ],
+        }, {
+          heading: "Fish Tank Computer 2012",
+          image: "/images/about/contributions/youtube-logo.svg",
+          copyBlock: `For a college course, ${inlineLink('Alex Cash', { href: 'https://alex.cash/Adventures-in-Robotics/' })} and I made a fishtank computer using mineral oil. The idea is that the mineral oil will cool the computer. Since mineral oil is non-conductive, the computer components are safe and won't ruin. The downside is that the oil can wick up the cord and into the wall socket. The experiment worked, and was a good learning experience for us.`,
+          links: [
+            {
+              label: "Youtube Video",
+              dataVideoId: 'GNhxvhKoagg',
+            },
+          ],
+        }, {
+          heading: "MICS 2011 Robotics contest",
+          image: "/images/about/contributions/lego-logo.svg",
+          copyBlock: `MICS stands for The Midwest Instruction and Computing Symposium. MICS hosts an annual robotics contest and a programming contest. This is the code that ${inlineLink('Alex Cash', { href: 'https://alex.cash/Adventures-in-Robotics/' })} and I wrote to compete in the robotics contest. We won 2nd place.`,
+          links: [
+            {
+              label: "Github",
+              url: "https://github.com/briananders/Robotics-Solutions",
+            },
+          ],
+        }, {
+          heading: "iTunes JScripts",
+          image: "/images/about/contributions/itunes-logo.svg",
+          copyBlock: "I have been a junkie for iTunes and Apple Music since middle school. For many of my early years, I was a Windows user. My parents wouldn't let me have internet, so I manually managed my library. This means that I typed in everything by hand. When I learned to program, I realized how helpful it would be to automate some library management tasks. I wrote JScripts to interface with my iTunes Library and to do repetitive tasks.",
+          links: [
+            {
+              label: "Github",
+              url: "https://github.com/briananders/iTunes-JavaScript-JScript",
+            },
+          ]
+        }, {
+          heading: "Participated in RAGBRAI 2017",
+          image: "/images/about/contributions/ragbrai-logo.svg",
+          copyBlock: "RAGBRAI stands for The Register’s Annual Great Bike Ride Across Iowa. In 2017, my mom and I rode RAGBRAI together. We joined the Graceland University alumni team for the week. We rode over 400 miles in 7 days.",
+          links: [
+            {
+              label: "Media link",
+              url: "https://graceland.meritpages.com/news/corrected--graceland-university-participates-in-ragbrai-2017-for-a-seventh-year-/816/",
+            }, {
+              label: "RAGBRAI site",
+              url: "https://ragbrai.com/",
+            }, {
+              label: "2017 RAGBRAI Archive",
+              url: "https://ragbrai.com/category/2017-ragbrai/",
+            },
+          ]
+        }
+      ]
+      model.forEach(({ copyBlock, image, heading, links }) => {
+    %>
+  <%- partial('contributions-card', Object.assign(locals, { copyBlock, image, heading, links })); %>
+  <% }); %>
+<%- partial('section/close', { ...locals }) %>

@@ -11,24 +11,20 @@ scripts:
   - 'posts/color-canvas'
 ---
 
-<section>
-  <div class="content">
-    <p>
-      The X-axis represents red. The Y-axis represents green. The slider represents the Z-axis, which is blue. Just slide the slider, below, and appreciate all of the beautiful colors that your screen can render!
-    </p>
-  </div>
-</section>
+<%- partial('section/open', { ...locals }) %>
+  <p>
+    The X-axis represents red. The Y-axis represents green. The slider represents the Z-axis, which is blue. Just slide the slider, below, and appreciate all of the beautiful colors that your screen can render!
+  </p>
+<%- partial('section/close', { ...locals }) %>
 
-<section>
-  <div class="content">
-    <canvas id="canvas"></canvas>
+<%- partial('section/open', { ...locals }) %>
+  <canvas id="canvas"></canvas>
 
-    <div class="form">
-      <button id="play-pause">
-        <%- img({ src: '/images/icons/play.svg', classes: ['play'] }); %>
-        <%- img({ src: '/images/icons/pause.svg', classes: ['pause'] }); %>
-      </button>
-      <input id='blue-slider' type="range" min="0" max="255" value="0" step="1" aria-label="Blue value">
-    </div>
+  <div class="form">
+    <button id="play-pause">
+      <%- img({ src: '/images/icons/play.svg', classes: ['play'] }); %>
+      <%- img({ src: '/images/icons/pause.svg', classes: ['pause'] }); %>
+    </button>
+    <input id='blue-slider' type="range" min="0" max="255" value="0" step="1" aria-label="Blue value">
   </div>
-</section>
+<%- partial('section/close', { ...locals }) %>
