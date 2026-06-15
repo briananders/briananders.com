@@ -17,7 +17,8 @@
     @include palette--base;
     @include card;
 
-    &.album {
+    &.album,
+    &.artist {
       grid-template-columns: 1fr 100px;
     }
 

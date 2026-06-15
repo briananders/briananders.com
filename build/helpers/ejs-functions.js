@@ -423,9 +423,7 @@ module.exports = (dir, pageMappingData) => ({
         </span>
         <bar style="width: 100%;"></bar>
       </span>
-      ${albums ? `
-        <span>Loading album cover</span>
-      ` : ''}
+      <span>Loading ${albums ? 'album' : 'artist'} cover</span>
     </span>`,
 
   /**

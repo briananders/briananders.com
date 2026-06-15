@@ -194,10 +194,16 @@ if (!production) {
 
   // Proxy external data paths to the staging S3 bucket so they're available
   // during local development without needing to download them.
-  app.use('/last-fm-history', createProxyMiddleware({
-    target: 'http://staging.briananders.com.s3-website-us-east-1.amazonaws.com/last-fm-history',
-    changeOrigin: true,
-  }));
+  // Serve local last-fm-history files if they exist on disk, otherwise proxy to the staging S3 bucket.
+  const localLastFmHistory = '/Users/briananders/Code/last-fm-scrobbles';
+  if (fs.existsSync(localLastFmHistory)) {
+    app.use('/last-fm-history', express.static(localLastFmHistory));
+  } else {
+    app.use('/last-fm-history', createProxyMiddleware({
+      target: 'http://staging.briananders.com.s3-website-us-east-1.amazonaws.com/last-fm-history',
+      changeOrigin: true,
+    }));
+  }
   app.use('/band-news', createProxyMiddleware({
     target: 'http://staging.briananders.com.s3-website-us-east-1.amazonaws.com/band-news',
     changeOrigin: true,

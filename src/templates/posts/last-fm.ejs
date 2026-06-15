@@ -33,19 +33,18 @@ scripts:
   <form class="content">
     <p>How far back do you want to see?</p>
     <select name="period" aria-label="Data period of time">
-      <option value="7day">1 week</option>
-      <option value="1month" selected>1 month</option>
-      <option value="3month">3 months</option>
+      <option value="7day">7 days</option>
+      <option value="30day" selected>30 days</option>
+      <option value="90day">90 days</option>
       <option value="6month">6 months</option>
-      <option value="12month">1 year</option>
-      <option value="overall">Forever</option>
+      <option value="12month">12 months</option>
+      <option value="2year">2 years</option>
     </select>
   </form>
 </section>
 
 <section class="content">
   <h2>Top Albums</h2>
-  <link rel="preconnect" href="https://ws.audioscrobbler.com" crossorigin />
   <div class='last-fm-module p' data-type="albums" src="/images/posts/last-fm/default.webp">
     <% for (let i=0; i < 10; i++) { %>
       <%- defaultLastFMModule(); %>
