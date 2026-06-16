@@ -40,3 +40,8 @@
 .Trashes
 ehthumbs.db
 Thumbs.db
+
+# AI configuration files
+.claude
+.gemini
+.antigravity
