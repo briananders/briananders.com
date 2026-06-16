@@ -5,7 +5,7 @@ module.exports = `
       rel="noopener"
       href="{{url}}"
       class="item {{#if artist}}album{{else}}artist{{/if}}"
-      title="{{name}}, {{playcount}} scrobbles">
+      title="{{name}}, {{playcount}} plays">
     <span class="info">
       <span class="name">
         {{name}}
@@ -16,7 +16,7 @@ module.exports = `
         </span>
       {{/if}}
       <span class="scrobbles">
-        {{playcount}} scrobbles
+        {{playcount}} plays
       </span>
       <bar style="width: {{percent}}%;"></bar>
     </span>

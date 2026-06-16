@@ -201,7 +201,7 @@ const TrendsModal = (() => {
     state.titleEl.style.padding = '0 20px';
 
     state.totalEl = document.createElement('div');
-    state.totalEl.innerHTML = `Total Scrobbles: <span class="total-scrobbles"></span>`;
+    state.totalEl.innerHTML = `Total Plays: <span class="total-scrobbles"></span>`;
     state.totalEl.style.padding = '0 20px';
 
     state.statusEl = document.createElement('div');
@@ -489,7 +489,7 @@ function renderReport(fileName) {
 function updateTrends() {
   /* <div class="container" id="artist-trends-container" data-artist="the-beatles">
     <h2>Trends For <span class="trend-name"></span></h2>
-    <h3>Total Scrobbles: <span class="total-scrobbles"></span></h3>
+    <h3>Total Plays: <span class="total-scrobbles"></span></h3>
     <div class="trend-list-container">
       <div class="trend-list"></div>
     </div>
@@ -497,7 +497,7 @@ function updateTrends() {
 
   <div class="container" id="album-trends-container" data-album="the-beatles/1">
     <h2>Trends For <span class="trend-name"></span></h2>
-    <h3>Total Scrobbles: <span class="total-scrobbles"></span></h3>
+    <h3>Total Plays: <span class="total-scrobbles"></span></h3>
     <div class="trend-list-container">
       <div class="trend-list"></div>
     </div>

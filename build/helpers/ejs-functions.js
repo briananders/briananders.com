@@ -419,7 +419,7 @@ module.exports = (dir, pageMappingData) => ({
           Loading artist name
         </span>
         <span class="scrobbles">
-          Loading scrobbles
+          Loading play data
         </span>
         <bar style="width: 100%;"></bar>
       </span>

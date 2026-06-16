@@ -107,7 +107,7 @@ class YearListing extends HTMLElement {
     if (['year', 'value'].includes(name)) {
       const year = this.getAttribute('year');
       const value = this.getAttribute('value');
-      this.shadowRoot.querySelector('a').setAttribute('aria-label', `${value} scrobbles in the year ${year}`);
+      this.shadowRoot.querySelector('a').setAttribute('aria-label', `${value} plays in the year ${year}`);
     }
   }
 

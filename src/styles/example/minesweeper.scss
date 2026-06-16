@@ -141,7 +141,7 @@ section.minesweeper {
 
     @for $i from 0 through 9 {
       &[data-number="#{$i}"] {
-        background-position-x: math.percentage(math.div(892, 90) * $i);
+        background-position-x: math.percentage(math.div(math.div(892, 90) * $i, 100));
       }
     }
   }
