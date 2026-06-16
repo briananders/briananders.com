@@ -1,0 +1,58 @@
+<%
+  // Renders a label + text-like input (text, email, number, search, tel, url, password).
+  // Standardizes label/input association via matching for/id.
+  //
+  // Parameter names avoid colliding with site-wide keys that come along via
+  // the `...locals` spread (e.g. `name`, `description` are reserved by
+  // siteData and front matter). Use `inputName` and `helpText` instead.
+  //
+  // locals:
+  //   id          — input id (required). Also used as `name` if `inputName` not given.
+  //   label       — visible label text. Pass falsy to render no label.
+  //   ariaLabel   — used when no visible label is desired but a11y is still needed.
+  //   type        — input type. Default 'text'.
+  //   inputName   — input `name` attribute. Defaults to id.
+  //   value       — initial value.
+  //   placeholder, min, max, step, maxlength, pattern, autocomplete, inputmode
+  //   required, disabled, readonly, autofocus — boolean attributes.
+  //   inputClass  — extra classes on the <input>.
+  //   fieldClass  — extra classes on the outer wrapper.
+  //   helpText    — optional helper text rendered below the input.
+  //
+  // Usage:
+  //   partial('form/field', { ...locals, id: 'guess', label: 'Your guess', maxlength: 5 })
+  if (!locals.id) throw new Error('form/field is missing required `id`');
+  const type = locals.type || 'text';
+  const inputName = locals.inputName || locals.id;
+  const fieldClass = ['field', locals.fieldClass || ''].filter(Boolean).join(' ');
+  const inputClass = locals.inputClass ? ` class="${locals.inputClass}"` : '';
+  const attrs = [
+    `id="${locals.id}"`,
+    `type="${type}"`,
+    `name="${inputName}"`,
+    locals.value !== undefined ? `value="${locals.value}"` : '',
+    locals.placeholder ? `placeholder="${locals.placeholder}"` : '',
+    locals.min !== undefined ? `min="${locals.min}"` : '',
+    locals.max !== undefined ? `max="${locals.max}"` : '',
+    locals.step !== undefined ? `step="${locals.step}"` : '',
+    locals.maxlength !== undefined ? `maxlength="${locals.maxlength}"` : '',
+    locals.pattern ? `pattern="${locals.pattern}"` : '',
+    locals.autocomplete ? `autocomplete="${locals.autocomplete}"` : '',
+    locals.inputmode ? `inputmode="${locals.inputmode}"` : '',
+    locals.required ? 'required' : '',
+    locals.disabled ? 'disabled' : '',
+    locals.readonly ? 'readonly' : '',
+    locals.autofocus ? 'autofocus' : '',
+    !locals.label && locals.ariaLabel ? `aria-label="${locals.ariaLabel}"` : '',
+    locals.helpText ? `aria-describedby="${locals.id}-desc"` : '',
+  ].filter(Boolean).join(' ');
+%>
+<div class="<%- fieldClass %>">
+  <% if (locals.label) { %>
+    <label for="<%- locals.id %>"><%- locals.label %></label>
+  <% } %>
+  <input<%- inputClass %> <%- attrs %> />
+  <% if (locals.helpText) { %>
+    <span id="<%- locals.id %>-desc" class="field-description"><%- locals.helpText %></span>
+  <% } %>
+</div>

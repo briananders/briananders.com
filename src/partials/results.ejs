@@ -1,0 +1,36 @@
+<%
+  // Renders a results display section: heading + count readout + output container.
+  // Consolidates the pattern from wordle-solver, imdb-ratings, and similar
+  // solver/calculator pages.
+  //
+  // locals:
+  //   title           — section heading. Default 'Results'.
+  //   level           — heading level (2-6). Default 2.
+  //   countId         — id for the count <span>. Default 'results-count'.
+  //   countLabel      — label preceding the count. Default 'Results:'.
+  //   initialCount    — initial count text. Default '-'.
+  //   containerId     — id for the output container. Default 'results'.
+  //   containerTag    — tag name for the output container. Default 'div'.
+  //   containerClass  — class on the output container. Default 'p'.
+  //   sectionClass    — extra classes on <section>.
+  //   loadingText     — optional placeholder shown inside the container until populated.
+  //
+  // Usage:
+  //   partial('results', { ...locals,
+  //     title: 'Potential Solutions', containerId: 'options',
+  //   })
+  const level = Math.max(2, Math.min(6, locals.level || 2));
+  const title = locals.title || 'Results';
+  const countId = locals.countId || 'results-count';
+  const countLabel = locals.countLabel || 'Results:';
+  const initialCount = locals.initialCount !== undefined ? locals.initialCount : '-';
+  const containerId = locals.containerId || 'results';
+  const containerTag = locals.containerTag || 'div';
+  const containerClass = locals.containerClass || 'p';
+  const sectionClass = ['content', locals.sectionClass || ''].filter(Boolean).join(' ');
+%>
+<section class="<%- sectionClass %>">
+  <h<%- level %>><%- noWidows(title) %></h<%- level %>>
+  <p><%- countLabel %> <span id="<%- countId %>" aria-live="polite"><%- initialCount %></span></p>
+  <<%- containerTag %> class="<%- containerClass %>" id="<%- containerId %>"><% if (locals.loadingText) { %><%- locals.loadingText %><% } %></<%- containerTag %>>
+</section>
