@@ -20,6 +20,10 @@ const EVENTS = {
   trendsChange: 'ba:lastfm:trendschange',
 };
 
+function sentenceCase(string) {
+  return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
+}
+
 function formatNumber(number) {
   return number.toLocaleString();
 }
@@ -197,7 +201,7 @@ const TrendsModal = (() => {
     state.titleEl.style.padding = '0 20px';
 
     state.totalEl = document.createElement('div');
-    state.totalEl.innerHTML = `Total Scrobbles: <span class="total-scrobbles"></span>`;
+    state.totalEl.innerHTML = `Total Plays: <span class="total-scrobbles"></span>`;
     state.totalEl.style.padding = '0 20px';
 
     state.statusEl = document.createElement('div');
@@ -369,48 +373,70 @@ function installTrendsLinkInterceptor() {
 }
 
 function initSelects() {
-  Object.keys(reportsData).forEach((type) => {
-    if (type === 'all-time') {
-      typeSelector.innerHTML += `<option selected value="${type}">${type}</option>`;
-    } else {
-      typeSelector.innerHTML += `<option value="${type}">${type} - ${reportsData[type].length}</option>`;
+  Object.keys(reportsData).sort(customPeriodSort).forEach((type) => {
+    if (type !== 'all-time') {
+      typeSelector.innerHTML += `<option value="${type}">${sentenceCase(type)} (${reportsData[type].length})</option>`;
     }
   });
   typeSelector.addEventListener('change', updateSelects.bind(this));
   updateSelects();
 }
 
+function customPeriodSort(a, b) {
+  // 0. all-time
+  // 1. year
+  // 2. quarter
+  // 3. month
+  // 4. week
+  if (a.type === 'all-time') return -1;
+  if (b.type === 'all-time') return 1;
+
+  if (a.type === 'year') return -1;
+  if (b.type === 'year') return 1;
+
+  if (a.type === 'quarter') return -1;
+  if (b.type === 'quarter') return 1;
+
+  if (a.type === 'month') return -1;
+  if (b.type === 'month') return 1;
+
+  if (a.type === 'week') return -1;
+  if (b.type === 'week') return 1;
+
+  return 0;
+}
+
 function updateSelects() {
   const type = typeSelector.value;
-  const reports = reportsData[type].sort((a,b) => a.label > b.label);
+  const reports = reportsData[type].sort((a,b) => a.filename < b.filename ? 1 : -1);
   let select;
 
   if (selectorContainer.dataset.type !== type) {
     selectorContainer.dataset.type = type;
     selectorContainer.innerHTML = '';
 
-    if (type !== 'all-time') {
-      select = document.createElement('select');
-      select.setAttribute('name', type);
-
-      reports.forEach((report, index) => {
-        console.log(report);
-        const option = document.createElement('option');
-        option.value = report.filename;
-        if (index === 0) {
-          option.selected = 'selected';
-          selectorContainer.dataset.filename = report.filename;
-        }
-        option.innerHTML = report.label;
-        select.appendChild(option);
-      });
-
-      select.addEventListener('change', updateSelects.bind(this));
-      selectorContainer.appendChild(select);
-    } else {
+    if (type === 'all-time') {
       renderReport('all_time.json');
       return;
     }
+    
+    select = document.createElement('select');
+    select.setAttribute('name', type);
+    select.setAttribute('id', 'period-selector');
+    reports.forEach((report, index) => {
+      const option = document.createElement('option');
+      option.value = report.filename;
+      if (index === 0) {
+        option.selected = 'selected';
+        selectorContainer.dataset.filename = report.filename;
+      }
+      option.innerHTML = report.label;
+      select.appendChild(option);
+    });
+
+    selectorContainer.innerHTML = '<label for="period-selector">Time Period</label>';
+    select.addEventListener('change', updateSelects.bind(this));
+    selectorContainer.appendChild(select);
   } else {
     select = selectorContainer.querySelector(`select[name=${type}]`);
   }
@@ -436,7 +462,7 @@ function renderReport(fileName) {
       artistElement.innerHTML = artist.name;
       artistElement.setAttribute('name', artist.name);
       artistElement.setAttribute('count', artist.count);
-      artistElement.setAttribute('img', getImageUrl(artist.image, 'avif'));
+      artistElement.setAttribute('img', getImageUrl(artist.image, 'webp'));
       artistElement.setAttribute('max', artistMax);
 
       artistsContainer.appendChild(artistElement);
@@ -453,7 +479,7 @@ function renderReport(fileName) {
       albumElement.setAttribute('artist', album.artist);
       albumElement.setAttribute('count', album.count);
       albumElement.setAttribute('max', albumMax);
-      albumElement.setAttribute('img', getImageUrl(album.albumImage, 'avif'));
+      albumElement.setAttribute('img', getImageUrl(album.albumImage, 'webp'));
 
       albumsContainer.appendChild(albumElement);
     });
@@ -463,7 +489,7 @@ function renderReport(fileName) {
 function updateTrends() {
   /* <div class="container" id="artist-trends-container" data-artist="the-beatles">
     <h2>Trends For <span class="trend-name"></span></h2>
-    <h3>Total Scrobbles: <span class="total-scrobbles"></span></h3>
+    <h3>Total Plays: <span class="total-scrobbles"></span></h3>
     <div class="trend-list-container">
       <div class="trend-list"></div>
     </div>
@@ -471,7 +497,7 @@ function updateTrends() {
 
   <div class="container" id="album-trends-container" data-album="the-beatles/1">
     <h2>Trends For <span class="trend-name"></span></h2>
-    <h3>Total Scrobbles: <span class="total-scrobbles"></span></h3>
+    <h3>Total Plays: <span class="total-scrobbles"></span></h3>
     <div class="trend-list-container">
       <div class="trend-list"></div>
     </div>

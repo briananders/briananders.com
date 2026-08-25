@@ -35,12 +35,21 @@ p {
   margin-bottom: space(12);
 }
 
-#selector-container {
-  display: inline-block;
+.selector-container {
+  display: flex;
+  align-items: center;
+  gap: space(2);
+
+  label {
+    padding: 0;
+    margin: 0;
+  }
 }
 
-#filters-container {
+.filters-container {
   @include paragraph-margin;
+  display: grid;
+  gap: space(2);
 }
 
 .trend-list-container {
