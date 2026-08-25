@@ -372,14 +372,73 @@ function installTrendsLinkInterceptor() {
   }, { capture: true });
 }
 
-function initSelects() {
-  Object.keys(reportsData).sort(customPeriodSort).forEach((type) => {
-    if (type !== 'all-time') {
-      typeSelector.innerHTML += `<option value="${type}">${sentenceCase(type)} (${reportsData[type].length})</option>`;
+const EXCLUDED_TYPES = new Set(['all-time', 'listening history']);
+
+function isSelectableType(type) {
+  return !!reportsData && !!reportsData[type] && !EXCLUDED_TYPES.has(type);
+}
+
+function slugFromFilename(filename, type) {
+  if (!filename) return '';
+  return filename
+    .replace(/\.json$/i, '')
+    .replace(new RegExp(`^${type}_`), '');
+}
+
+function getFilterParams() {
+  const params = new URLSearchParams(window.location.search);
+  return {
+    type: params.get('type'),
+    period: params.get('period'),
+  };
+}
+
+function updateFilterParams(updates) {
+  const url = new URL(window.location.href);
+  Object.entries(updates).forEach(([key, value]) => {
+    if (value === null || value === undefined || value === '') {
+      url.searchParams.delete(key);
+    } else {
+      url.searchParams.set(key, value);
     }
   });
-  typeSelector.addEventListener('change', updateSelects.bind(this));
-  updateSelects();
+  // Use replaceState so filter changes don't add browser history entries.
+  history.replaceState(history.state, '', url.toString());
+}
+
+function initSelects() {
+  Object.keys(reportsData).sort(customPeriodSort).forEach((type) => {
+    if (EXCLUDED_TYPES.has(type)) return;
+    typeSelector.innerHTML += `<option value="${type}">${sentenceCase(type)} (${reportsData[type].length})</option>`;
+  });
+  typeSelector.addEventListener('change', handleTypeChange);
+  applyFilterParams();
+}
+
+function applyFilterParams() {
+  const { type, period } = getFilterParams();
+
+  if (type && isSelectableType(type)) {
+    typeSelector.value = type;
+  }
+
+  buildPeriodSelectAndRender(period);
+}
+
+function handleTypeChange() {
+  const type = typeSelector.value;
+  // Reset period whenever the type changes.
+  updateFilterParams({
+    type: type === 'all-time' ? null : type,
+    period: null,
+  });
+  buildPeriodSelectAndRender();
+}
+
+function handlePeriodChange(select) {
+  const type = selectorContainer.dataset.type;
+  updateFilterParams({ period: select.value });
+  renderReport(`${type}_${select.value}.json`);
 }
 
 function customPeriodSort(a, b) {
@@ -388,60 +447,67 @@ function customPeriodSort(a, b) {
   // 2. quarter
   // 3. month
   // 4. week
-  if (a.type === 'all-time') return -1;
-  if (b.type === 'all-time') return 1;
+  if (a === 'all-time') return -1;
+  if (b === 'all-time') return 1;
 
-  if (a.type === 'year') return -1;
-  if (b.type === 'year') return 1;
+  if (a === 'year') return -1;
+  if (b === 'year') return 1;
 
-  if (a.type === 'quarter') return -1;
-  if (b.type === 'quarter') return 1;
+  if (a === 'quarter') return -1;
+  if (b === 'quarter') return 1;
 
-  if (a.type === 'month') return -1;
-  if (b.type === 'month') return 1;
+  if (a === 'month') return -1;
+  if (b === 'month') return 1;
 
-  if (a.type === 'week') return -1;
-  if (b.type === 'week') return 1;
+  if (a === 'week') return -1;
+  if (b === 'week') return 1;
 
   return 0;
 }
 
-function updateSelects() {
+function buildPeriodSelectAndRender(preferredPeriod) {
   const type = typeSelector.value;
-  const reports = reportsData[type].sort((a,b) => a.filename < b.filename ? 1 : -1);
-  let select;
+  const reports = (reportsData[type] || []).slice().sort((a, b) => a.filename < b.filename ? 1 : -1);
 
-  if (selectorContainer.dataset.type !== type) {
-    selectorContainer.dataset.type = type;
-    selectorContainer.innerHTML = '';
+  selectorContainer.dataset.type = type;
+  selectorContainer.innerHTML = '';
 
-    if (type === 'all-time') {
-      renderReport('all_time.json');
-      return;
-    }
-    
-    select = document.createElement('select');
-    select.setAttribute('name', type);
-    select.setAttribute('id', 'period-selector');
-    reports.forEach((report, index) => {
-      const option = document.createElement('option');
-      option.value = report.filename;
-      if (index === 0) {
-        option.selected = 'selected';
-        selectorContainer.dataset.filename = report.filename;
-      }
-      option.innerHTML = report.label;
-      select.appendChild(option);
-    });
-
-    selectorContainer.innerHTML = '<label for="period-selector">Time Period</label>';
-    select.addEventListener('change', updateSelects.bind(this));
-    selectorContainer.appendChild(select);
-  } else {
-    select = selectorContainer.querySelector(`select[name=${type}]`);
+  if (type === 'all-time') {
+    delete selectorContainer.dataset.filename;
+    renderReport('all_time.json');
+    return;
   }
 
-  renderReport(select.value);
+  const select = document.createElement('select');
+  select.setAttribute('name', type);
+  select.setAttribute('id', 'period-selector');
+
+  let selectedIndex = 0;
+  if (preferredPeriod) {
+    const idx = reports.findIndex((r) => slugFromFilename(r.filename, type) === preferredPeriod);
+    if (idx !== -1) selectedIndex = idx;
+  }
+
+  reports.forEach((report, index) => {
+    const option = document.createElement('option');
+    option.value = slugFromFilename(report.filename, type);
+    if (index === selectedIndex) {
+      option.selected = 'selected';
+    }
+    option.innerHTML = report.label;
+    select.appendChild(option);
+  });
+
+  // Correct the URL if the preferred period wasn't found and we fell back.
+  if (select.value !== preferredPeriod) {
+    updateFilterParams({ period: select.value || null });
+  }
+
+  selectorContainer.innerHTML = '<label for="period-selector">Time Period</label>';
+  select.addEventListener('change', () => handlePeriodChange(select));
+  selectorContainer.appendChild(select);
+
+  renderReport(`${type}_${select.value}.json`);
 }
 
 function renderReport(fileName) {
