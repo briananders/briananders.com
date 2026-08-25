@@ -378,6 +378,13 @@ function isSelectableType(type) {
   return !!reportsData && !!reportsData[type] && !EXCLUDED_TYPES.has(type);
 }
 
+function slugFromFilename(filename) {
+  if (!filename) return '';
+  return filename
+    .replace(/\.json$/i, '')
+    .replace(/^rolling_/, '');
+}
+
 function getFilterParams() {
   const params = new URLSearchParams(window.location.search);
   return {
@@ -431,7 +438,7 @@ function handleTypeChange() {
 }
 
 function handlePeriodChange(select) {
-  updateFilterParams({ period: select.value });
+  updateFilterParams({ period: slugFromFilename(select.value) });
   selectorContainer.dataset.filename = select.value;
   renderReport(select.value);
 }
@@ -479,7 +486,7 @@ function buildPeriodSelectAndRender(preferredPeriod) {
 
   let selectedIndex = 0;
   if (preferredPeriod) {
-    const idx = reports.findIndex((r) => r.filename === preferredPeriod);
+    const idx = reports.findIndex((r) => slugFromFilename(r.filename) === preferredPeriod);
     if (idx !== -1) selectedIndex = idx;
   }
 
