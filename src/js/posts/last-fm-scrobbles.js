@@ -378,11 +378,11 @@ function isSelectableType(type) {
   return !!reportsData && !!reportsData[type] && !EXCLUDED_TYPES.has(type);
 }
 
-function slugFromFilename(filename) {
+function slugFromFilename(filename, type) {
   if (!filename) return '';
   return filename
     .replace(/\.json$/i, '')
-    .replace(/^rolling_/, '');
+    .replace(new RegExp(`^${type}_`), '');
 }
 
 function getFilterParams() {
@@ -420,8 +420,6 @@ function applyFilterParams() {
 
   if (type && isSelectableType(type)) {
     typeSelector.value = type;
-  } else if (type === 'all-time') {
-    typeSelector.value = 'all-time';
   }
 
   buildPeriodSelectAndRender(period);
@@ -438,9 +436,9 @@ function handleTypeChange() {
 }
 
 function handlePeriodChange(select) {
-  updateFilterParams({ period: slugFromFilename(select.value) });
-  selectorContainer.dataset.filename = select.value;
-  renderReport(select.value);
+  const type = selectorContainer.dataset.type;
+  updateFilterParams({ period: select.value });
+  renderReport(`${type}_${select.value}.json`);
 }
 
 function customPeriodSort(a, b) {
@@ -449,20 +447,20 @@ function customPeriodSort(a, b) {
   // 2. quarter
   // 3. month
   // 4. week
-  if (a.type === 'all-time') return -1;
-  if (b.type === 'all-time') return 1;
+  if (a === 'all-time') return -1;
+  if (b === 'all-time') return 1;
 
-  if (a.type === 'year') return -1;
-  if (b.type === 'year') return 1;
+  if (a === 'year') return -1;
+  if (b === 'year') return 1;
 
-  if (a.type === 'quarter') return -1;
-  if (b.type === 'quarter') return 1;
+  if (a === 'quarter') return -1;
+  if (b === 'quarter') return 1;
 
-  if (a.type === 'month') return -1;
-  if (b.type === 'month') return 1;
+  if (a === 'month') return -1;
+  if (b === 'month') return 1;
 
-  if (a.type === 'week') return -1;
-  if (b.type === 'week') return 1;
+  if (a === 'week') return -1;
+  if (b === 'week') return 1;
 
   return 0;
 }
@@ -486,26 +484,30 @@ function buildPeriodSelectAndRender(preferredPeriod) {
 
   let selectedIndex = 0;
   if (preferredPeriod) {
-    const idx = reports.findIndex((r) => slugFromFilename(r.filename) === preferredPeriod);
+    const idx = reports.findIndex((r) => slugFromFilename(r.filename, type) === preferredPeriod);
     if (idx !== -1) selectedIndex = idx;
   }
 
   reports.forEach((report, index) => {
     const option = document.createElement('option');
-    option.value = report.filename;
+    option.value = slugFromFilename(report.filename, type);
     if (index === selectedIndex) {
       option.selected = 'selected';
-      selectorContainer.dataset.filename = report.filename;
     }
     option.innerHTML = report.label;
     select.appendChild(option);
   });
 
+  // Correct the URL if the preferred period wasn't found and we fell back.
+  if (select.value !== preferredPeriod) {
+    updateFilterParams({ period: select.value || null });
+  }
+
   selectorContainer.innerHTML = '<label for="period-selector">Time Period</label>';
   select.addEventListener('change', () => handlePeriodChange(select));
   selectorContainer.appendChild(select);
 
-  renderReport(select.value);
+  renderReport(`${type}_${select.value}.json`);
 }
 
 function renderReport(fileName) {
