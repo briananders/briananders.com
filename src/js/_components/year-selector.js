@@ -87,7 +87,7 @@ class YearSelector extends HTMLElement {
       this[id] = Number(this.getAttribute(id));
     });
 
-    this.debounceDate = 1;
+    this.debounceDate = Date.now();
 
     this.backButton = shadow.getElementById('back');
     this.nextButton = shadow.getElementById('next');
