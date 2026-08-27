@@ -38,10 +38,11 @@ My personal website, built as a custom static site generator.
 - `npm test`: Runs the Node.js native test runner suite on the build processes.
 
 ## Deploy the static site
-My website uses AWS as the host, and the deploy uses `aws-sdk`. For this to work you need credentials saved as bash variables:
+My website uses AWS as the host, and the deploy uses the modular **AWS SDK for JavaScript v3** (`@aws-sdk/client-s3`, `@aws-sdk/lib-storage`, `@aws-sdk/client-cloudfront`). For this to work you need credentials saved as bash variables:
 - `CLOUDFRONT_ID`
 - `AWS_ACCESS_KEY`
 - `AWS_SECRET_ACCESS_KEY`
+- `AWS_REGION` (optional; defaults to `us-east-1` for S3—set this if your bucket lives in another region)
 
 **DO NOT SHARE YOUR CREDENTIALS WITH ANYONE.**
 **DO NOT COMMIT THEM TO A PUBLIC REPO.**

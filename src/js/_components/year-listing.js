@@ -77,12 +77,12 @@ const yearTemplate = `
   </a>
 `;
 
-const attributes = ["year", "value", "maximum"];
+const attributes = ['year', 'value', 'maximum'];
 
 class YearListing extends HTMLElement {
   constructor() {
     super();
-    const shadow = this.attachShadow({ mode: "open" });
+    const shadow = this.attachShadow({ mode: 'open' });
     shadow.innerHTML = yearTemplate;
     this.value = 0;
 
@@ -97,17 +97,17 @@ class YearListing extends HTMLElement {
     this.barElement = this.shadowRoot.querySelector('.bar');
 
     // console.log(name, oldValue, newValue);
-    if (name === "value") {
+    if (name === 'value') {
       this.animateToValue(newValue);
     }
-    if (name === "year") {
+    if (name === 'year') {
       this.shadowRoot.querySelector(`[slot="${name}"]`).innerText = newValue;
-      this.shadowRoot.querySelector('a').setAttribute('href', `https://www.last.fm/user/imbanders/library/artists?from=${newValue}-01-01&rangetype=year`)
+      this.shadowRoot.querySelector('a').setAttribute('href', `https://www.last.fm/user/imbanders/library/artists?from=${newValue}-01-01&rangetype=year`);
     }
     if (['year', 'value'].includes(name)) {
       const year = this.getAttribute('year');
       const value = this.getAttribute('value');
-      this.shadowRoot.querySelector('a').setAttribute('aria-label', `${value} scrobbles in the year ${year}`);
+      this.shadowRoot.querySelector('a').setAttribute('aria-label', `${value} plays in the year ${year}`);
     }
   }
 
@@ -138,16 +138,16 @@ class YearListing extends HTMLElement {
         slotElement.innerHTML = formatNumber(value);
       }
     }
-    run()
+    run();
   }
 
   updateWidth() {
-    const barElement = this.barElement;
+    const { barElement } = this;
     const maximum = Number(this.getAttribute('maximum') || 1);
     const value = Number(this.getAttribute('value') || 0);
 
     setTimeout(() => {
-      barElement.style.setProperty('--bar-width', (value / maximum * 100) + "%");
+      barElement.style.setProperty('--bar-width', `${value / maximum * 100}%`);
     }, 1);
   }
 

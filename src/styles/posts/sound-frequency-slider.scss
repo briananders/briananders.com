@@ -1,4 +1,4 @@
-@import "system/utilities";
+@use "system/utilities" as *;
 
 button[value=add] {
   display: block;
@@ -21,6 +21,7 @@ button[value=add] {
     width: 100%;
     margin: space(2) 0;
   }
+
   input[type=number] {
     width: 150px;
   }
@@ -43,6 +44,7 @@ button[value=add] {
       display: none;
     }
   }
+
   button[value=pause] {
     span.play {
       display: none;

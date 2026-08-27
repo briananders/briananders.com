@@ -1,4 +1,4 @@
-@import "system/utilities";
+@use "system/utilities" as *;
 
 $squareSize: 768;
 
@@ -25,6 +25,7 @@ canvas {
     float: left;
     min-height: 1px;
   }
+
   span {
     color: black;
     transform: rotate(90deg);

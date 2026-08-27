@@ -29,7 +29,7 @@ ready.document(() => {
 
   const calculateURL = (urlParam) => {
     let url = window.location;
-    if (urlParam !== undefined && urlParam !== "") {
+    if (urlParam !== undefined && urlParam !== '') {
       try {
         url = new URL(urlParam);
         errorElement.classList.remove('visible');
@@ -79,12 +79,11 @@ ready.document(() => {
       calculateURL(url);
     });
 
-    visualViewport.addEventListener("resize", updateViewport);
+    visualViewport.addEventListener('resize', updateViewport);
 
     calculateURL();
     updateViewport();
   };
 
   init();
-
 });

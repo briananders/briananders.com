@@ -1,4 +1,6 @@
-@import "system/variables/all";
+@use "system/variables/all" as *;
+@use "./media-queries" as *;
+@use "system/functions/all" as *;
 
 @mixin grid($no-padding: false) {
   mixin: grid;

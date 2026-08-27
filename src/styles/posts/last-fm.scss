@@ -1,13 +1,12 @@
-@import "system/utilities";
+@use "system/utilities" as *;
 
 .last-fm-module {
   display: grid;
-  grid-gap: space(6);
+  grid-gap: space(2);
 
   .item {
     display: grid;
     grid-template-columns: 1fr;
-    grid-gap: space(1) / 2;
     grid-gap: space(3);
     border: none;
     padding: space(1);
@@ -16,8 +15,10 @@
     margin-right: -#{space(1)};
 
     @include palette--base;
+    @include card;
 
-    &.album {
+    &.album,
+    &.artist {
       grid-template-columns: 1fr 100px;
     }
 
@@ -55,4 +56,8 @@
     display: grid;
     position: relative;
   }
+}
+
+form.time-selector {
+  margin: $paragraph-bottom auto;
 }

@@ -1,3 +1,5 @@
+@use "system/utilities" as *;
+
 .code-container {
   @include type--body-small;
   @include readingWidth;
@@ -22,6 +24,7 @@
     left: 0px;
     background: linear-gradient(to left, rgba($palette--primary-grey, 0), rgba($palette--primary-grey, 1));
   }
+
   &::after {
     right: 0px;
     background: linear-gradient(to right, rgba($palette--primary-grey, 0), rgba($palette--primary-grey, 1));

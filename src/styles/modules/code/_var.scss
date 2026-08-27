@@ -1,3 +1,5 @@
+@use "system/utilities" as *;
+
 var {
   @include type--monospace;
   display: inline-block;

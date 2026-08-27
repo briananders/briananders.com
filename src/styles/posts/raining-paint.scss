@@ -1,4 +1,4 @@
-@import "system/utilities";
+@use "system/utilities" as *;
 
 
 canvas {
@@ -9,6 +9,7 @@ canvas {
 }
 
 form {
+
   &,
   label {
     display: flex;

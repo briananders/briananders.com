@@ -1,4 +1,4 @@
-@import "system/utilities";
+@use "system/utilities" as *;
 
 #bar {
   border: 1px solid white;
@@ -30,17 +30,30 @@ p {
   gap: space(2);
 }
 
+#yearly-scrobbles {
+  margin-bottom: $paragraph-bottom;
+}
+
 #albums, #artists {
-  gap: space(6);
+  gap: space(2);
   margin-bottom: space(12);
 }
 
-#selector-container {
-  display: inline-block;
+.selector-container {
+  display: flex;
+  align-items: center;
+  gap: space(2);
+
+  label {
+    padding: 0;
+    margin: 0;
+  }
 }
 
-#filters-container {
+.filters-container {
   @include paragraph-margin;
+  display: grid;
+  gap: space(2);
 }
 
 .trend-list-container {
