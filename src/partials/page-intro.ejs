@@ -1,0 +1,26 @@
+<%
+  // Renders a page-introduction paragraph block. Matches the markup currently
+  // hard-coded in layout/base.ejs so the same styling applies.
+  //
+  // Not yet integrated into base.ejs; callable directly from any page that
+  // wants the same look without using the layout's automatic injection.
+  //
+  // locals:
+  //   description — the intro paragraph text (may contain HTML).
+  //   classes     — extra classes appended to .content.description.
+  //   level       — if set, wraps description in <h2>/<hN> instead of <p>.
+  //
+  // Usage:
+  //   partial('page-intro', { ...locals, description: 'A short summary.' })
+  const classes = ['content', 'description', locals.classes || '']
+    .filter(Boolean).join(' ');
+%>
+<div class="<%- classes %>" itemprop="description">
+  <% if (locals.level) {
+       const level = Math.max(2, Math.min(6, locals.level));
+  %>
+    <h<%- level %>><%- locals.description %></h<%- level %>>
+  <% } else { %>
+    <p><%- locals.description %></p>
+  <% } %>
+</div>

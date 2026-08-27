@@ -1,0 +1,28 @@
+<%
+  // Renders a <toast-notification> element. Matches the existing wordle-solver
+  // markup so its styles (already in posts/wordle-solver.scss) keep working.
+  //
+  // locals:
+  //   id        — optional id attribute.
+  //   icon      — emoji or short string shown before the message. Default '✔️'.
+  //   message   — the toast message text.
+  //   tag       — custom element tag name. Default 'toast-notification'.
+  //   classes   — extra classes on the outer element.
+  //   role      — ARIA role. Default 'status' (polite live region).
+  //
+  // Usage:
+  //   partial('toast', { ...locals, message: 'Copied to clipboard' })
+  const tag = locals.tag || 'toast-notification';
+  const icon = locals.icon !== undefined ? locals.icon : '✔️';
+  const role = locals.role || 'status';
+  const idAttr = locals.id ? ` id="${locals.id}"` : '';
+  const classAttr = locals.classes ? ` class="${locals.classes}"` : '';
+%>
+<<%- tag %><%- idAttr %><%- classAttr %> role="<%- role %>" aria-live="polite">
+  <div class="container">
+    <div class="nbar">
+      <% if (icon) { %><span class="toast-icon" aria-hidden="true"><%- icon %></span><% } %>
+      <span class="toast-message"><%- locals.message %></span>
+    </div>
+  </div>
+</<%- tag %>>

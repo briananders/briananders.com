@@ -1,0 +1,47 @@
+<%
+  // Renders a fieldset of radio buttons sharing a name.
+  //
+  // Parameter names avoid colliding with site-wide keys via the `...locals`
+  // spread. Use `inputName` instead of `name`.
+  //
+  // locals:
+  //   inputName  — radio group `name` attribute (required). All radios share this.
+  //   legend     — visible <legend> for the group. Pass falsy to omit.
+  //   value      — currently selected value (matches against option.value).
+  //   options    — array of { id?, value, label, disabled? }.
+  //                If `id` is omitted it is derived as `${inputName}-${value}`.
+  //   groupClass — extra classes on the <fieldset>.
+  //   disabled   — disable the whole group.
+  //
+  // Usage:
+  //   partial('form/radio-group', { ...locals,
+  //     inputName: 'difficulty', legend: 'Difficulty', value: 'beginner',
+  //     options: [
+  //       { value: 'beginner', label: 'Beginner' },
+  //       { value: 'intermediate', label: 'Intermediate' },
+  //       { value: 'expert', label: 'Expert' },
+  //     ],
+  //   })
+  if (!locals.inputName) throw new Error('form/radio-group is missing required `inputName`');
+  if (!Array.isArray(locals.options)) throw new Error('form/radio-group requires `options` array');
+  const groupClass = ['field', 'field--radio-group', locals.groupClass || '']
+    .filter(Boolean).join(' ');
+%>
+<fieldset class="<%- groupClass %>"<%- locals.disabled ? ' disabled' : '' %>>
+  <% if (locals.legend) { %><legend><%- locals.legend %></legend><% } %>
+  <% locals.options.forEach((opt) => {
+    const optId = opt.id || `${locals.inputName}-${opt.value}`;
+    const checked = locals.value !== undefined && String(opt.value) === String(locals.value);
+  %>
+    <label class="field--radio" for="<%- optId %>">
+      <input
+        id="<%- optId %>"
+        type="radio"
+        name="<%- locals.inputName %>"
+        value="<%- opt.value %>"
+        <%- checked ? 'checked' : '' %>
+        <%- (opt.disabled || locals.disabled) ? 'disabled' : '' %> />
+      <span class="field-label"><%- opt.label %></span>
+    </label>
+  <% }); %>
+</fieldset>
