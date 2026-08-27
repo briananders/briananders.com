@@ -1,0 +1,25 @@
+@use "system/utilities" as *;
+
+.h1 {
+  @include type--heading-1;
+}
+
+.h2 {
+  @include type--heading-2;
+}
+
+.h3 {
+  @include type--heading-3;
+}
+
+.h4 {
+  @include type--heading-4;
+}
+
+.h5 {
+  @include type--heading-5;
+}
+
+.h6 {
+  @include type--heading-6;
+}

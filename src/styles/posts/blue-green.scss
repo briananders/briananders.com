@@ -1,0 +1,65 @@
+@use "system/utilities" as *;
+
+.canvas {
+  display: block;
+  height: 200px;
+  @include paragraph;
+  margin-left: 0;
+}
+
+.table {
+  @include paragraph;
+}
+
+row {
+  grid-template-columns: 1fr 120px;
+  display: grid;
+  text-align: left;
+
+  label {
+    grid-column: 1 / span 2;
+    text-align: left;
+    padding: 0;
+  }
+}
+
+.buttons {
+  display: grid;
+  gap: space(2);
+  justify-content: center;
+  grid-template-columns: 1fr 120px 120px 1fr;
+
+  @include paragraph-margin;
+
+  button:first-child {
+    grid-column: 2;
+  }
+  button:last-child {
+    grid-column: 2 / span 2;
+  }
+}
+
+.reveal {
+  @include paragraph;
+
+  .chart {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto space(4);
+    gap: space(2);
+
+    * {
+      padding: 0 space(1);
+    }
+
+    :nth-child(odd) {
+      text-align: right;
+    }
+  }
+
+  button {
+    display: block;
+    margin: space(2) auto 0;
+  }
+}

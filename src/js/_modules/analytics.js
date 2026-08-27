@@ -1,4 +1,4 @@
-const log = require('./log');
+const { log } = require('./log');
 
 const pushEvent = ({ category, action, label } = {}) => {
   const eventObject = {
@@ -42,12 +42,11 @@ module.exports = {
       });
     });
 
-
     let scrollTrackerMilestones = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1];
     window.addEventListener('scroll', () => {
       const totalScrollHeight = document.documentElement.scrollHeight - window.innerHeight;
       const currentScroll = document.documentElement.scrollTop;
-      let scrollTracker = scrollTrackerMilestones.map(value => ({
+      let scrollTracker = scrollTrackerMilestones.map((value) => ({
         percent: value * 100,
         milestone: totalScrollHeight * value,
       }));

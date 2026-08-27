@@ -1,0 +1,14 @@
+@use "defaults" as *;
+
+@function space($size) {
+  @return $base-unit * $size;
+}
+
+$section-spacer: space(20);
+$paragraph-bottom: space(6);
+$content-max-width: 1024px;
+
+
+$full-bleed: $content-max-width;
+$full-width-small: $content-max-width - (2 * space(2));
+$full-width-medium: $content-max-width - (2 * space(6));

@@ -1,0 +1,26 @@
+@use "system/utilities" as *;
+
+
+canvas {
+  width: 100vw;
+  max-width: 100%;
+  height: calc(100vh - 120px);
+  @include border--light;
+}
+
+form {
+
+  &,
+  label {
+    display: flex;
+    align-items: center;
+  }
+
+  label {
+    padding: 0;
+  }
+
+  input {
+    margin-right: space(2);
+  }
+}

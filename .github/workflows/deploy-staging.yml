@@ -1,0 +1,43 @@
+name: Build and Deploy Staging
+
+env:
+  CLOUDFRONT_ID: "${{ secrets.CLOUDFRONT_ID }}"
+  AWS_ACCESS_KEY: "${{ secrets.AWS_ACCESS_KEY }}"
+  AWS_SECRET_ACCESS_KEY: "${{ secrets.AWS_SECRET_ACCESS_KEY }}"
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - staging
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5.0.0
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: ".nvmrc"
+          cache: npm
+
+      - name: Use clean install
+        run: npm ci
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build website
+        run: npm run build
+
+      - name: Cancel previous in-progress runs
+        uses: styfle/cancel-workflow-action@0.12.1
+        with:
+          access_token: ${{ github.token }}
+
+      - name: Deploy to Staging
+        run: npm run stage

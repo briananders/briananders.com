@@ -1,0 +1,5 @@
+@use "system/variables/all" as *;
+
+@mixin box {
+  box-sizing: border-box;
+}

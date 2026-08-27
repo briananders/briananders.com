@@ -1,0 +1,15 @@
+@use "system/utilities" as *;
+
+[aria-hidden="true"] {
+  display: none;
+  visibility: hidden;
+}
+
+
+[role=list] {
+  @include list;
+}
+
+[role=listitem] {
+  @include list-item;
+}

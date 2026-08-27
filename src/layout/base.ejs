@@ -2,27 +2,27 @@
 layout: blank
 ---
 
-<% if(!locals.devBuild) { %>
-  <%# Google Tag Manager (noscript); %>
-  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5KZW4HX" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
-  <%# End Google Tag Manager (noscript); %>
-<% } %>
+<style><%- inlineScss('/styles/base.scss'); %></style>
 
-<%- partial('header', locals); %>
+<%- partial('head/scripts', locals); %>
+
+<%- partial('header', {
+  ...locals,
+  inlineStyles: true,
+  inlineSVGs: true,
+}); %>
 
 <main class="<%- (locals.pageClasses) ? locals.pageClasses.toString().replace(/,/g,' ') : '' %>">
-  <header class="content">
-    <% if (locals.description) { %>
-      <p class="description" itemprop="description">
-        <%- noWidows(locals.description); %>
+  <% if (locals.description && !locals.homepage) { %>
+    <div class="content description" itemprop="description">
+      <p>
+        <%- locals.description %>
       </p>
-    <% } %>
-  </header>
+    </div>
+  <% } %>
 
   <%- content %>
 
 </main>
 
-<%- partial('footer', locals); %>
-
-<script src="/scripts/main.js" async defer></script>
+<%- partial('footer', { ...locals, deferStyles: true }); %>

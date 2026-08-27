@@ -1,15 +1,17 @@
+<%- partial('head/styles', {...locals, path: 'modules/header' }); %>
+
 <div id="skip-nav" tabindex="-1" data-state=inactive>
-  <button>Skip navigation</button>
+  <button class="button">Skip navigation</button>
 </div>
 <%- partial('nav', locals); %>
-<header lazy data-lazy-style="background-image: var(--background-image);" class="main-header <%- locals.withHead ? 'with-head' : 'without-head' %> <%- (locals.pageClasses) ? locals.pageClasses.toString().replace(/,/g,' ') : '' %>">
-  <% if(!locals.withHead) { %>
-    <h1 itemprop="title" class="name content">
+<% if(!locals.homepage) { %>
+  <header class="main-header <%- (locals.pageClasses) ? locals.pageClasses.toString().replace(/,/g,' ') : '' %>">
+    <h1 itemprop="headline" class="name content">
       <% if (locals.altTitle !== undefined) { %>
-        <%- locals.altTitle %>
+        <%- noWidows(locals.altTitle); %>
       <% } else if (locals.title !== undefined) { %>
-        <%- locals.title %>
+        <%- noWidows(locals.title); %>
       <% } %>
     </h1>
-  <% } %>
-</header>
+  </header>
+<% } %>

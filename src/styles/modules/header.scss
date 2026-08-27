@@ -1,0 +1,15 @@
+@use "system/utilities" as *;
+@use "modules/nav" as *;
+@use "modules/skip-nav" as *;
+
+header.main-header {
+  @include palette--base;
+  margin-top: space(6);
+  @include left-margins;
+
+  h1.name {
+    @include type--title;
+    @include text-center;
+  }
+}
+

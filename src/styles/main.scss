@@ -1,5 +1,6 @@
-@import "./lib/normalize";
-@import "./lib/base-styles";
+@use "./vendor/normalize";
+@use "./system/utilities" as *;
+@use "./system/styles";
 
 @import "./four-oh-four";
 

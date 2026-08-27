@@ -1,0 +1,2 @@
+brew "awscli"
+brew "nvm"

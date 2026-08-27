@@ -1,3 +1,1 @@
-module.exports = {
-  isDarkMode: window.matchMedia('(prefers-color-scheme: dark)').matches,
-};
+module.exports.isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;

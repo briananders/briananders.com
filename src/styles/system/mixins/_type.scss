@@ -1,0 +1,156 @@
+@use "sass:map";
+@use "system/variables/all" as *;
+@use "./media-queries" as *;
+
+// Base size rules
+@mixin font-size($size: 2) {
+  mixin: font-size;
+
+  $multiplier: map.get((
+    0 : 2,   // tiny
+    1 : 2.5, // small
+    2 : 3,   // default body
+    3 : 3.5,
+    4 : 4,
+    5 : 4.5,
+    6 : 5,
+    7 : 5.5,
+    8 : 6,   // H1
+    9 : 6.5,
+    10: 7    // title
+  ), $size);
+
+  $font-size: $multiplier * $base-unit;
+  font-size: $font-size;
+  line-height: 1.5 * $font-size;
+}
+
+// font-family and weight
+@mixin type--regular-serif {
+  mixin: type--regular-serif;
+
+  font-family: $serif;
+  font-weight: $regular;
+}
+
+@mixin type--regular-sans-serif {
+  mixin: type--regular-sans-serif;
+
+  font-family: $sans-serif;
+  font-weight: $regular;
+}
+
+@mixin type--bold-serif {
+  mixin: type--bold-serif;
+
+  font-family: $serif;
+  font-weight: $bold;
+}
+
+@mixin type--bold-sans-serif {
+  mixin: type--bold-sans-serif;
+
+  font-family: $sans-serif;
+  font-weight: $bold;
+}
+
+@mixin italic {
+  mixin: italic;
+
+  font-style: italic;
+}
+
+
+// Definitions
+@mixin type--headings {
+  mixin: type--headings;
+
+  @include type--bold-sans-serif;
+
+  text-align: left;
+  text-shadow: 0px 2px 4px black;
+}
+
+@mixin type--title {
+  mixin: type--title;
+
+  @include type--headings;
+
+  @include font-size(9);
+  margin-bottom: space(6);
+}
+
+@mixin type--heading-1 {
+  mixin: type--heading-1;
+
+  @include type--headings;
+
+  @include font-size(8);
+  margin-bottom: space(6);
+}
+
+@mixin type--heading-2 {
+  mixin: type--heading-2;
+
+  @include type--headings;
+
+  @include font-size(7);
+  margin-bottom: space(6);
+}
+
+@mixin type--heading-3 {
+  mixin: type--heading-3;
+
+  @include type--headings;
+
+  @include font-size(6);
+  margin-bottom: space(4);
+}
+
+@mixin type--heading-4 {
+  mixin: type--heading-4;
+
+  @include type--headings;
+
+  @include font-size(5);
+  margin-bottom: space(3);
+}
+
+@mixin type--heading-5 {
+  mixin: type--heading-5;
+
+  @include type--headings;
+
+  @include font-size(4);
+  margin-bottom: space(3);
+}
+
+@mixin type--heading-6 {
+  mixin: type--heading-6;
+
+  @include type--headings;
+
+  @include font-size(3);
+  margin-bottom: space(3);
+}
+
+@mixin type--body {
+  mixin: type--body;
+
+  @include type--regular-serif;
+  @include font-size(2);
+}
+
+@mixin type--body-small {
+  mixin: type--body-small;
+
+  @include type--regular-serif;
+  @include font-size(1);
+}
+
+@mixin type--body-tiny {
+  mixin: type--body-tiny;
+
+  @include type--regular-serif;
+  @include font-size(0);
+}

@@ -1,121 +1,94 @@
 ---
 title: "Home"
-altTitle: "Hi, I'm Brian."
-description: "Brian Anders is a Staff UX Engineer at Google"
+description: "Brian Anders is an Engineering Manager in the tech industry. I'm also a YouTuber, Podcaster, and
+Musician."
 priority: 1.0
+homepage: true
 pageClasses:
-  - 'main'
-  - 'home'
+- 'main'
+- 'home'
 layout: base
 styles:
-  - 'main'
-  - 'homepage'
+- 'main'
+scripts:
+- 'homepage'
 ---
 
 
+<%- partial('head/styles', { ...locals, path: 'homepage', inlineStyles: true }) %>
 
-<section class="intro">
+
+<section class="contributions">
+  <div class="content deck">
+    <%
+      const model = [
+        {
+          heading: "Bat Lessons",
+          image: "/images/about/contributions/batlessons.webp",
+          copyBlock: `Batman history, presented by ${inlineLink('Alex Cash', { href: 'https://alex.cash', external: true })} and myself.`,
+          links: [
+            {
+              label: "Website",
+              url: locals.batLessons,
+            },
+            {
+              label: "YouTube",
+              url: locals.batLessonsYT,
+            }
+          ]
+        }, {
+          heading: "Banders Drums",
+          image: "/images/drums/logo.png",
+          copyBlock: "A YouTube channel with videos of me playing drum covers.",
+          links: [
+            {
+              label: "Website",
+              path: locals.bandersDrums.path,
+            }, {
+              label: "YouTube",
+              url: locals.bandersDrums.youtube,
+            }
+          ]
+        },
+      ]
+      model.forEach(({ copyBlock, image, heading, links }) => {
+    %>
+    <%- partial('contributions-card', Object.assign(locals, { copyBlock, image, heading, links })); %>
+    <% }); %>
+  </div>
   <div class="content">
-    <header>
-      <h2>
-        <%- noWidows("Who am I?"); %>
-      </h2>
-    </header>
-    <p>
-      I am a Staff UX Engineer at <%- externalLink("Google", { href: "https://google.com" }) %>. From 2013 to 2018, I worked on <%- externalLink("nest.com", { href: "https://nest.com" }) %>. Since 2018 I have been working on the <%- externalLink("Google Store", { href: "https://store.google.com" }) %>; building and enhancing the web experience.
-    </p>
-    <p>
-      Outside of work, I listen to music, play some instruments, do some camping, and more or less try to enjoy the life I lead.
-    </p>
-    <p>
-      You can find me on the internet in some other places.
-      <% const contactLinks = [
-          { copy: 'Twitter', url: locals.twitter, },
-          { copy: 'Last.fm', url: locals.lastfm, },
-          { copy: 'Github', url: locals.github, },
-          { copy: 'LinkedIn', url: locals.linkedin, },
-        ].map(item => externalLink(item.copy, {
-          href: item.url,
-          itemprop: "url",
-          target: "blank",
-          rel: "noopener",
-        }));
-      %>
-      <%- contactLinks.join(', ') %>.
-    </p>
+    <%- blockLink('More', {
+      href: '/about/',
+    }); %>
   </div>
 </section>
 
 
-<section class="thoughts">
-  <div class="content">
-    <header>
-      <h2>
-        <%- noWidows("I have thoughts. Here are some recent ones."); %>
-      </h2>
-    </header>
-  </div>
-  <%- partial('thoughts-list', Object.assign(locals, { thoughtCount: 6 })) %>
-  <div class="content center">
-    <%- link('More thoughts', {
-      href: "/thoughts/",
-      class: "button",
-    }) %>
-  </div>
-</section>
-
-
-<section class="index-music">
-  <div class="content">
-    <header>
-      <h2>
-        <%- noWidows("What I've been listening to."); %>
-      </h2>
-      <p>
-        <%- noWidows("Music is a big deal to me. I am always looking for my next favorite album. Last.fm is a tool that I use to track my listening habits. Here are some of the albums that I have been listening to recently."); %>
-      </p>
-    </header>
-    <div class='last-fm-module p' data-type="albums"></div>
-    <div class="center">
-    <%- link('More music details', {
-      href: "/thoughts/last-fm/",
-      class: "button",
-    }) %>
+  <section class="posts">
+    <div class="content">
+      <header>
+        <h2>
+          <%- noWidows(`Recent posts`); %>
+        </h2>
+      </header>
+      <%- partial('posts-list', Object.assign(locals, { postCount: 6 })); %>
+      <%- blockLink('More posts', { href: '/posts/' }); %>
     </div>
-  </div>
-</section>
+  </section>
 
 
-<section>
-  <div class="content">
-    <header>
-      <h2>
-        <%- noWidows("What I've been screaming into the abyss."); %>
-      </h2>
-      <p class="center">
-        &#61;&#61;&gt;
-        <%- externalLink(`@${locals.twitterHandle}`, {
-          href: `${locals.twitter}?ref_src=twsrc%5Etfw`
-        }) %>
-        &lt;&#61;&#61;
-      </p>
-    </header>
-    <p>
-      <%- externalLink(`Tweets by @${locals.twitterHandle}`, {
-        class: "twitter-timeline",
-        href: `${locals.twitter}?ref_src=twsrc%5Etfw`,
-        'data-height': "800",
-        'data-theme': "light",
-      }) %>
-    </p>
-  </div>
-  <script>
-    (function() {
-      const timelineElement = document.querySelector('.twitter-timeline[data-theme]');
-      if(matchMedia('(prefers-color-scheme: dark)').matches) {
-        timelineElement.dataset.theme = 'dark';
-      }
-    })();
-  </script>
-  <script async defer src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
-</section>
+  <section class="index-music">
+    <div class="content">
+      <header>
+        <h2>
+          <%- noWidows(`Music that I have been listening to`); %>
+        </h2>
+      </header>
+      <div class="last-fm-module p" data-type="albums" src="/images/posts/last-fm/default.webp">
+        <% for (let i=0; i < 4; i++) { %>
+          <%- defaultLastFMModule(); %>
+        <% } %>
+      </div>
+      <%- blockLink('More music details', { href: '/posts/last-fm/' }); %>
+    </div>
+  </section>

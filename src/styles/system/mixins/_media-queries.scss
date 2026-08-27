@@ -1,0 +1,20 @@
+@use "system/variables/all" as *;
+
+// MEDIA QUERY MIXINS
+@mixin mq($query) {
+  @media (min-width: $query) {
+    @content;
+  }
+}
+
+@mixin mq-max($query) {
+  @media (max-width: #{$query - 1}) {
+    @content;
+  }
+}
+
+@mixin dark-mode() {
+  @media (prefers-color-scheme: dark) {
+    @content;
+  }
+}

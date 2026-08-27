@@ -1,0 +1,285 @@
+---
+title: "Design System for this website"
+description: "I pulled together the basic elements that I used on my website, and rewrote the majority of my EJS functions and SASS mixins to deliver consistent application of these elements."
+date: 2024-12-31
+priority: 0.8
+pageClasses:
+  - 'design-system'
+layout: base
+styles:
+  - 'main'
+  - 'posts/design-system'
+scripts:
+  - 'posts/design-system'
+---
+
+<section class="palette">
+  <div class="container">
+    <h2>Color Palette</h2>
+    <ul>
+      <li class="primary-white">
+        <div>$palette--primary-white</div>
+        <div>--palette--primary-white</div>
+        <span></span>
+      </li>
+      <li class="primary-grey">
+        <div>$palette--primary-grey</div>
+        <div>--palette--primary-grey</div>
+        <span></span>
+      </li>
+      <li class="secondary-grey">
+        <div>$palette--secondary-grey</div>
+        <div>--palette--secondary-grey</div>
+        <span></span>
+      </li>
+      <li class="hover-grey">
+        <div>$palette--hover-grey</div>
+        <div>--palette--hover-grey</div>
+        <span></span>
+      </li>
+      <li class="divider-color">
+        <div>$palette--divider-color</div>
+        <div>--palette--divider-color</div>
+        <span></span>
+      </li>
+      <li class="error-color">
+        <div>$palette--error</div>
+        <div>--palette--error</div>
+        <span></span>
+      </li>
+
+      <li class="primary-color-dark">
+        <div>$palette--primary-color-dark</div>
+        <div>--palette--primary-color-dark</div>
+        <span></span>
+      </li>
+      <li class="primary-color-light">
+        <div>$palette--primary-color-light</div>
+        <div>--palette--primary-color-light</div>
+        <span></span>
+      </li>
+      <li class="accent-color">
+        <div>$palette--accent-color</div>
+        <div>--palette--accent-color</div>
+        <span></span>
+      </li>
+    </ul>
+  </div>
+</section>
+<section class="palette-combos">
+  <div class="container">
+    <h2>Palette Combinations</h2>
+    <ul>
+      <li class="palette--base">@include palette--base</li>
+      <li class="palette--base--inverted">@include palette--base--inverted</li>
+      <li class="palette--primary">@include palette--primary</li>
+      <li class="palette--header">@include palette--header</li>
+      <li class="palette--orange-gradient">@include orange-gradient</li>
+    </ul>
+  </div>
+</section>
+
+<section class="defaults">
+  <div class="container">
+    <h2>Default Values</h2>
+    <ul>
+      <li>$base-unit: 6px</li>
+      <li>$transition-speed: 300ms</li>
+      <li>$transition-timing: ease</li>
+      <li>$border-radius: 3px</li>
+    </ul>
+    <h2>Spacing Variables</h2>
+    <ul>
+      <li>$section-spacer: 120px</li>
+      <li>$paragraph-bottom: 36px</li>
+    </ul>
+    <div class="content-max-width">$content-max-width: 1,020px</div>
+    <div class="full-bleed">$full-bleed: 1,020px</div>
+    <div class="full-width-small">$full-width-small: 1,008px</div>
+    <div class="full-width-medium">$full-width-medium: 960px</div>
+  </div>
+</section>
+
+<section class="viewports">
+  <div class="container">
+    <h2>Viewports</h2>
+
+    <div class="small">$small: 320px</div>
+    <div class="medium">$medium: 600px</div>
+    <div class="large">$large: 960px</div>
+  </div>
+</section>
+
+<section class="fonts">
+  <div class="container">
+    <h2>Fonts</h2>
+
+    <ul>
+      <li class="serif-regular">
+        font-family: 'Source Serif Pro', serif;<br>
+        font-weight: 300;
+      </li>
+      <li class="serif-bold">
+        font-family: 'Source Serif Pro', serif;<br>
+        font-weight: 500;
+      </li>
+      <li class="sans-serif-regular">
+        font-family: 'Roboto', sans-serif;<br>
+        font-weight: 300;
+      </li>
+      <li class="sans-serif-bold">
+        font-family: 'Roboto', sans-serif;<br>
+        font-weight: 500;
+      </li>
+    </ul>
+  </div>
+</section>
+
+<section class="type">
+  <div class="container">
+    <h2>Type Definitions</h2>
+    <ul>
+      <li class="type--title">
+        @include type--title
+      </li>
+      <li class="type--title italic">
+        @include type--title + @include italic
+      </li>
+      <li class="type--heading-1">
+        @include type--heading-1
+      </li>
+      <li class="type--heading-1 italic">
+        @include type--heading-1 + @include italic
+      </li>
+      <li class="type--heading-2">
+        @include type--heading-2
+      </li>
+      <li class="type--heading-2 italic">
+        @include type--heading-2 + @include italic
+      </li>
+      <li class="type--heading-3">
+        @include type--heading-3
+      </li>
+      <li class="type--heading-3 italic">
+        @include type--heading-3 + @include italic
+      </li>
+      <li class="type--heading-4">
+        @include type--heading-4
+      </li>
+      <li class="type--heading-4 italic">
+        @include type--heading-4 + @include italic
+      </li>
+      <li class="type--heading-5">
+        @include type--heading-5
+      </li>
+      <li class="type--heading-5 italic">
+        @include type--heading-5 + @include italic
+      </li>
+      <li class="type--heading-6">
+        @include type--heading-6
+      </li>
+      <li class="type--heading-6 italic">
+        @include type--heading-6 + @include italic
+      </li>
+      <li class="type--headings">
+        @include type--headings
+      </li>
+      <li class="type--headings italic">
+        @include type--headings + @include italic
+      </li>
+      <li class="type--body">
+        @include type--body
+      </li>
+      <li class="type--body italic">
+        @include type--body + @include italic
+      </li>
+      <li class="type--body-small">
+        @include type--body-small
+      </li>
+      <li class="type--body-small italic">
+        @include type--body-small + @include italic
+      </li>
+      <li class="type--body-tiny">
+        @include type--body-tiny
+      </li>
+      <li class="type--body-tiny italic">
+        @include type--body-tiny + @include italic
+      </li>
+    </ul>
+  </div>
+</section>
+
+<section class="links">
+  <div class="container">
+    <h2>Inline Link</h2>
+    <p>
+      This is what an inline <%- inlineLink('inlineLink()', { href: 'javascript: void(0);' }); %> tag looks like
+    </p>
+    <h2>Block Link</h2>
+    <p>
+      This is what a block link tag looks like.
+      <%- blockLink('blockLink()', { href: 'javascript: void(0);' }); %>
+    </p>
+    <h2>Button Link</h2>
+    <p>
+      This is what a button link tag looks like.
+      <%- buttonLink('buttonLink()', { href: 'javascript: void(0);' }); %>
+    </p>
+    <h2>Card Link</h2>
+    <div class="p">
+      <%- cardLink(`<h3>cardLink()</h3><p>This is what a card link tag looks like. This is what a card link tag looks like. This is what a card link tag looks like.</p>`, { href: 'javascript: void(0);' }); %>
+    </div>
+    <h2>Other</h2>
+    <p>
+      Button element without any classes. <button>Random button</button>
+    </p>
+    <p>
+      Button element with <var>inline-link</var> class. <button class="inline-link">Inline Link</button>
+    </p>
+    <p>
+      Button element with <var>block-link</var> class. <button class="block-link">Block Link&nbsp;<b>&gt;</b></button>
+    </p>
+    <p>
+      Button element with <var>button-link</var> class. <button class="button-link">Button Link</button>
+    </p>
+    <p>
+      Button element with <var>card-link</var> class.
+    </p>
+    <div class="p">
+      <button class="card-link">
+        <h6>Card Link</h6>
+        <p>This is what a card link tag looks like. This is what a card link tag looks like. This is what a card link tag looks like.</p>
+      </button>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="container">
+    <h2>Other Interactive Elements</h2>
+    <ul>
+      <li>
+        <select name=difficulty aria-label="Game difficulty">
+          <option value=beginner selected>Beginner</option>
+          <option value=intermediate>Intermediate</option>
+          <option value=expert>Expert</option>
+        </select>
+      </li>
+      <li>
+        <input type="text" />
+      </li>
+      <li>
+        <input type="number" min=1 max=60 step=1 />
+      </li>
+      <li>
+        <input type="range" min=1 max=60 step=1 />
+      </li>
+      <li>
+        <input type="checkbox" />
+      </li>
+      <li>
+        <input type="radio" />
+      </li>
+    </ul>
+  </div>
+</section>

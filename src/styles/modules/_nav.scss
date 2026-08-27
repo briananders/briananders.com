@@ -1,11 +1,34 @@
+@use "system/utilities" as *;
+@use "modules/sticky-stacky" as *;
+
+$nav-height: space(12);
+
+html {
+  --nav-height: #{$nav-height};
+  --window-height: calc(100vh - #{$nav-height});
+}
+
+#nav-overlay {
+  width: 100%;
+  height: 100%;
+  display: none;
+  position: fixed;
+  left: 0;
+  top: 0;
+
+  &.visible {
+    display: block;
+  }
+}
+
 nav.main {
   border-radius: 0;
   margin: 0;
   transition-property: opacity;
-  z-index: 5;
-  position: fixed;
+  z-index: 1000;
   width: 100%;
-  background-color: var(--primary-color-dark, #{$primary-color-dark});
+  position: relative;
+  @include palette--header;
 
   &.shadow {
     box-shadow: 0 0 $s2 $primary-text-color;
@@ -18,13 +41,23 @@ nav.main {
     padding: 0;
   }
 
-  .content, .container {
+  .content,
+  .container {
     overflow: visible;
     align-items: center;
     display: flex;
     justify-content: space-between;
-    min-height: $s11;
-    background-color: var(--primary-color-dark, #{$primary-color-dark});
+    min-height: $nav-height;
+
+    &::after {
+      display: block;
+      content: "";
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 100%;
+      width: 100vw;
+    }
   }
 
   .menu {
@@ -59,8 +92,16 @@ nav.main {
     }
   }
 
-  .mobile-nav-tray {
-    z-index: -1;
+  #activate-menu {
+    border-width: 0px;
+    border-color: rgba(0, 0, 0, 0);
+    border-image: none;
+    border-style: none;
+    background-color: rgba(50, 50, 50, 1);
+  }
+
+  #nav-tray {
+    z-index: 0;
     position: absolute;
     transition-property: transform;
     top: $s11 + 1;
@@ -115,7 +156,6 @@ nav.main {
     &:focus {
       text-decoration: underline;
     }
-  }
 
   .menu,
   [role="menuitem"] {

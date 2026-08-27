@@ -1,0 +1,29 @@
+<div id="posts-list" role="list">
+  <%
+    const basePages = getChildPages('posts');
+    let newestPages = basePages.sort((pageA, pageB) => {
+      const dateA = new Date(pageA.data.date);
+      const dateB = new Date(pageB.data.date);
+      return (dateA < dateB) ? 1 : -1;
+    });
+    if (locals.postCount) {
+      newestPages = newestPages.splice(0, locals.postCount);
+    }
+    newestPages.forEach(({ url, data: { date, description, title }}) => {
+  %>
+    <%- cardLink(`
+      <span itemprop="name" ${locals.headingLevel ? `role="heading" aria-level="${locals.headingLevel}"` : ""}>${title}</span>
+      <date itemprop="datePublished" content="${date}">
+        ${formattedDate(date)}
+      </date>
+      <meta itemprop="author" content="Brian Anders"/>
+      <meta itemprop="publisher" content="Brian Anders"/>
+    `, {
+      href: `/${url}`,
+      itemscope: '',
+      itemtype: 'https://schema.org/BlogPosting',
+      role: 'listitem',
+      class: 'block',
+    }); %>
+  <% }); %>
+</div>

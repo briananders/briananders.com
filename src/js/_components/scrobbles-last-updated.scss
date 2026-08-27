@@ -1,0 +1,24 @@
+@use "system/utilities" as *;
+
+:host {
+  display: inline-flex;
+  align-items: baseline;
+  gap: space(1);
+  @include font-size(1);
+  @include type--regular-sans-serif;
+  color: $palette--secondary-grey;
+  padding: space(1) 0;
+}
+
+.label {
+  @include type--bold-sans-serif;
+}
+
+time {
+  font-variant-numeric: tabular-nums;
+
+  &.loading {
+    font-style: italic;
+    opacity: 0.6;
+  }
+}

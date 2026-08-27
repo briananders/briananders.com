@@ -1,0 +1,189 @@
+@use "sass:math";
+@use "system/utilities" as *;
+
+i {
+  @include italic;
+}
+
+section {
+  @include section;
+}
+
+main {
+  @include left-margins;
+  z-index: 1;
+  position: relative;
+  transition-property: right, min-height;
+  right: 0;
+  min-height: 100vh;
+}
+
+html {
+  @include html;
+}
+
+body {
+  overflow-x: hidden;
+  width: 100%;
+  @include type--body;
+}
+
+p {
+  @include paragraph;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  @include type--headings;
+}
+
+h1 {
+  @include type--heading-1;
+}
+
+h2 {
+  @include type--heading-2;
+}
+
+h3 {
+  @include type--heading-3;
+}
+
+h4 {
+  @include type--heading-4;
+}
+
+h5 {
+  @include type--heading-5;
+}
+
+h6 {
+  @include type--heading-6;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+  display: inline-block;
+}
+
+cite {
+  @include citation;
+}
+
+blockquote {
+  @include quotation;
+}
+
+strong {
+  font-weight: $bold;
+}
+
+date {
+  text-align: right;
+  display: block;
+  @include type--bold-serif;
+}
+
+label {
+  @include label;
+}
+
+list,
+ul,
+ol {
+  @include list;
+}
+
+ol:not(.default) {
+  list-style: decimal;
+  padding-left: space(4);
+}
+
+item,
+li {
+  @include list-item;
+}
+
+button {
+  font-family: unset;
+  font-size: unset;
+  line-height: unset;
+  margin: unset;
+  padding: unset;
+  border: unset;
+  cursor: pointer;
+
+  &:not(.button):not([class*="link"]) {
+    @include button-element;
+
+    @include link-focus;
+    @include link-hover;
+  }
+}
+
+select {
+  @include select;
+}
+
+input[type=checkbox],
+input[type=radio] {
+  @include checkbox;
+}
+
+input[type=text],
+input[type=number] {
+  @include input;
+}
+
+input[type=range] {
+  @include input-range;
+}
+
+input[type=checkbox].toggle {
+  appearance: none;
+  position: relative;
+  display: inline-block;
+  width: space(8);
+  height: space(3);
+  background-color: $palette--primary-white;
+  border-radius: space(2);
+  border: none;
+
+  &:focus {
+    box-shadow: none;
+    background-color: $palette--primary-white !important;
+  }
+
+  /* After slide changes */
+  &::before {
+    content: '';
+    position: absolute;
+    width: space(4);
+    height: space(4);
+    border-radius: space(2);
+    background-color: $palette--accent-color;
+    top: 0 - math.div(space(1), 2);
+    left: 0 - math.div(space(1), 2);
+    transition: left $transition-speed, background-color $transition-speed;
+    box-shadow: 0 0 space(1) $color--grey-900;
+  }
+
+  /* Checkbox checked toggle label bg color */
+  &:checked {
+    background-color: $palette--accent-color;
+
+    /* Checkbox checked effect */
+    &::before {
+      left: calc(100% - (space(4) - (space(1) / 2)));
+    }
+
+    &:focus {
+      background-color: $palette--accent-color !important;
+    }
+  }
+}

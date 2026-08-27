@@ -1,0 +1,41 @@
+---
+title: "Drawing with Microsoft Paint"
+description: "If you want a place to goof around and draw. Here’s your place."
+date: 2018-07-18
+priority: 0.8
+layout: base
+styles:
+  - 'main'
+  - 'posts/paint'
+scripts:
+  - 'posts/paint'
+---
+
+<div class="content">
+  <canvas id="canvas"></canvas>
+</div>
+
+<div class="content">
+  <div class="color-palette p">
+    <main-color class="color"></main-color>
+    <%# colors filled by js %>
+  </div>
+
+  <div class="stroke-size-palette p">
+    <div class="slider-container">
+      <input id="stroke-slider" type="range" min="1" max="200" value="5" step="1" aria-label="Stroke size">
+    </div>
+    <main-stroke>
+      <span>1px</span>
+    </main-stroke>
+  </div>
+
+  <div class="shape-palette p">
+    <label>
+      <input id=circle type=radio name=shape value=circle checked=checked /> Circle
+    </label>
+    <label>
+      <input id=square type=radio name=shape value=square /> Square
+    </label>
+  </div>
+</div>

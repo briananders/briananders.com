@@ -1,0 +1,47 @@
+---
+title: ""
+description: ""
+date: 2023-08-17
+priority: 0.8
+pageClasses:
+  - 'example minesweeper'
+robots: false
+layout: blank
+styles:
+  - 'main'
+  - 'example/minesweeper'
+scripts:
+  - 'example/minesweeper'
+---
+
+<style><%- inlineScss('/styles/base.scss'); %></style>
+
+<script src="/scripts/example/minesweeper.js" async defer></script>
+
+<section class="minesweeper">
+  <div class="header-first-row" data-difficulty="">
+    <span class="time">
+      <span class="number hundreds" data-number=''></span>
+      <span class="number tens" data-number=''></span>
+      <span class="number ones" data-number=''></span>
+    </span>
+    <button id='restart' class="face-button"></button>
+    <span class="mine-count-down">
+      <span class="number hundreds" data-number=''></span>
+      <span class="number tens" data-number=''></span>
+      <span class="number ones" data-number=''></span>
+    </span>
+  </div>
+
+  <div class="header-second-row" data-difficulty="">
+    <div>
+      <select name=difficulty aria-label="Game difficulty">
+        <option value=beginner selected>Beginner</option>
+        <option value=intermediate>Intermediate</option>
+        <option value=expert>Expert</option>
+      </select>
+    </div>
+  </div>
+
+  <ul class="table" data-difficulty=""></ul>
+</section>

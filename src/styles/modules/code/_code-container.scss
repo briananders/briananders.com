@@ -1,0 +1,32 @@
+@use "system/utilities" as *;
+
+.code-container {
+  @include type--body-small;
+  @include readingWidth;
+  margin: 0 0 space(6);
+  max-width: 100%;
+  overflow: hidden;
+  position: relative;
+  text-align: left;
+  display: flex;
+  @include border--light;
+
+  &::before,
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0px;
+    bottom: 0px;
+    width: space(6);
+  }
+
+  &::before {
+    left: 0px;
+    background: linear-gradient(to left, rgba($palette--primary-grey, 0), rgba($palette--primary-grey, 1));
+  }
+
+  &::after {
+    right: 0px;
+    background: linear-gradient(to right, rgba($palette--primary-grey, 0), rgba($palette--primary-grey, 1));
+  }
+}

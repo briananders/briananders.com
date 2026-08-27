@@ -1,0 +1,5 @@
+{
+  "urls": [ <% for(let i = 0; i < locals.pages.length; i++) { const page = locals.pages[i]; %>
+    "/<%- page.url %>"<% if (i < locals.pages.length - 1) { %>,<% } %><% } %>
+  ]
+}

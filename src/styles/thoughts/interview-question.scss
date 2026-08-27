@@ -1,9 +1,0 @@
-@import "./lib/base-styles";
-@import "code";
-
-[role=listitem] {
-  display: inline-block;
-  clear: both;
-  float: left;
-  margin-top: $s4;
-}

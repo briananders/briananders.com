@@ -1,7 +1,14 @@
-const queryParameters = require('./_modules/queryParameters');
+const analytics = require('./_modules/analytics');
 const lazyLoader = require('./_modules/lazy-loader');
+const noAnimations = require('./_modules/no-animations');
+const ready = require('./_modules/document-ready');
+const stickyStack = require('./_modules/sticky-stacky');
+const windowResize = require('./_modules/window-resize');
 
-module.exports = {
+function setupNavEvents() {
+  const menuButton = document.getElementById('activate-menu');
+  const navTray = document.getElementById('nav-tray');
+  const navOverlay = document.getElementById('nav-overlay');
 
   parameters: queryParameters(),
 
@@ -45,7 +52,9 @@ module.exports = {
         }, 0);
       }
     });
-  },
+    menuButton.setAttribute('aria-expanded', 'true');
+    navTray.setAttribute('aria-hidden', 'false');
+    navOverlay.classList.add('visible');
 
   setUpSkipNav() {
     const skipNavContainer = document.getElementById('skip-nav');
@@ -54,58 +63,103 @@ module.exports = {
     const interactableElements = ['a', 'input', 'button', 'textarea', 'select'];
     const querySelectors = nonNavContainerSelectors.map((container) => interactableElements.map((input) => `${container} ${input}`));
 
-    skipNavButton.addEventListener('focus', () => {
-      skipNavContainer.dataset.state = 'active';
+  function closeMenu() {
+    analytics.pushEvent({
+      category: 'nav',
+      action: 'menu close',
     });
-    skipNavButton.addEventListener('blur', () => {
-      skipNavContainer.dataset.state = 'inactive';
-    });
-    skipNavButton.addEventListener('click', () => {
-      const firstInput = document.querySelector(querySelectors.join(', '));
-      firstInput.focus();
-    });
-  },
+    navTray.classList.remove('slide-in');
+    navOverlay.classList.remove('visible');
 
-  navScrollWatcher() {
-    const mainNav = document.querySelector('nav.main');
+    setTimeout(() => {
+      menuButton.setAttribute('aria-expanded', 'false');
+      navTray.setAttribute('aria-hidden', 'true');
+    }, 300);
+  }
 
-    const checkScrollDepth = () => {
-      if (window.scrollY <= 0) {
-        mainNav.classList.remove('shadow');
-      } else {
-        mainNav.classList.add('shadow');
-      }
-    };
+  navOverlay.addEventListener('click', () => {
+    closeMenu();
+  });
 
-    window.addEventListener('scroll', checkScrollDepth);
-    checkScrollDepth();
-  },
-
-  testForTouch() {
-    if ('ontouchstart' in document.documentElement) {
-      document.documentElement.classList.add('touch-events');
-    } else {
-      document.documentElement.classList.add('no-touch-events');
+  menuButton.addEventListener('click', () => {
+    if (menuButton.getAttribute('aria-expanded') === 'true') { // it’s open
+      closeMenu();
+    } else { // it’s closed
+      openMenu();
     }
-  },
+  });
 
-  setMainMinHeight() {
-    const mainElement = document.querySelector('main');
-    const footerElement = document.querySelector('footer');
+  document.addEventListener('keydown', (evt) => {
+    if (evt.key === 'Escape') {
+      closeMenu();
+    }
+  });
+}
 
-    const calculateMinHeight = () => {
-      const docHeight = document.documentElement.clientHeight;
-      const { bottom } = footerElement.getBoundingClientRect();
-      const { height } = mainElement.getBoundingClientRect();
+function setUpSkipNav() {
+  const skipNavContainer = document.getElementById('skip-nav');
+  const skipNavButton = skipNavContainer.querySelector('button');
+  const nonNavContainerSelectors = ['main', 'footer'];
+  const interactiveElements = ['a', 'input', 'button', 'textarea', 'select'];
+  const querySelectors = nonNavContainerSelectors.map((container) => interactiveElements.map((input) => `${container} ${input}`));
 
-      const heightDelta = docHeight - bottom;
+  skipNavButton.addEventListener('focus', () => {
+    skipNavContainer.dataset.state = 'active';
+  });
+  skipNavButton.addEventListener('blur', () => {
+    skipNavContainer.dataset.state = 'inactive';
+  });
+  skipNavButton.addEventListener('click', () => {
+    const firstInput = document.querySelector(querySelectors.join(', '));
+    firstInput.focus();
+  });
+}
 
-      mainElement.style.minHeight = `${height + heightDelta}px`;
-    };
+function testForTouch() {
+  if ('ontouchstart' in document.documentElement) {
+    document.documentElement.classList.add('touch-events');
+  } else {
+    document.documentElement.classList.add('no-touch-events');
+  }
+}
 
-    calculateMinHeight();
-    window.addEventListener('resize', calculateMinHeight);
-    window.addEventListener('orientationchange', calculateMinHeight);
-  },
+function setMainMinHeight() {
+  const mainElement = document.querySelector('main');
+  const footerElement = document.querySelector('footer');
 
-};
+  const calculateMinHeight = () => {
+    const docHeight = document.documentElement.clientHeight;
+    const { bottom } = footerElement.getBoundingClientRect();
+    const { height } = mainElement.getBoundingClientRect();
+
+    const heightDelta = docHeight - bottom;
+
+    mainElement.style.minHeight = `min(${height + heightDelta}px, 100vh)`;
+  };
+
+  calculateMinHeight();
+  windowResize(calculateMinHeight.bind(this));
+}
+
+function preventFormSubmit() {
+  const formElements = document.querySelectorAll('form');
+  formElements.forEach((element) => {
+    element.addEventListener('keydown', (evt) => {
+      if (evt.key === 'Enter') evt.preventDefault();
+    });
+  });
+}
+
+ready.document(() => {
+  preventFormSubmit();
+  setupNavEvents(analytics);
+  testForTouch();
+  // navScrollWatcher();
+  setMainMinHeight();
+  setUpSkipNav();
+  noAnimations.initBodyClass();
+
+  lazyLoader.init();
+  analytics.watchElements();
+  stickyStack.init();
+});

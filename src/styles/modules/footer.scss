@@ -1,0 +1,43 @@
+@use "system/utilities" as *;
+
+footer {
+  padding: space(6) 0 space(2);
+  margin-top: $section-spacer;
+  @include palette--base;
+  position: relative;
+
+  &::before {
+    content: '';
+    width: 100%;
+    height: 4px;
+    display: block;
+    position: absolute;
+    top: 2px;
+    @include orange-gradient;
+  }
+
+  .copyright {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .links {
+    display: flex;
+    gap: space(2);
+    flex-wrap: wrap;
+    margin-top: space(4);
+    margin-bottom: space(4);
+  }
+
+  a {
+
+    &.brand {
+      border: none !important;
+      padding: 0 !important;
+      display: flex !important;
+
+      @include link-focus;
+    }
+  }
+}

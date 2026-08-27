@@ -1,0 +1,40 @@
+@use "system/utilities" as *;
+@use "modules/code/var" as *;
+@use "modules/code/code-container" as *;
+@use "modules/code/code-element" as *;
+
+.posts.browser-and-device-diagnostics {
+  input {
+    width: 100%;
+    margin: space(2) auto;
+  }
+
+  #error {
+    color: $palette--error;
+    opacity: 0;
+    transition-property: opacity;
+    font-family: $sans-serif;
+    font-weight: $bold;
+
+    &.visible {
+      opacity: 1;
+    }
+  }
+
+  code {
+    white-space: unset;
+    margin: 0;
+
+    ul {
+      margin-left: space(4);
+    }
+
+    li {
+      margin-bottom: unset;
+    }
+
+    .key {
+      color: $palette--primary-color-light;
+    }
+  }
+}

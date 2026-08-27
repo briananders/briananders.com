@@ -1,0 +1,10 @@
+@use "defaults" as *;
+@use "spaces" as *;
+@use "viewports" as *;
+@use "sass:math";
+
+$grid--gutter: space(2);
+$grid--gap: space(1);
+$grid--start-break-point: $medium;
+$grid--max-width: 1440px;
+$grid--copy-max-width: math.div($grid--max-width, 2);

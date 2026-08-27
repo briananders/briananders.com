@@ -1,0 +1,70 @@
+@use "system/utilities" as *;
+
+section.contributions {
+  .deck {
+    @include grid($no-padding: true);
+  }
+
+  .card {
+    text-align: left;
+    display: grid;
+    align-content: start;
+    grid-template-columns: 1fr;
+    grid-template-rows: auto;
+    grid-template-areas:
+      "image"
+      "title"
+      "description"
+      "links";
+    column-gap: space(4);
+
+    @include columns(12);
+
+    @include mq($medium) {
+      grid-template-columns: css-min(25%, 100px) 1fr;
+      grid-template-areas:
+        "image title"
+        "image description"
+        "image links";
+    }
+
+    @include mq($large) {
+      @include columns(6);
+    }
+
+    img {
+      grid-area: image;
+      width: 100%;
+      margin-top: 9px;
+
+      @include mq-max($medium) {
+        width: css-min(100%, 100px);
+        margin: 0 auto #{space(4)};
+      }
+    }
+
+    h5 {
+      text-align: left;
+      grid-area: title;
+      margin-bottom: space(1);
+    }
+
+    p {
+      grid-area: description;
+      margin-bottom: space(1);
+    }
+
+    .links {
+      grid-area: links;
+      line-height: 1.7;
+
+      a {
+        line-height: 27px;
+      }
+    }
+
+    button.link {
+      border: none;
+    }
+  }
+}

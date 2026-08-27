@@ -7,12 +7,11 @@
     <div class="mobile-nav-tray" id="mobile-nav-tray" aria-hidden="true" role="menu" style="display: none;">
       <%- link('Home', { href: '/', role: 'menuitem', }) %>
       <%
-        var basePages = getChildPages('');
-        for(var i = 0; i < basePages.length; i++) {
-          var page = basePages[i];
+        let basePages = getChildPages('');
+        basePages.forEach(({ url, data }) => {
       %>
         <%- link(page.data.title, { href: `/${page.url}`, role: 'menuitem', }) %>
       <% } %>
     </div>
-  </div>
-</nav>
+  </nav>
+</div>

@@ -1,0 +1,46 @@
+@use "system/utilities" as *;
+
+answer,
+answer-array {
+  display: block;
+  text-align: center;
+  margin-top: space(6);
+  margin-bottom: space(6);
+}
+
+answer-array {
+  a::after {
+    content: ',';
+  }
+
+  a:last-of-type::after {
+    content: '';
+  }
+}
+
+canvas#star {
+  width: css-min(100%, $grid--copy-max-width);
+
+  aspect-ratio: 1 / 1;
+
+  display: block;
+  transform: rotate(-90deg);
+}
+
+
+
+form {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+
+  >* {
+    padding: 0 space(1);
+  }
+
+  span,
+  label {
+    display: inline-flex;
+    align-items: center;
+  }
+}
