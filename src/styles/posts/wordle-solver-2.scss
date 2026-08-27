@@ -1,13 +1,16 @@
-@import "system/utilities";
+@use "system/utilities" as *;
+@use "sass:math";
 
 @mixin close {
   background: yellow;
   color: $palette--primary-grey;
 }
+
 @mixin correct {
   background: green;
   color: $palette--primary-white;
 }
+
 @mixin wrong {
   background: black;
   color: $palette--primary-white;
@@ -17,12 +20,15 @@
   0% {
     clip-path: inset(50% 50%);
   }
+
   50% {
     clip-path: inset(0% 0%);
   }
+
   99% {
     clip-path: inset(0% 0%);
   }
+
   100% {
     clip-path: inset(50% 50%);
   }
@@ -30,7 +36,7 @@
 
 .board {
   overflow: hidden;
-  padding: 0 $s1;
+  padding: 0 space(1);
   transition-property: height;
 }
 
@@ -48,9 +54,9 @@
   span {
     position: relative;
     display: inline-block;
-    padding: #{$s1 / 2} $s1;
-    margin: $s1;
-    border: 2px solid $palette--divider-color;
+    padding: math.div(space(1), 2) space(1);
+    margin: space(1);
+    @include border--light;
     cursor: pointer;
 
     @include link-hover;
@@ -83,9 +89,8 @@
 .line {
   display: grid;
   grid-template-columns: repeat(5, 60px);
-  justify-content: center;
   align-items: center;
-  padding: $s2 0;
+  padding: space(2) 0;
 
   @include mq-max(375px) {
     grid-template-columns: repeat(5, 58px);
@@ -102,27 +107,30 @@
 }
 
 .game-board {
-  text-align: center;
+  text-align: left;
 }
 
 fieldset {
   label {
     display: block;
     padding: 0;
-    height: $s4;
+    height: space(4);
     position: relative;
     margin-bottom: 0;
 
     &[for^="close"] {
       @include close;
     }
+
     &[for^="correct"] {
       @include correct;
     }
+
     &[for^="wrong"] {
       @include wrong;
     }
   }
+
   input[type=radio] {
     appearance: none;
     padding: 0;
@@ -152,9 +160,9 @@ fieldset {
 input.letter {
   @include type--heading-1;
   text-align: center;
-  width: $s10;
-  height: $s10;
-  line-height: $s10;
+  width: space(10);
+  height: space(10);
+  line-height: space(10);
   min-width: 0;
   padding: 0;
   margin-bottom: 0;
@@ -162,9 +170,11 @@ input.letter {
   &[data-state="wrong"] {
     @include wrong;
   }
+
   &[data-state="close"] {
     @include close;
   }
+
   &[data-state="correct"] {
     @include correct;
   }
@@ -189,7 +199,7 @@ toast-notification {
     display: inline-block;
     background: $palette--accent-color;
     color: $palette--primary-grey;
-    padding: $s2 $s4;
-    margin-bottom: $s2;
+    padding: space(2) space(4);
+    margin-bottom: space(2);
   }
 }

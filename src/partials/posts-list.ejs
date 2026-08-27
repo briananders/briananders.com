@@ -12,10 +12,7 @@
     newestPages.forEach(({ url, data: { date, description, title }}) => {
   %>
     <%- cardLink(`
-      <h5 itemprop="name" ${locals.headingLevel ? `role="heading" aria-level="${locals.headingLevel}"` : ""}>${title}</h5>
-      <figcaption itemprop="description">
-        ${description}
-      </figcaption>
+      <span itemprop="name" ${locals.headingLevel ? `role="heading" aria-level="${locals.headingLevel}"` : ""}>${title}</span>
       <date itemprop="datePublished" content="${date}">
         ${formattedDate(date)}
       </date>

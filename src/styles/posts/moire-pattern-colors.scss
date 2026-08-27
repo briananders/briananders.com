@@ -1,30 +1,21 @@
-@import "system/utilities";
+@use "system/utilities" as *;
 
-.posts.moire-pattern-colors {
-
-}
+.posts.moire-pattern-colors {}
 
 .form {
-  display: grid;
-  grid-template-columns: 1fr;
-  grid-template-rows: repeat(2, 1fr);
-  width: css-min(80vh, 80vw);
-  margin: auto;
-  gap: $s1;
-  justify-content: center;
+  @include paragraph;
+  margin: 0;
+  gap: space(1);
   align-items: center;
+  display: flex;
 
-  > div {
-    display: flex;
-    align-items: center;
-  }
 
   input {
     flex-grow: 1;
   }
 
   span {
-    margin: 0 $s2;
+    margin: 0 space(2);
     width: 36px;
     text-align: left;
   }
@@ -41,6 +32,7 @@
 
   img {
     border-radius: 0;
+    width: 50%;
   }
 
   &.play {
@@ -58,9 +50,9 @@
 
 .canvas {
   position: relative;
-  width: css-min(80vh, 80vw);
-  height: css-min(80vh, 80vw);
-  margin: $section-spacer auto 0;
+  @include readingWidth;
+  aspect-ratio: 1 / 1;
+  margin-top: $paragraph-bottom;
   background: $palette--primary-white;
 
   .line {
@@ -84,7 +76,8 @@
   }
 }
 
-#control, [id^="variant-"] {
+#control,
+[id^="variant-"] {
   position: absolute;
   top: 0;
   left: 0;
