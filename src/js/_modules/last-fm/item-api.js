@@ -6,31 +6,38 @@ const lazyLoader = require('../lazy-loader');
 const config = require('./config');
 const template = require('./template');
 
-let period = '1month'; // default
-const cache = {};
+let period = '30day'; // default
+const rawCache = {};
+const pendingRequests = {};
+
+const PERIOD_MAP = {
+  '7day': 'rolling_last-7-days.json',
+  '30day': 'rolling_last-30-days.json',
+  '90day': 'rolling_last-90-days.json',
+  '6month': 'rolling_last-6-months.json',
+  '12month': 'rolling_last-12-months.json',
+  '2year': 'rolling_last-2-years.json',
+};
 
 module.exports = {
   init(opts) {
     const containerElement = document.querySelector(opts.scope);
+    if (!containerElement) {
+      return;
+    }
     opts.description = opts.description || false; // defaults
     opts.count = opts.count || 4; // defaults
 
     function getURL() {
-      return `https://ws.audioscrobbler.com/2.0/?method=${opts.method}&user=${
-        config.user
-      }&period=${
-        period
-      }&api_key=${
-        config.apiKey
-      }&format=json&limit=${
-        config.limit
-      }`;
+      const reportFile = PERIOD_MAP[period] || PERIOD_MAP['30day'];
+      return `/last-fm-history/reports/${reportFile}`;
     }
 
     function render() {
       const url = getURL();
-      const data = cache[url];
-      const handlebarsData = { ...opts, items: data };
+      const rawData = rawCache[url];
+      const items = serialize(rawData);
+      const handlebarsData = { ...opts, items };
 
       const compiledHandlebars = handlebars.compile(template);
       const outputHTML = compiledHandlebars(handlebarsData);
@@ -40,12 +47,14 @@ module.exports = {
     }
 
     function serialize(data) {
-      data.defaultImage = containerElement.getAttribute('src');
-      const items = opts.customSerialize(data);
-      const maxPlayCount = Math.max(...items.map((item) => Number(item.playcount)));
+      if (!data) return [];
+      const defaultImage = containerElement.getAttribute('src');
+      const dataWithDefault = { ...data, defaultImage };
+      const items = opts.customSerialize(dataWithDefault);
+      const maxPlayCount = Math.max(...items.map((item) => Number(item.playcount || 0)));
       items.forEach((item) => {
-        const playCount = Number(item.playcount);
-        item.percent = (playCount / maxPlayCount) * 100;
+        const playCount = Number(item.playcount || 0);
+        item.percent = maxPlayCount > 0 ? (playCount / maxPlayCount) * 100 : 0;
       });
       const shortenedItem = items.filter((item, index) => index < opts.count);
       return shortenedItem;
@@ -53,18 +62,30 @@ module.exports = {
 
     function getData() {
       const url = getURL();
-      if (cache[url]) {
+      if (rawCache[url]) {
         render();
+      } else if (pendingRequests[url]) {
+        pendingRequests[url].push(render);
       } else {
+        pendingRequests[url] = [render];
         const request = new XMLHttpRequest();
         request.open('GET', url, true);
 
         request.onload = () => {
           if (request.status >= 200 && request.status < 400) {
             // Success!
-            const data = JSON.parse(request.response);
-            cache[url] = serialize(data);
-            render();
+            try {
+              const data = JSON.parse(request.response);
+              rawCache[url] = data;
+              const callbacks = pendingRequests[url];
+              delete pendingRequests[url];
+              if (callbacks) {
+                callbacks.forEach((cb) => cb());
+              }
+            } catch (err) {
+              console.error(`Failed to parse response from ${url}:`, err);
+              delete pendingRequests[url];
+            }
           } else {
             // We reached our target server, but it returned an error
             // log(`${url} returned ${request.status}`);

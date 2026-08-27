@@ -6,6 +6,7 @@ env:
   AWS_SECRET_ACCESS_KEY: "${{ secrets.AWS_SECRET_ACCESS_KEY }}"
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - main
@@ -20,15 +21,35 @@ jobs:
           fetch-depth: 0
 
       - name: Setup Node.js
-        uses: actions/setup-node@v3.9.1
+        uses: actions/setup-node@v4
         with:
           node-version-file: ".nvmrc"
+          cache: npm
 
-      - name: Install dependencies
-        run: npm install
+      - name: Use clean install
+        run: npm ci
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build website
         run: npm run build
 
+      - name: Cancel previous in-progress runs
+        uses: styfle/cancel-workflow-action@0.12.1
+        with:
+          access_token: ${{ github.token }}
+        
       - name: Deploy to Production
         run: npm run deploy
+
+      - name: Configure Git
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+
+      - name: Create and Push Tag
+        run: |
+          TIMESTAMP=$(date +%s)
+          TAG_NAME="deploy/${TIMESTAMP}"
+          git tag -a "${TAG_NAME}" -m "Production deployment at ${TAG_NAME}"
+          git push origin "${TAG_NAME}"

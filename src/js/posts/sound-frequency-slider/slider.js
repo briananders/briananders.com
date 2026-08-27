@@ -97,15 +97,15 @@ module.exports = function Slider(parent) {
         optionElement.value = tones.hertz[`${tone}${scale}`];
         optionElement.innerHTML = `${scale} ${tones.labels[tone]} ${labelDashes(`${scale} ${tones.labels[tone]}`, `${tones.hertz[`${tone}${scale}`]}`)} ${tones.hertz[`${tone}${scale}`]}`;
 
-        if(`${tone}${scale}` === DEFAULT_TONE) {
-          optionElement.selected = "selected";
+        if (`${tone}${scale}` === DEFAULT_TONE) {
+          optionElement.selected = 'selected';
         }
 
         optionElements.push(optionElement);
       });
     }
 
-    optionElements.sort((a, b) => Number(a.value) > Number(b.value) ? -1 : 1).forEach((optionElement) => {
+    optionElements.sort((a, b) => (Number(a.value) > Number(b.value) ? -1 : 1)).forEach((optionElement) => {
       elements.select.appendChild(optionElement);
     });
   }

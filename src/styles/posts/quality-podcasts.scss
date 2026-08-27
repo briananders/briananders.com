@@ -1,10 +1,9 @@
-@import "system/utilities";
+@use "system/utilities" as *;
 
 
 .podcast-cover {
-  max-width: 410px;
-  margin: auto;
+  max-width: 200px;
   display: block;
-  margin-bottom: $s6;
+  margin-bottom: space(6);
   width: 100%;
 }

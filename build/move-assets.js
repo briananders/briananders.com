@@ -1,17 +1,28 @@
 const fs = require('fs-extra');
-const glob = require('glob');
+const { globSync } = require('glob');
 const path = require('path');
 const pngToIco = require('png-to-ico');
 
 const { log, error } = console;
 
+/**
+ * Converts `src/images/favicon_base.png` to `favicon.ico` and writes it to
+ * the output directory root.
+ *
+ * Uses `png-to-ico` (which exports an async default function in v3+) to
+ * perform the PNG → ICO conversion. The resulting buffer is written
+ * synchronously once the promise resolves.
+ *
+ * @param {{ dir: object, completionFlags: object }} params
+ */
 function makeFaviconIco({
   dir, completionFlags,
 }) {
   const timestamp = require(`${dir.build}helpers/timestamp`);
   log(`${timestamp.stamp()} makeFaviconIco()`);
   completionFlags.FAVICON_ICO = false;
-  pngToIco(`${dir.src}images/favicon_base.png`)
+  // png-to-ico v3 ships as ESM with a default export — call via `.default()`.
+  pngToIco.default(`${dir.src}images/favicon_base.png`)
     .then((buffer) => {
       fs.writeFileSync(`${dir.package}favicon.ico`, buffer);
       log(`${timestamp.stamp()} makeFaviconIco(): ${'MOVED'.bold.green}`);
@@ -19,12 +30,36 @@ function makeFaviconIco({
     .catch(error);
 }
 
+/**
+ * Removes the output-directory counterpart of a source file.
+ *
+ * Called when a source file no longer exists (e.g. deleted during a watch
+ * session) so the stale artifact is cleaned up from the output directory.
+ *
+ * @param {string} srcPath - Absolute path to the (now-missing) source file.
+ * @param {{ dir: { src: string, package: string } }} configs
+ */
 function deletePackageFile(srcPath, { dir }) {
   const destPath = srcPath.replace(dir.src, dir.package);
   fs.removeSync(destPath);
 }
 
-function moveOneImage(imagePath, configs, callback = () => {}) {
+/**
+ * Copies or optimizes a single image file to the output directory.
+ *
+ * Dispatch logic by file type:
+ * - `.svg` → optimized via SVGO (`optimizeSvg`).
+ * - `.jpg`/`.jpeg`/`.png` → converted to a sibling `.webp` AND copied as-is.
+ * - All other image types → copied as-is.
+ *
+ * If the source file no longer exists the corresponding output file is
+ * deleted and the callback is called immediately. Directories are skipped.
+ *
+ * @param {string} imagePath - Absolute path to the source image.
+ * @param {object} configs - Build configuration object.
+ * @param {Function} [callback] - Called once the image has been processed.
+ */
+function moveOneImage(imagePath, configs, callback = () => { }) {
   const {
     dir, debug,
   } = configs;
@@ -46,27 +81,41 @@ function moveOneImage(imagePath, configs, callback = () => {}) {
     return callback();
   }
 
+  // Ensure the destination subdirectory exists before writing.
   fs.mkdirpSync(path.dirname(destination));
   if (debug) log(`${timestamp.stamp()} moveOneImage(${imagePath})`);
 
   if (extn === '.svg') {
-    // move optimized svg
+    // SVGs are passed through SVGO for optimization before output.
     optimizeSvg(imagePath, { dir });
     return callback();
   } if (webpCandidates.includes(extn.substring(1))) {
-    // move file and move webp file
+    // Raster images: produce a .webp sibling AND keep the original format.
     if (debug) log(`${timestamp.stamp()} convertToWebp(${imagePath}): ${destination}`);
-    convertToWebp(imagePath, { dir }).then(() => {
-      fs.copyFile(imagePath, destination);
-      return callback();
-    });
+    convertToWebp(imagePath, { dir })
+      .then(() => fs.copyFile(imagePath, destination))
+      .then(() => callback())
+      .catch((err) => {
+        error(`${timestamp.stamp()} moveOneImage() error:`, err);
+        callback();
+      });
   } else {
-    // move file
+    // All other image types (e.g. .webp originals): copy as-is.
     fs.copyFile(imagePath, destination);
     return callback();
   }
 }
 
+/**
+ * Processes all source images and copies/converts them to the output directory.
+ *
+ * Also triggers `makeFaviconIco` to generate `favicon.ico`. Globbing is
+ * driven by the `images` extension list in `constants/file-formats`. When
+ * every image has been processed, `IMAGES_ARE_MOVED` is set to `true` and
+ * the `imagesMoved` event is emitted.
+ *
+ * @param {object} configs - Build configuration object.
+ */
 function moveAllImages(configs) {
   const {
     dir, completionFlags, buildEvents, debug,
@@ -91,20 +140,30 @@ function moveAllImages(configs) {
 
   makeFaviconIco({ dir, completionFlags, buildEvents });
 
-  const imagesGlob = glob.sync(`${dir.src}images/**/*.{${images.join(',')}}`);
-  let processed = 0;
+  const imagesGlob = globSync(`${dir.src}images/**/*.{${images.join(',')}}`);
+  const progress = { completed: 0 };
 
   for (let i = 0; i < imagesGlob.length; i++) {
     const imagePath = imagesGlob[i];
     moveOneImage(imagePath, configs, () => {
-      processed++;
-      if (debug) log(`${timestamp.stamp()} ${processed}/${imagesGlob.length}: ${imagePath}`);
-      checkDone(processed, imagesGlob.length);
+      progress.completed += 1;
+      if (debug) log(`${timestamp.stamp()} ${progress.completed}/${imagesGlob.length}: ${imagePath}`);
+      checkDone(progress.completed, imagesGlob.length);
     });
   }
 }
 
-function moveOneVideo(videoPath, configs, callback = () => {}) {
+/**
+ * Copies a single video file to the output directory.
+ *
+ * If the source file is missing the output counterpart is deleted instead.
+ * Directories are skipped.
+ *
+ * @param {string} videoPath - Absolute path to the source video.
+ * @param {object} configs - Build configuration object.
+ * @param {Function} [callback] - Called once the video has been processed.
+ */
+function moveOneVideo(videoPath, configs, callback = () => { }) {
   const {
     dir, debug,
   } = configs;
@@ -129,6 +188,15 @@ function moveOneVideo(videoPath, configs, callback = () => {}) {
   return callback();
 }
 
+/**
+ * Copies all source videos to the output directory.
+ *
+ * Globbing is driven by the `videos` extension list in `constants/file-formats`.
+ * When every video has been processed, `VIDEOS_ARE_MOVED` is set to `true`
+ * and the `videosMoved` event is emitted.
+ *
+ * @param {object} configs - Build configuration object.
+ */
 function moveAllVideos(configs) {
   const {
     dir, completionFlags, buildEvents, debug,
@@ -151,20 +219,30 @@ function moveAllVideos(configs) {
 
   fs.mkdirpSync(`${dir.package}videos/`);
 
-  const videoGlob = glob.sync(`${dir.src}videos/**/*.{${videos.join(',')}}`);
-  let processed = 0;
+  const videoGlob = globSync(`${dir.src}videos/**/*.{${videos.join(',')}}`);
+  const progress = { completed: 0 };
 
   for (let i = 0; i < videoGlob.length; i++) {
     const videoPath = videoGlob[i];
-    moveOneImage(videoPath, configs, () => {
-      processed++;
-      if (debug) log(`${timestamp.stamp()} ${processed}/${videoGlob.length}: ${videoPath}`);
-      checkDone(processed, videoGlob.length);
+    moveOneVideo(videoPath, configs, () => {
+      progress.completed += 1;
+      if (debug) log(`${timestamp.stamp()} ${progress.completed}/${videoGlob.length}: ${videoPath}`);
+      checkDone(progress.completed, videoGlob.length);
     });
   }
 }
 
-function moveOneTxtFile(filePath, configs, callback = () => {}) {
+/**
+ * Copies a single `.txt` file from the source root to the output directory.
+ *
+ * Used for files like `robots.txt` and `humans.txt`. If the source file is
+ * missing the output counterpart is deleted. Directories are skipped.
+ *
+ * @param {string} filePath - Absolute path to the source `.txt` file.
+ * @param {object} configs - Build configuration object.
+ * @param {Function} [callback] - Called once the file has been processed.
+ */
+function moveOneTxtFile(filePath, configs, callback = () => { }) {
   const {
     dir, debug,
   } = configs;
@@ -189,6 +267,15 @@ function moveOneTxtFile(filePath, configs, callback = () => {}) {
   return callback();
 }
 
+/**
+ * Copies all `.txt` files from the source root to the output directory.
+ *
+ * Handles `robots.txt`, `humans.txt`, and any other top-level text files in
+ * `src/`. Does not emit a build event — txt files are not a dependency of
+ * any downstream stage.
+ *
+ * @param {object} configs - Build configuration object.
+ */
 function moveAllTxtFiles(configs) {
   const {
     dir, debug,
@@ -204,48 +291,31 @@ function moveAllTxtFiles(configs) {
     }
   }
 
-  const txtGlob = glob.sync(`${dir.src}*.txt`);
-  let processed = 0;
+  const txtGlob = globSync(`${dir.src}*.txt`);
+  const progress = { completed: 0 };
 
   for (let i = 0; i < txtGlob.length; i++) {
     const filePath = txtGlob[i];
     moveOneTxtFile(filePath, configs, () => {
-      processed++;
-      if (debug) log(`${timestamp.stamp()} ${processed}/${txtGlob.length}: ${filePath}`);
-      checkDone(processed, txtGlob.length);
+      progress.completed += 1;
+      if (debug) log(`${timestamp.stamp()} ${progress.completed}/${txtGlob.length}: ${filePath}`);
+      checkDone(progress.completed, txtGlob.length);
     });
   }
 }
 
-function moveJSONFiles(configs) {
-  const {
-    dir, debug,
-  } = configs;
-
-  const timestamp = require(`${dir.build}helpers/timestamp`);
-
-  log(`${timestamp.stamp()} moveJSONFiles()`);
-
-  function checkDone(processed, maximum) {
-    if (processed >= maximum) {
-      log(`${timestamp.stamp()} moveJSONFiles(): ${'DONE'.bold.green}`);
-    }
-  }
-
-  const jsonGlob = glob.sync(`${dir.src}data/**/*.json`);
-  let processed = 0;
-
-  for (let i = 0; i < jsonGlob.length; i++) {
-    const filePath = jsonGlob[i];
-    moveOneTxtFile(filePath, configs, () => {
-      processed++;
-      if (debug) log(`${timestamp.stamp()} ${processed}/${jsonGlob.length}: ${filePath}`);
-      checkDone(processed, jsonGlob.length);
-    });
-  }
-}
-
-function moveOneDownload(filePath, configs, callback = () => {}) {
+/**
+ * Copies a single file from `src/downloads/` to the output directory.
+ *
+ * Downloads are files exposed for direct browser download (PDFs, ZIPs, etc.).
+ * If the source file is missing the output counterpart is deleted. Directories
+ * are skipped.
+ *
+ * @param {string} filePath - Absolute path to the source download file.
+ * @param {object} configs - Build configuration object.
+ * @param {Function} [callback] - Called once the file has been processed.
+ */
+function moveOneDownload(filePath, configs, callback = () => { }) {
   const {
     dir, debug,
   } = configs;
@@ -270,6 +340,15 @@ function moveOneDownload(filePath, configs, callback = () => {}) {
   return callback();
 }
 
+/**
+ * Copies all files from `src/downloads/` to the output directory.
+ *
+ * Uses `{ nodir: true }` on the glob so that the `downloads/` directory
+ * itself is never included in the results (only its contents). Does not emit
+ * a build event — downloads are not a dependency of any downstream stage.
+ *
+ * @param {object} configs - Build configuration object.
+ */
 function moveAllDownloads(configs) {
   const {
     dir, debug,
@@ -287,28 +366,36 @@ function moveAllDownloads(configs) {
 
   fs.mkdirpSync(`${dir.package}downloads/`);
 
-  const downloadsGlob = glob.sync(`${dir.src}downloads/**`);
-  let processed = 0;
+  // `nodir: true` prevents glob from returning the base `downloads/` directory
+  // itself, which would trigger the "is a directory" guard in moveOneDownload.
+  const downloadsGlob = globSync(`${dir.src}downloads/**`, { nodir: true });
+  const progress = { completed: 0 };
 
   for (let i = 0; i < downloadsGlob.length; i++) {
     const filePath = downloadsGlob[i];
     moveOneDownload(filePath, configs, () => {
-      processed++;
-      if (debug) log(`${timestamp.stamp()} ${processed}/${downloadsGlob.length}: ${filePath}`);
-      checkDone(processed, downloadsGlob.length);
+      progress.completed += 1;
+      if (debug) log(`${timestamp.stamp()} ${progress.completed}/${downloadsGlob.length}: ${filePath}`);
+      checkDone(progress.completed, downloadsGlob.length);
     });
   }
 }
 
 module.exports = {
+  /**
+   * Runs all four asset-move operations in parallel:
+   * images (+ favicon), videos, txt files, and downloads.
+   *
+   * @param {object} configs - Build configuration object.
+   */
   moveAssets: (configs) => {
     moveAllImages(configs);
     moveAllVideos(configs);
     moveAllTxtFiles(configs);
     moveAllDownloads(configs);
-    moveJSONFiles(configs);
   },
 
+  // Individual move functions exposed for incremental updates in watch mode.
   moveOneDownload,
   moveOneImage,
   moveOneTxtFile,

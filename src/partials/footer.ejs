@@ -11,7 +11,7 @@
     { copy: 'Last.fm',       href: locals.lastfm,               },
     { copy: 'LinkedIn',      href: locals.linkedin,             },
     { copy: 'Mastodon',      href: locals.mastodon, rel: 'me',  },
-    { copy: 'Blue Sky',      href: locals.bluesky,              },
+    { copy: 'Bluesky',       href: locals.bluesky,              },
     { copy: 'Twitter',       href: locals.twitter,              },
     { copy: 'YouTube',       href: locals.bandersDrums.youtube, },
   ].map(item => {
@@ -19,7 +19,7 @@
   });
 %>
 
-<footer class="<%- (locals.pageClasses) ? locals.pageClasses.toString().replace(/,/g,' ') : '' %>" role="navigation" aria-label="Site footer">
+<footer class="<%- (locals.pageClasses) ? locals.pageClasses.toString().replace(/,/g,' ') : '' %>" role="contentinfo" aria-label="Site footer">
   <div class="content">
     <div class="copyright">
       <span>

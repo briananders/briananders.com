@@ -24,21 +24,23 @@ scripts:
       <input type="text" id="url" />
       <div id="error">Invalid URL. Keep typing.</div>
     </form>
-    <code>
-      {
-      <ul>
-        <li><span class="key">hash:</span> "<span id="hash"></span>",</li>
-        <li><span class="key">host:</span> "<span id="host"></span>",</li>
-        <li><span class="key">hostname:</span> "<span id="hostname"></span>",</li>
-        <li><span class="key">href:</span> "<span id="href"></span>",</li>
-        <li><span class="key">origin:</span> "<span id="origin"></span>",</li>
-        <li><span class="key">pathname:</span> "<span id="pathname"></span>",</li>
-        <li><span class="key">port:</span> "<span id="port"></span>",</li>
-        <li><span class="key">protocol:</span> "<span id="protocol"></span>",</li>
-        <li><span class="key">search:</span> "<span id="search"></span>"</li>
-      </ul>
-      }
-    </code>
+    <div class="code-container">
+      <code>
+        {
+        <ul>
+          <li><span class="key">hash:</span> "<span id="hash"></span>",</li>
+          <li><span class="key">host:</span> "<span id="host"></span>",</li>
+          <li><span class="key">hostname:</span> "<span id="hostname"></span>",</li>
+          <li><span class="key">href:</span> "<span id="href"></span>",</li>
+          <li><span class="key">origin:</span> "<span id="origin"></span>",</li>
+          <li><span class="key">pathname:</span> "<span id="pathname"></span>",</li>
+          <li><span class="key">port:</span> "<span id="port"></span>",</li>
+          <li><span class="key">protocol:</span> "<span id="protocol"></span>",</li>
+          <li><span class="key">search:</span> "<span id="search"></span>"</li>
+        </ul>
+        }
+      </code>
+    </div>
     <p>
       <%- blockLink('Detailed Reference', {
         href: 'https://developer.mozilla.org/en-US/docs/Web/API/Location'
@@ -53,9 +55,11 @@ scripts:
       <h2>Your device's userAgent</h2>
       <h5><var>window.navigator.userAgent</var></h5>
     </header>
-    <code>
-      <span id="userAgent"></span>
-    </code>
+    <div class="code-container">
+      <code>
+        <span id="userAgent"></span>
+      </code>
+    </div>
     <p>
       <%- blockLink('Detailed Reference', {
         href: 'https://developer.mozilla.org/en-US/docs/Web/API/Navigator'
@@ -71,9 +75,11 @@ scripts:
       <h2>Your device's devicePixelRatio</h2>
       <h5><var>window.devicePixelRatio</var></h5>
     </header>
-    <code>
-      <span class="key">devicePixelRatio:</span> <span id="devicePixelRatio"></span>
-    </code>
+    <div class="code-container">
+      <code>
+        <span class="key">devicePixelRatio:</span> <span id="devicePixelRatio"></span>
+      </code>
+    </div>
     <p>
       <%- blockLink('Detailed Reference', {
         href: 'https://developer.mozilla.org/en-US/docs/Web/API/Window/devicePixelRatio'
@@ -88,15 +94,17 @@ scripts:
       <h2>Your browser's viewport</h2>
       <h5><var>window.visualViewport</var></h5>
     </header>
-    <code>
-      {
-      <ul>
-        <li><span class="key">width:</span> "<span id="width"></span>",</li>
-        <li><span class="key">height:</span> "<span id="height"></span>",</li>
-        <li><span class="key">scale:</span> "<span id="scale"></span>",</li>
-      </ul>
-      }
-    </code>
+    <div class="code-container">
+      <code>
+        {
+        <ul>
+          <li><span class="key">width:</span> "<span id="width"></span>",</li>
+          <li><span class="key">height:</span> "<span id="height"></span>",</li>
+          <li><span class="key">scale:</span> "<span id="scale"></span>",</li>
+        </ul>
+        }
+      </code>
+    </div>
     <p>
       <%- blockLink('Detailed Reference', {
         href: 'https://developer.mozilla.org/en-US/docs/Web/API/VisualViewport'
