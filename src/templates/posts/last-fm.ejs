@@ -1,0 +1,57 @@
+---
+title: "Recent Listening Trends"
+description: "Music is a major contributor to my life. I am constantly looking for my next favorite album. I'm one of
+those nuts that listens to the same thing over and over until I'm sick of it. I track my listening habits to see what
+I've been enjoying. Here are some of the albums that I have been listening to recently."
+date: 2017-09-07
+priority: 0.8
+layout: base
+pageClasses:
+- 'posts'
+- 'last-fm'
+styles:
+- 'main'
+- 'posts/last-fm'
+scripts:
+- 'posts/last-fm'
+---
+
+<div class="container">
+  <p>
+    I track my listening habits to see what I've been enjoying. Here is the music I have been playing recently, split by top albums and top artists.
+  </p>
+</div>
+
+<form class="content time-selector">
+  <p>How far back do you want to see?</p>
+  <select name="period" aria-label="Data period of time">
+    <option value="7day">7 days</option>
+    <option value="30day" selected>30 days</option>
+    <option value="90day">90 days</option>
+    <option value="6month">6 months</option>
+    <option value="12month">12 months</option>
+    <option value="2year">2 years</option>
+  </select>
+</form>
+
+<section class="content">
+  <h2>Top Albums</h2>
+  <div class='last-fm-module p' data-type="albums" src="/images/posts/last-fm/default.webp">
+    <% for (let i=0; i < 10; i++) { %>
+      <%- defaultLastFMModule(); %>
+        <% } %>
+  </div>
+
+  <scrobbles-last-updated></scrobbles-last-updated>
+</section>
+
+<section class="content">
+  <h2>Top Artists</h2>
+  <div class='last-fm-module p' data-type="artists">
+    <% for (let i=0; i < 10; i++) { %>
+      <%- defaultLastFMModule(false); %>
+        <% } %>
+  </div>
+
+  <scrobbles-last-updated></scrobbles-last-updated>
+</section>

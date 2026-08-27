@@ -1,0 +1,11 @@
+@use "system/utilities" as *;
+
+var {
+  font-family: courier;
+  display: inline-block;
+  border: 1px solid $palette--secondary-grey;
+  border-radius: 4px;
+  padding: 0 0.5rem;
+  background-color: transparent;
+  color: $palette--primary-white;
+}

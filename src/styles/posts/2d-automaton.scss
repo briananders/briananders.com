@@ -1,0 +1,45 @@
+@use "system/utilities" as *;
+@use "modules/code" as *;
+
+canvas {
+  width: 100%;
+  max-width: 100vh;
+  height: 100vh;
+  max-height: 100vw;
+  display: block;
+  @include border--light;
+  margin-top: space(6);
+}
+
+td {
+  padding: space(4) space(4) 0;
+  @include type--heading-2;
+  line-height: .7;
+
+  @include mq-max(500px) {
+    padding: space(2) space(2) 0;
+    @include type--heading-3;
+    line-height: .7;
+  }
+
+  span {
+    line-height: 2;
+  }
+}
+
+form {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  font-family: $sans-serif;
+
+  >* {
+    margin: 0 space(1);
+  }
+
+  span,
+  label {
+    display: inline-flex;
+    align-items: center;
+  }
+}

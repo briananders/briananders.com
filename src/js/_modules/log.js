@@ -1,6 +1,14 @@
 const { isProduction } = require('./environment');
-const { log } = console;
+const { log, table } = console;
 
-module.exports = (...args) => {
-  if (!isProduction) log(...args);
+module.exports = {
+
+  table: (...args) => {
+    if (!isProduction) table(...args);
+  },
+
+  log: (...args) => {
+    if (!isProduction) log(...args);
+  },
+
 };

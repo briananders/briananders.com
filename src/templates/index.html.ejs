@@ -1,127 +1,94 @@
 ---
 title: "Home"
-description: "Brian Anders is a Staff UX Engineer at Google"
+description: "Brian Anders is an Engineering Manager in the tech industry. I'm also a YouTuber, Podcaster, and
+Musician."
 priority: 1.0
 homepage: true
 pageClasses:
-  - 'main'
-  - 'home'
+- 'main'
+- 'home'
 layout: base
 styles:
-  - 'main'
-  - 'homepage'
+- 'main'
 scripts:
-  - 'homepage'
+- 'homepage'
 ---
 
 
+<%- partial('head/styles', { ...locals, path: 'homepage', inlineStyles: true }) %>
 
-<section class="intro">
+
+<section class="contributions">
+  <div class="content deck">
+    <%
+      const model = [
+        {
+          heading: "Bat Lessons",
+          image: "/images/about/contributions/batlessons.webp",
+          copyBlock: `Batman history, presented by ${inlineLink('Alex Cash', { href: 'https://alex.cash', external: true })} and myself.`,
+          links: [
+            {
+              label: "Website",
+              url: locals.batLessons,
+            },
+            {
+              label: "YouTube",
+              url: locals.batLessonsYT,
+            }
+          ]
+        }, {
+          heading: "Banders Drums",
+          image: "/images/drums/logo.png",
+          copyBlock: "A YouTube channel with videos of me playing drum covers.",
+          links: [
+            {
+              label: "Website",
+              path: locals.bandersDrums.path,
+            }, {
+              label: "YouTube",
+              url: locals.bandersDrums.youtube,
+            }
+          ]
+        },
+      ]
+      model.forEach(({ copyBlock, image, heading, links }) => {
+    %>
+    <%- partial('contributions-card', Object.assign(locals, { copyBlock, image, heading, links })); %>
+    <% }); %>
+  </div>
   <div class="content">
-    <header>
-      <h2>
-        <%- noWidows("Who am I?"); %>
-      </h2>
-    </header>
-    <p>
-      Brian is a Staff UX Engineer at <%- externalLink("Google", { href: "https://google.com" }) %>. From 2013 to 2018, Brian worked on <%- externalLink("nest.com", { href: "https://nest.com" }) %>. Since 2018 Brian has been working on the <%- externalLink("Google Store", { href: "https://store.google.com" }) %>; building and enhancing the web experience.
-    </p>
-    <p>
-      Outside of work, Brian listens to music, plays some instruments, camps, and more or less tries to enjoy the life he leads.
-    </p>
-    <p>
-      You can find him on the internet in some other places.
-      <% const contactLinks = [
-          { copy: 'Twitter', url: locals.twitter, },
-          { copy: 'Last.fm', url: locals.lastfm, },
-          { copy: 'Github', url: locals.github, },
-          { copy: 'LinkedIn', url: locals.linkedin, },
-        ].map(item => externalLink(item.copy, {
-          href: item.url,
-          itemprop: "url",
-          target: "blank",
-          rel: "noopener",
-        }));
-      %>
-      <%- contactLinks.join(', ') %>.
-    </p>
+    <%- blockLink('More', {
+      href: '/about/',
+    }); %>
   </div>
 </section>
 
 
-<section class="thoughts">
-  <div class="content">
-    <header>
-      <h2>
-        <%- noWidows("Brian has thoughts. Here are some recent ones."); %>
-      </h2>
-    </header>
-  </div>
-  <%- partial('thoughts-list', Object.assign(locals, { thoughtCount: 6 })) %>
-  <div class="content center">
-    <%- link('More thoughts', {
-      href: "/thoughts/",
-      class: "button mega-button",
-    }) %>
-  </div>
-</section>
-
-
-<section class="index-music">
-  <div class="content">
-    <header>
-      <h2>
-        <%- noWidows("What Brian has been listening to."); %>
-      </h2>
-      <p>
-        <%- noWidows("Music is a big deal to Brian. He is always looking for his next favorite album. Last.fm is a tool that Brian uses to track his listening habits. Here are some of the albums that he's been listening to recently."); %>
-      </p>
-    </header>
-    <div class='last-fm-module p' data-type="albums" src="/images/thoughts/last-fm/default.jpg">
-      <% for (let i = 0; i < 4; i++) { %>
-        <%- defaultLastFMModule() %>
-      <% } %>
+  <section class="posts">
+    <div class="content">
+      <header>
+        <h2>
+          <%- noWidows(`Recent posts`); %>
+        </h2>
+      </header>
+      <%- partial('posts-list', Object.assign(locals, { postCount: 6 })); %>
+      <%- blockLink('More posts', { href: '/posts/' }); %>
     </div>
-    <div class="center">
-    <%- link('More music details', {
-      href: "/thoughts/last-fm/",
-      class: "button mega-button",
-    }) %>
-    </div>
-  </div>
-</section>
+  </section>
 
 
-<section>
-  <div class="content">
-    <header>
-      <h2>
-        <%- noWidows("What I've been screaming into the abyss."); %>
-      </h2>
-      <p class="center p-margin">
-        &#61;&#61;&gt;
-        <%- externalLink(`@${locals.twitterHandle}`, {
-          href: `${locals.twitter}?ref_src=twsrc%5Etfw`
-        }) %>
-        &lt;&#61;&#61;
-      </p>
-    </header>
-    <div class="p">
-      <%- externalLink(`Tweets by @${locals.twitterHandle}`, {
-        class: "twitter-timeline",
-        href: `${locals.twitter}?ref_src=twsrc%5Etfw`,
-        'data-height': "800",
-        'data-theme': "light",
-      }) %>
+  <section class="index-music">
+    <div class="content">
+      <header>
+        <h2>
+          <%- noWidows(`Music that I have been listening to`); %>
+        </h2>
+      </header>
+      <div class="last-fm-module p" data-type="albums" src="/images/posts/last-fm/default.webp">
+        <% for (let i=0; i < 4; i++) { %>
+          <%- defaultLastFMModule(); %>
+        <% } %>
+      </div>
+      <%- blockLink('More music details', { href: '/posts/last-fm/' }); %>
     </div>
-  </div>
-  <script>
-    (function() {
-      const timelineElement = document.querySelector('.twitter-timeline[data-theme]');
-      if(matchMedia('(prefers-color-scheme: dark)').matches) {
-        timelineElement.dataset.theme = 'dark';
-      }
-    })();
-  </script>
-  <script async defer src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
-</section>
+  </section>

@@ -1,41 +1,16 @@
 <!DOCTYPE html>
-<html lang="en-US" itemscope="itemscope" itemtype="http://schema.org/WebPage" class="<%- locals.sitePallette %>">
+<html lang="en-US" itemscope="itemscope" itemtype="https://schema.org/WebPage">
 <head>
-  <% if (!locals.sitePallette) { %>
-  <script>
-    function setSitePallette() {
-      var pallettes = [
-        'red',
-        'pink',
-        'purple',
-        'deep-purple',
-        'indigo',
-        'blue',
-        'light-blue',
-        'cyan',
-        'teal',
-        'green',
-        'light-green',
-        'orange',
-        'deep-orange',
-        'brown',
-        'grey',
-        'blue-grey',
-      ];
-      var palletteIndex = Math.floor(Math.random() * pallettes.length);
-      var pallette = pallettes[palletteIndex];
-      var urlParams = new URLSearchParams(window.location.search);
+  <%- partial('head/meta', locals); %>
 
-      if (urlParams.has('pallette')) {
-        pallette = urlParams.get('pallette');
-      }
-
-      document.documentElement.classList.add(pallette);
-    }
-    setSitePallette();
-  </script>
-  <% } %>
-  <%- partial('meta', locals); %>
+  <%- partial('head/fonts', {
+    customFontsDeferred: true,
+    customFontsSwap: true,
+  }); %>
+  
+  <% locals.styles.forEach((path) => { %>
+    <%- partial('head/styles', { ...locals, path, deferStyles: true, }); %>
+  <% }); %>
   <script>
     window.onerror = function (msg, url, lineNo, columnNo, error) {
       var string = msg.toLowerCase();
@@ -62,5 +37,13 @@
     <%# End Google Tag Manager (noscript); %>
   <% } %>
   <%- content %>
+  <% if(locals.devBuild) { %>
+    <script>
+      (function() {
+        var es = new EventSource('/livereload');
+        es.onmessage = function() { location.reload(); };
+      })();
+    </script>
+  <% } %>
 </body>
 </html>

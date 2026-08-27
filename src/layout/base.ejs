@@ -2,37 +2,21 @@
 layout: blank
 ---
 
+<style><%- inlineScss('/styles/base.scss'); %></style>
 
-<style>
-  html {
-    background-color: #ffffff;
-    color: #212121;
-  }
-  @media (prefers-color-scheme: dark) {
-    html {
-      background-color: #212121;
-      color: #ffffff;
-    }
-  }
-</style>
+<%- partial('head/scripts', locals); %>
 
-<script src="/scripts/all.js" async defer></script>
-<%
-  if(locals.scripts) {
-    locals.scripts.forEach((path) => { %>
-  <script src="/scripts/<%- path %>.js" async defer></script>
-<%
-    });
-  }
-%>
-
-<%- partial('header', locals); %>
+<%- partial('header', {
+  ...locals,
+  inlineStyles: true,
+  inlineSVGs: true,
+}); %>
 
 <main class="<%- (locals.pageClasses) ? locals.pageClasses.toString().replace(/,/g,' ') : '' %>">
   <% if (locals.description && !locals.homepage) { %>
     <div class="content description" itemprop="description">
       <p>
-        <%- noWidows(locals.description); %>
+        <%- locals.description %>
       </p>
     </div>
   <% } %>
@@ -41,4 +25,4 @@ layout: blank
 
 </main>
 
-<%- partial('footer', locals); %>
+<%- partial('footer', { ...locals, deferStyles: true }); %>

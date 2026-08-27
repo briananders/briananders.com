@@ -1,29 +1,49 @@
-<nav class="nav main" role="navigation" aria-label="Main navigation">
-  <div class="content">
-    <%- link(locals.name, {
-      href: '/',
-      class: 'brand h1',
-    }) %>
-    <button id="activate-menu" class="menu link" aria-expanded="false" aria-controls="nav-tray">
+<%
+  const inlineSVGs = locals.inlineSVGs || false;
+%>
+
+<div id="nav-overlay"></div>
+<div class="sticky-container">
+  <nav class="nav main sticky-stacky" role="navigation" aria-label="Main navigation">
+    <div class="content">
+    <% if (inlineSVGs) { %>
+      <%- link(getFileContents('/images/logo.svg'), {
+        href: '/',
+        class: 'brand',
+        'aria-label': 'Brian Anders home page',
+      }); %>
+    <% } else { %>
+      <%- link(img({
+        src: '/images/logo.svg',
+        alt: 'Brian Anders logo',
+        width: '200',
+        height: '68',
+      }), {
+        href: '/',
+        class: 'brand',
+        'aria-label': 'Brian Anders home page',
+      }); %>
+    <% } %>
+    <button id="activate-menu" class="menu button-link" aria-expanded="false" aria-controls="nav-tray">
       Menu
     </button>
     <div aria-hidden="true" role="menu" id="nav-tray">
+      <span id="top-triangle"></span>
       <%- link('Main', {
         href: '/',
-        class: 'nav-link',
+        class: 'block-link',
         role: 'menuitem',
-      }) %>
+      }); %>
       <%
-        var basePages = getChildPages('');
-        for(var i = 0; i < basePages.length; i++) {
-          var page = basePages[i];
+        let basePages = getChildPages('');
+        basePages.forEach(({ url, data }) => {
       %>
-        <%- link(page.data.title, {
-          href: `/${page.url}`,
-          class: 'nav-link',
+        <%- link(data.title, {
+          href: `/${url}`,
+          class: 'block-link',
           role: 'menuitem',
-        }) %>
-      <% } %>
+        }); %>
+      <% }); %>
     </div>
-  </div>
-</nav>
+  </nav>
+</div>

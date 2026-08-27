@@ -1,9 +1,0 @@
-@import "../utilities";
-
-@each $name, $pallette in $pallettes {
-  @each $key, $value in $pallette {
-    html.#{$name} {
-      --#{$key}: #{$value};
-    }
-  }
-};

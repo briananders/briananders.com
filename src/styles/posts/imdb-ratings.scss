@@ -1,0 +1,111 @@
+@use "system/utilities" as *;
+
+
+// .movies-container {
+
+// }
+
+.rating-selector {
+  display: flex;
+  align-items: center;
+  gap: space(2);
+  margin-bottom: space(2);
+
+  label {
+    margin-bottom: 0;
+  }
+
+  select {
+    font-size: 1rem;
+    padding: space(1) space(2);
+    border-radius: 8px;
+    cursor: pointer;
+  }
+
+  .movies-count {
+    margin-left: auto;
+    @include type--body-small;
+    opacity: 0.6;
+    white-space: nowrap;
+  }
+}
+
+.movies-loading {
+  padding: space(4);
+  text-align: center;
+  display: none;
+}
+
+.movies-grid {
+  @include grid($no-padding: true);
+  gap: space(3);
+  justify-content: center;
+  width: min(100%, $content-max-width);
+  margin-left: auto;
+  margin-right: auto;
+
+  @include mq($medium) {
+    justify-content: flex-start;
+  }
+}
+
+a.movie {
+  // width: 240px;
+  display: flex;
+  flex-direction: column;
+  gap: space(1);
+
+  img {
+    display: block;
+    width: 100%;
+    max-width: 240px;
+  }
+
+  .movie-info {
+    display: flex;
+    flex-direction: column;
+    gap: space(0);
+  }
+
+  h2 {
+    margin-bottom: 0;
+  }
+
+  p {
+    margin-bottom: 0;
+  }
+
+  .content-type {
+    vertical-align: middle;
+  }
+
+  .ratings {
+    display: flex;
+    gap: space(1);
+    align-items: center;
+  }
+
+  .content-rating {
+    border: 1px solid $palette--divider-color;
+    padding: 0 3px;
+    border-radius: 4px;
+  }
+
+  .imdb-rating {
+    @include type--body-small;
+  }
+
+  grid-column: span 4;
+
+  @include mq(480px) {
+    grid-column: span 2;
+  }
+
+  @include mq($medium) {
+    grid-column: span 4;
+  }
+
+  @include mq($large) {
+    grid-column: span 3;
+  }
+}

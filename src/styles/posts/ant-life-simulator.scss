@@ -1,0 +1,76 @@
+@use "system/utilities" as *;
+
+#board {
+  display: grid;
+  grid-template-columns: repeat(var(--size), 1fr);
+
+  width: css-min(100vh, 100vw, var(--window-height));
+  height: css-min(100vh, 100vw, var(--window-height));
+  @include border--light;
+
+  div {
+    border-radius: 100%;
+
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+
+    &[data-value="ant"] {
+      background-color: $palette--primary-white;
+    }
+
+    &[data-value="anteater"] {
+      background-color: $palette--primary-color-dark;
+    }
+  }
+}
+
+.overlay-container {
+  height: 0;
+  width: 100%;
+}
+
+.overlay {
+  background-color: rgba($palette--primary-white, 0.4);
+  width: css-min(100vh, 100vw, var(--window-height));
+  height: css-min(100vh, 100vw, var(--window-height));
+  transform: translateY(-100%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  clip-path: circle(100% at center);
+
+  transition: clip-path $transition-speed $transition-timing;
+
+  button {
+    background-color: $palette--primary-color-dark;
+  }
+
+  &.hidden {
+    clip-path: circle(0% at center);
+  }
+}
+
+.score-bar {
+  height: 40px;
+  display: flex;
+  @include border--light;
+  margin-bottom: $paragraph-bottom;
+  width: css-min(100vh, 100vw, var(--window-height), 100%);
+  @include left-margins;
+  margin-top: $paragraph-bottom;
+
+
+  span {
+    display: block;
+    transition: width $transition-speed linear;
+
+    &#ants-bar {
+      background-color: $palette--primary-white;
+    }
+
+    &#ant-eaters-bar {
+      background-color: $palette--primary-color-dark;
+    }
+  }
+}

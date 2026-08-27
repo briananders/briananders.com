@@ -1,0 +1,19 @@
+<%
+  const { copyBlock, image, heading, links } = locals;
+%>
+<div class="card" data-card-id="<%- dasherize(heading.toLowerCase()); %>">
+  <%- lazyImage({ src: image }); %>
+  <h3 class="h5"><%- noWidows(heading); %></h3>
+  <p class="description"><%- copyBlock %></p>
+  <div class="links">
+    <% links.forEach(({ label, url, path, dataVideoId }) => { %>
+      <% if (url) { %>
+        <%- blockLink(label, { href: url, external: true }); %>
+      <% } else if (path) { %>
+        <%- blockLink(label, { href: path }); %>
+      <% } else { %>
+        <button class="block-link <%- (dataVideoId) ? 'yt-modal-trigger' : '' %>" <%- (dataVideoId) ? `data-video-id="${dataVideoId}"` : '' %> type="button" ><%- label %>&nbsp;<b>&gt;</b></button>
+      <% } %>
+    <% }); %>
+  </div>
+</div>

@@ -1,22 +1,44 @@
-@import 'system/utilities';
+@use 'system/utilities' as *;
+@use "./modules/contributions" as *;
+@use "modules/posts-list" as *;
+@use "posts/last-fm" as *;
 
 main.home {
-  @import "modules/thoughts-list";
-  @import "thoughts/last-fm";
-
-  margin-top: $s17;
-
-  // .intro {
-  //   padding-top: 0;
-  //   margin-top: 0;
-  // }
-
-  // .container header p,
-  // .content header p {
-  //   margin-bottom: $s6;
-  // }
+  margin-top: space(12);
 
   .last-fm-module {
-    margin-top: $s5;
+    margin-top: space(6);
+  }
+
+  .deck {
+    margin-bottom: $paragraph-bottom;
+  }
+
+  .posts {
+    .content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .block-link-wrapper,
+    header {
+      @include readingWidth;
+      justify-content: flex-start;
+    }
+  }
+
+  .index-music {
+    .content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .block-link-wrapper,
+    header {
+      @include readingWidth;
+      justify-content: flex-start;
+    }
   }
 }

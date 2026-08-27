@@ -1,143 +1,255 @@
-@import "../variables/all";
+@use "sass:math";
+@use "system/variables/all" as *;
+@use "./media-queries" as *;
+@use "./type" as *;
+@use "./colors" as *;
+@use "./grid" as *;
+@use "system/functions/all" as *;
 
 @mixin html {
+  mixin: html;
+
   min-height: 100%;
   font-size: 62.5%;
   position: relative;
   @include type--regular-serif;
-  @include font-size;
+  @include type--body;
   overflow-x: hidden;
-  @include pallette--base;
+  @include palette--base;
+  text-wrap: pretty;
+
+  --palette--primary-white: #{$palette--primary-white};
+  --palette--primary-grey: #{$palette--primary-grey};
+  --palette--hover-grey: #{$palette--hover-grey};
+  --palette--secondary-grey: #{$palette--secondary-grey};
+  --palette--divider-color: #{$palette--divider-color};
+  --palette--error: #{$palette--error};
+  --palette--primary-color-dark: #{$palette--primary-color-dark};
+  --palette--primary-color-light: #{$palette--primary-color-light};
+  --palette--accent-color: #{$palette--accent-color};
+  --border-radius: #{$border-radius};
+  --transition-speed: #{$transition-speed};
+  --transition-timing: #{$transition-timing};
 }
 
 @mixin selection {
-  ::selection,
-  ::-moz-selection {
-    text-shadow: none;
-    @include pallette--base--inverted;
-  }
+  mixin: selection;
+
+  text-shadow: none;
+  background-color: $palette--primary-color-light;
+  color: $palette--primary-grey;
+  -webkit-text-fill-color: $palette--primary-grey;
 }
 
 @mixin section {
-  max-width: $grid--max-width;
-  @include margin-center;
-  margin-bottom: $section-spacer;
+  mixin: section;
+
+  width: css-min($grid--max-width, 100%);
+  margin: 0 auto $section-spacer;
 
   &:last-child {
     margin-bottom: 0;
   }
 }
 
-@mixin input {
-  min-width: $s10;
+@mixin checkbox {
+  mixin: checkbox;
+
+  cursor: pointer;
+  height: space(4);
+  width: space(4);
+  margin: unset;
+
+  @include link-focus;
 }
 
-@mixin link-focus {
-  transition-property: color, background-color;
+@mixin button-element {
+  /* basic button */
+  mixin: button-element;
 
-  &:focus {
-    color: $color--white;
-    background-color: $color--grey-800 !important;
-  }
+  @include type--body;
+  @include palette--base;
+  border-radius: var(--border-radius, $border-radius);
+  height: calc(space(6) + math.div(space(1), 2));
+  padding: math.div(space(1), 3) space(1) 0;
+  border: 1px solid $palette--divider-color;
+}
+
+@mixin input {
+  mixin: input;
+
+  @include type--body;
+  @include palette--base;
+
+  min-width: space(12);
+  border-radius: var(--border-radius, $border-radius);
+  height: calc(space(6) + math.div(space(1), 2));
+  padding: 0 space(1);
+  border: 1px solid $palette--secondary-grey;
+}
+
+@mixin input-range {
+  mixin: input-range;
+
+  height: calc(space(6) + math.div(space(1), 2));
+  cursor: pointer;
+
+  @include link-focus;
+}
+
+@mixin select {
+  mixin: select;
+
+  @include type--body;
+  @include palette--base;
+
+  appearance: menulist;
+  border-radius: var(--border-radius, $border-radius);
+  height: calc(space(6) + math.div(space(1), 2));
+  padding: 0 space(1);
+  border: 1px solid $palette--secondary-grey;
+  cursor: pointer;
+
+  @include link-focus;
+}
+
+@mixin link-base {
+  mixin: link-base;
+
+  position: relative;
+  background-color: transparent;
+  text-decoration: none;
+  overflow: hidden;
 }
 
 @mixin link-hover {
-  transition-property: color, background-color;
-  position: relative;
+  mixin: link-hover;
 
-  &::after {
-    content: "";
-    position: absolute;
-    border-radius: $border-radius;
-    left: -$s1;
-    top: -$s1;
-    width: calc(100% + #{$s2});
-    height: calc(100% + #{$s2});
-    opacity: 0;
-    transition-property: opacity;
-    transition-duration: $transition-speed;
-    z-index: 1000;
+  transition-property: background-color;
 
-    box-shadow: 0 0 0 2px var(--primary-text-color, #{$pallette--primary-text-color});
-
-    @include dark-mode {
-      box-shadow: 0 0 0 2px var(--primary-color-text, #{$pallette--primary-color-text});
-    }
+  &:hover {
+    background-color: $palette--hover-grey;
   }
+}
 
-  &:hover::after {
-    opacity: 1;
+@mixin link-focus {
+  mixin: link-focus;
+
+  &:focus {
+    box-shadow: 0px 0px 0px 2px $palette--primary-grey, 0px 0px 0px 4px $palette--secondary-grey;
   }
 }
 
 @mixin inline-link {
-  padding: 0 $s1;
-  display: inline-block;
-  text-decoration: none;
-  @include pallette--primary;
-}
+  mixin: inline-link;
 
-@mixin block-link {
-  padding: 0 $s1;
-  display: inline-block;
-  text-decoration: none;
-  @include pallette--base;
+  @include link-base;
 
-  &:focus {
-    background-color: $color--grey-200 !important;
+  padding: 2px 0 0;
+  display: inline-flex;
+  color: $palette--primary-color-light;
 
-    @include dark-mode {
-      background-color: $color--grey-800 !important;
-    }
+  @include link-hover;
+  @include link-focus;
+
+  &:hover {
+    @include link-base;
+    text-decoration: underline;
   }
 }
 
-@mixin interactive {
-  cursor: pointer;
-  text-decoration: none;
-  @include interactive-outline;
-  transition-duration: $transition-speed;
-  transition-timing-function: ease;
+@mixin block-link {
+  mixin: block-link;
+
+  @include link-base;
+
+  padding: 2px space(1) 0;
+  margin-left: -#{space(1)};
+  box-sizing: content-box;
+  display: inline-flex;
+  color: $palette--primary-white;
+
+  @include link-hover;
+  @include link-focus;
+
+  b {
+    transition-property: transform;
+    padding-left: 0.2rem;
+    transform: scaleY(1.5) translateY(0.03rem);
+    color: $palette--primary-color-light;
+  }
+
+  &:hover b {
+    transform: scaleY(1.5) translateY(0.03rem) translateX(0.2rem);
+  }
+}
+
+@mixin button-link {
+  mixin: button-link;
+
+  @include link-base;
+
+  @include type--bold-sans-serif;
+  @include text-center;
+
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  padding: space(2) space(6);
+  margin: space(2);
+  border-radius: var(--border-radius, $border-radius);
+
+  color: $palette--primary-white;
+  border: 2px solid $palette--divider-color;
+
   @include link-hover;
   @include link-focus;
 }
 
-@mixin interactive-outline {
-  outline-color: var(--accent-color, #{$pallette--accent-color});
+@mixin card-link {
+  mixin: card-link;
+
+  @include link-base;
+
+  display: grid;
+  border-radius: var(--border-radius, $border-radius);
+
+  color: $palette--primary-white;
+  width: 100%;
+
+  @include link-hover;
+  @include link-focus;
+
+  @include card;
 }
 
-@mixin interactive-border {
-  border: 2px solid var(--primary-color-dark, #{$pallette--primary-color-dark});
+@mixin content-width {
+  mixin: content-width;
+
+  width: css-min(100%, #{$content-max-width});
+  margin-left: auto;
+  margin-right: auto;
 }
 
-@mixin button {
-  text-align: center;
-  display: inline-block;
-  padding: $s2 $s6;
-  border-radius: $border-radius;
-  text-decoration: none;
-  font-family: $sans-serif;
-  font-weight: $bold;
-  transition-property: background-color;
-  color: $pallette--primary-color-text;
-  background-color: var(--primary-color-dark, #{$pallette--primary-color-dark});
-  border: 2px solid var(--primary-color-dark, #{$pallette--primary-color-dark});
+@mixin content {
+  mixin: content;
 
-  @include dark-mode {
-    background-color: transparent;
-  }
+  @include content-width;
+  position: relative;
+  padding: 0 space(2);
 
-  &::before {
-    height: 0;
+  @include mq($medium) {
+    padding: 0 space(6);
   }
 }
 
 @mixin paragraph {
+  mixin: paragraph;
+
   width: 100%;
-  max-width: $grid--copy-max-width;
-  @include margin-center;
-  margin-bottom: $s6;
-  @include font-size(3);
+  @include readingWidth;
+  margin-bottom: $paragraph-bottom;
+  @include type--body;
 
   &:last-child {
     margin-bottom: 0;
@@ -145,41 +257,36 @@
 }
 
 @mixin paragraph-margin {
+  mixin: paragraph-margin;
+
   &,
   &:last-child {
-    margin-bottom: $s6;
+    margin-bottom: $paragraph-bottom;
   }
 }
 
 @mixin citation {
+  mixin: citation;
+
   float: right;
 
-  &::before {
-    display: inline;
-    content: '-';
-  }
-
   a {
-    @include font-size;
+    @include type--body;
     text-decoration: none;
   }
 }
 
 @mixin quotation {
-  padding: $s5 $s5;
+  mixin: quotation;
+
+  @include paragraph-margin;
+
+  @include card;
+
   overflow: hidden;
   max-width: 500px;
-  @include margin-center;
-  margin-bottom: $s6;
-  @include font-size(3);
-  background-color: var(--primary-color-light, #{$pallette--primary-color-light});
-  color: $pallette--primary-text-color;
-
-  @include dark-mode {
-    background-color: transparent;
-    border: 2px solid var(--primary-color-dark, #{$pallette--primary-color-dark});
-    color: $pallette--primary-color-text;
-  }
+  @include border--light;
+  color: $palette--primary-white;
 
   p {
     &:last-of-type {
@@ -194,26 +301,40 @@
 }
 
 @mixin label {
-  @include font-size(3);
-  padding: 0 $s3;
+  mixin: label;
+
+  @include type--heading-6;
+  padding: 0 space(3);
   @include type--regular-sans-serif;
 }
 
 @mixin list {
+  mixin: list;
+
   @include paragraph;
 }
 
 @mixin list-item {
-  margin-bottom: $s3;
+  mixin: list-item;
+
+  margin-bottom: space(3);
+
   &:last-of-type {
     margin-bottom: 0;
   }
 }
 
-@mixin button-select {
-  @include font-size;
+@mixin mega-button {
+  mixin: mega-button;
+
+  padding: space(2) space(4);
 }
 
-@mixin mega-button {
-  padding: $s2 $s4;
+@mixin card {
+  mixin: card;
+
+  padding: $grid--gutter;
+  border-radius: var(--border-radius, $border-radius);
+  @include surface;
+  @include border--light;
 }

@@ -1,0 +1,32 @@
+@use "system/utilities" as *;
+@use "modules/code" as *;
+
+.cards-container {
+  display: flex;
+  pointer-events: none;
+  flex-wrap: wrap;
+  align-items: center;
+  pointer-events: none;
+  gap: space(3);
+
+  card {
+    display: block;
+    width: 100px;
+    height: 100px;
+    background-color: $palette--primary-color-dark;
+    pointer-events: all;
+
+    opacity: 1;
+    transition-property: opacity;
+  }
+
+  &:hover {
+    card {
+      opacity: 0.2;
+
+      &:hover {
+        opacity: 1;
+      }
+    }
+  }
+}

@@ -1,4 +1,4 @@
-@import "../variables/all";
+@use "system/variables/all" as *;
 
 // MEDIA QUERY MIXINS
 @mixin mq($query) {
@@ -8,7 +8,7 @@
 }
 
 @mixin mq-max($query) {
-  @media (max-width: $query - 1) {
+  @media (max-width: #{$query - 1}) {
     @content;
   }
 }

@@ -1,7 +1,7 @@
-@import "./colors";
-@import "./defaults";
-@import "./fonts";
-@import "./grid";
-@import "./pallettes";
-@import "./spaces";
-@import "./viewports";
+@forward "colors";
+@forward "defaults";
+@forward "fonts";
+@forward "grid";
+@forward "palettes";
+@forward "spaces";
+@forward "viewports";

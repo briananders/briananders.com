@@ -1,0 +1,27 @@
+@use "system/utilities" as *;
+
+canvas {
+  width: 100%;
+  max-width: 100vh;
+  max-height: 100vw;
+  display: block;
+  @include border--light;
+  margin-top: space(6);
+}
+
+form {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  font-family: $sans-serif;
+
+  >* {
+    margin: 0 space(1);
+  }
+
+  span,
+  label {
+    display: inline-flex;
+    align-items: center;
+  }
+}

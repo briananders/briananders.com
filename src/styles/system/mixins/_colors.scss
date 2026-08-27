@@ -1,36 +1,37 @@
-@import "../variables/all";
+@use "system/variables/all" as *;
 
-@mixin pallette--base {
-  background-color: $color--white;
-  color: $pallette--primary-text-color;
-
-  @include dark-mode {
-    background-color: $pallette--primary-text-color;
-    color: $pallette--primary-color-text;
-  }
+@mixin palette--base($background-alpha: 1) {
+  color: $palette--primary-white;
+  background-color: rgba($palette--primary-grey, $background-alpha);
 }
 
-@mixin pallette--base--inverted {
-  background-color: $pallette--primary-text-color;
-  color: $pallette--primary-color-text;
-
-  @include dark-mode {
-    background-color: $color--white;
-    color: $pallette--primary-text-color;
-  }
+@mixin palette--base--inverted($background-alpha: 1) {
+  color: $palette--primary-grey;
+  background-color: rgba($palette--primary-white, $background-alpha);
 }
 
-@mixin pallette--primary {
-  color: $pallette--primary-color-text;
-  background-color: var(--primary-color-dark, #{$pallette--primary-color-dark});
+@mixin palette--primary($background-alpha: 1) {
+  color: $palette--primary-white;
+  background-color: rgba($palette--primary-color-dark, $background-alpha);
 }
 
-@mixin pallette--primary--active {
-  color: $pallette--primary-color-text;
-  background-color: var(--primary-color, #{$pallette--primary-color});
+@mixin palette--header {
+  color: $palette--primary-white;
+  @include surface;
+  background-blend-mode: luminosity;
+  backdrop-filter: blur(10px);
 }
 
-@mixin pallette--secondary {
-  // color: $pallette--primary-color-text;
-  // background-color: var(--primary-color-dark, #{$pallette--primary-color-dark});
+@mixin orange-gradient {
+  background: linear-gradient(to left, $palette--primary-color-light, $palette--primary-color-dark);
+}
+
+@mixin surface {
+  mixin: surface;
+
+  background-color: $palette--surface-color;
+}
+
+@mixin border--light {
+  border: 2px solid rgba($palette--divider-color, 0.2);
 }

@@ -1,0 +1,53 @@
+---
+title: "Circle Multiplier"
+description: "Another experiment born of the mesmerizing circle patterns from years ago. This one divides a circle each
+time it contacts a wall. But the max is 1024 circles."
+date: 2022-03-28
+priority: 0.8
+pageClasses:
+- 'posts circle-multiplier'
+layout: base
+styles:
+- 'main'
+- 'posts/circle-multiplier'
+scripts:
+- 'posts/circle-multiplier'
+---
+
+<article class="content" itemscope itemtype="https://schema.org/BlogPosting">
+  <form>
+    <select id="border-style" aria-label="Circle border style">
+      <option value="no-border">No Border</option>
+      <option value="border-white">Border White</option>
+      <option value="border-gray">Border Gray</option>
+      <option value="border-color" selected>Border Color</option>
+      <option value="epileptic">Epileptic</option>
+    </select>
+    <label for="alpha-border">
+      <input id="alpha-border" type="checkbox">Border Transparency
+    </label>
+    <select id="fill-style" aria-label="Circle fill style">
+      <option value="no-fill" selected>No Fill</option>
+      <option value="fill-gray">Fill Gray</option>
+      <option value="fill-color">Fill Color</option>
+      <option value="epileptic">Epileptic</option>
+    </select>
+    <label for="alpha-fill">
+      <input id="alpha-fill" type="checkbox">Fill Transparency
+    </label>
+    <label for="fast-slow">
+      Slow&nbsp;<input id="fast-slow" type="checkbox" class="toggle">Fast
+    </label>
+    <span>
+      <button id="erase-button" type="button">Erase</button>
+      <button id="pause-button" type="button">Pause</button>
+      <button id="clear-button" type="button">Clear</button>
+    </span>
+  </form>
+</article>
+
+<section>
+  <div class="content">
+    <canvas id="canvas"></canvas>
+  </div>
+</section>
