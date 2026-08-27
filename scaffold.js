@@ -5,10 +5,7 @@ const cssTemplate = require('./scaffold/css');
 const htmlTemplate = require('./scaffold/html');
 const jsTemplate = require('./scaffold/js');
 
-const dir = {
-  root: `${__dirname}/`,
-  src: `${__dirname}/src/`,
-};
+const dir = require('./build/constants/directories')(__dirname);
 
 const argPath = process.env.npm_config_path;
 

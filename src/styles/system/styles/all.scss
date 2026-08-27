@@ -1,5 +1,3 @@
-@import "system/utilities";
-
-@import "./defaults";
-@import "./attributes";
-@import "./elements";
+@use "./defaults";
+@use "./attributes";
+@use "./elements";

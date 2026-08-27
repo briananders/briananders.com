@@ -1,22 +1,25 @@
-@import "system/utilities";
+@use "sass:color";
+@use "sass:math";
+@use "system/utilities" as *;
 
-$circle-diameter: 30;
+$circle-count: 30;
 
 $circle-size: 26px;
 $circle-border-width: 3px;
 $circle-color: #ff9eed;
 
 $rotation-steps: 16;
-$rotation-step: 360deg / $rotation-steps;
+$rotation-step: math.div(360deg, $rotation-steps);
 
 $rotation-duration: 30s;
-$rotation-time-step: $rotation-duration / $rotation-steps;
+$rotation-time-step: math.div($rotation-duration, $rotation-steps);
 
 
 @keyframes rotate {
   0% {
     transform: rotate(0deg);
   }
+
   100% {
     transform: rotate(360deg);
   }
@@ -25,8 +28,8 @@ $rotation-time-step: $rotation-duration / $rotation-steps;
 .form {
   display: flex;
   align-items: flex-start;
-  height: 60px;
   @include paragraph;
+  padding-bottom: $paragraph-bottom;
 
   label {
     display: flex;
@@ -40,7 +43,7 @@ $rotation-time-step: $rotation-duration / $rotation-steps;
   }
 
   span {
-    margin-bottom: $s2;
+    margin-bottom: space(2);
   }
 
   input {
@@ -62,6 +65,7 @@ $rotation-time-step: $rotation-duration / $rotation-steps;
 
     img {
       border-radius: 0;
+      width: 50%;
     }
 
     &.play {
@@ -80,15 +84,19 @@ $rotation-time-step: $rotation-duration / $rotation-steps;
 
 .circle-container {
   display: grid;
-  grid-template: repeat($circle-diameter, $circle-size) / repeat($circle-diameter, $circle-size);
+  grid-template-columns: repeat($circle-count, calc(75% / $circle-count));
+  grid-template-rows: repeat($circle-count, 1fr);
   background-color: #d6de1d;
-  gap: $s1;
+  gap: space(1);
   justify-content: center;
-  padding: $s6 0;
+  padding: space(6) 0;
+  max-width: 100%;
+  aspect-ratio: 1 / 1;
 }
 
 .circle {
   position: relative;
+  aspect-ratio: 1 / 1;
 
   &::after {
     content: '';
@@ -97,7 +105,7 @@ $rotation-time-step: $rotation-duration / $rotation-steps;
     height: 100%;
 
     border-radius: 100%;
-    background-color: darken($circle-color, 10%);
+    background-color: color.adjust($circle-color, $lightness: -10%);
     border-width: $circle-border-width;
     border-style: solid;
 
