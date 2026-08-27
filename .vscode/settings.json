@@ -3,7 +3,7 @@
   "eslint.validate": [
     "javascript"
   ],
-  "editor.formatOnSave": true,
+  "editor.formatOnSave": false,
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": "explicit"
   },
@@ -26,5 +26,6 @@
   "gitlens.advanced.blame.delayAfterEdit": 5000,
   "gitlens.codeLens.enabled": false,
   "gitlens.hovers.currentLine.over": "line",
-  "gitlens.currentLine.enabled": false
+  "gitlens.currentLine.enabled": false,
+  "editor.formatOnSaveMode": "modifications"
 }

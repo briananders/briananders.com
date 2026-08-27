@@ -1,5 +1,4 @@
-@import "system/utilities";
-@import "system/variables/all";
+@use "system/utilities" as *;
 
 section.contributions {
   .deck {

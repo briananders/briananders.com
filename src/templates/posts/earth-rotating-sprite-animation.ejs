@@ -1,23 +1,28 @@
 ---
 title: "Earth Rotating Sprite Animation"
-description: "I wanted to animate a sprite by targeting a changing data attribute + unique css background-positioning. I win."
+description: "I wanted to animate a sprite by targeting a changing data attribute + unique css background-positioning. I
+win."
 date: 2018-08-03
 priority: 0.8
 layout: base
 styles:
-  - 'main'
-  - 'posts/earth-rotating-sprite-animation'
+- 'main'
+- 'posts/earth-rotating-sprite-animation'
 scripts:
-  - 'posts/earth-rotating-sprite-animation'
+- 'posts/earth-rotating-sprite-animation'
 ---
 
 <section>
   <div class="content">
     <p>
-      The setup is pretty basic. I have an event listener on document scroll. Using that event I can see how far you have scrolled (<var>window.scrollY</var>). I add that number to an existing counter. Sprinkle on some math (below) and you have the current frame. Easy peasy.
+      The setup is pretty basic. I have an event listener on document scroll. Using that event I can see how far you
+      have scrolled (<var>window.scrollY</var>). I add that number to an existing counter. Sprinkle on some math (below)
+      and you have the current frame. Easy peasy.
     </p>
     <p>
-      The sprite that I'm using has 16 rows and 16 columns. So I had to add in the math for wrapping around from position <var>0, 15</var> to <var>1, 0</var>. That’s why I use <var>$sprite-height</var> and <var>$frame-height</var> below.
+      The sprite that I'm using has 16 rows and 16 columns. So I had to add in the math for wrapping around from
+      position <var>0, 15</var> to <var>1, 0</var>. That’s why I use <var>$sprite-height</var> and
+      <var>$frame-height</var> below.
     </p>
   </div>
 </section>
@@ -28,11 +33,11 @@ scripts:
     <h2>
       Demo
     </h2>
-    <div lazy
-      style="--background-image: url('/images/posts/earth-rotating-sprite-animation/earth-sprite-color.webp');"
-      data-lazy-style="background-image: var(--background-image);"
-      id="frame-container"
-      data-number="0"></div>
+    <div class="p">
+      <div lazy
+        style="--background-image: url('/images/posts/earth-rotating-sprite-animation/earth-sprite-color.webp');"
+        data-lazy-style="background-image: var(--background-image);" id="frame-container" data-number="0"></div>
+    </div>
   </div>
 </section>
 
@@ -68,19 +73,10 @@ scripts:
         <var>$frame-height = $sprite-height / $y-max</var>
       </li>
     </ul>
-    <%- code(`#frame-container {
-  width: round($frame-width);
-  height: round($frame-height);
-  background-image: url(/path/to/sprite.jpg);
-
-  @for $frame from 0 to ($y-max * $x-max) {
-    &[data-number="#{$frame}"] {
-      $x-position: 1 - round(($frame % $x-max) * $frame-width);
-      $y-position: 1 - round(floor($frame / $x-max) * $frame-height);
-      background-position: #{$x-position} #{$y-position};
-    }
-  }
-}`); %>
+    <%- code(`#frame-container { width: round($frame-width); height: round($frame-height); background-image:
+      url(/path/to/sprite.jpg); @for $frame from 0 to ($y-max * $x-max) { &[data-number="#{$frame}" ] { $x-position: 1 -
+      round(($frame % $x-max) * $frame-width); $y-position: 1 - round(floor($frame / $x-max) * $frame-height);
+      background-position: #{$x-position} #{$y-position}; } } }`); %>
   </div>
 </section>
 
@@ -91,26 +87,22 @@ scripts:
       JavaScript
     </h2>
     <p>
-      There’s almost nothing going on here. Set an event listener on the document for scroll. In the caught event, find the scroll movement using <var>scrollY</var>. Add that to the existing frame number and add a large multiple of <var>numberOfFrames</var> to account for negative numbers (you don’t want a negative frame number). Then, find the modulus of that number to get a final frame number between zero and the maximum number of frames. Finally, set that number to the container’s data attribute, and let the CSS do the rendering work.
+      There’s almost nothing going on here. Set an event listener on the document for scroll. In the caught event, find
+      the scroll movement using <var>scrollY</var>. Add that to the existing frame number and add a large multiple of
+      <var>numberOfFrames</var> to account for negative numbers (you don’t want a negative frame number). Then, find the
+      modulus of that number to get a final frame number between zero and the maximum number of frames. Finally, set
+      that number to the container’s data attribute, and let the CSS do the rendering work.
     </p>
-    <%- code(`const frameContainer = document.getElementById('frame-container');
-const numberOfFrames = 16 * 16;
-let number = 0;
-let lastKnownScrollPosition = 0;
+    <%- code( `const frameContainer=document.getElementById('frame-container'); const numberOfFrames=16 * 16; let
+      number=0; let lastKnownScrollPosition=0; function updateEarth(value) { number=((number + value) + (numberOfFrames
+      * 100)) % numberOfFrames; frameContainer.dataset.number=number; } document.addEventListener('scroll', (event)=> {
+      const scrollPosition = Math.floor(window.scrollY);
+      const movementY = scrollPosition - lastKnownScrollPosition;
+      lastKnownScrollPosition = scrollPosition;
 
-function updateEarth(value) {
-  number = ((number + value) + (numberOfFrames * 100)) % numberOfFrames;
-  frameContainer.dataset.number = number;
-}
-
-document.addEventListener('scroll', (event) => {
-  const scrollPosition = Math.floor(window.scrollY);
-  const movementY = scrollPosition - lastKnownScrollPosition;
-  lastKnownScrollPosition = scrollPosition;
-
-  window.requestAnimationFrame(() => {
-    updateEarth(movementY);
-  });
-});`); %>
+      window.requestAnimationFrame(() => {
+      updateEarth(movementY);
+      });
+      });`); %>
   </div>
 </section>

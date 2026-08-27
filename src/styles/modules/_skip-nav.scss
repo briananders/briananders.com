@@ -1,3 +1,5 @@
+@use "system/utilities" as *;
+
 #skip-nav {
   @include palette--base;
   position: fixed;

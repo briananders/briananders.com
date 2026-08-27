@@ -1,4 +1,2 @@
-@import "./utilities";
-
-@import "./styles/all";
-@import "./classes/all";
+@use "./styles/all" as styles;
+@use "./classes/all" as classes;
