@@ -1,21 +1,15 @@
-@import "system/utilities";
-
-@import "modules/nav";
-@import "modules/skip-nav";
+@use "system/utilities" as *;
+@use "modules/nav" as *;
+@use "modules/skip-nav" as *;
 
 header.main-header {
-  @include font-size;
   @include palette--base;
-  margin-bottom: $s6;
-  margin-top: $s2;
-  padding: $s1 0;
+  margin-top: space(6);
+  @include left-margins;
 
-  .name {
-    margin: auto;
-
-    @include mq($medium) {
-      @include font-size(8);
-    }
+  h1.name {
+    @include type--title;
+    @include text-center;
   }
 }
 

@@ -24,14 +24,14 @@
         'aria-label': 'Brian Anders home page',
       }); %>
     <% } %>
-    <button id="activate-menu" class="menu link" aria-expanded="false" aria-controls="nav-tray">
+    <button id="activate-menu" class="menu button-link" aria-expanded="false" aria-controls="nav-tray">
       Menu
     </button>
     <div aria-hidden="true" role="menu" id="nav-tray">
       <span id="top-triangle"></span>
       <%- link('Main', {
         href: '/',
-        class: 'nav-link',
+        class: 'block-link',
         role: 'menuitem',
       }); %>
       <%
@@ -40,7 +40,7 @@
       %>
         <%- link(data.title, {
           href: `/${url}`,
-          class: 'nav-link',
+          class: 'block-link',
           role: 'menuitem',
         }); %>
       <% }); %>

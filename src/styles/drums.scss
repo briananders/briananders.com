@@ -1,26 +1,10 @@
-@import "system/utilities";
-@import "./modules/youtube-modal";
+@use "system/utilities" as *;
+@use "sass:math";
+@use "./modules/youtube-modal" as *;
 
 $width: 560;
 $height: 315;
-$aspectRatio: $height / $width;
-
-@keyframes logo-hue {
-  0% {
-    filter: hue-rotate(0deg);
-  } 100% {
-    filter: hue-rotate(360deg);
-  }
-}
-
-@keyframes logo-rotate {
-  0% {
-    transform: rotate(0deg);
-  } 100% {
-    transform: rotate(360deg);
-  }
-}
-
+$aspectRatio: math.div($height, $width);
 
 .drums {
   &.main-header {
@@ -32,21 +16,7 @@ $aspectRatio: $height / $width;
 
   .videos {
     position: relative;
-    padding-bottom: $s6;
-
-    &::after {
-      background-image: url(/images/drums/logo.svg);
-      background-repeat: no-repeat;
-      background-position: center center;
-      background-size: contain;
-      opacity: 0.05;
-      content: '';
-      position: absolute;
-      left: 0;
-      top: 0;
-      width: 100%;
-      height: 100%;
-    }
+    padding-bottom: space(6);
   }
 
   .content.description {
@@ -54,35 +24,27 @@ $aspectRatio: $height / $width;
   }
 
   .drums-logo {
-    width: css-min(100%, 400px);
-    margin: $s6 auto;
+    width: css-min(100%, $full-width-medium);
+    margin-bottom: space(6);
+    background: linear-gradient(90deg, rgba($palette--primary-color-dark, 255), rgba($palette--primary-color-light, 0));
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    padding: space(2);
 
-    animation-name: logo-hue;
-    animation-duration: 10s;
-    animation-timing-function: linear;
-    animation-iteration-count: infinite;
-
-    #drum {
-      animation-name: logo-rotate;
-      animation-duration: 40s;
-      animation-timing-function: linear;
-      animation-iteration-count: infinite;
-      transform-origin: center center;
-    }
-
-    svg {
-      width: 100%;
-      height: auto;
+    img {
+      width: css-min(100%, 400px);
+      border-radius: 0;
     }
 
     body.no-animations &,
     body.no-animations & #drum {
-      animation-delay: 100s;
+      animation-duration: 100s;
     }
   }
 
   .video-container {
-    margin-bottom: $s6;
+    margin-bottom: space(6);
     @include content-width;
 
     @include mq($content-max-width) {
@@ -92,12 +54,13 @@ $aspectRatio: $height / $width;
   }
 
   .social-icon {
-    margin-bottom: $s2;
+    margin-bottom: space(2);
     width: 100px;
     height: 100px;
     border-radius: 50%;
-    padding: $s3;
-    box-shadow: inset 0 0 0 1px #{$palette--primary-white}, 0 0 0 3px #{$palette--primary-color-dark};
+    padding: space(3);
+    box-shadow: inset 0 0 0 1px #{$palette--primary-white},
+    0 0 0 3px #{$palette--primary-color-dark};
     display: flex;
     justify-content: center;
     align-items: center;
@@ -106,40 +69,44 @@ $aspectRatio: $height / $width;
   .social-profiles {
     display: flex;
     align-items: center;
-    justify-content: center;
     flex-wrap: wrap;
+    gap: $grid--gap;
   }
 
   .social-profile {
-    @include block-link;
     display: flex;
     align-items: center;
     justify-content: center;
     flex-direction: column;
-    margin: $s2;
     width: 150px;
-    padding-top: $s3;
   }
 
   .video-grid {
     display: grid;
     grid-template-columns: 1fr;
-    gap: 12px;
-    max-width: 400px;
+    gap: $grid--gap;
+    @include readingWidth;
 
     @include mq(700px) {
       grid-template-columns: repeat(2, 1fr);
-      max-width: unset;
     }
 
-    &:not(.playlists) {
-      @include mq(900px) {
-        grid-template-columns: repeat(3, 1fr);
-      }
+    button {
+      width: css-min(100%, 400px);
+      @include left-margins;
+    }
+
+    img {
+      margin-bottom: space(2);
     }
   }
 
-  .yt-modal-trigger {
-    padding: $s2;
+  .video-list {
+    @include grid;
+    @include readingWidth;
+
+    .card-link {
+      @include columns(12);
+    }
   }
 }

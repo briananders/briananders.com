@@ -20,7 +20,7 @@ scripts:
       <h2>Instructions</h2>
     </header>
     <p>
-      First, build a basic in-view <%- externalLink("intersection observer", { href: "https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API" }); %>. This will notify the browser when a given element is within the scroll view.
+      First, build a basic in-view <%- inlineLink("intersection observer", { href: "https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API" }) %>. This will notify the browser when a given element is within the scroll view.
     </p>
     <%- code(`const inView = (element, callback, options = { rootMargin: '0px 0px 0px 0px' }) => {
   if (window.IntersectionObserver) {
@@ -34,19 +34,25 @@ scripts:
   } else {
     callback(element, true);
   }
-};`); %>
-    <p>Then, set up some way to change the element’s scope when the observer triggers.</p>
+};`, { language: 'javascript' }); %>
+    <p>
+      Then, set up some way to change the element’s scope when the observer triggers.
+    </p>
     <%- code(`const inViewOutOfView = (element, isInView) => {
   element.setAttribute('in-view', isInView);
-};`); %>
-    <p>Now, attach the observer function to your desired elements. I chose headings and paragraphs, as you can see.</p>
+};`, { language: 'javascript' }); %>
+    <p>
+      Now, attach the observer function to your desired elements. I chose headings and paragraphs, as you can see.
+    </p>
     <%- code(`const querySelector = 'h1, h2, h3, h4, h5, h6, p';
 Array.from(document.querySelectorAll(querySelector)).forEach((element) => {
   inView(element, inViewOutOfView, {
     rootMargin: '-70px 0px -20px 0px',
   });
-});`); %>
-    <p>Finally, configure your in-view/out-of-view style changes. And you're good to go.</p>
+});`, { language: 'javascript' }); %>
+    <p>
+      Finally, configure your in-view/out-of-view style changes. And you're good to go.
+    </p>
     <%- code(`h1, h2, h3, h4, h5, h6, p {
   transition: opacity 300ms ease, transform 300ms ease;
 
@@ -55,7 +61,7 @@ Array.from(document.querySelectorAll(querySelector)).forEach((element) => {
     transform: translateY(1em) rotateX(-90deg);
     opacity: 0;
   }
-}`); %>
+}`, { language: 'css' }); %>
   </div>
 </section>
 

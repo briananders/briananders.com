@@ -1,7 +1,7 @@
-@import "system/utilities";
+@use "system/utilities" as *;
 
 footer {
-  padding: $s6 0;
+  padding: space(6) 0 space(2);
   margin-top: $section-spacer;
   @include palette--base;
   position: relative;
@@ -16,13 +16,28 @@ footer {
     @include orange-gradient;
   }
 
-  ul {
-    display: grid;
-    grid-gap: $s1;
+  .copyright {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .links {
+    display: flex;
+    gap: space(2);
+    flex-wrap: wrap;
+    margin-top: space(4);
+    margin-bottom: space(4);
   }
 
   a {
-    background-color: transparent !important;
-    padding: 0;
+
+    &.brand {
+      border: none !important;
+      padding: 0 !important;
+      display: flex !important;
+
+      @include link-focus;
+    }
   }
 }

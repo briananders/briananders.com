@@ -20,6 +20,14 @@ module.exports = function Matcher({
     return true;
   }
 
+  function none(word, letter) {
+    for (let i = 0; i < letters.length; i++) {
+      const letter = letters[i];
+      if (word.includes(letter)) return false;
+    }
+    return true;
+  }
+
   function correctLettersMatch(word, letters) {
     for (let i = 0; i < letters.length; i++) {
       const letter = letters[i];

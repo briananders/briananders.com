@@ -16,7 +16,7 @@ styles:
     <p>A podcast is an episodic series of digital audio files which a user can subscribe to so that new episodes are automatically downloaded via web syndication to the user’s own local computer, mobile application, or portable media player.</p>
     <p>The word arose as a portmanteau of "iPod" (a brand of media player) and "broadcast". Thus, the files distributed are in audio format, but may sometimes include other file formats such as PDF or ePub. Videos which are shared following a podcast model are called video podcasts or vodcasts.</p>
     <cite>
-      <%- externalLink('Wikipedia.org', { href: 'https://en.wikipedia.org/wiki/Podcast' }); %>
+      <%- blockLink('Wikipedia.org', { href: 'https://en.wikipedia.org/wiki/Podcast' }); %>
     </cite>
   </blockquote>
 
@@ -39,7 +39,7 @@ styles:
         imgUrl: "/images/posts/quality-podcasts/reply-all.webp",
         url: "https://gimletmedia.com/reply-all/",
         wiki: "https://en.wikipedia.org/wiki/Reply_All_(podcast)",
-        description: `Reply All is a podcast in the ${externalLink('Gimlet Media', { href: 'https://gimletmedia.com/' })} family of podcasts. Hosted by PJ Vogt and Alex Goldman, Reply All takes a look at all things technology. In actuality, they just cover all things... Technology optional. I enjoy listening to them cover a wide variety of topics. They recently had an excellent episode called 'What Kind of Idiot Gets Phished?' that covers just how tricky phishing schemes can be. The short takes on it are 1) check, and double check the FROM field on an email, and 2) two-factor auth can be beaten.</p><p>This podcast is pretty young, having only been on-the-air since November 2014. At the writing of this, they’re at episode 99.`,
+        description: `Reply All is a podcast in the ${inlineLink('Gimlet Media', { href: 'https://gimletmedia.com/' })} family of podcasts. Hosted by PJ Vogt and Alex Goldman, Reply All takes a look at all things technology. In actuality, they just cover all things... Technology optional. I enjoy listening to them cover a wide variety of topics. They recently had an excellent episode called 'What Kind of Idiot Gets Phished?' that covers just how tricky phishing schemes can be. The short takes on it are 1) check, and double check the FROM field on an email, and 2) two-factor auth can be beaten.</p><p>This podcast is pretty young, having only been on-the-air since November 2014. At the writing of this, they’re at episode 99.`,
       }, {
         name: "Radio Lab",
         imgUrl: "/images/posts/quality-podcasts/radio-lab.webp",
@@ -62,7 +62,7 @@ styles:
         imgUrl: "/images/posts/quality-podcasts/revisionist-history.webp",
         url: "https://revisionisthistory.com/",
         wiki: "https://en.wikipedia.org/wiki/Revisionist_History_(podcast)",
-        description: `Revisionist History is Malcolm Gladwell’s podcast. Malcolm goes back to interesting moments in history and re-reports them, always taking on a novel perspective. My follow-up reporting gives you a fuller picture of the historical events. My favorite is the episode about the Toyota sticky gas pedal episode; the conclusion that he presents blew my mind.`,
+        description: `Revisionist History is Malcolm Gladwell’s podcast. Malcolm goes back to interesting moments in history and re-reports them, always taking on a novel perspective. His follow-up reporting gives you a fuller picture of the historical events. My favorite is the episode about the Toyota sticky gas pedal episode; the conclusion that he presents blew my mind.`,
       }, {
         name: "99% Invisible",
         imgUrl: "/images/posts/quality-podcasts/99-invisible.webp",
@@ -74,7 +74,7 @@ styles:
         imgUrl: "/images/posts/quality-podcasts/startup.webp",
         url: "https://gimletmedia.com/startup/",
         wiki: "https://en.wikipedia.org/wiki/StartUp_(podcast)",
-        description: `It is very meta, but the startup is a podcast about a guy that runs a podcast startup. The show starts with my venture capital pitches, and continues on through the growth of the company. In later seasons, the show covers other startup businesses, and I found it to be insightful into how ambitious businesses operate, focussing on growth and agility.`,
+        description: `It is very meta, but the startup is a podcast about a guy that runs a podcast startup. The show starts with his venture capital pitches, and continues on through the growth of the company. In later seasons, the show covers other startup businesses, and I found it to be insightful into how ambitious businesses operate, focussing on growth and agility.`,
       }, {
         name: "Crimetown",
         imgUrl: "/images/posts/quality-podcasts/crimetown.webp",
@@ -95,25 +95,19 @@ styles:
         <% if (podcast.description) { %>
           <%- podcast.description %>
         <% } else { %>
-          My thoughts on this podast, coming soon.
+          My thoughts on this podcast, coming soon.
         <% } %>
       </p>
       <p>
         Learn more
-        <%- externalLink('at their website', {
-          itemprop: 'url',
+        <%- inlineLink('at their website', {
           href: podcast.url,
-          target: 'blank',
-          rel: 'noopener',
         }); %>
 
         <% if (podcast.wiki) { %>
           and
-          <%- externalLink('on wikipedia', {
-            itemprop: 'url',
+          <%- inlineLink('on wikipedia', {
             href: podcast.wiki,
-            target: 'blank',
-            rel: 'noopener',
           }); %>
         <% } %>
       </p>

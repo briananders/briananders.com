@@ -5,7 +5,7 @@ const COLOR = (a) => `rgba(255,255,255,${a})`;
 const RADIUS = 6;
 const PADDING = 2;
 const TAIL_LENGTH = 13;
-const FPS = 1000/30;
+const FPS = 1000 / 30;
 const lanes = [];
 let extraPadding = 0;
 let maxHeight = 0;
@@ -41,7 +41,7 @@ function RainDrop({
   function draw({
     lane,
     drawIndex,
-    fade=0,
+    fade = 0,
   }) {
     clearLane();
 
@@ -60,10 +60,10 @@ function RainDrop({
   function finish() {
     finishIndex++;
 
-    draw({ 
-      lane, 
-      drawIndex: index, 
-      fade: (1 / TAIL_LENGTH) * finishIndex, 
+    draw({
+      lane,
+      drawIndex: index,
+      fade: (1 / TAIL_LENGTH) * finishIndex,
     });
 
     if (finishIndex >= TAIL_LENGTH) {

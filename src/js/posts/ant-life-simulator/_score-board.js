@@ -1,3 +1,6 @@
+function formatNumber(number) {
+  return new Intl.NumberFormat('en-US', { maximumSignificantDigits: 3 }).format(number);
+}
 class ScoreBoard {
 
   #board;
@@ -26,11 +29,11 @@ class ScoreBoard {
   update() {
     const scores = this.#board.getScores();
 
-    this.#antsCountElement.innerText = scores.antsCount;
-    this.#antEatersCountElement.innerText = scores.antEatersCount;
-    this.#antsEatenElement.innerText = scores.antsEaten;
-    this.#antEatersEatenElement.innerText = scores.antEatersEaten;
-    this.#antEatersKilledElement.innerText = scores.antEatersKilled;
+    this.#antsCountElement.innerText = formatNumber(scores.antsCount);
+    this.#antEatersCountElement.innerText = formatNumber(scores.antEatersCount);
+    this.#antsEatenElement.innerText = formatNumber(scores.antsEaten);
+    this.#antEatersEatenElement.innerText = formatNumber(scores.antEatersEaten);
+    this.#antEatersKilledElement.innerText = formatNumber(scores.antEatersKilled);
   }
 
   setBoard(newBoard) {

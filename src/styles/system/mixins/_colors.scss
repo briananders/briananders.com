@@ -1,25 +1,37 @@
-@import "system/variables/all";
+@use "system/variables/all" as *;
 
-@mixin palette--base {
-  background-color: $palette--primary-grey;
+@mixin palette--base($background-alpha: 1) {
   color: $palette--primary-white;
+  background-color: rgba($palette--primary-grey, $background-alpha);
 }
 
-@mixin palette--base--inverted {
-  background-color: $palette--primary-white;
+@mixin palette--base--inverted($background-alpha: 1) {
   color: $palette--primary-grey;
+  background-color: rgba($palette--primary-white, $background-alpha);
 }
 
-@mixin palette--primary {
+@mixin palette--primary($background-alpha: 1) {
   color: $palette--primary-white;
-  background-color: $palette--primary-color-dark;
+  background-color: rgba($palette--primary-color-dark, $background-alpha);
 }
 
 @mixin palette--header {
   color: $palette--primary-white;
-  background-color: $palette--primary-color-dark;
+  @include surface;
+  background-blend-mode: luminosity;
+  backdrop-filter: blur(10px);
 }
 
 @mixin orange-gradient {
   background: linear-gradient(to left, $palette--primary-color-light, $palette--primary-color-dark);
+}
+
+@mixin surface {
+  mixin: surface;
+
+  background-color: $palette--surface-color;
+}
+
+@mixin border--light {
+  border: 2px solid rgba($palette--divider-color, 0.2);
 }

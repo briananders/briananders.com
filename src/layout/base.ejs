@@ -16,7 +16,7 @@ layout: blank
   <% if (locals.description && !locals.homepage) { %>
     <div class="content description" itemprop="description">
       <p>
-        <%- noWidows(locals.description); %>
+        <%- locals.description %>
       </p>
     </div>
   <% } %>

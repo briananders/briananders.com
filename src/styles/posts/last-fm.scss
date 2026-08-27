@@ -1,30 +1,36 @@
-@import "system/utilities";
+@use "system/utilities" as *;
 
 .last-fm-module {
   display: grid;
-  grid-gap: $s5;
+  grid-gap: space(2);
 
   .item {
     display: grid;
     grid-template-columns: 1fr;
-    grid-gap: $s1 / 2;
-    grid-gap: $s3;
+    grid-gap: space(3);
+    border: none;
+    padding: space(1);
+    text-decoration: none;
+    margin-left: -#{space(1)};
+    margin-right: -#{space(1)};
 
     @include palette--base;
+    @include card;
 
-    &.album {
+    &.album,
+    &.artist {
       grid-template-columns: 1fr 100px;
     }
 
     @include link-hover;
     @include link-focus;
 
-    &:hover img {
-      transform: scale(1.12);
+    &:focus {
+      border: none;
+      box-shadow: 0 0 0 2px $palette--primary-grey, 0 0 0 4px $palette--secondary-grey;
     }
 
     .name {
-      @include font-size(3);
       font-family: $sans-serif;
       font-weight: $bold;
     }
@@ -35,19 +41,15 @@
 
     bar {
       display: block;
-      height: $s2;
-      margin-top: $s1;
+      height: space(2);
+      margin-top: space(1);
       transition-property: background-color;
-      transition-duration: $transition-speed;
-      transition-timing-function: $transition-timing;
       @include orange-gradient;
     }
 
     img {
       width: 100px;
       height: 100px;
-      transform: scale(1);
-      transition: transform $transition-speed $transition-timing;
     }
   }
 
@@ -55,4 +57,8 @@
     display: grid;
     position: relative;
   }
+}
+
+form.time-selector {
+  margin: $paragraph-bottom auto;
 }

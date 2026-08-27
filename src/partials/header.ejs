@@ -1,7 +1,7 @@
 <%- partial('head/styles', {...locals, path: 'modules/header' }); %>
 
 <div id="skip-nav" tabindex="-1" data-state=inactive>
-  <button>Skip navigation</button>
+  <button class="button">Skip navigation</button>
 </div>
 <%- partial('nav', locals); %>
 <% if(!locals.homepage) { %>

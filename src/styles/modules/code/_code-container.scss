@@ -1,14 +1,15 @@
+@use "system/utilities" as *;
+
 .code-container {
-  @include font-size;
-  max-width: $grid--copy-max-width;
-  margin: auto auto $s6;
-  margin-bottom: $s6;
+  @include type--body-small;
+  @include readingWidth;
+  margin: 0 0 space(6);
   max-width: 100%;
   overflow: hidden;
   position: relative;
-  text-align: center;
+  text-align: left;
   display: flex;
-  border: 2px solid $palette--divider-color;
+  @include border--light;
 
   &::before,
   &::after {
@@ -16,13 +17,14 @@
     position: absolute;
     top: 0px;
     bottom: 0px;
-    width: $s5;
+    width: space(6);
   }
 
   &::before {
     left: 0px;
     background: linear-gradient(to left, rgba($palette--primary-grey, 0), rgba($palette--primary-grey, 1));
   }
+
   &::after {
     right: 0px;
     background: linear-gradient(to right, rgba($palette--primary-grey, 0), rgba($palette--primary-grey, 1));

@@ -1,10 +1,9 @@
-@import "system/utilities";
+@use "system/utilities" as *;
 
 #canvas {
-  width: css-min(90vw, $content-max-width);
-  height: 80vh;
-  border: 2px solid $palette--divider-color;
+  width: 100%;
+  height: calc(100vh - 120px);
+  @include border--light;
   display: block;
-  margin-left: auto;
-  margin-right: auto;
+  @include left-margins;
 }

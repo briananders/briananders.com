@@ -2,6 +2,7 @@ const { log } = require('./log');
 
 module.exports = function YoutubeModal({ triggerScope } = { triggerScope: '.yt-modal-trigger' }) {
   let triggerElements = [];
+  const boundHandlers = new Map();
 
   const MODAL_ELEMENTS = {
     container: document.createElement('div'),
@@ -18,7 +19,7 @@ module.exports = function YoutubeModal({ triggerScope } = { triggerScope: '.yt-m
 
   const IFRAME_CONFIG = {
     srcPrepend: 'https://www.youtube.com/embed/',
-    srcAppend: '&origin=https://briananders.net&autoplay=1&rel=0',
+    srcAppend: '&origin=https://briananders.com&autoplay=1&rel=0',
     width: '560',
     height: '315',
   };
@@ -97,11 +98,18 @@ module.exports = function YoutubeModal({ triggerScope } = { triggerScope: '.yt-m
   };
 
   const addEventListeners = () => {
-    triggerElements.forEach((element) => { element.addEventListener('click', openModal.bind(this, element)); });
+    triggerElements.forEach((element) => {
+      const handler = openModal.bind(this, element);
+      boundHandlers.set(element, handler);
+      element.addEventListener('click', handler);
+    });
   };
 
   const removeEventListeners = () => {
-    triggerElements.forEach((element) => { element.addEventListener('click', openModal.bind(this, element)); });
+    triggerElements.forEach((element) => {
+      element.removeEventListener('click', boundHandlers.get(element));
+      boundHandlers.delete(element);
+    });
   };
 
   this.init = () => {

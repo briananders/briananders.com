@@ -95,7 +95,7 @@ function setMainMinHeight() {
 
     const heightDelta = docHeight - bottom;
 
-    mainElement.style.minHeight = `${height + heightDelta}px`;
+    mainElement.style.minHeight = `min(${height + heightDelta}px, 100vh)`;
   };
 
   calculateMinHeight();

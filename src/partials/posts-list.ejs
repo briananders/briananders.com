@@ -1,4 +1,4 @@
-<div id="posts-list" class="content" role="list">
+<div id="posts-list" role="list">
   <%
     const basePages = getChildPages('posts');
     let newestPages = basePages.sort((pageA, pageB) => {
@@ -11,11 +11,8 @@
     }
     newestPages.forEach(({ url, data: { date, description, title }}) => {
   %>
-    <%- link(`
-      <h3 itemprop="name" ${locals.headingLevel ? `role="heading" aria-level="${locals.headingLevel}"` : ""}>${noWidows(title)}</h3>
-      <figcaption itemprop="description">
-        ${noWidows(description)}
-      </figcaption>
+    <%- cardLink(`
+      <span itemprop="name" ${locals.headingLevel ? `role="heading" aria-level="${locals.headingLevel}"` : ""}>${title}</span>
       <date itemprop="datePublished" content="${date}">
         ${formattedDate(date)}
       </date>

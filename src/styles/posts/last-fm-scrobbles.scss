@@ -1,4 +1,4 @@
-@import "system/utilities";
+@use "system/utilities" as *;
 
 #bar {
   border: 1px solid white;
@@ -18,29 +18,44 @@ p {
   }
 }
 
-year-selector {
-  display: block;
-  min-height: 28px;
-  position: relative;
+.year-selector-container {
+  @include readingWidth;
+  @include paragraph-margin;
 }
 
-album-listing,
-artist-listing {
-  margin: auto;
-  width: css-min(600px, 100%);
-  display: block;
-  border-radius: $s1;
-  margin-bottom: $s2;
-  box-sizing: border-box;
-  min-height: 116px;
+#albums, #artists, #yearly-scrobbles {
+  @include readingWidth;
 
-  &:last-of-type {
-    margin-bottom: $s6;
+  display: grid;
+  gap: space(2);
+}
+
+#yearly-scrobbles {
+  margin-bottom: $paragraph-bottom;
+}
+
+#albums, #artists {
+  gap: space(2);
+  margin-bottom: space(12);
+}
+
+.selector-container {
+  display: flex;
+  align-items: center;
+  gap: space(2);
+
+  label {
+    padding: 0;
+    margin: 0;
   }
 }
 
-album-listing {
-  min-height: 117px;
+.filters-container {
+  @include paragraph-margin;
+  display: grid;
+  gap: space(2);
 }
 
-
+.trend-list-container {
+  overflow: auto;
+}

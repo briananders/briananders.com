@@ -1,6 +1,6 @@
 ---
 title: "Sticky Stacky Peeking Navigation Bars"
-description: "At the time of writing I work at store.google.com. One of our design choices has been for the navigation to scroll with you. As the user scrolls down, one could have the navigation bars stack up. This pattern could fill the screen. Instead, this alternative design only shows the bottom most bar. As the user scrolls up, the navigation bars from above peek out from anywhere on the page."
+description: "At the time of writing I work at a major e-commerce website. One of our design choices has been for the navigation to scroll with you. As the user scrolls down, one could have the navigation bars stack up. This pattern could fill the screen. Instead, this alternative design only shows the bottom most bar. As the user scrolls up, the navigation bars from above peek out from anywhere on the page."
 date: 2022-07-09
 priority: 0.8
 pageClasses:
@@ -8,15 +8,22 @@ pageClasses:
 layout: base
 styles:
   - 'main'
+  - 'posts/code'
+  - 'posts/sticky-stacky'
 ---
 
-
-<p>
-  This is a common design pattern. As I have fixed bugs with store.google.com's navigation bar, I have reconsidered how complex the setup is. Here, I present a simpler, more general, and scalable way to support such a system.
-</p>
+<section>
+  <div class="content">
+    <p>
+      This is a common design pattern. As I have fixed bugs with many navigation bars, I have reconsidered how complex the setup is. Here, I present a simpler, more general, and scalable way to support such a system.
+    </p>
+  </div>
+  </section>
 
 <div class="sticky-container h3">
-  <nav class="sticky-stacky default-styles">How does it work?</nav>
+  <nav class="sticky-stacky default-styles">
+    <div class="container">How does it work?</div>
+  </nav>
 </div>
 
 <section>
@@ -28,7 +35,9 @@ styles:
 </section>
 
 <div class="sticky-container h3">
-  <nav class="sticky-stacky default-styles">What do you need for the markup?</nav>
+  <nav class="sticky-stacky default-styles">
+    <div class="container">What do you need for the markup?</div>
+  </nav>
 </div>
 
 <section>
@@ -44,7 +53,9 @@ styles:
 </section>
 
 <div class="sticky-container h3">
-  <nav class="sticky-stacky default-styles">What do you need for the styles?</nav>
+  <nav class="sticky-stacky default-styles">
+    <div class="container">What do you need for the styles?</div>
+  </nav>
 </div>
 
 <section>
@@ -63,7 +74,9 @@ styles:
 </section>
 
 <div class="sticky-container h3">
-  <nav class="sticky-stacky default-styles">The JavaScript that drives the scrolling behavior.</nav>
+  <nav class="sticky-stacky default-styles">
+    <div class="container">The JavaScript that drives the scrolling behavior.</div>
+  </nav>
 </div>
 
 <section>
@@ -79,7 +92,9 @@ styles:
 </section>
 
 <div class="sticky-container h3">
-  <nav class="sticky-stacky default-styles">Conclusion</nav>
+  <nav class="sticky-stacky default-styles">
+    <div class="container">Conclusion</div>
+  </nav>
 </div>
 
 <section>
