@@ -1,23 +1,24 @@
-@import "system/utilities";
-@import "modules/code";
+@use "system/utilities" as *;
+@use "sass:math";
+@use "modules/code" as *;
 
 $sprite-width: 1024px;
 $sprite-height: 1024px;
 $x-max: 16;
 $y-max: 16;
-$frame-width: $sprite-width / $x-max;
-$frame-height: $sprite-height / $y-max;
+$frame-width: math.div($sprite-width, $x-max);
+$frame-height: math.div($sprite-height, $y-max);
 
 #frame-container {
-  width: round($frame-width);
-  height: round($frame-height);
+  width: math.round($frame-width);
+  height: math.round($frame-height);
   margin: auto;
   border-radius: 100%;
 
   @for $frame from 0 to ($y-max * $x-max) {
     &[data-number="#{$frame}"] {
-      $x-position: 1 - round(($frame % $x-max) * $frame-width);
-      $y-position: 1 - round(floor($frame / $x-max) * $frame-height);
+      $x-position: 1 - math.round(($frame % $x-max) * $frame-width);
+      $y-position: 1 - math.round(math.floor(math.div($frame, $x-max)) * $frame-height);
       background-position: #{$x-position} #{$y-position};
     }
   }

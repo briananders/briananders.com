@@ -1,14 +1,15 @@
-@import "system/utilities";
+@use "system/utilities" as *;
 
 
 canvas {
   width: 100vw;
   max-width: 100%;
-  height: calc(100vh - 100px);
-  border: 2px solid rgba($palette--divider-color, 0.2);
+  height: calc(100vh - 120px);
+  @include border--light;
 }
 
 form {
+
   &,
   label {
     display: flex;
