@@ -1,4 +1,5 @@
-@import "modules/sticky-stacky";
+@use "system/utilities" as *;
+@use "modules/sticky-stacky" as *;
 
 $nav-height: space(12);
 
@@ -50,7 +51,8 @@ nav.main {
     padding: 0;
   }
 
-  .content, .container {
+  .content,
+  .container {
     overflow: visible;
     align-items: center;
     display: flex;
@@ -67,6 +69,7 @@ nav.main {
       width: 100vw;
     }
   }
+
   .menu {
     font-weight: $regular;
     padding: 4px 8px;
@@ -86,7 +89,7 @@ nav.main {
   #nav-tray {
     z-index: 0;
     position: absolute;
-    top: calc(100% + 12px);
+    top: calc(100% + #{space(2)});
     transform-origin: calc(100% - #{space(2) + 20px}) -#{space(2)};
     transform: rotateY(90deg);
     display: grid;
@@ -111,6 +114,7 @@ nav.main {
   }
 
   #top-triangle {
+
     &,
     &::after {
       position: absolute;
@@ -139,7 +143,7 @@ nav.main {
 
   .brand {
     width: auto;
-    max-width: css-min(calc(100% - #{66px + 12px}), 200px);
+    max-width: css-min(calc(100% - #{66px + space(2)}), 200px);
     display: flex;
     justify-content: flex-start;
     align-items: middle;
