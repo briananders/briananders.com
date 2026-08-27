@@ -14,7 +14,7 @@ scripts:
 - 'posts/ant-life-simulator/index'
 ---
 
-<section class="content">
+<%- partial('section/open', { ...locals, kind: 'none', sectionClass: 'content' }) %>
   <ol>
     <li>50 ants (white)</li>
     <li>20 anteaters (green)</li>
@@ -25,7 +25,7 @@ scripts:
     <li>If an anteater goes without eating for 12 turns, it will starve.</li>
     <li>Ants move first</li>
   </ol>
-</section>
+<%- partial('section/close', { ...locals, kind: 'none' }) %>
 
 <div class="content">
   <div id="board">
@@ -38,7 +38,7 @@ scripts:
   </div>
 </div>
 
-<section class="content">
+<%- partial('section/open', { ...locals, kind: 'none', sectionClass: 'content' }) %>
   <div class="score-bar">
     <span id="ants-bar"></span>
     <span id="ant-eaters-bar"></span>
@@ -51,4 +51,4 @@ scripts:
     <li>Anteaters Eaten: <span id="ant-eaters-eaten">0</span></li>
     <li>Anteaters Starved: <span id="ant-eaters-killed">0</span></li>
   </ul>
-</section>
+<%- partial('section/close', { ...locals, kind: 'none' }) %>

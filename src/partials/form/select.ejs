@@ -1,0 +1,55 @@
+<%
+  // Renders a label + <select> dropdown.
+  //
+  // Parameter names avoid colliding with site-wide keys that come via the
+  // `...locals` spread. Use `inputName` and `helpText` instead of `name`
+  // and `description`.
+  //
+  // locals:
+  //   id         — select id (required). Also used as `name` if `inputName` not given.
+  //   label      — visible label text. Pass falsy to render no label.
+  //   ariaLabel  — used when no visible label is desired.
+  //   inputName  — select `name` attribute. Defaults to id.
+  //   value      — currently selected value (matches against option.value).
+  //   options    — array of { value, label, disabled? }.
+  //                If an option matches `value`, it is rendered with `selected`.
+  //   disabled, required — boolean attributes on the <select>.
+  //   selectClass — extra classes on the <select>.
+  //   fieldClass  — extra classes on the outer wrapper.
+  //   helpText    — optional helper text below the select.
+  //
+  // Usage:
+  //   partial('form/select', { ...locals,
+  //     id: 'rating', label: 'Rating', value: '10',
+  //     options: [
+  //       { value: '10', label: '10 stars' },
+  //       { value: '9',  label: '9 stars' },
+  //     ],
+  //   })
+  if (!locals.id) throw new Error('form/select is missing required `id`');
+  if (!Array.isArray(locals.options)) throw new Error('form/select requires `options` array');
+  const inputName = locals.inputName || locals.id;
+  const fieldClass = ['field', locals.fieldClass || ''].filter(Boolean).join(' ');
+  const selectClass = locals.selectClass ? ` class="${locals.selectClass}"` : '';
+  const selAttrs = [
+    `id="${locals.id}"`,
+    `name="${inputName}"`,
+    locals.disabled ? 'disabled' : '',
+    locals.required ? 'required' : '',
+    !locals.label && locals.ariaLabel ? `aria-label="${locals.ariaLabel}"` : '',
+    locals.helpText ? `aria-describedby="${locals.id}-desc"` : '',
+  ].filter(Boolean).join(' ');
+%>
+<div class="<%- fieldClass %>">
+  <% if (locals.label) { %>
+    <label for="<%- locals.id %>"><%- locals.label %></label>
+  <% } %>
+  <select<%- selectClass %> <%- selAttrs %>>
+    <% locals.options.forEach((opt) => { %>
+      <option value="<%- opt.value %>"<%- opt.disabled ? ' disabled' : '' %><%- (locals.value !== undefined && String(opt.value) === String(locals.value)) ? ' selected' : '' %>><%- opt.label %></option>
+    <% }); %>
+  </select>
+  <% if (locals.helpText) { %>
+    <span id="<%- locals.id %>-desc" class="field-description"><%- locals.helpText %></span>
+  <% } %>
+</div>

@@ -17,8 +17,6 @@ scripts:
   </label>
 </form>
 
-<section>
-  <div class="content">
-    <canvas id="canvas"></canvas>
-  </div>
-  </section>
+<%- partial('section/open', { ...locals }) %>
+  <canvas id="canvas"></canvas>
+<%- partial('section/close', { ...locals }) %>

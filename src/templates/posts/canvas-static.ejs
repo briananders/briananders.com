@@ -13,15 +13,11 @@ scripts:
   - 'posts/canvas-static'
 ---
 
-<section>
-  <div class="content">
-    <canvas id="canvas"></canvas>
-  </div>
-</section>
+<%- partial('section/open', { ...locals }) %>
+  <canvas id="canvas"></canvas>
+<%- partial('section/close', { ...locals }) %>
 
-<section>
-  <div class="container">
-    <div id="graph">
-    </div>
+<%- partial('section/open', { ...locals, kind: 'container' }) %>
+  <div id="graph">
   </div>
-</section>
+<%- partial('section/close', { ...locals, kind: 'container' }) %>

@@ -14,17 +14,11 @@ scripts:
 - 'posts/moire-patterns'
 ---
 
-<div class="container">
-  <blockquote>
-    <p>Moiré patterns or moiré fringes are large-scale interference patterns that can be produced when an opaque ruled
-      pattern with transparent gaps is overlaid on another similar pattern. For the moiré interference pattern to
-      appear, the two patterns must not be completely identical, but rather displaced, rotated, or have slightly
-      different pitch.</p>
-    <cite>
-      <%- blockLink("Wikipedia.org", { href: "https://en.wikipedia.org/wiki/Moir%C3%A9_pattern" }); %>
-    </cite>
-  </blockquote>
-</div>
+<%- partial('blockquote', { ...locals,
+  quote: 'Moiré patterns or moiré fringes are large-scale interference patterns that can be produced when an opaque ruled\n      pattern with transparent gaps is overlaid on another similar pattern. For the moiré interference pattern to\n      appear, the two patterns must not be completely identical, but rather displaced, rotated, or have slightly\n      different pitch.',
+  citation: 'Wikipedia.org',
+  href: 'https://en.wikipedia.org/wiki/Moir%C3%A9_pattern',
+}) %>
 
 <div class="container">
   <div class="form">

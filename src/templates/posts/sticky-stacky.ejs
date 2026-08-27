@@ -12,13 +12,11 @@ styles:
   - 'posts/sticky-stacky'
 ---
 
-<section>
-  <div class="content">
-    <p>
-      This is a common design pattern. As I have fixed bugs with many navigation bars, I have reconsidered how complex the setup is. Here, I present a simpler, more general, and scalable way to support such a system.
-    </p>
-  </div>
-  </section>
+<%- partial('section/open', { ...locals }) %>
+  <p>
+    This is a common design pattern. As I have fixed bugs with many navigation bars, I have reconsidered how complex the setup is. Here, I present a simpler, more general, and scalable way to support such a system.
+  </p>
+<%- partial('section/close', { ...locals }) %>
 
 <div class="sticky-container h3">
   <nav class="sticky-stacky default-styles">
@@ -26,13 +24,11 @@ styles:
   </nav>
 </div>
 
-<section>
-  <div class="content">
-    <p>
-      At its core, this system is not complex. The markup is basic, as is the styles. The javascript can be challenging to wrap your head around, since it has to keep up with the scroll state.
-    </p>
-  </div>
-</section>
+<%- partial('section/open', { ...locals }) %>
+  <p>
+    At its core, this system is not complex. The markup is basic, as is the styles. The javascript can be challenging to wrap your head around, since it has to keep up with the scroll state.
+  </p>
+<%- partial('section/close', { ...locals }) %>
 
 <div class="sticky-container h3">
   <nav class="sticky-stacky default-styles">
@@ -40,17 +36,15 @@ styles:
   </nav>
 </div>
 
-<section>
-  <div class="content">
-    <ol>
-      <li>A container that holds the height and position of the navigation bar on the page.</li>
-      <li>The actual visible navigation bar that sticks when scrolling.</li>
-    </ol>
-    <%- code(`<div class="sticky-container">
+<%- partial('section/open', { ...locals }) %>
+  <ol>
+    <li>A container that holds the height and position of the navigation bar on the page.</li>
+    <li>The actual visible navigation bar that sticks when scrolling.</li>
+  </ol>
+  <%- code(`<div class="sticky-container">
   <div class="sticky-stacky">Sticky Nav Element</div>
 </div>`, { language: 'html' }); %>
-  </div>
-</section>
+<%- partial('section/close', { ...locals }) %>
 
 <div class="sticky-container h3">
   <nav class="sticky-stacky default-styles">
@@ -58,20 +52,18 @@ styles:
   </nav>
 </div>
 
-<section>
-  <div class="content">
-    <p>
-      For the container element, your styles are simple: a block element that holds the height of your navigation bar. Through some experimenting, I found a good way to smooth rendering, and simplify the javascript. We calculate the height and store it in a CSS variable.
-    </p>
-    <p>
-      For the navigation bar itself, the styles are still simple. You need a basic default state, and a fixed state. The default state uses <var>position: relative</var>. The fixed state moves it to <var>position: fixed</var>. The important piece keeps the navigation bars sticking in the right positions.
-    </p>
-    <p>
-      To keep them sticking in the right positions, we depend on two properties. The <var>top</var> property is the sum of the heights of previous navigation bars. Again, I am using a CSS variable for simplicity. The <var>transform</var> property uses another CSS variable to translate the nav bar up and down. This translation handles the peeking logic. The CSS variable we use here will be quite dynamic, and updated with JavaScript.
-    </p>
-    <%- code(getFileContents('/styles/modules/_sticky-stacky.scss'), { language: 'css' }); %>
-  </div>
-</section>
+<%- partial('section/open', { ...locals }) %>
+  <p>
+    For the container element, your styles are simple: a block element that holds the height of your navigation bar. Through some experimenting, I found a good way to smooth rendering, and simplify the javascript. We calculate the height and store it in a CSS variable.
+  </p>
+  <p>
+    For the navigation bar itself, the styles are still simple. You need a basic default state, and a fixed state. The default state uses <var>position: relative</var>. The fixed state moves it to <var>position: fixed</var>. The important piece keeps the navigation bars sticking in the right positions.
+  </p>
+  <p>
+    To keep them sticking in the right positions, we depend on two properties. The <var>top</var> property is the sum of the heights of previous navigation bars. Again, I am using a CSS variable for simplicity. The <var>transform</var> property uses another CSS variable to translate the nav bar up and down. This translation handles the peeking logic. The CSS variable we use here will be quite dynamic, and updated with JavaScript.
+  </p>
+  <%- code(getFileContents('/styles/modules/_sticky-stacky.scss'), { language: 'css' }); %>
+<%- partial('section/close', { ...locals }) %>
 
 <div class="sticky-container h3">
   <nav class="sticky-stacky default-styles">
@@ -79,17 +71,15 @@ styles:
   </nav>
 </div>
 
-<section>
-  <div class="content">
-    <p>
-      Breaking the algorithm into two pieces is the most organized. A class that controls all the sticky navigation bars on the page: StickyController. And a class that updates each sticky navigation bar: StickyStacky.
-    </p>
-    <p>
-      Read through the comments in the JavaScript below. The explanation makes the most sense to me in context.
-    </p>
-    <%- code(getFileContents('/js/_modules/sticky-stacky.js'), { language: 'javascript' }); %>
-  </div>
-</section>
+<%- partial('section/open', { ...locals }) %>
+  <p>
+    Breaking the algorithm into two pieces is the most organized. A class that controls all the sticky navigation bars on the page: StickyController. And a class that updates each sticky navigation bar: StickyStacky.
+  </p>
+  <p>
+    Read through the comments in the JavaScript below. The explanation makes the most sense to me in context.
+  </p>
+  <%- code(getFileContents('/js/_modules/sticky-stacky.js'), { language: 'javascript' }); %>
+<%- partial('section/close', { ...locals }) %>
 
 <div class="sticky-container h3">
   <nav class="sticky-stacky default-styles">
@@ -97,8 +87,6 @@ styles:
   </nav>
 </div>
 
-<section>
-  <div class="content">
-    <p>I hope this has been a helpful and informative way to combine JavaScript, HTML, and CSS in a robust and scalable way. The patterns I use in this solution are more valuable than the solution itself.</p>
-  </div>
-</section>
+<%- partial('section/open', { ...locals }) %>
+  <p>I hope this has been a helpful and informative way to combine JavaScript, HTML, and CSS in a robust and scalable way. The patterns I use in this solution are more valuable than the solution itself.</p>
+<%- partial('section/close', { ...locals }) %>

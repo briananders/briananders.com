@@ -1,0 +1,39 @@
+<%
+  // Opens a <section> with an optional inner wrapper and heading.
+  // Pair with section/close to wrap arbitrary page content.
+  //
+  // Uses `sectionTitle` (not `title`) for the heading because `title` is set
+  // globally by the page's front matter and would otherwise be inherited via
+  // the `...locals` spread, producing a duplicate heading on every page.
+  //
+  // locals:
+  //   kind         — 'content' (default) | 'container' | 'none'
+  //                  'content' / 'container' render the named wrapper div.
+  //                  'none' omits the inner wrapper entirely.
+  //   sectionTitle — optional heading text. Runs through noWidows().
+  //   level        — heading level (2-6). Default 2.
+  //   sectionClass — extra classes on <section>.
+  //   sectionId    — id attribute on <section>.
+  //   wrapperClass — extra classes on the inner div.
+  //   attributes   — raw attribute string injected on <section> (e.g. 'itemscope itemtype="..."').
+  //
+  // Usage:
+  //   partial('section/open', { ...locals, sectionTitle: 'My title' })
+  //     <p>...</p>
+  //   partial('section/close', locals)
+  const kind = locals.kind || 'content';
+  const level = Math.max(2, Math.min(6, locals.level || 2));
+  const sectionAttrs = [
+    locals.sectionId ? `id="${locals.sectionId}"` : '',
+    locals.sectionClass ? `class="${locals.sectionClass}"` : '',
+    locals.attributes || '',
+  ].filter(Boolean).join(' ');
+  const wrapperClass = [kind !== 'none' ? kind : '', locals.wrapperClass || '']
+    .filter(Boolean).join(' ');
+%><section <%- sectionAttrs %>>
+<% if (kind !== 'none') { %>
+  <div class="<%- wrapperClass %>">
+<% } %>
+<% if (locals.sectionTitle) { %>
+  <h<%- level %>><%- noWidows(locals.sectionTitle) %></h<%- level %>>
+<% } %>

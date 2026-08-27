@@ -24,16 +24,14 @@ scripts:
   }); %>
 </div>
 
-<section>
-  <div class="container">
-    <p>
-      Banders Drums is my channel for drum covers. I grew up loving all kinds of rock and punk music. When I was younger, I played in symphonic band, jazz band, and the orchestra. Over time, I have focused more and more time and energy on playing to the music that I love listening to.
-    </p>
-    <p>
-      Hardcore and emo bands like Emery and Underoath are my favorite to play to. I also play lots of music that features Travis Barker. Someday, I will write my own music, but for now I will continue posting drum cover videos.
-    </p>
-  </div>
-</section>
+<%- partial('section/open', { ...locals, kind: 'container' }) %>
+  <p>
+    Banders Drums is my channel for drum covers. I grew up loving all kinds of rock and punk music. When I was younger, I played in symphonic band, jazz band, and the orchestra. Over time, I have focused more and more time and energy on playing to the music that I love listening to.
+  </p>
+  <p>
+    Hardcore and emo bands like Emery and Underoath are my favorite to play to. I also play lots of music that features Travis Barker. Someday, I will write my own music, but for now I will continue posting drum cover videos.
+  </p>
+<%- partial('section/close', { ...locals, kind: 'container' }) %>
 
 <section>
   <header class="container">

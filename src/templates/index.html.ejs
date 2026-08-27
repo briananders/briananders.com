@@ -18,7 +18,7 @@ scripts:
 <%- partial('head/styles', { ...locals, path: 'homepage', inlineStyles: true }) %>
 
 
-<section class="contributions">
+<%- partial('section/open', { ...locals, kind: 'none', sectionClass: 'contributions' }) %>
   <div class="content deck">
     <%
       const model = [
@@ -61,7 +61,7 @@ scripts:
       href: '/about/',
     }); %>
   </div>
-</section>
+<%- partial('section/close', { ...locals, kind: 'none' }) %>
 
 
   <section class="posts">

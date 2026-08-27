@@ -283,3 +283,251 @@ scripts:
     </ul>
   </div>
 </section>
+
+<section class="partials">
+  <div class="container">
+    <h2>Reusable Partials</h2>
+    <p>
+      Standardized markup primitives that live in
+      <code>src/partials/</code>. Call them with
+      <code>partial('name', { ...locals, ...data })</code>. The
+      <code>...locals</code> spread is required so partials inherit the EJS
+      helper functions (<code>noWidows</code>, <code>blockLink</code>, etc.).
+    </p>
+  </div>
+</section>
+
+<%- partial('section/open', { ...locals,
+  sectionTitle: 'section/open + section/close',
+  sectionClass: 'partial-demo',
+}) %>
+  <p>
+    Wraps arbitrary content in a <code>&lt;section&gt;</code> with an inner
+    <code>.content</code> (default) or <code>.container</code> wrapper, plus
+    an optional heading. Pair an opening call with a matching close.
+  </p>
+  <p>
+    Options: <code>kind</code> (<var>content</var> | <var>container</var> |
+    <var>none</var>), <code>title</code>, <code>level</code> (2&ndash;6),
+    <code>sectionId</code>, <code>sectionClass</code>,
+    <code>wrapperClass</code>, <code>attributes</code>.
+  </p>
+  <p>
+    This entire section is rendered by section/open and section/close &mdash;
+    look at the page source to confirm.
+  </p>
+<%- partial('section/close', { ...locals }) %>
+
+<%- partial('blockquote', { ...locals,
+  quote: 'An automaton (plural: automata or automatons) is a self-operating machine, or a machine or control mechanism designed to automatically follow a predetermined sequence of operations, or respond to predetermined instructions.',
+  citation: 'Wikipedia.org',
+  href: 'https://en.wikipedia.org/wiki/Automaton',
+}) %>
+
+<%- partial('section/open', { ...locals,
+  sectionTitle: 'blockquote',
+  sectionClass: 'partial-demo',
+}) %>
+  <p>
+    The quoted text above is rendered by the <code>blockquote</code> partial.
+    Consolidates ~14 occurrences across posts that hand-built a
+    <code>&lt;blockquote&gt;</code> with a <code>&lt;cite&gt;</code> wrapping
+    a <code>blockLink</code>.
+  </p>
+  <p>
+    Options: <code>quote</code>, <code>citation</code>, <code>href</code>,
+    <code>wrap</code> (<var>container</var> | <var>content</var> |
+    <var>none</var>), <code>wrapClass</code>.
+  </p>
+<%- partial('section/close', { ...locals }) %>
+
+<%- partial('section/open', { ...locals,
+  sectionTitle: 'canvas-demo',
+  sectionClass: 'partial-demo',
+  kind: 'container',
+}) %>
+  <p>
+    Wraps a <code>&lt;canvas&gt;</code> in the standard
+    <code>.canvas-container</code> with an optional start button.
+    Consolidates the pattern used across canvas posts (polyrhythm, lissajous,
+    cellular automata, etc.).
+  </p>
+  <p>
+    Options: <code>canvasId</code>, <code>canvasClass</code>,
+    <code>canvasAttrs</code>, <code>playId</code>, <code>playLabel</code>,
+    <code>showPlay</code> (boolean), <code>wrap</code> (<var>section</var> |
+    <var>content</var> | <var>none</var>), <code>ariaLabel</code>.
+  </p>
+<%- partial('section/close', { ...locals }) %>
+
+<%- partial('canvas-demo', { ...locals,
+  canvasId: 'design-system-canvas-demo',
+  playId: 'design-system-canvas-play',
+  playLabel: 'Demo button',
+  canvasAttrs: 'width="600" height="200" style="background: var(--palette--surface-color, rgba(0,0,0,0.05)); display: block; width: 100%;"',
+  ariaLabel: 'Empty canvas demo',
+}) %>
+
+<%- partial('section/open', { ...locals,
+  sectionTitle: 'form/field',
+  sectionClass: 'partial-demo',
+}) %>
+  <p>
+    Label + text-like <code>&lt;input&gt;</code> (text, number, email,
+    search, tel, url, password). Standardizes label/input association via
+    matching <code>for</code> / <code>id</code>.
+  </p>
+  <%- partial('form/field', { ...locals,
+    id: 'ds-field-text',
+    label: 'Your name',
+    placeholder: 'Brian',
+  }) %>
+  <%- partial('form/field', { ...locals,
+    id: 'ds-field-number',
+    label: 'Rule number from 0 to 65,535',
+    type: 'number',
+    min: 0,
+    max: 65535,
+    value: 10678,
+    step: 2,
+    helpText: 'Numbers ending in binary 10110 produce interesting patterns.',
+  }) %>
+<%- partial('section/close', { ...locals }) %>
+
+<%- partial('section/open', { ...locals,
+  sectionTitle: 'form/select',
+  sectionClass: 'partial-demo',
+}) %>
+  <%- partial('form/select', { ...locals,
+    id: 'ds-select-rating',
+    label: 'Rating',
+    value: 8,
+    options: [
+      { value: 10, label: '10 stars' },
+      { value: 9, label: '9 stars' },
+      { value: 8, label: '8 stars' },
+      { value: 7, label: '7 stars' },
+      { value: 6, label: '6 stars' },
+    ],
+  }) %>
+  <%- partial('form/select', { ...locals,
+    id: 'ds-select-period',
+    label: 'How far back?',
+    value: '1month',
+    options: [
+      { value: '7day', label: '1 week' },
+      { value: '1month', label: '1 month' },
+      { value: '3month', label: '3 months' },
+      { value: '12month', label: '1 year' },
+      { value: 'overall', label: 'Forever' },
+    ],
+  }) %>
+<%- partial('section/close', { ...locals }) %>
+
+<%- partial('section/open', { ...locals,
+  sectionTitle: 'form/range',
+  sectionClass: 'partial-demo',
+}) %>
+  <p>
+    Range slider with an attached <code>&lt;output&gt;</code> readout. Wire
+    the slider's <code>input</code> event in JS to update the readout's
+    <code>textContent</code>.
+  </p>
+  <%- partial('form/range', { ...locals,
+    id: 'ds-range-frequency',
+    label: 'Frequency',
+    min: 20,
+    max: 2000,
+    value: 440,
+    unit: 'Hz',
+  }) %>
+  <%- partial('form/range', { ...locals,
+    id: 'ds-range-tempo',
+    label: 'Tempo',
+    min: 40,
+    max: 240,
+    value: 120,
+    unit: 'bpm',
+  }) %>
+<%- partial('section/close', { ...locals }) %>
+
+<%- partial('section/open', { ...locals,
+  sectionTitle: 'form/checkbox',
+  sectionClass: 'partial-demo',
+}) %>
+  <%- partial('form/checkbox', { ...locals,
+    id: 'ds-checkbox-random',
+    label: 'Random start',
+  }) %>
+  <%- partial('form/checkbox', { ...locals,
+    id: 'ds-checkbox-scroll',
+    label: 'Auto-scroll',
+    checked: true,
+  }) %>
+<%- partial('section/close', { ...locals }) %>
+
+<%- partial('section/open', { ...locals,
+  sectionTitle: 'form/radio-group',
+  sectionClass: 'partial-demo',
+}) %>
+  <%- partial('form/radio-group', { ...locals,
+    inputName: 'ds-radio-difficulty',
+    legend: 'Difficulty',
+    value: 'intermediate',
+    options: [
+      { value: 'beginner', label: 'Beginner' },
+      { value: 'intermediate', label: 'Intermediate' },
+      { value: 'expert', label: 'Expert' },
+    ],
+  }) %>
+<%- partial('section/close', { ...locals }) %>
+
+<%- partial('results', { ...locals,
+  resultsTitle: 'results',
+  containerId: 'ds-results',
+  initialCount: 0,
+  loadingText: '<em>Results appear here once submitted.</em>',
+}) %>
+
+<%- partial('section/open', { ...locals,
+  sectionTitle: 'results (above)',
+  sectionClass: 'partial-demo',
+}) %>
+  <p>
+    Standardized heading + count readout + output container. Used by
+    solver/calculator-style posts.
+    Options: <code>title</code>, <code>level</code>, <code>countId</code>,
+    <code>countLabel</code>, <code>initialCount</code>,
+    <code>containerId</code>, <code>containerTag</code>,
+    <code>containerClass</code>, <code>loadingText</code>.
+  </p>
+<%- partial('section/close', { ...locals }) %>
+
+<%- partial('section/open', { ...locals,
+  sectionTitle: 'toast',
+  sectionClass: 'partial-demo',
+}) %>
+  <p>
+    Renders a <code>&lt;toast-notification&gt;</code> element matching the
+    existing wordle-solver markup. Style/animate via the post's stylesheet;
+    show/hide via JS by toggling a class.
+  </p>
+  <%- partial('toast', { ...locals,
+    id: 'ds-toast',
+    message: 'Copied to clipboard',
+  }) %>
+<%- partial('section/close', { ...locals }) %>
+
+<%- partial('section/open', { ...locals,
+  sectionTitle: 'page-intro',
+  sectionClass: 'partial-demo',
+}) %>
+  <p>
+    Extracts the description block currently hard-coded in
+    <code>layout/base.ejs</code> into a reusable partial. Not yet integrated
+    into the base layout &mdash; available for opt-in use today.
+  </p>
+  <%- partial('page-intro', { ...locals,
+    description: 'A short, evocative summary of the page that sits between the title and the main content.',
+  }) %>
+<%- partial('section/close', { ...locals }) %>

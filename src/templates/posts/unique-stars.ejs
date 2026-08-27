@@ -72,8 +72,6 @@ scripts:
 
 </div>
 
-<section>
-  <div class="content">
-    <canvas id='star'></canvas>
-  </div>
-</section>
+<%- partial('section/open', { ...locals }) %>
+  <canvas id='star'></canvas>
+<%- partial('section/close', { ...locals }) %>

@@ -1,0 +1,54 @@
+<%
+  // Renders a label + range slider with an optional current-value readout.
+  // The value readout has id `${id}-value`; pair with a JS handler that updates
+  // its textContent on the slider's `input` event.
+  //
+  // Parameter names avoid colliding with site-wide keys via the `...locals`
+  // spread. Use `inputName` instead of `name`.
+  //
+  // locals:
+  //   id         — range id (required). Used as `name` if `inputName` not given.
+  //   label      — visible label text.
+  //   ariaLabel  — used when no visible label is desired.
+  //   inputName  — range `name` attribute. Defaults to id.
+  //   min, max, step, value — slider bounds + initial value.
+  //   showValue  — boolean. If true (default), render a <output> element
+  //                next to the slider with id `${id}-value`.
+  //   unit       — optional unit string appended to the value readout (e.g. 'Hz', 'ms').
+  //   disabled   — boolean attribute on the slider.
+  //   inputClass, fieldClass — extra classes.
+  //
+  // Usage:
+  //   partial('form/range', { ...locals,
+  //     id: 'frequency', label: 'Frequency', min: 20, max: 2000, value: 440, unit: 'Hz',
+  //   })
+  if (!locals.id) throw new Error('form/range is missing required `id`');
+  const inputName = locals.inputName || locals.id;
+  const fieldClass = ['field', 'field--range', locals.fieldClass || ''].filter(Boolean).join(' ');
+  const inputClass = locals.inputClass ? ` class="${locals.inputClass}"` : '';
+  const showValue = locals.showValue !== false;
+  const min = locals.min !== undefined ? locals.min : 0;
+  const max = locals.max !== undefined ? locals.max : 100;
+  const value = locals.value !== undefined ? locals.value : Math.round((min + max) / 2);
+  const step = locals.step !== undefined ? locals.step : 1;
+  const attrs = [
+    `id="${locals.id}"`,
+    'type="range"',
+    `name="${inputName}"`,
+    `min="${min}"`,
+    `max="${max}"`,
+    `step="${step}"`,
+    `value="${value}"`,
+    locals.disabled ? 'disabled' : '',
+    !locals.label && locals.ariaLabel ? `aria-label="${locals.ariaLabel}"` : '',
+  ].filter(Boolean).join(' ');
+%>
+<div class="<%- fieldClass %>">
+  <% if (locals.label) { %>
+    <label for="<%- locals.id %>"><%- locals.label %></label>
+  <% } %>
+  <input<%- inputClass %> <%- attrs %> />
+  <% if (showValue) { %>
+    <output for="<%- locals.id %>" id="<%- locals.id %>-value"><%- value %><%- locals.unit ? ` ${locals.unit}` : '' %></output>
+  <% } %>
+</div>

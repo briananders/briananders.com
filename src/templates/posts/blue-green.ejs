@@ -15,19 +15,17 @@ scripts:
 - 'posts/blue-green'
 ---
 
-<section>
-  <div class="content">
-    <p>Is this more blue or more green?</p>
+<%- partial('section/open', { ...locals }) %>
+  <p>Is this more blue or more green?</p>
 
-    <div id=canvas class=canvas></div>
+  <div id=canvas class=canvas></div>
 
-    <div class="buttons p">
-      <button id=blue-button>More blue</button>
-      <button id=green-button>More green</button>
-      <button id=submit>I'm unsure</button>
-    </div>
+  <div class="buttons p">
+    <button id=blue-button>More blue</button>
+    <button id=green-button>More green</button>
+    <button id=submit>I'm unsure</button>
   </div>
-</section>
+<%- partial('section/close', { ...locals }) %>
 
 <div class="content">
   <div class=reveal style="display: none;">

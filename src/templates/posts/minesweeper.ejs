@@ -15,8 +15,6 @@ scripts:
 
 
 
-<section>
-  <div class="content">
-    <iframe id="minesweeper-iframe" src="/example/minesweeper"></iframe>
-  </div>
-  </section>
+<%- partial('section/open', { ...locals }) %>
+  <iframe id="minesweeper-iframe" src="/example/minesweeper"></iframe>
+<%- partial('section/close', { ...locals }) %>

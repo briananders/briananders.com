@@ -16,11 +16,15 @@ scripts:
 - 'posts/last-fm'
 ---
 
-<div class="container">
-  <p>
-    I track my listening habits to see what I've been enjoying. Here is the music I have been playing recently, split by top albums and top artists.
-  </p>
-</div>
+<%- partial('blockquote', { ...locals,
+  quote: `
+      To 'scrobble' a song means that when you listen to it, the name of the song is sent to a Web site (for example,
+      Last.fm) and added to your music profile. Here’s how it works: Once you've signed up and downloaded Last.fm, you
+      can scrobble songs you listen to on your computer or iPod automatically.
+    `,
+  citation: 'Netlingo.com',
+  href: 'https://www.netlingo.com/word/scrobble.php',
+}) %>
 
 <form class="content time-selector">
   <p>How far back do you want to see?</p>
@@ -34,24 +38,19 @@ scripts:
   </select>
 </form>
 
-<section class="content">
-  <h2>Top Albums</h2>
+<%- partial('section/open', { ...locals, kind: 'none', sectionClass: 'content', sectionTitle: 'Top Albums' }) %>
+  <link rel="preconnect" href="https://ws.audioscrobbler.com" crossorigin />
   <div class='last-fm-module p' data-type="albums" src="/images/posts/last-fm/default.webp">
     <% for (let i=0; i < 10; i++) { %>
       <%- defaultLastFMModule(); %>
         <% } %>
   </div>
+<%- partial('section/close', { ...locals, kind: 'none' }) %>
 
-  <scrobbles-last-updated></scrobbles-last-updated>
-</section>
-
-<section class="content">
-  <h2>Top Artists</h2>
+<%- partial('section/open', { ...locals, kind: 'none', sectionClass: 'content', sectionTitle: 'Top Artists' }) %>
   <div class='last-fm-module p' data-type="artists">
     <% for (let i=0; i < 10; i++) { %>
       <%- defaultLastFMModule(false); %>
         <% } %>
   </div>
-
-  <scrobbles-last-updated></scrobbles-last-updated>
-</section>
+<%- partial('section/close', { ...locals, kind: 'none' }) %>

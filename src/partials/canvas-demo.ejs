@@ -1,0 +1,40 @@
+<%
+  // Renders a canvas demo container with optional play/pause button.
+  // Consolidates the pattern used across canvas-based posts (polyrhythm,
+  // 2d-automaton, lissajous-curve, cellular-automaton, etc.).
+  //
+  // locals:
+  //   canvasId     — id for the <canvas>. Default 'canvas'.
+  //   canvasClass  — extra classes on the <canvas>.
+  //   canvasAttrs  — raw attribute string on the <canvas> (e.g. 'width="800" height="600"').
+  //   playId       — id for the start/play button. Default 'play'.
+  //   playLabel    — button text. Default 'Start'.
+  //   showPlay     — set to false to omit the play button. Default true.
+  //   wrap         — 'section' (default) | 'content' | 'none'. Outer wrapper.
+  //                  'section' renders <section><div class="content">.
+  //                  'content' renders just <div class="content">.
+  //                  'none' renders only the canvas-container.
+  //   ariaLabel    — aria-label on the <canvas> for screen readers.
+  //
+  // Usage:
+  //   partial('canvas-demo', { ...locals })
+  //   partial('canvas-demo', { ...locals, canvasId: 'rhythm', playLabel: 'Play rhythm' })
+  const canvasId = locals.canvasId || 'canvas';
+  const playId = locals.playId || 'play';
+  const playLabel = locals.playLabel || 'Start';
+  const showPlay = locals.showPlay !== false;
+  const wrap = locals.wrap || 'section';
+  const canvasClass = locals.canvasClass ? ` class="${locals.canvasClass}"` : '';
+  const canvasAttrs = locals.canvasAttrs ? ` ${locals.canvasAttrs}` : '';
+  const ariaLabel = locals.ariaLabel ? ` aria-label="${locals.ariaLabel}"` : '';
+%>
+<% if (wrap === 'section') { %><section><div class="content"><% } %>
+<% if (wrap === 'content') { %><div class="content"><% } %>
+  <div class="canvas-container">
+    <% if (showPlay) { %>
+      <button id="<%- playId %>" class="button" type="button"><%- playLabel %></button>
+    <% } %>
+    <canvas id="<%- canvasId %>"<%- canvasClass %><%- canvasAttrs %><%- ariaLabel %>></canvas>
+  </div>
+<% if (wrap === 'content') { %></div><% } %>
+<% if (wrap === 'section') { %></div></section><% } %>

@@ -15,16 +15,11 @@ scripts:
 - 'posts/cellular-automaton'
 ---
 
-<div class="container">
-  <blockquote>
-    <p>An automaton (plural: automata or automatons) is a self-operating machine, or a machine or control mechanism
-      designed to automatically follow a predetermined sequence of operations, or respond to predetermined instructions.
-    </p>
-    <cite>
-      <%- blockLink("Wikipedia.org", { href: 'https://en.wikipedia.org/wiki/Automaton' }); %>
-    </cite>
-  </blockquote>
-</div>
+<%- partial('blockquote', { ...locals,
+  quote: 'An automaton (plural: automata or automatons) is a self-operating machine, or a machine or control mechanism\n      designed to automatically follow a predetermined sequence of operations, or respond to predetermined instructions.\n    ',
+  citation: 'Wikipedia.org',
+  href: 'https://en.wikipedia.org/wiki/Automaton',
+}) %>
 
 <div class="content">
   <p>
@@ -123,6 +118,4 @@ scripts:
   </form>
 </div>
 
-<section>
-  <div class="container"><canvas id="canvas"></canvas></div>
-</section>
+<%- partial('section/open', { ...locals, kind: 'container' }) %><canvas id="canvas"></canvas><%- partial('section/close', { ...locals, kind: 'container' }) %>

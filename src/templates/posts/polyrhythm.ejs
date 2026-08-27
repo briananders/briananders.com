@@ -13,25 +13,19 @@ scripts:
   - 'posts/polyrhythm'
 ---
 
-<section>
-  <div class="content">
-    <p>I was perusing YouTube, as one does, and encountered a fascinating channel called <%- inlineLink('Lucid Rhythms', { href: 'https://www.youtube.com/@LucidRhythms' } ) %>. Highly recommend! Through the process of watching their videos, I began to dissect them and attempt to figure out how they work.</p>
+<%- partial('section/open', { ...locals }) %>
+  <p>I was perusing YouTube, as one does, and encountered a fascinating channel called <%- inlineLink('Lucid Rhythms', { href: 'https://www.youtube.com/@LucidRhythms' } ) %>. Highly recommend! Through the process of watching their videos, I began to dissect them and attempt to figure out how they work.</p>
 
-    <blockquote>
-      <p>Polyrhythm is the simultaneous use of two or more rhythms that are not readily perceived as deriving from one another, or as simple manifestations of the same meter.</p>
-      <cite>
-        <%- blockLink("Wikipedia.org", { href: "https://en.wikipedia.org/wiki/Polyrhythm" }); %>
-      </cite>
-    </blockquote>
+  <%- partial('blockquote', { ...locals,
+    wrap: 'none',
+    quote: 'Polyrhythm is the simultaneous use of two or more rhythms that are not readily perceived as deriving from one another, or as simple manifestations of the same meter.',
+    citation: 'Wikipedia.org',
+    href: 'https://en.wikipedia.org/wiki/Polyrhythm',
+  }) %>
 
-    <p>To accomplish this, I used some math to set the velocity of each ball to be a ratio of the other ball velocities. There is a simple mathematical function that sets the velocity. Each ball is assigned a specific tone on the repeating scale of A, C, E, G in different octaves. When the ball touches a wall, the assigned tone plays.</p>
+  <p>To accomplish this, I used some math to set the velocity of each ball to be a ratio of the other ball velocities. There is a simple mathematical function that sets the velocity. Each ball is assigned a specific tone on the repeating scale of A, C, E, G in different octaves. When the ball touches a wall, the assigned tone plays.</p>
 
-    <div class="canvas-container">
-      <button id="play" class="button" >Start</button>
+  <%- partial('canvas-demo', { ...locals, wrap: 'none' }) %>
 
-      <canvas id="canvas"></canvas>
-    </div>
-
-    <debug></debug>
-  </div>
-</section>
+  <debug></debug>
+<%- partial('section/close', { ...locals }) %>

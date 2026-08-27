@@ -1,0 +1,36 @@
+<%
+  // Renders a checkbox with adjacent label.
+  //
+  // Parameter names avoid colliding with site-wide keys via the `...locals`
+  // spread. Use `inputName` instead of `name`.
+  //
+  // locals:
+  //   id         — checkbox id (required). Used as `name` if `inputName` not given.
+  //   label      — visible label text (right of the checkbox).
+  //   inputName  — checkbox `name` attribute. Defaults to id.
+  //   value      — submitted value. Defaults to 'on'.
+  //   checked    — initial checked state.
+  //   disabled   — boolean attribute.
+  //   inputClass, fieldClass — extra classes.
+  //
+  // Usage:
+  //   partial('form/checkbox', { ...locals,
+  //     id: 'random-start', label: 'Random start', checked: false,
+  //   })
+  if (!locals.id) throw new Error('form/checkbox is missing required `id`');
+  const inputName = locals.inputName || locals.id;
+  const fieldClass = ['field', 'field--checkbox', locals.fieldClass || ''].filter(Boolean).join(' ');
+  const inputClass = locals.inputClass ? ` class="${locals.inputClass}"` : '';
+  const attrs = [
+    `id="${locals.id}"`,
+    'type="checkbox"',
+    `name="${inputName}"`,
+    locals.value !== undefined ? `value="${locals.value}"` : '',
+    locals.checked ? 'checked' : '',
+    locals.disabled ? 'disabled' : '',
+  ].filter(Boolean).join(' ');
+%>
+<label class="<%- fieldClass %>" for="<%- locals.id %>">
+  <input<%- inputClass %> <%- attrs %> />
+  <% if (locals.label) { %><span class="field-label"><%- locals.label %></span><% } %>
+</label>

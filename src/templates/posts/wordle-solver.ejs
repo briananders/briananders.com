@@ -13,61 +13,52 @@ scripts:
   - 'posts/wordle-solver/index'
 ---
 
-<section>
-  <div class="container">
-    <h2>
-      How to play Wordle
-    </h2>
+<%- partial('section/open', { ...locals, kind: 'container', sectionTitle: 'How to play Wordle' }) %>
+  <p>
+    Wordle is a word game in which players are presented with a grid of letters and must guess a hidden word or phrase.
+  </p>
 
-    <p>
-      Wordle is a word game in which players are presented with a grid of letters and must guess a hidden word or phrase.
-    </p>
+  <p>
+    Here's how to play Wordle:
+  </p>
 
-    <p>
-      Here's how to play Wordle:
-    </p>
+  <ol>
+    <li>
+      A grid of letters will be presented on the screen, with some of the letters already filled in. These letters represent the hidden word or phrase.
+    </li>
+    <li>
+      The player has to guess the hidden word or phrase by typing their guess into the text field provided.
+    </li>
+    <li>
+      The game will indicate how many letters the player has guessed correctly, but not in the correct position, and how many letters are correctly placed.
+    </li>
+    <li>
+      If a letter is correctly placed, that letter will be filled in the grid in the corresponding position.
+    </li>
+    <li>
+      The player can continue guessing different words until they are able to guess the correct one.
+    </li>
+    <li>
+      Some versions of the game have a limited number of guesses, so the player should use them wisely.
+    </li>
+    <li>
+      The game can have different levels and different themes, and some versions may include a time limit.
+    </li>
+    <li>
+      Wordle is a fun and challenging word game that will test your ability to guess words based on the letters provided. Be creative and don't be afraid to try different words and combinations of letters to find the correct answer.
+    </li>
+  </ol>
 
-    <ol>
-      <li>
-        A grid of letters will be presented on the screen, with some of the letters already filled in. These letters represent the hidden word or phrase.
-      </li>
-      <li>
-        The player has to guess the hidden word or phrase by typing their guess into the text field provided.
-      </li>
-      <li>
-        The game will indicate how many letters the player has guessed correctly, but not in the correct position, and how many letters are correctly placed.
-      </li>
-      <li>
-        If a letter is correctly placed, that letter will be filled in the grid in the corresponding position.
-      </li>
-      <li>
-        The player can continue guessing different words until they are able to guess the correct one.
-      </li>
-      <li>
-        Some versions of the game have a limited number of guesses, so the player should use them wisely.
-      </li>
-      <li>
-        The game can have different levels and different themes, and some versions may include a time limit.
-      </li>
-      <li>
-        Wordle is a fun and challenging word game that will test your ability to guess words based on the letters provided. Be creative and don't be afraid to try different words and combinations of letters to find the correct answer.
-      </li>
-    </ol>
+  <p>
+    Please note that the game mechanics might differ a bit from version to version but overall the rules are quite similar.
+  </p>
 
-    <p>
-      Please note that the game mechanics might differ a bit from version to version but overall the rules are quite similar.
-    </p>
+  <p>
+    <%- inlineLink('Check out the post with enhanced strategies', { href: '/posts/wordle-solver-2/' }) %> (and a better algorithm).
+  </p>
+<%- partial('section/close', { ...locals, kind: 'container' }) %>
 
-    <p>
-      <%- inlineLink('Check out the post with enhanced strategies', { href: '/posts/wordle-solver-2/' }) %> (and a better algorithm).
-    </p>
-  </div>
-</section>
-
-<section class="game-board content">
-  <h2>
-    Game Board
-  </h2>
+<%- partial('section/open', { ...locals, kind: 'none', sectionClass: 'game-board content', sectionTitle: 'Game Board' }) %>
   <p>
     Update the board below so it matches your current game. Mark each letter as a near miss (🟨) or a hit (🟩).
   </p>
@@ -131,18 +122,11 @@ scripts:
     type=button>
     Clear
   </button>
-</section>
+<%- partial('section/close', { ...locals, kind: 'none' }) %>
 
-<section class="content">
-  <h2>Potential Solutions</h2>
-  <p>Results: <span id="results-count">-</span></p>
-  <div class="p" id="options"></div>
-</section>
+<%- partial('results', { ...locals,
+  resultsTitle: 'Potential Solutions',
+  containerId: 'options',
+}) %>
 
-<toast-notification>
-  <div class="container">
-    <div class="nbar">
-      <span>✔️</span> Copied to clipboard
-    </div>
-  </div>
-</toast-notification>
+<%- partial('toast', { ...locals, message: 'Copied to clipboard' }) %>
