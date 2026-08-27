@@ -1,5 +1,6 @@
 const itemApi = require('../_modules/last-fm/item-api');
 const ready = require('../_modules/document-ready');
+require('../_components/scrobbles-last-updated').init();
 
 ready.document(() => {
   itemApi.init({

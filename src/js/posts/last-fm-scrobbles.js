@@ -3,6 +3,7 @@ const TrendsBarChart = require('../_modules/trends-bar-chart');
 require('../_components/album-listing').init();
 require('../_components/artist-listing').init();
 require('../_components/year-listing').init();
+require('../_components/scrobbles-last-updated').init();
 
 const lastFmHistoryUrl = '/last-fm-history/';
 const imageUrl = `${lastFmHistoryUrl}images/`;
