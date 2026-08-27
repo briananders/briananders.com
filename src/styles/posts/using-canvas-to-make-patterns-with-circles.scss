@@ -5,7 +5,7 @@ main.posts.using-canvas-to-make-patterns-with-circles {
 
   canvas {
     width: 100%;
-    border: 2px solid rgba($palette--divider-color, 0.2);
+    @include border--light;
     box-sizing: border-box;
     height: calc(100vh - 120px);
   }

@@ -31,3 +31,7 @@
 
   background-color: $palette--surface-color;
 }
+
+@mixin border--light {
+  border: 2px solid rgba($palette--divider-color, 0.2);
+}

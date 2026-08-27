@@ -47,7 +47,10 @@ module.exports = function bundleSCSS({
   log(`${timestamp.stamp()} bundleSCSS()`);
 
   // Find all non-private SCSS entry points (files NOT starting with `_`).
-  const stylesGlob = globSync(`${dir.src}**/**/[^_]*.scss`);
+  // SCSS co-located under src/js/ is bundled via Browserify (shadow DOM); exclude from site CSS.
+  const stylesGlob = globSync(`${dir.src}**/**/[^_]*.scss`, {
+    ignore: [`${dir.src}js/**/*.scss`],
+  });
   let processed = 0;
 
   stylesGlob.forEach((scssFilename, index, array) => {

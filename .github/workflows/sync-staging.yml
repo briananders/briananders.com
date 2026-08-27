@@ -1,0 +1,40 @@
+name: Sync Main to Staging
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  sync-staging:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5.0.0
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Check for code changes not in staging
+        id: diff-check
+        run: |
+          git fetch origin staging
+          DIFF=$(git diff origin/staging...origin/main -- . ':(exclude).github')
+          if [ -n "$DIFF" ]; then
+            echo "has_changes=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "has_changes=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Configure Git
+        if: steps.diff-check.outputs.has_changes == 'true'
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+
+      - name: Merge main into staging
+        if: steps.diff-check.outputs.has_changes == 'true'
+        run: |
+          git checkout staging
+          git merge origin/main --no-edit
+          git push origin staging

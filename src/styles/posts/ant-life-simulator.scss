@@ -6,7 +6,7 @@
 
   width: css-min(100vh, 100vw, var(--window-height));
   height: css-min(100vh, 100vw, var(--window-height));
-  border: 2px solid rgba($palette--divider-color, 0.2);
+  @include border--light;
 
   div {
     border-radius: 100%;
@@ -54,7 +54,7 @@
 .score-bar {
   height: 40px;
   display: flex;
-  border: 2px solid rgba($palette--divider-color, 0.2);
+  @include border--light;
   margin-bottom: $paragraph-bottom;
   width: css-min(100vh, 100vw, var(--window-height), 100%);
   @include left-margins;

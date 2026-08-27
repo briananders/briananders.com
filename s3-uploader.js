@@ -1,3 +1,38 @@
+/**
+ * @fileoverview Deploys the briananders.com static site package to AWS S3.
+ *
+ * Syncs the local build output to S3, deleting stale files and uploading new or
+ * changed ones. Dynamic files (HTML, XML, JSON, TXT, ICO) are always re-uploaded
+ * to guarantee fresh content. Paths in s3-upload-allowlist.json are never deleted,
+ * preserving external data managed by separate repositories.
+ *
+ * Source:      package/  (built static site, populated by `npm run build`)
+ * Destination: www.briananders.com      (production, NODE_ENV=production)
+ *              staging.briananders.com  (staging)
+ *
+ * Preserved S3 paths (s3-upload-allowlist.json — never deleted during sync):
+ *   /band-news/        managed by music-news repo
+ *   /last-fm-history/  managed by last-fm-scrobbles repo
+ *   /data/             managed by briananders.com-data-files repo
+ *   /movies/           managed by imdb-data-scraper repo
+ *
+ * CloudFront:  Invalidates /* after a production deploy via CLOUDFRONT_ID.
+ *
+ * Required environment variables:
+ *   AWS_ACCESS_KEY        - AWS IAM access key ID
+ *   AWS_SECRET_ACCESS_KEY - AWS IAM secret access key
+ *   CLOUDFRONT_ID         - CloudFront distribution ID (production only)
+ *
+ * Optional environment variables:
+ *   AWS_REGION            - AWS region (default: us-east-1)
+ *   S3_UPLOAD_MAX_SOCKETS - Max concurrent HTTP sockets (default: 128)
+ *   S3_UPLOAD_CONCURRENCY - Max concurrent file uploads (default: 50)
+ *
+ * Usage:
+ *   npm run deploy   (NODE_ENV=production node s3-uploader.js)
+ *   npm run stage    (node s3-uploader.js)
+ */
+
 const fs = require('fs-extra');
 const http = require('http');
 const https = require('https');
@@ -159,16 +194,17 @@ async function deleteS3Files(fileList) {
 
 function getCacheControl(fileName) {
   const extn = path.extname(fileName);
+  // Unwrap double extensions (e.g. .html.gz → .html) so gzipped dynamic files
+  // receive the same no-cache directive as their uncompressed counterparts.
+  const effectiveExtn = extn === '.gz'
+    ? path.extname(path.basename(fileName, extn))
+    : extn;
 
-  switch (extn) {
+  switch (effectiveExtn) {
     case '.html':
-    case '.html.gz':
     case '.xml':
-    case '.xml.gz':
     case '.json':
-    case '.json.gz':
     case '.txt':
-    case '.txt.gz':
       return 'no-cache,no-store';
     default:
       return 'max-age=15552000,public';

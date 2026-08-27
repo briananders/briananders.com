@@ -105,17 +105,7 @@ async function renderTemplate({
     }
 
     // Read the layout file (e.g. src/layout/base.ejs) asynchronously.
-    readFile(`${dir.src}layout/${templateData.layout}.ejs`).catch((error) => {
-      if (error && production) throw error;
-      else if (error) {
-        console.error(error.message.red);
-        notifier.notify({
-          title: 'Template Error',
-          message: error.message,
-        });
-        reject();
-      }
-    }).then(async (fileBuffer) => {
+    readFile(`${dir.src}layout/${templateData.layout}.ejs`).then(async (fileBuffer) => {
       const fileData = fileBuffer.toString();
       let html;
       try {
@@ -145,6 +135,14 @@ async function renderTemplate({
         });
       }
       resolve(html);
+    }, (error) => {
+      if (production) throw error;
+      console.error(error.message.red);
+      notifier.notify({
+        title: 'Template Error',
+        message: error.message,
+      });
+      reject();
     });
   });
 }
