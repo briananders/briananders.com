@@ -1,5 +1,5 @@
-@import "./phone-shared";
-@import "./float-iphone";
+@use "./phone-shared" as *;
+@use "./float-iphone" as *;
 
 @keyframes jiggle {
   0% {
@@ -41,7 +41,7 @@ close {
   border-radius: 100%;
   background-color: grey;
   color: black;
-  text-align: center;
+  text-align: left;
   line-height: 3.4vw;
   font-size: 5vw;
   cursor: pointer;

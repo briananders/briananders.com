@@ -1,9 +1,14 @@
-@import "system/utilities";
+@use "system/utilities" as *;
+@use "sass:math";
+
+section.minesweeper {
+  margin-bottom: 0;
+}
 
 .minesweeper {
 
   .blog-container {
-    > * {
+    >* {
       max-width: none;
       width: auto;
     }
@@ -18,9 +23,11 @@
     &[data-difficulty=beginner] {
       grid-template-columns: repeat(8, 1fr);
     }
+
     &[data-difficulty=intermediate] {
       grid-template-columns: repeat(16, 1fr);
     }
+
     &[data-difficulty=expert] {
       grid-template-columns: repeat(24, 1fr);
     }
@@ -31,8 +38,7 @@
   .header-first-row,
   .header-second-row {
     transition-property: width, max-width;
-    margin-left: auto;
-    margin-right: auto;
+    @include default-margins;
 
     &[data-difficulty=beginner] {
       max-width: 400px;
@@ -59,7 +65,7 @@
 
   .header-second-row {
     justify-content: center;
-    margin: $s5 auto;
+    margin: space(6) auto space(4);
   }
 
   .mine-sweeper-tile {
@@ -109,7 +115,7 @@
     @for $i from 1 through 8 {
       &[data-value="#{$i}"] {
         background-position-y: 0%;
-        background-position-x: percentage($i / 8);
+        background-position-x: math.percentage(math.div($i, 8));
       }
     }
   }
@@ -135,12 +141,12 @@
 
     @for $i from 0 through 9 {
       &[data-number="#{$i}"] {
-        background-position-x: 892px / 90px * $i * 1%;
+        background-position-x: math.percentage(math.div(math.div(892, 90) * $i, 100));
       }
     }
   }
 
-  .face-button {
+  #restart {
     transition: none;
     width: 52px;
     height: 52px;

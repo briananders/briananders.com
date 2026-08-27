@@ -1,26 +1,23 @@
-@import "system/utilities";
-@import "modules/code";
+@use "system/utilities" as *;
+@use "modules/code" as *;
 
 .cards-container {
   display: flex;
   pointer-events: none;
   flex-wrap: wrap;
-  justify-content: center;
   align-items: center;
   pointer-events: none;
+  gap: space(3);
 
   card {
     display: block;
     width: 100px;
     height: 100px;
     background-color: $palette--primary-color-dark;
-    margin: $s2;
     pointer-events: all;
 
     opacity: 1;
     transition-property: opacity;
-    transition-duration: $transition-speed;
-    transition-timing-function: $transition-timing;
   }
 
   &:hover {

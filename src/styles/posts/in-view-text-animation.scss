@@ -1,9 +1,9 @@
-@import "system/utilities";
+@use "system/utilities" as *;
 
 .posts.in-view-text-animation {
   .the-test {
     h1, h2, h3, h4, h5, h6, p {
-      transition: opacity $transition-speed $transition-timing, transform $transition-speed $transition-timing;
+      transition-property: opacity, transform;
 
       &[in-view=false],
       &:not([in-view]) {

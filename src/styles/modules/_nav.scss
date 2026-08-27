@@ -1,6 +1,7 @@
-@import "modules/sticky-stacky";
+@use "system/utilities" as *;
+@use "modules/sticky-stacky" as *;
 
-$nav-height: $s11;
+$nav-height: space(12);
 
 html {
   --nav-height: #{$nav-height};
@@ -27,7 +28,7 @@ nav.main {
   z-index: 1000;
   width: 100%;
   position: relative;
-  @include palette--base;
+  @include palette--header;
 
   * {
     position: relative;
@@ -50,118 +51,114 @@ nav.main {
     padding: 0;
   }
 
-  .content, .container {
+  .content,
+  .container {
     overflow: visible;
     align-items: center;
     display: flex;
     justify-content: space-between;
     min-height: $nav-height;
-    @include palette--base;
 
     &::after {
       display: block;
       content: "";
       position: absolute;
-      @include palette--base;
       top: 0;
       bottom: 0;
       left: 100%;
       width: 100vw;
     }
   }
+
   .menu {
-    display: block;
-    background-color: transparent;
-    color: $palette--primary-white;
     font-weight: $regular;
     padding: 4px 8px;
-    box-shadow: 0 0 0 1px $palette--primary-color-light;
-    border-color: transparent;
+    cursor: pointer;
 
-    &::before {
-      content: unset;
-    }
+    @include link-focus;
+  }
+
+  #activate-menu {
+    border-width: 0px;
+    border-color: rgba(0, 0, 0, 0);
+    border-image: none;
+    border-style: none;
+    background-color: rgba(50, 50, 50, 1);
   }
 
   #nav-tray {
     z-index: 0;
     position: absolute;
-    top: calc(100% + 12px);
-    transform-origin: calc(100% - #{$s2 + 20px}) -$s2;
+    top: calc(100% + #{space(2)});
+    transform-origin: calc(100% - #{space(2) + 20px}) -#{space(2)};
     transform: rotateY(90deg);
     display: grid;
-    right: $s2;
+    right: space(2);
     transition-property: transform;
-    transition-duration: $transition-speed;
-    transition-timing-function: $transition-timing;
     @include palette--base;
-    box-shadow: 0 0 0 1px $palette--primary-color-light;
-    padding: $s1;
+    box-shadow: 0 0 0 2px $palette--primary-color-light;
+    padding: space(1);
 
     &.slide-in {
       transform: rotateY(0deg);
     }
 
     @include mq($medium) {
-      right: $s5;
+      right: space(6);
     }
 
-    #top-triangle {
-      &,
-      &::after {
-        position: absolute;
-        width: $s4;
-        height: $s4;
-        border-style: solid;
-        border-width: $s2;
-        border-radius: 0;
-        border-top-color: transparent;
-        border-left-color: transparent;
-        border-right-color: transparent;
-      }
-
-      &::after {
-        content: '';
-        left: -12px;
-        top: -12px;
-        border-bottom-color: $palette--primary-grey;
-        transform: translateY(2px);
-      }
-
-      top: -$s4;
-      right: 20px;
-      border-bottom-color: $palette--primary-color-light;
+    .block-link {
+      padding: 2px space(1) 0;
+      margin-left: 0;
     }
   }
 
-  .nav-link {
-    background-color: transparent;
-    padding: 4px 8px;
+  #top-triangle {
+
+    &,
+    &::after {
+      position: absolute;
+      width: space(4);
+      height: space(4);
+      border-style: solid;
+      border-width: space(2);
+      border-radius: 0;
+      border-top-color: transparent;
+      border-left-color: transparent;
+      border-right-color: transparent;
+    }
+
+    &::after {
+      content: '';
+      left: -12px;
+      top: -12px;
+      border-bottom-color: $palette--primary-grey;
+      transform: translateY(2px);
+    }
+
+    top: -#{space(4)};
+    right: 20px;
+    border-bottom-color: $palette--primary-color-light;
   }
 
+  .brand {
+    width: auto;
+    max-width: css-min(calc(100% - #{66px + space(2)}), 200px);
+    display: flex;
+    justify-content: flex-start;
+    align-items: middle;
+    border: none;
 
-  .link {
-    @include font-size;
-    font-family: $sans-serif;
-    color: $palette--primary-white;
-
-    &.brand {
-      width: auto;
-      max-width: css-min(calc(100% - #{66px + 12px}), 200px);
-      display: flex;
-      justify-content: flex-start;
-      align-items: middle;
-      @include palette--base;
-
-      &::after {
-        top: 4px;
-        height: calc(100% - 8px);
-      }
-
-      svg {
-        width: 100%;
-        height: auto;
-      }
+    &::after {
+      top: 4px;
+      height: calc(100% - 8px);
     }
+
+    svg {
+      width: 100%;
+      height: auto;
+    }
+
+    @include link-focus;
   }
 }

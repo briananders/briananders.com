@@ -1,25 +1,27 @@
-@import "system/utilities";
-
+@use "system/utilities" as *;
+@use "modules/code" as *;
 
 main.posts.how-to-match {
-  @import "modules/code";
-
   .example-container {
     overflow: hidden;
-    @include font-size(3);
-    border: 2px solid $palette--divider-color;
-    margin-bottom: $s6;
+    @include type--heading-4;
+    @include border--light;
+    margin-bottom: space(6);
   }
+
   .tall {
-    border-top: $s3 solid $palette--accent-color;
+    border-top: space(3) solid $palette--accent-color;
   }
+
   .column-1,
   .column-3 {
     background-color: $color--grey-900;
   }
+
   .column-2 {
     background-color: $color--grey-800;
   }
+
   .column-1,
   .column-2,
   .column-3 {
@@ -28,19 +30,22 @@ main.posts.how-to-match {
     float: left;
     color: $palette--primary-white;
   }
+
   .example-1 .column-1,
   .example-1 .column-2 {
     width: 50%;
   }
+
   .example-2 .column-1,
   .example-2 .column-2,
   .example-2 .column-3 {
     width: 33.33333%;
   }
+
   ul {
     margin: 0;
-    padding-top: $s6;
-    padding-bottom: $s6;
+    padding-top: space(6);
+    padding-bottom: space(6);
     list-style: none;
     padding-left: 0;
     text-align: center;

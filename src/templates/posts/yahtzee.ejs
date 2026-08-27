@@ -16,12 +16,12 @@ scripts:
 <section>
   <div class="content">
     <p>
-      <%- noWidows(`I play a Yahtzee knock off on my phone, and it is clearly making adjustments because there are levels of difficulty. I like creating games (check out ${link('minesweeper', { href: '/posts/minesweeper/' })}) and this one seemed like a fun challenge. It’s a dice game, and my focus was on getting the logic down. So, enjoy!`) %>
+      I play a Yahtzee knock off on my phone, and it is clearly making adjustments because there are levels of difficulty. I like creating games (check out <%- inlineLink('minesweeper', { href: '/posts/minesweeper/' }); %>) and this one seemed like a fun challenge. It’s a dice game, and my focus was on getting the logic down. So, enjoy!
     </p>
     <p>
-      <%- noWidows(`According to ${externalLink("Wikipedia", { href: "https://en.wikipedia.org/wiki/Yahtzee" })}, Yahtzee is owned by ${externalLink("Hasbro", { href: "https://shop.hasbro.com/en-us" })} and they have an
-      ${externalLink("Android app", { href: "https://play.google.com/store/apps/details?id=com.scopely.yux&hl=en_US&gl=US" })} and an
-      ${externalLink("iOS app", { href: "https://apps.apple.com/us/app/yahtzee-with-buddies-dice/id1206967173" })}. Check out a higher quality gaming experience there.`) %>
+      According to <%- inlineLink("Wikipedia", { href: "https://en.wikipedia.org/wiki/Yahtzee" }); %>, Yahtzee is owned by <%- inlineLink("Hasbro", { href: "https://shop.hasbro.com/en-us" }); %> and they have an
+      <%- inlineLink("Android app", { href: "https://play.google.com/store/apps/details?id=com.scopely.yux&hl=en_US&gl=US" }); %> and an
+      <%- inlineLink("iOS app", { href: "https://apps.apple.com/us/app/yahtzee-with-buddies-dice/id1206967173" }); %>. Check out a higher quality gaming experience there.
     </p>
   </div>
 </section>
@@ -29,160 +29,164 @@ scripts:
 <section>
   <div class="content">
     <h2>
-      <%- noWidows(`How to play`) %>
+      How to play
     </h2>
     <p>
-      <%- noWidows(`Yahtzee is a dice game played with five six-sided dice. The objective of the game is to score points by rolling certain combinations of the dice. The game is played with a scorecard, with a separate section for each combination.`) %>
+      Yahtzee is a dice game played with five six-sided dice. The objective of the game is to score points by rolling certain combinations of the dice. The game is played with a scorecard, with a separate section for each combination.
     </p>
 
     <ol>
       <li>
-        <%- noWidows(`The first step is to roll all five dice. You can roll them as many times as you want, but you must set aside at least one die after each roll. This means that you cannot roll all five dice again after the first roll.`) %>
+        The first step is to roll all five dice. You can roll them as many times as you want, but you must set aside at least one die after each roll. This means that you cannot roll all five dice again after the first roll.
       </li>
       <li>
-        <%- noWidows(`After the first roll, you can set aside any dice that you want to keep and roll the remaining dice again.`) %>
+        After the first roll, you can set aside any dice that you want to keep and roll the remaining dice again.
       </li>
       <li>
-        <%- noWidows(`After the second roll, you must again set aside at least one die and you can roll the remaining dice again, if any.`) %>
+        After the second roll, you must again set aside at least one die and you can roll the remaining dice again, if any.
       </li>
       <li>
-        <%- noWidows(`After the third roll, you must set aside any remaining dice and cannot roll again.`) %>
+        After the third roll, you must set aside any remaining dice and cannot roll again.
       </li>
       <li>
-        <%- noWidows(`After the third roll, you must choose one of the sections on the scorecard to fill in with your roll. For example, you might score your roll as "3 of a kind" if you have rolled three dice with the same number. Each combination can only be filled once in the game, so choose wisely.`) %>
+        After the third roll, you must choose one of the sections on the scorecard to fill in with your roll. For example, you might score your roll as "3 of a kind" if you have rolled three dice with the same number. Each combination can only be filled once in the game, so choose wisely.
       </li>
       <li>
-        <%- noWidows(`Once you have filled in a section on the scorecard, your turn is over, and it's the next player's turn.`) %>
+        Once you have filled in a section on the scorecard, your turn is over, and it's the next player's turn.
       </li>
       <li>
-        <%- noWidows(`The game ends when all thirteen sections of the scorecard have been filled in.`) %>
+        The game ends when all thirteen sections of the scorecard have been filled in.
       </li>
       <li>
-        <%- noWidows(`The player with the highest total score at the end of the game wins.`) %>
+        The player with the highest total score at the end of the game wins.
       </li>
     </ol>
 
     <p>
-      <%- noWidows(`Some possible combinations are:`) %>
+      Some possible combinations are:
     </p>
 
     <ul class="default">
       <li>
-        <%- noWidows(`3 of a kind: Sum of all the dice if three of them have the same value.`) %>
+        3 of a kind: Sum of all the dice if three of them have the same value.
       </li>
       <li>
-        <%- noWidows(`4 of a kind: Sum of all the dice if four of them have the same value.`) %>
+        4 of a kind: Sum of all the dice if four of them have the same value.
       </li>
       <li>
-        <%- noWidows(`Small Straight: 30 points if a player rolls 1-2-3-4-5 or 2-3-4-5-6 in any order.`) %>
+        Small Straight: 30 points if a player rolls 1-2-3-4-5 or 2-3-4-5-6 in any order.
       </li>
       <li>
-        <%- noWidows(`Large Straight: 40 points if a player rolls 1-2-3-4-5 or 2-3-4-5-6 in order.`) %>
+        Large Straight: 40 points if a player rolls 1-2-3-4-5 or 2-3-4-5-6 in order.
       </li>
       <li>
-        <%- noWidows(`Full House: 25 points, if a player rolls two of one number, three of another number.`) %>
+        Full House: 25 points, if a player rolls two of one number, three of another number.
       </li>
       <li>
-        <%- noWidows(`Yahtzee: 50 points, if all five dice have the same value`) %>
+        Yahtzee: 50 points, if all five dice have the same value`
       </li>
       <li>
-        <%- noWidows(`Chance: Sum of all the dice`) %>
+        Chance: Sum of all the dice`
       </li>
       <li>
-        <%- noWidows(`Bonus: Extra 35 points if the single totals are greater than 62`) %>
+        Bonus: Extra 35 points if the single totals are greater than 62`
       </li>
     </ul>
 
     <p>
-      <%- noWidows(`Scoring combination are many and different based on the version of the game.`) %>
+      Scoring combination are many and different based on the version of the game.
     </p>
 
     <p>
-      <%- noWidows(`A score over 200 is considered good and above 250 is considered very good. However, it really depends on the competitive level of the players and the scoring rule that been agreed upon before the game.`) %>
+      A score over 200 is considered good and above 250 is considered very good. However, it really depends on the competitive level of the players and the scoring rule that been agreed upon before the game.
     </p>
 
     <p>
-      <%- noWidows(`It's important to remember, Yahtzee is a game of luck, so the outcome can be very different each time you play.`) %>
+      It's important to remember, Yahtzee is a game of luck, so the outcome can be very different each time you play.
     </p>
   </div>
 </section>
 
-<div class="content game-container">
-  <button type=button id=roll data-rolls-left=3 class="button">Roll</button>
+<section>
+  <div class="content">
+    <div class="game-container">
+      <button type=button id=roll data-rolls-left=3 class="button">Roll</button>
 
-  <div id=dice>
-    <% for (let i = 0; i < 5; i++) { %>
-      <button type="button" id="die-<%- i %>" value="0">0</button>
-    <% } %>
-  </div>
+      <div id=dice>
+        <% for (let i = 0; i < 5; i++) { %>
+          <button type="button" id="die-<%- i %>" value="0">0</button>
+        <% } %>
+      </div>
 
-  <div id=score-board data-rolls-left=3>
-    <div class="column">
-      <div id=ones>
-        <label>Ones</label>
-        <button type=button class=score>0</button>
+      <div id=score-board data-rolls-left=3>
+        <div class="column">
+          <div id=ones>
+            <label>Ones</label>
+            <button type=button class=score>0</button>
+          </div>
+          <div id=twos>
+            <label>Twos</label>
+            <button type=button class=score>0</button>
+          </div>
+          <div id=threes>
+            <label>Threes</label>
+            <button type=button class=score>0</button>
+          </div>
+          <div id=fours>
+            <label>Fours</label>
+            <button type=button class=score>0</button>
+          </div>
+          <div id=fives>
+            <label>Fives</label>
+            <button type=button class=score>0</button>
+          </div>
+          <div id=sixes>
+            <label>Sixes</label>
+            <button type=button class=score>0</button>
+          </div>
+          <div id=kind-total>
+            <label>Total</label>
+            <div class=score>0</div>
+          </div>
+          <div id=bonus>
+            <label>Bonus</label>
+            <div class=score>0</div>
+          </div>
+        </div>
+
+        <div class="column">
+          <div id=three-kind>
+            <label>3 of a kind</label>
+            <button type=button class=score>0</button>
+          </div>
+          <div id=four-kind>
+            <label>4 of a kind</label>
+            <button type=button class=score>0</button>
+          </div>
+          <div id=small-straight>
+            <label>Small Straight</label>
+            <button type=button class=score>0</button>
+          </div>
+          <div id=large-straight>
+            <label>Large Straight</label>
+            <button type=button class=score>0</button>
+          </div>
+          <div id=full-house>
+            <label>Full House</label>
+            <button type=button class=score>0</button>
+          </div>
+          <div id=wild>
+            <label>Chance</label>
+            <button type=button class=score>0</button>
+          </div>
+          <div id=yahtzee>
+            <label>Yahtzee</label>
+            <button type=button class=score>0</button>
+          </div>
+        </div>
       </div>
-      <div id=twos>
-        <label>Twos</label>
-        <button type=button class=score>0</button>
-      </div>
-      <div id=threes>
-        <label>Threes</label>
-        <button type=button class=score>0</button>
-      </div>
-      <div id=fours>
-        <label>Fours</label>
-        <button type=button class=score>0</button>
-      </div>
-      <div id=fives>
-        <label>Fives</label>
-        <button type=button class=score>0</button>
-      </div>
-      <div id=sixes>
-        <label>Sixes</label>
-        <button type=button class=score>0</button>
-      </div>
-      <div id=kind-total>
-        <label>Total</label>
-        <div class=score>0</div>
-      </div>
-      <div id=bonus>
-        <label>Bonus</label>
-        <div class=score>0</div>
-      </div>
+
+      <div id=total><label>Grand total:</label><span class=score>0</span></div>
     </div>
-
-    <div class="column">
-      <div id=three-kind>
-        <label>3 of a kind</label>
-        <button type=button class=score>0</button>
-      </div>
-      <div id=four-kind>
-        <label>4 of a kind</label>
-        <button type=button class=score>0</button>
-      </div>
-      <div id=small-straight>
-        <label>Small Straight</label>
-        <button type=button class=score>0</button>
-      </div>
-      <div id=large-straight>
-        <label>Large Straight</label>
-        <button type=button class=score>0</button>
-      </div>
-      <div id=full-house>
-        <label>Full House</label>
-        <button type=button class=score>0</button>
-      </div>
-      <div id=wild>
-        <label>Chance</label>
-        <button type=button class=score>0</button>
-      </div>
-      <div id=yahtzee>
-        <label>Yahtzee</label>
-        <button type=button class=score>0</button>
-      </div>
-    </div>
   </div>
-
-  <div id=total><label>Grand total:</label><span class=score>0</span></div>
-</div>
+</section>

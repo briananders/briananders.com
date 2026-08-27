@@ -1,0 +1,56 @@
+---
+title: 'Coin Flip'
+description: 'A simple coin flipping widget with smooth animations. Flip a virtual coin and track your results!'
+date: 2025-06-10
+priority: 0.8
+pageClasses:
+- 'posts coin-flip'
+layout: base
+styles:
+- 'main'
+- 'posts/coin-flip'
+scripts:
+- 'posts/coin-flip'
+---
+
+<section>
+  <div class="content">
+    <p>
+      Sometimes you just need to flip a coin to make a decision. This simple widget lets you flip a virtual coin with a satisfying animation and keeps track of your results.
+    </p>
+
+    <div class="coin-container card">
+      <div class="coin-wrapper">
+        <div id="coin" class="coin">
+          <div class="coin-side heads">
+            <div class="coin-face">HEADS</div>
+          </div>
+          <div class="coin-side tails">
+            <div class="coin-face">TAILS</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="result" id="result">Click "Flip Coin" to start</div>
+
+      <button type="button" id="flip-button" class="button">Flip Coin</button>
+
+      <div class="stats">
+        <div class="stat-item">
+          <span class="stat-label">Heads:</span>
+          <span class="stat-value" id="heads-count">0</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-label">Tails:</span>
+          <span class="stat-value" id="tails-count">0</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-label">Total Flips:</span>
+          <span class="stat-value" id="total-count">0</span>
+        </div>
+      </div>
+
+      <button type="button" id="reset-button" class="button-secondary">Reset Stats</button>
+    </div>
+  </div>
+</section>

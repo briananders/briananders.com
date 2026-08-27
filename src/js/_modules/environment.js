@@ -1,1 +1,1 @@
-module.exports.isProduction = (() => window.location.hostname === 'briananders.net')();
+module.exports.isProduction = (() => window.location.hostname === 'briananders.com')();

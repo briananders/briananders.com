@@ -1,7 +1,7 @@
-@import "system/utilities";
+@use "system/utilities" as *;
 
 
-form, 
+form,
 #results {
-  text-align: center;
+  text-align: left;
 }

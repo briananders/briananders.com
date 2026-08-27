@@ -1,52 +1,31 @@
-const artistTemplate = document.createElement("artist-template");
-artistTemplate.innerHTML = `
-  <style>
-    a {
-      color: inherit;
-      text-decoration: none;
-      display: grid;
-      grid-template-columns: 90px 1fr;
-      gap: 12px;
-    }
-    #bar {
-      width: 0%;
-      max-width: 100%;
-      height: 12px;
-      border-radius: 3px;
-      background: linear-gradient(to left, #f57f17, #cd4800);
-      transition: width 300ms ease;
-      margin-top: 6px;
-    }
-    img {
-      display: block;
-      width: 90px;
-    }
-    slot {
-      font-size: 24px;
-      display: block;
-      margin-bottom: 12px;
-      font-family: "Roboto", sans-serif;
-      font-weight: 500;
-    }
-  </style>
+const { dasherize } = require('underscore.string');
 
-  <a href="" itemprop="url" rel="noopener" target="blank">
-    <img src="" alt="" />
+const artistListingStyles = require('./artist-listing.scss');
+
+const artistTemplate = `
+  <style>${artistListingStyles}</style>
+
+  <a href="#" itemprop="url" rel="noopener" target="blank">
     <span class="info">
       <slot>Loading...</slot>
       <div><span slot="count">00</span> Plays</div>
       <div id="bar" style="--length: 100%"></div>
     </span>
+    <img src="" alt="" />
   </a>
 `;
 
-const attributes = ["name", "count", "max", 'img'];
+const attributes = ['name', 'count', 'max', 'img'];
+
+function formatNumber(number) {
+  return Number(number).toLocaleString();
+}
 
 class ArtistListing extends HTMLElement {
   constructor() {
     super();
-    const shadow = this.attachShadow({ mode: "open" });
-    shadow.append(artistTemplate.cloneNode(true));
+    const shadow = this.attachShadow({ mode: 'open' });
+    shadow.innerHTML = artistTemplate;
   }
 
   static get observedAttributes() {
@@ -56,21 +35,21 @@ class ArtistListing extends HTMLElement {
   attributeChangedCallback(name, oldValue, newValue) {
     // console.log(name, oldValue, newValue);
     if (['count'].includes(name)) {
-      this.shadowRoot.querySelector(`[slot="${name}"]`).innerText = newValue;
+      this.shadowRoot.querySelector(`[slot="${name}"]`).innerText = formatNumber(newValue);
     }
     if (['count', 'max'].includes(name)) {
       const count = Number(this.getAttribute('count'));
       const max = Number(this.getAttribute('max'));
 
-      const length = count / max * 100;
+      const length = (count / max) * 100;
       this.shadowRoot.getElementById('bar').style.width = `${length}%`;
     }
-    if (name === "name") {
+    if (name === 'name') {
       const imgElement = this.shadowRoot.querySelector('img');
       imgElement.setAttribute('alt', newValue);
-      this.shadowRoot.querySelector('a').setAttribute('href', `https://www.last.fm/music/${newValue.replace(/\s/g, '+')}`);
+      this.shadowRoot.querySelector('a').setAttribute('href', `?trends=artists/${dasherize(newValue.trim().toLowerCase())}`);
     }
-    if (name === "img") {
+    if (name === 'img') {
       const imgElement = this.shadowRoot.querySelector('img');
       imgElement.setAttribute('src', newValue);
     }

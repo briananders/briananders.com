@@ -1,30 +1,20 @@
+@use "system/utilities" as *;
+
 #posts-list {
   display: grid;
   grid-template-columns: 1fr;
+  gap: $grid--gap;
   justify-content: space-around;
-  column-gap: $s5;
-  row-gap: $s10;
   align-items: stretch;
   justify-items: stretch;
-  margin-bottom: $s6;
+  margin-bottom: space(6);
   text-align: left;
 
-  h3 {
-    text-align: left;
-  }
-
-  figcaption {
-    @include font-size(3);
-    margin-bottom: $s2;
-    flex-grow: 1;
-  }
-
   a {
-    display: block;
-    @include sixHundred;
-    padding: $s3;
-    border-radius: $border-radius;
-    border: 2px solid $palette--divider-color;;
-    margin: 0 auto;
+    display: grid;
+    @include readingWidth;
+    margin-bottom: 0;
+    grid-template-columns: 1fr 130px;
+    align-items: center;
   }
 }

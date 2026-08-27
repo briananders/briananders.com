@@ -14,11 +14,11 @@ styles:
 <article class="content" itemscope itemtype="https://schema.org/BlogPosting">
 
   <p>
-    <%- noWidows(`<strong>TL;DR:</strong> ${externalLink('git clean', { href: 'https://git-scm.com/docs/git-clean' })} documentation here.`); %>
+    <strong>TL;DR:</strong> <%- inlineLink('git clean', { href: 'https://git-scm.com/docs/git-clean' }) %> documentation here.
   </p>
 
   <p>
-    <%- noWidows("If you have ever changed branches in Git, to find a lot of extra files that don’t belong on the branch, here’s what you need to know. It’s not fun to manually delete every file or directory. In the past I have seen people <var>rm</var> and then <var>git checkout</var> whole folders to clean up extra untracked files. Thankfully, there’s this better way - built into Git, even!"); %>
+    If you have ever changed branches in Git, to find a lot of extra files that don’t belong on the branch, here’s what you need to know. It’s not fun to manually delete every file or directory. In the past I have seen people <var>rm</var> and then <var>git checkout</var> whole folders to clean up extra untracked files. Thankfully, there’s this better way - built into Git, even!
   </p>
 
   <%- code(
@@ -27,11 +27,11 @@ styles:
 }); %>
 
   <p>
-    <%- noWidows('Git clean, "Cleans the working tree by recursively removing files that are not under version control, starting from the current directory." There are flags that you can pass to extend the <var>git clean</var> functionality.'); %>
+    Git clean, "Cleans the working tree by recursively removing files that are not under version control, starting from the current directory." There are flags that you can pass to extend the <var>git clean</var> functionality.
   </p>
 
   <p>
-    <%- noWidows("<strong>-n</strong> or <strong>--dry-run</strong> will not delete anything; only list the files that are to be deleted."); %>
+    <strong>-n</strong> or <strong>--dry-run</strong> will not delete anything; only list the files that are to be deleted.
   </p>
 
   <%- code(
@@ -40,7 +40,7 @@ styles:
 }); %>
 
   <p>
-    <%- noWidows("<strong>-d</strong> will remove untracked directories as well as files. If an directory is managed by a different Git repo, it will not be removed."); %>
+    <strong>-d</strong> will remove untracked directories as well as files. If an directory is managed by a different Git repo, it will not be removed.
   </p>
 
   <%- code(
@@ -49,7 +49,7 @@ styles:
 }); %>
 
   <p>
-    <%- noWidows("<strong>-f</strong> will force the deletion of files or directory. So this is the option that I use the most just for simplicity."); %>
+    <strong>-f</strong> will force the deletion of files or directory. So this is the option that I use the most just for simplicity.
   </p>
 
   <%- code(
@@ -59,7 +59,7 @@ git clean -fd`, {
 }); %>
 
   <p>
-    <%- noWidows("And if you want to clean out a certain directory - without deleting files in that directory that are tracked - you can provide a path as an argument."); %>
+    And if you want to clean out a certain directory - without deleting files in that directory that are tracked - you can provide a path as an argument.
   </p>
 
   <%- code(
@@ -72,7 +72,7 @@ git clean -fd path/to/folder/or/file`, {
 }); %>
 
   <p>
-    <%- noWidows("I hope this is helpful!"); %>
+    I hope this is helpful!
   </p>
 
 </article>

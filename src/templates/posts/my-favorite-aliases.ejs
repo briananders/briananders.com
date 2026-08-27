@@ -21,19 +21,18 @@ styles:
 <%- code(
 `alias push="git push -u origin HEAD"
 alias src="source ~/.zshrc"
-alias prune-repo='${pruneRepo}'
-`); %>
+alias prune-repo='${pruneRepo}'`); %>
 
   <p>
-    <%- noWidows(`After creating a new git branch, the best way to push the branch up to the remote location is with this <tag>push</tag> command.`); %>
+    After creating a new git branch, the best way to push the branch up to the remote location is with this <tag>push</tag> command.
   </p>
 
   <p>
-    <%- noWidows(`If you need to reload your terminal settings because you made a change to your .zshrc or .bashrc file, it’s cumbersome to remember the source command. This <tag>src</tag> command saves some key strokes and you don’t have to remember anything.`); %>
+    If you need to reload your terminal settings because you made a change to your .zshrc or .bashrc file, it’s cumbersome to remember the source command. This <tag>src</tag> command saves some key strokes and you don’t have to remember anything.
   </p>
 
   <p>
-    <%- noWidows(`Sometimes, when you have checked out many Git branches, those branches will eventually go stale. It can be a slow process to checkout a branch that is thousands of commits behind master locally, when you know the remote branch is closer to, or even ahead of master. <tag>prune-git</tag> will delete all branches that are not <tag>master</tag>. Then, when you checkout any remote branch, you will get exactly what is in the remote.`); %>
+    Sometimes, when you have checked out many Git branches, those branches will eventually go stale. It can be a slow process to checkout a branch that is thousands of commits behind master locally, when you know the remote branch is closer to, or even ahead of master. <tag>prune-git</tag> will delete all branches that are not <tag>master</tag>. Then, when you checkout any remote branch, you will get exactly what is in the remote.
   </p>
 
 </article>

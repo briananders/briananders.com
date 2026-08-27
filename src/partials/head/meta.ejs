@@ -16,11 +16,10 @@
   <meta name="robots"                                content="noindex, nofollow" />
 <% } %>
 
-<meta name="keywords"                              content="Brian, Anders, Brian Anders, Engineer, UX Engineer, Senior UX Engineer, Staff UX Engineer, User Experience, User Experience Engineer, Senior User Experience Engineer, Staff User Experience Engineer, Nest, Google, Alphabet, Lamoni, Graceland University, Google Store" />
-<meta name="description"                           content="<%- locals.description %>" />
+<meta name="keywords"                              content="Brian, Anders, Brian Anders" />
 <meta name="author"                                content="<%- locals.author %>" />
 
-<!-- Schema.org markup for Google+ -->
+<!-- Schema.org markup -->
 <meta itemprop="name"                              content="<%- locals.author %>" />
 <meta itemprop="description"                       content="<%- locals.description %>" />
 <meta itemprop="image"                             content="/images/favicon_base.png" />
@@ -52,6 +51,9 @@
 <meta itemprop="copyrightHolder"                   content="<%- locals.author %>"/>
 <meta itemprop="copyrightYear"                     content="<%- new Date().getFullYear(); %>"/>
 <meta itemprop="isFamilyFriendly"                  content="true"/>
+
+<meta name="build-id" content="<%- locals.commitHash %>" />
+<meta name="build-datetime" content="<%- new Date().toISOString() %>" />
 
 <meta itemprop="author"                            content="<%- locals.author %>"/>
 <% if (locals.date) { %>
