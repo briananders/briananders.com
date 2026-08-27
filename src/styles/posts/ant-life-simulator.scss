@@ -9,7 +9,7 @@
   @include border--light;
 
   div {
-    border-radius: 100%;
+    border-radius: $border-radius--circle;
 
     background-size: cover;
     background-repeat: no-repeat;
@@ -35,9 +35,7 @@
   width: css-min(100vh, 100vw, var(--window-height));
   height: css-min(100vh, 100vw, var(--window-height));
   transform: translateY(-100%);
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  @include flex-center;
   clip-path: circle(100% at center);
 
   transition: clip-path $transition-speed $transition-timing;

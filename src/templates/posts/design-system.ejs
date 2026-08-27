@@ -13,62 +13,127 @@ scripts:
   - 'posts/design-system'
 ---
 
-<section class="palette">
+<section class="ds-toc">
+  <div class="container">
+    <h3>Table of Contents</h3>
+    <ol>
+      <li><a class="inline-link" href="#anatomy">System Anatomy</a></li>
+      <li><a class="inline-link" href="#color-palette">Color Palette</a></li>
+      <li><a class="inline-link" href="#palette-combos">Palette Combinations</a></li>
+      <li><a class="inline-link" href="#typography">Typography</a></li>
+      <li><a class="inline-link" href="#type-scale">Type Scale</a></li>
+      <li><a class="inline-link" href="#spacing">Spacing</a></li>
+      <li><a class="inline-link" href="#defaults">Default Values</a></li>
+      <li><a class="inline-link" href="#viewports">Viewports &amp; Breakpoints</a></li>
+      <li><a class="inline-link" href="#grid">Grid</a></li>
+      <li><a class="inline-link" href="#shadows">Shadows</a></li>
+      <li><a class="inline-link" href="#z-index">Z-Index Scale</a></li>
+      <li><a class="inline-link" href="#transitions">Transitions</a></li>
+      <li><a class="inline-link" href="#links">Links</a></li>
+      <li><a class="inline-link" href="#forms">Form Controls</a></li>
+      <li><a class="inline-link" href="#utilities">Utility Classes</a></li>
+    </ol>
+  </div>
+</section>
+
+<!-- 1. SYSTEM ANATOMY -->
+<section class="ds-anatomy" id="anatomy">
+  <div class="container">
+    <h2>System Anatomy</h2>
+    <p>The design system lives in <var>src/styles/system/</var> and is organized into five layers that build on each other.</p>
+    <div class="file-tree"><span class="dir">system/</span>
+├── <span class="dir">variables/</span>        Design tokens
+│   ├── _colors.scss       Google Material palette
+│   ├── _defaults.scss     Base unit, transitions, border-radius
+│   ├── _fonts.scss        Font families and weights
+│   ├── _grid.scss         Grid dimensions
+│   ├── _palettes.scss     Semantic color palette
+│   ├── _shadows.scss      Box-shadow tokens
+│   ├── _spaces.scss       Spacing scale
+│   ├── _viewports.scss    Breakpoints
+│   └── _z-index.scss      Z-index scale
+├── <span class="dir">functions/</span>        SCSS helper functions
+│   └── all.scss           css-min(), css-max()
+├── <span class="dir">mixins/</span>           Reusable style patterns
+│   ├── _animations.scss   Animation mixins
+│   ├── _colors.scss       Palette application mixins
+│   ├── _elements.scss     Component mixins
+│   ├── _grid.scss         Layout mixins
+│   ├── _media-queries.scss  Responsive helpers
+│   ├── _type.scss         Typography mixins
+│   └── _utilities.scss    Box-sizing mixin
+├── <span class="dir">styles/</span>           Base element styles
+│   ├── _defaults.scss     *, ::selection
+│   ├── _elements.scss     HTML element defaults
+│   └── _attributes.scss   ARIA attribute styles
+└── <span class="dir">classes/</span>          Utility CSS classes
+    ├── _display.scss      Display &amp; layout utilities
+    ├── _elements.scss     Component classes
+    ├── _spacing.scss      Margin &amp; padding utilities
+    └── _type.scss         Heading classes</div>
+  </div>
+</section>
+
+<!-- 2. COLOR PALETTE -->
+<section class="palette" id="color-palette">
   <div class="container">
     <h2>Color Palette</h2>
+    <p>Nine semantic palette tokens map to the Google Material color system. Available as both SCSS variables (<var>$palette--*</var>) and CSS custom properties (<var>--palette--*</var>).</p>
     <ul>
       <li class="primary-white">
-        <div>$palette--primary-white</div>
-        <div>--palette--primary-white</div>
         <span></span>
+        <div>$palette--primary-white</div>
+        <div class="ds-section-label">#ffffff</div>
       </li>
       <li class="primary-grey">
-        <div>$palette--primary-grey</div>
-        <div>--palette--primary-grey</div>
         <span></span>
+        <div>$palette--primary-grey</div>
+        <div class="ds-section-label">#212121</div>
       </li>
       <li class="secondary-grey">
-        <div>$palette--secondary-grey</div>
-        <div>--palette--secondary-grey</div>
         <span></span>
+        <div>$palette--secondary-grey</div>
+        <div class="ds-section-label">#757575</div>
       </li>
       <li class="hover-grey">
-        <div>$palette--hover-grey</div>
-        <div>--palette--hover-grey</div>
         <span></span>
+        <div>$palette--hover-grey</div>
+        <div class="ds-section-label">#424242</div>
       </li>
       <li class="divider-color">
-        <div>$palette--divider-color</div>
-        <div>--palette--divider-color</div>
         <span></span>
+        <div>$palette--divider-color</div>
+        <div class="ds-section-label">#f57f17</div>
       </li>
       <li class="error-color">
+        <span></span>
         <div>$palette--error</div>
-        <div>--palette--error</div>
-        <span></span>
+        <div class="ds-section-label">#ef5350</div>
       </li>
-
       <li class="primary-color-dark">
-        <div>$palette--primary-color-dark</div>
-        <div>--palette--primary-color-dark</div>
         <span></span>
+        <div>$palette--primary-color-dark</div>
+        <div class="ds-section-label">darken(#e65100, 5)</div>
       </li>
       <li class="primary-color-light">
-        <div>$palette--primary-color-light</div>
-        <div>--palette--primary-color-light</div>
         <span></span>
+        <div>$palette--primary-color-light</div>
+        <div class="ds-section-label">#f57f17</div>
       </li>
       <li class="accent-color">
-        <div>$palette--accent-color</div>
-        <div>--palette--accent-color</div>
         <span></span>
+        <div>$palette--accent-color</div>
+        <div class="ds-section-label">#69f0ae</div>
       </li>
     </ul>
   </div>
 </section>
-<section class="palette-combos">
+
+<!-- 3. PALETTE COMBINATIONS -->
+<section class="palette-combos" id="palette-combos">
   <div class="container">
     <h2>Palette Combinations</h2>
+    <p>Predefined color pairings for backgrounds and text. Use the SCSS mixins to apply them.</p>
     <ul>
       <li class="palette--base">@include palette--base</li>
       <li class="palette--base--inverted">@include palette--base--inverted</li>
@@ -79,20 +144,179 @@ scripts:
   </div>
 </section>
 
-<section class="defaults">
+<!-- 4. TYPOGRAPHY - FONTS -->
+<section class="fonts" id="typography">
+  <div class="container">
+    <h2>Typography</h2>
+    <p>Two font families are used across the site. Serif for body copy, sans-serif for headings and UI elements.</p>
+    <ul>
+      <li class="serif-regular">
+        <div class="ds-section-label">@include type--regular-serif</div>
+        Source Serif Pro, serif — weight 300
+      </li>
+      <li class="serif-bold">
+        <div class="ds-section-label">@include type--bold-serif</div>
+        Source Serif Pro, serif — weight 500
+      </li>
+      <li class="sans-serif-regular">
+        <div class="ds-section-label">@include type--regular-sans-serif</div>
+        Roboto, sans-serif — weight 300
+      </li>
+      <li class="sans-serif-bold">
+        <div class="ds-section-label">@include type--bold-sans-serif</div>
+        Roboto, sans-serif — weight 500
+      </li>
+    </ul>
+  </div>
+</section>
+
+<!-- 5. TYPE SCALE -->
+<section class="type" id="type-scale">
+  <div class="container">
+    <h2>Type Scale</h2>
+    <p>All sizes are multiples of the <var>$base-unit</var> (6px). The <var>@include font-size($n)</var> mixin sets both <var>font-size</var> and <var>line-height</var> (1.5&times;).</p>
+    <div class="ds-token-table">
+      <table>
+        <thead>
+          <tr>
+            <th>Mixin</th>
+            <th>font-size(n)</th>
+            <th>Size</th>
+            <th>Line-height</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>type--body-tiny</td><td>0</td><td>12px</td><td>18px</td></tr>
+          <tr><td>type--body-small</td><td>1</td><td>15px</td><td>22.5px</td></tr>
+          <tr><td>type--body</td><td>2</td><td>18px</td><td>27px</td></tr>
+          <tr><td>type--heading-6</td><td>3</td><td>21px</td><td>31.5px</td></tr>
+          <tr><td>type--heading-5</td><td>4</td><td>24px</td><td>36px</td></tr>
+          <tr><td>type--heading-4</td><td>5</td><td>27px</td><td>40.5px</td></tr>
+          <tr><td>type--heading-3</td><td>6</td><td>30px</td><td>45px</td></tr>
+          <tr><td>type--heading-2</td><td>7</td><td>33px</td><td>49.5px</td></tr>
+          <tr><td>type--heading-1</td><td>8</td><td>36px</td><td>54px</td></tr>
+          <tr><td>type--title</td><td>9</td><td>39px</td><td>58.5px</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <ul>
+      <li class="type--title">
+        @include type--title
+      </li>
+      <li class="type--heading-1">
+        @include type--heading-1
+      </li>
+      <li class="type--heading-2">
+        @include type--heading-2
+      </li>
+      <li class="type--heading-3">
+        @include type--heading-3
+      </li>
+      <li class="type--heading-4">
+        @include type--heading-4
+      </li>
+      <li class="type--heading-5">
+        @include type--heading-5
+      </li>
+      <li class="type--heading-6">
+        @include type--heading-6
+      </li>
+      <li class="type--body">
+        @include type--body
+      </li>
+      <li class="type--body-small">
+        @include type--body-small
+      </li>
+      <li class="type--body-tiny">
+        @include type--body-tiny
+      </li>
+    </ul>
+  </div>
+</section>
+
+<!-- 6. SPACING -->
+<section class="ds-spacing-demo" id="spacing">
+  <div class="container">
+    <h2>Spacing Scale</h2>
+    <p>All spacing values are multiples of the <var>$base-unit</var> (6px). Use spacing tokens for margin, padding, and gap values.</p>
+    <ul>
+      <li class="s1">
+        <span class="swatch"></span>
+        <div>$s1</div>
+        <div class="ds-section-label">6px</div>
+      </li>
+      <li class="s2">
+        <span class="swatch"></span>
+        <div>$s2</div>
+        <div class="ds-section-label">12px</div>
+      </li>
+      <li class="s3">
+        <span class="swatch"></span>
+        <div>$s3</div>
+        <div class="ds-section-label">18px</div>
+      </li>
+      <li class="s4">
+        <span class="swatch"></span>
+        <div>$s4</div>
+        <div class="ds-section-label">24px</div>
+      </li>
+      <li class="s6">
+        <span class="swatch"></span>
+        <div>$s6</div>
+        <div class="ds-section-label">36px</div>
+      </li>
+      <li class="s8">
+        <span class="swatch"></span>
+        <div>$s8</div>
+        <div class="ds-section-label">48px</div>
+      </li>
+      <li class="s10">
+        <span class="swatch"></span>
+        <div>$s10</div>
+        <div class="ds-section-label">60px</div>
+      </li>
+      <li class="s12">
+        <span class="swatch"></span>
+        <div>$s12</div>
+        <div class="ds-section-label">72px</div>
+      </li>
+    </ul>
+    <div class="ds-token-table">
+      <table>
+        <thead>
+          <tr><th>Token</th><th>Value</th><th>Common usage</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>$section-spacer</td><td>120px ($s20)</td><td>Between page sections</td></tr>
+          <tr><td>$paragraph-bottom</td><td>36px ($s6)</td><td>Below paragraphs</td></tr>
+          <tr><td>$content-max-width</td><td>1020px</td><td>Content container max width</td></tr>
+          <tr><td>$full-bleed</td><td>1020px</td><td>Full-bleed sections</td></tr>
+          <tr><td>$full-width-small</td><td>1008px</td><td>Full width minus small padding</td></tr>
+          <tr><td>$full-width-medium</td><td>960px</td><td>Full width minus medium padding</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- 7. DEFAULT VALUES -->
+<section class="defaults" id="defaults">
   <div class="container">
     <h2>Default Values</h2>
-    <ul>
-      <li>$base-unit: 6px</li>
-      <li>$transition-speed: 300ms</li>
-      <li>$transition-timing: ease</li>
-      <li>$border-radius: 3px</li>
-    </ul>
-    <h2>Spacing Variables</h2>
-    <ul>
-      <li>$section-spacer: 120px</li>
-      <li>$paragraph-bottom: 36px</li>
-    </ul>
+    <div class="ds-token-table">
+      <table>
+        <thead>
+          <tr><th>Token</th><th>Value</th><th>Description</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>$base-unit</td><td>6px</td><td>Foundation for all spacing and sizing</td></tr>
+          <tr><td>$transition-speed</td><td>500ms</td><td>Default transition duration</td></tr>
+          <tr><td>$transition-timing</td><td>ease</td><td>Default timing function</td></tr>
+          <tr><td>$border-radius</td><td>3px</td><td>Default border radius</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <h3>Content Widths</h3>
     <div class="content-max-width">$content-max-width: 1,020px</div>
     <div class="full-bleed">$full-bleed: 1,020px</div>
     <div class="full-width-small">$full-width-small: 1,008px</div>
@@ -100,136 +324,191 @@ scripts:
   </div>
 </section>
 
-<section class="viewports">
+<!-- 8. VIEWPORTS -->
+<section class="viewports" id="viewports">
   <div class="container">
-    <h2>Viewports</h2>
-
+    <h2>Viewports &amp; Breakpoints</h2>
+    <p>Three breakpoints are used with mobile-first <var>min-width</var> media queries via <var>@include mq($breakpoint)</var>. Use <var>@include mq-max($breakpoint)</var> for max-width queries.</p>
     <div class="small">$small: 320px</div>
     <div class="medium">$medium: 600px</div>
     <div class="large">$large: 960px</div>
+    <div class="ds-token-table">
+      <table>
+        <thead>
+          <tr><th>Mixin</th><th>Output</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>@include mq($medium)</td><td>@media (min-width: 600px)</td></tr>
+          <tr><td>@include mq-max($medium)</td><td>@media (max-width: 599px)</td></tr>
+          <tr><td>@include dark-mode()</td><td>@media (prefers-color-scheme: dark)</td></tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 </section>
 
-<section class="fonts">
+<!-- 9. GRID -->
+<section class="ds-grid-demo" id="grid">
   <div class="container">
-    <h2>Fonts</h2>
+    <h2>Grid</h2>
+    <p>The grid is based on a 12-column system at <var>$large</var> (960px) width. Copy containers are capped at 600px (<var>$grid--copy-max-width</var>). The overall grid max width is 1,320px.</p>
+    <div class="ds-token-table">
+      <table>
+        <thead>
+          <tr><th>Token</th><th>Value</th><th>Description</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>$grid--gutter</td><td>~1.875%</td><td>Gutter between columns</td></tr>
+          <tr><td>$grid--column</td><td>~7.5%</td><td>Single column width</td></tr>
+          <tr><td>$grid--copy-max-width</td><td>600px</td><td>Max width for text content</td></tr>
+          <tr><td>$grid--max-width</td><td>1320px</td><td>Max width for grid container</td></tr>
+          <tr><td>$grid--start-break-point</td><td>600px ($medium)</td><td>When grid layout activates</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <h3>Layout Mixins</h3>
+    <div class="ds-token-table">
+      <table>
+        <thead>
+          <tr><th>Mixin</th><th>Description</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>@include content</td><td>Centered container with max-width and responsive padding</td></tr>
+          <tr><td>@include content-width</td><td>Max-width with auto margins, no padding</td></tr>
+          <tr><td>@include section</td><td>Full-width section with bottom margin</td></tr>
+          <tr><td>@include sixHundred</td><td>Constrain to copy max-width (600px)</td></tr>
+          <tr><td>@include margin-center</td><td>Center with auto left/right margins</td></tr>
+          <tr><td>@include columns($n)</td><td>Set width to $n grid columns</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
 
+<!-- 10. SHADOWS -->
+<section class="ds-shadow-demo" id="shadows">
+  <div class="container">
+    <h2>Shadows</h2>
+    <p>Shadow tokens provide consistent elevation and depth cues throughout the&nbsp;site.</p>
     <ul>
-      <li class="serif-regular">
-        font-family: 'Source Serif Pro', serif;<br>
-        font-weight: 300;
+      <li class="shadow--text">
+        <span class="swatch">Heading</span>
+        <div>$shadow--text</div>
       </li>
-      <li class="serif-bold">
-        font-family: 'Source Serif Pro', serif;<br>
-        font-weight: 500;
+      <li class="shadow--focus">
+        <span class="swatch">Focus</span>
+        <div>$shadow--focus</div>
       </li>
-      <li class="sans-serif-regular">
-        font-family: 'Roboto', sans-serif;<br>
-        font-weight: 300;
+      <li class="shadow--card">
+        <span class="swatch">Card</span>
+        <div>$shadow--card</div>
       </li>
-      <li class="sans-serif-bold">
-        font-family: 'Roboto', sans-serif;<br>
-        font-weight: 500;
+      <li class="shadow--elevated">
+        <span class="swatch">Elevated</span>
+        <div>$shadow--elevated</div>
+      </li>
+      <li class="shadow--toggle">
+        <span class="swatch">Toggle</span>
+        <div>$shadow--toggle</div>
+      </li>
+      <li class="shadow--nav-tray">
+        <span class="swatch">Nav Tray</span>
+        <div>$shadow--nav-tray</div>
       </li>
     </ul>
   </div>
 </section>
 
-<section class="type">
+<!-- 11. Z-INDEX -->
+<section class="ds-z-index-demo" id="z-index">
   <div class="container">
-    <h2>Type Definitions</h2>
+    <h2>Z-Index Scale</h2>
+    <p>A predefined z-index scale prevents stacking conflicts. Always use the tokens rather than arbitrary&nbsp;values.</p>
     <ul>
-      <li class="type--title">
-        @include type--title
+      <li>
+        <span class="label">$z-index--skip-nav</span>
+        <span class="value">10,000,000</span>
       </li>
-      <li class="type--title italic">
-        @include type--title + @include italic
+      <li>
+        <span class="label">$z-index--modal</span>
+        <span class="value">100,000</span>
       </li>
-      <li class="type--heading-1">
-        @include type--heading-1
+      <li>
+        <span class="label">$z-index--overlay</span>
+        <span class="value">10,000</span>
       </li>
-      <li class="type--heading-1 italic">
-        @include type--heading-1 + @include italic
+      <li>
+        <span class="label">$z-index--sticky</span>
+        <span class="value">1,000</span>
       </li>
-      <li class="type--heading-2">
-        @include type--heading-2
-      </li>
-      <li class="type--heading-2 italic">
-        @include type--heading-2 + @include italic
-      </li>
-      <li class="type--heading-3">
-        @include type--heading-3
-      </li>
-      <li class="type--heading-3 italic">
-        @include type--heading-3 + @include italic
-      </li>
-      <li class="type--heading-4">
-        @include type--heading-4
-      </li>
-      <li class="type--heading-4 italic">
-        @include type--heading-4 + @include italic
-      </li>
-      <li class="type--heading-5">
-        @include type--heading-5
-      </li>
-      <li class="type--heading-5 italic">
-        @include type--heading-5 + @include italic
-      </li>
-      <li class="type--heading-6">
-        @include type--heading-6
-      </li>
-      <li class="type--heading-6 italic">
-        @include type--heading-6 + @include italic
-      </li>
-      <li class="type--headings">
-        @include type--headings
-      </li>
-      <li class="type--headings italic">
-        @include type--headings + @include italic
-      </li>
-      <li class="type--body">
-        @include type--body
-      </li>
-      <li class="type--body italic">
-        @include type--body + @include italic
-      </li>
-      <li class="type--body-small">
-        @include type--body-small
-      </li>
-      <li class="type--body-small italic">
-        @include type--body-small + @include italic
-      </li>
-      <li class="type--body-tiny">
-        @include type--body-tiny
-      </li>
-      <li class="type--body-tiny italic">
-        @include type--body-tiny + @include italic
+      <li>
+        <span class="label">$z-index--base</span>
+        <span class="value">1</span>
       </li>
     </ul>
   </div>
 </section>
 
-<section class="links">
+<!-- 12. TRANSITIONS -->
+<section class="ds-transitions-demo" id="transitions">
   <div class="container">
-    <h2>Inline Link</h2>
+    <h2>Transitions</h2>
+    <p>All elements inherit <var>transition-duration</var> and <var>transition-timing-function</var> from the global defaults. By default, <var>transition-property</var> is set to <var>none</var> — opt in by setting it on each element or via a&nbsp;mixin.</p>
+    <div class="ds-token-table">
+      <table>
+        <thead>
+          <tr><th>Token / CSS Var</th><th>Value</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>$transition-speed / --transition-speed</td><td>500ms</td></tr>
+          <tr><td>$transition-timing / --transition-timing</td><td>ease</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>Hover over this box to see the default transition:</p>
+    <div class="demo-box">Hover me</div>
+    <p>Commonly transitioned properties: <var>background-color</var>, <var>transform</var>, <var>opacity</var>, <var>color</var>. Always set <var>transition-property</var> explicitly to enable&nbsp;transitions.</p>
+  </div>
+</section>
+
+<!-- 13. LINKS -->
+<section class="links" id="links">
+  <div class="container">
+    <h2>Link Styles</h2>
+    <p>Four link patterns cover all navigation needs. Each has a corresponding SCSS mixin, CSS class, and EJS helper&nbsp;function.</p>
+    <div class="ds-token-table">
+      <table>
+        <thead>
+          <tr><th>Pattern</th><th>SCSS Mixin</th><th>CSS Class</th><th>EJS Helper</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Inline link</td><td>@include inline-link</td><td>.inline-link</td><td>inlineLink()</td></tr>
+          <tr><td>Block link</td><td>@include block-link</td><td>.block-link</td><td>blockLink()</td></tr>
+          <tr><td>Button link</td><td>@include button-link</td><td>.button-link</td><td>buttonLink()</td></tr>
+          <tr><td>Card link</td><td>@include card-link</td><td>.card-link</td><td>cardLink()</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>Inline Link</h3>
     <p>
       This is what an inline <%- inlineLink('inlineLink()', { href: 'javascript: void(0);' }); %> tag looks like
     </p>
-    <h2>Block Link</h2>
+    <h3>Block Link</h3>
     <p>
       This is what a block link tag looks like.
       <%- blockLink('blockLink()', { href: 'javascript: void(0);' }); %>
     </p>
-    <h2>Button Link</h2>
+    <h3>Button Link</h3>
     <p>
       This is what a button link tag looks like.
       <%- buttonLink('buttonLink()', { href: 'javascript: void(0);' }); %>
     </p>
-    <h2>Card Link</h2>
+    <h3>Card Link</h3>
     <div class="p">
       <%- cardLink(`<h3>cardLink()</h3><p>This is what a card link tag looks like. This is what a card link tag looks like. This is what a card link tag looks like.</p>`, { href: 'javascript: void(0);' }); %>
     </div>
-    <h2>Other</h2>
+    <h3>Other Element Variants</h3>
     <p>
       Button element without any classes. <button>Random button</button>
     </p>
@@ -254,32 +533,137 @@ scripts:
   </div>
 </section>
 
-<section>
+<!-- 14. FORM CONTROLS -->
+<section id="forms">
   <div class="container">
-    <h2>Other Interactive Elements</h2>
+    <h2>Form Controls</h2>
+    <p>All form elements inherit the design system colors and sizing. Input height is <var>$s6 + $s1/2</var> (39px), border radius is <var>$border-radius</var> (3px).</p>
+    <div class="ds-token-table">
+      <table>
+        <thead>
+          <tr><th>Element</th><th>SCSS Mixin</th><th>CSS Class</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>&lt;select&gt;</td><td>@include select</td><td>.select</td></tr>
+          <tr><td>&lt;input type="text"&gt;</td><td>@include input</td><td>—</td></tr>
+          <tr><td>&lt;input type="number"&gt;</td><td>@include input</td><td>—</td></tr>
+          <tr><td>&lt;input type="range"&gt;</td><td>@include input-range</td><td>—</td></tr>
+          <tr><td>&lt;input type="checkbox"&gt;</td><td>@include checkbox</td><td>—</td></tr>
+          <tr><td>&lt;input type="radio"&gt;</td><td>@include checkbox</td><td>—</td></tr>
+          <tr><td>&lt;input .toggle&gt;</td><td>—</td><td>.toggle</td></tr>
+        </tbody>
+      </table>
+    </div>
     <ul>
       <li>
-        <select name=difficulty aria-label="Game difficulty">
+        <label for="ds-select">Select</label>
+        <select id="ds-select" name="difficulty" aria-label="Game difficulty">
           <option value=beginner selected>Beginner</option>
           <option value=intermediate>Intermediate</option>
           <option value=expert>Expert</option>
         </select>
       </li>
       <li>
-        <input type="text" />
+        <label for="ds-text">Text input</label>
+        <input id="ds-text" type="text" placeholder="Text input" />
       </li>
       <li>
-        <input type="number" min=1 max=60 step=1 />
+        <label for="ds-number">Number input</label>
+        <input id="ds-number" type="number" min=1 max=60 step=1 />
       </li>
       <li>
-        <input type="range" min=1 max=60 step=1 />
+        <label for="ds-range">Range input</label>
+        <input id="ds-range" type="range" min=1 max=60 step=1 />
       </li>
       <li>
-        <input type="checkbox" />
+        <label for="ds-checkbox">Checkbox</label>
+        <input id="ds-checkbox" type="checkbox" />
       </li>
       <li>
-        <input type="radio" />
+        <label for="ds-radio">Radio</label>
+        <input id="ds-radio" type="radio" />
+      </li>
+      <li>
+        <label for="ds-toggle">Toggle</label>
+        <input id="ds-toggle" type="checkbox" class="toggle" />
       </li>
     </ul>
+  </div>
+</section>
+
+<!-- 15. UTILITY CLASSES -->
+<section id="utilities">
+  <div class="container">
+    <h2>Utility Classes</h2>
+    <p>Ready-to-use CSS classes that can be applied directly in HTML without writing custom&nbsp;SCSS.</p>
+
+    <h3>Layout &amp; Display</h3>
+    <div class="ds-token-table">
+      <table>
+        <thead>
+          <tr><th>Class</th><th>Property</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>.d-block</td><td>display: block</td></tr>
+          <tr><td>.d-flex</td><td>display: flex</td></tr>
+          <tr><td>.d-grid</td><td>display: grid</td></tr>
+          <tr><td>.d-none</td><td>display: none</td></tr>
+          <tr><td>.d-inline-flex</td><td>display: inline-flex</td></tr>
+          <tr><td>.flex-wrap</td><td>flex-wrap: wrap</td></tr>
+          <tr><td>.justify-center</td><td>justify-content: center</td></tr>
+          <tr><td>.justify-between</td><td>justify-content: space-between</td></tr>
+          <tr><td>.align-center</td><td>align-items: center</td></tr>
+          <tr><td>.gap-{n}</td><td>gap: $s{n} (1,2,3,4,6,8,12)</td></tr>
+          <tr><td>.text-center</td><td>text-align: center</td></tr>
+          <tr><td>.w-100</td><td>width: 100%</td></tr>
+          <tr><td>.relative</td><td>position: relative</td></tr>
+          <tr><td>.overflow-hidden</td><td>overflow: hidden</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>Spacing</h3>
+    <p>Spacing utilities follow the pattern <var>.{property}-{size}</var> where sizes match the spacing&nbsp;scale.</p>
+    <div class="ds-token-table">
+      <table>
+        <thead>
+          <tr><th>Pattern</th><th>Example</th><th>Output</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>.mt-{n}</td><td>.mt-4</td><td>margin-top: 24px</td></tr>
+          <tr><td>.mb-{n}</td><td>.mb-6</td><td>margin-bottom: 36px</td></tr>
+          <tr><td>.ml-{n}</td><td>.ml-2</td><td>margin-left: 12px</td></tr>
+          <tr><td>.mr-{n}</td><td>.mr-3</td><td>margin-right: 18px</td></tr>
+          <tr><td>.pt-{n}</td><td>.pt-4</td><td>padding-top: 24px</td></tr>
+          <tr><td>.pb-{n}</td><td>.pb-6</td><td>padding-bottom: 36px</td></tr>
+          <tr><td>.pl-{n}</td><td>.pl-2</td><td>padding-left: 12px</td></tr>
+          <tr><td>.pr-{n}</td><td>.pr-3</td><td>padding-right: 18px</td></tr>
+          <tr><td>.mx-auto</td><td>.mx-auto</td><td>margin-left/right: auto</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>Available sizes: 0, 1 (6px), 2 (12px), 3 (18px), 4 (24px), 6 (36px), 8 (48px), 10 (60px), 12&nbsp;(72px).</p>
+
+    <h3>Component Classes</h3>
+    <div class="ds-token-table">
+      <table>
+        <thead>
+          <tr><th>Class</th><th>Description</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>.section</td><td>Full-width section with section spacer margin</td></tr>
+          <tr><td>.content / .container</td><td>Centered content container with responsive padding</td></tr>
+          <tr><td>.paragraph / .p</td><td>Body paragraph with max-width and bottom margin</td></tr>
+          <tr><td>.inline-link</td><td>Orange inline link with hover underline</td></tr>
+          <tr><td>.block-link</td><td>White block-level link with arrow indicator</td></tr>
+          <tr><td>.button / .button-link</td><td>Bordered button with centered text</td></tr>
+          <tr><td>.card-link</td><td>Card container with shadow and hover state</td></tr>
+          <tr><td>.error</td><td>Red centered error text</td></tr>
+          <tr><td>.center</td><td>Center text and justify-content</td></tr>
+          <tr><td>.block-center</td><td>Center block with auto margins</td></tr>
+          <tr><td>.h1 through .h6</td><td>Apply heading styles to any element</td></tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 </section>

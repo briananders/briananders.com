@@ -4,10 +4,10 @@
 .posts.making-animations-with-squares {
 
   canvas {
-    width: 100%;
-    @include border--light;
+    width: 100vw;
+    @include canvas-border;
     box-sizing: border-box;
-    height: calc(100vh - 120px);
+    height: var(--window-height);
   }
 
   #pause-button.paused {
@@ -26,10 +26,8 @@
 
   form {
     margin-bottom: space(6);
-    display: flex;
+    @include flex-center;
     flex-wrap: wrap;
-    justify-content: center;
-    align-items: center;
     @include left-margins;
 
     label {

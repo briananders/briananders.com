@@ -11,7 +11,7 @@ section {
 
 main {
   @include left-margins;
-  z-index: 1;
+  z-index: $z-index--base;
   position: relative;
   transition-property: right, min-height;
   right: 0;
@@ -170,7 +170,7 @@ input[type=checkbox].toggle {
     top: 0 - math.div(space(1), 2);
     left: 0 - math.div(space(1), 2);
     transition: left $transition-speed, background-color $transition-speed;
-    box-shadow: 0 0 space(1) $color--grey-900;
+    box-shadow: $shadow--toggle;
   }
 
   /* Checkbox checked toggle label bg color */

@@ -41,9 +41,7 @@ section {
 section.resources {
   ul {
     text-align: left;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    @include flex-center;
     flex-wrap: wrap;
   }
   li {

@@ -4,8 +4,8 @@
 canvas {
   width: 100vw;
   max-width: 100%;
-  height: calc(100vh - 120px);
-  @include border--light;
+  height: calc(100vh - 100px);
+  @include canvas-border;
 }
 
 form {

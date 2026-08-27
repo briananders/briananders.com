@@ -20,7 +20,7 @@
   .a-label,
   .b-label {
     position: absolute;
-    z-index: 1;
+    z-index: $z-index--base;
     opacity: .1;
     transition-property: opacity;
   }
@@ -63,7 +63,7 @@
   .b-circle {
     width: 40%;
     height: 40%;
-    border-radius: 100%;
+    border-radius: $border-radius--circle;
     border-width: 1px;
     border-style: solid;
   }
