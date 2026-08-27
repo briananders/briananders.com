@@ -92,10 +92,13 @@ function moveOneImage(imagePath, configs, callback = () => { }) {
   } if (webpCandidates.includes(extn.substring(1))) {
     // Raster images: produce a .webp sibling AND keep the original format.
     if (debug) log(`${timestamp.stamp()} convertToWebp(${imagePath}): ${destination}`);
-    convertToWebp(imagePath, { dir }).then(() => {
-      fs.copyFile(imagePath, destination);
-      return callback();
-    });
+    convertToWebp(imagePath, { dir })
+      .then(() => fs.copyFile(imagePath, destination))
+      .then(() => callback())
+      .catch((err) => {
+        error(`${timestamp.stamp()} moveOneImage() error:`, err);
+        callback();
+      });
   } else {
     // All other image types (e.g. .webp originals): copy as-is.
     fs.copyFile(imagePath, destination);
