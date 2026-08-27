@@ -6,12 +6,12 @@ const artistTemplate = `
   <style>${artistListingStyles}</style>
 
   <a href="#" itemprop="url" rel="noopener" target="blank">
-    <img src="" alt="" />
     <span class="info">
       <slot>Loading...</slot>
       <div><span slot="count">00</span> Plays</div>
       <div id="bar" style="--length: 100%"></div>
     </span>
+    <img src="" alt="" />
   </a>
 `;
 

@@ -30,6 +30,10 @@ p {
   gap: space(2);
 }
 
+#yearly-scrobbles {
+  margin-bottom: $paragraph-bottom;
+}
+
 #albums, #artists {
   gap: space(2);
   margin-bottom: space(12);
