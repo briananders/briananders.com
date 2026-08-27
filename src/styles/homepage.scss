@@ -1,10 +1,9 @@
-@import 'system/utilities';
-@import "./modules/contributions";
+@use 'system/utilities' as *;
+@use "./modules/contributions" as *;
+@use "modules/posts-list" as *;
+@use "posts/last-fm" as *;
 
 main.home {
-  @import "modules/posts-list";
-  @import "posts/last-fm";
-
   margin-top: space(12);
 
   .last-fm-module {
@@ -13,5 +12,33 @@ main.home {
 
   .deck {
     margin-bottom: $paragraph-bottom;
+  }
+
+  .posts {
+    .content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .block-link-wrapper,
+    header {
+      @include readingWidth;
+      justify-content: flex-start;
+    }
+  }
+
+  .index-music {
+    .content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .block-link-wrapper,
+    header {
+      @include readingWidth;
+      justify-content: flex-start;
+    }
   }
 }

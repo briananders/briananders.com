@@ -1,12 +1,13 @@
-@import "system/utilities";
+@use "sass:color";
+@use "system/utilities" as *;
 
 main.posts.using-canvas-to-make-patterns-with-circles {
 
   canvas {
-    width: 100vw;
-    border: 2px solid rgba($palette--divider-color, 0.2);
+    width: 100%;
+    @include border--light;
     box-sizing: border-box;
-    height: calc(100vh - 66px);
+    height: calc(100vh - 120px);
   }
 
   #pause-button.paused {
@@ -16,10 +17,10 @@ main.posts.using-canvas-to-make-patterns-with-circles {
 
   #clear-button {
     color: $palette--primary-white;
-    background-color: darken($color: red, $amount: 15);
+    background-color: color.adjust(red, $lightness: -15%);
 
     &:focus {
-      background-color: darken($color: red, $amount: 30)
+      background-color: color.adjust(red, $lightness: -30%)
     }
   }
 
@@ -42,7 +43,7 @@ main.posts.using-canvas-to-make-patterns-with-circles {
       margin-right: space(1);
     }
 
-    > * {
+    >* {
       display: block;
       margin: 0 space(2) space(2);
     }
