@@ -1,0 +1,25 @@
+<% 
+  const path = locals.path;
+  const deferStyles = locals.deferStyles || false;
+  const inlineStyles = locals.inlineStyles || false;
+%>
+
+<% if (deferStyles) { %>
+  <% if (path === 'main') { %>
+    <style><%- inlineScss('/styles/main.scss'); %></style>
+  <% } else { %>
+    <link rel="preload" media="all" href="/styles/<%- path %>.css" lazyload onload="this.onload=null;this.rel='stylesheet'" as="style" />
+
+    <noscript>
+      <link rel="stylesheet" media="all" href="/styles/<%- path %>.css" />
+    </noscript>
+  <% } %>
+<% } else if (inlineStyles) { %>
+  <style><%- inlineScss(`/styles/${path}.scss`); %></style>
+<% } else { %>
+  <% if (path === 'main') { %>
+    <style><%- inlineScss('/styles/main.scss'); %></style>
+  <% } else { %>
+    <link rel="stylesheet" media="all" href="/styles/<%- path %>.css" />
+  <% } %>
+<% } %>

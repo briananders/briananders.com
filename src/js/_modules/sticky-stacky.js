@@ -96,10 +96,10 @@ class StickyController {
       if (index === stuckStacks.length - 1) { 
         // last stuck element gets the shadow
         this.#maxTransform = 0 - height; // set global variable. Must be a negative number.
-        stuckStack.stickyElement.classList.add('shadow');
+        // stuckStack.stickyElement.classList.add('shadow');
       } else {
         // other stuck elements lose the shadow
-        stuckStack.stickyElement.classList.remove('shadow');
+        // stuckStack.stickyElement.classList.remove('shadow');
       }
       // accumulate heights and set them, just like in recalculateHeights()
       stuckStack.setPreviousHeights(height);

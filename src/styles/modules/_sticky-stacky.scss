@@ -1,9 +1,12 @@
 .sticky-container {
   height: var(--sticky-container-height);
+  position: relative;
+  z-index: 1000-2;
 
   .sticky-stacky {
     position: relative;
-    
+    z-index: 1000-1;
+
     &.fixed {
       position: fixed;
       z-index: 1000;
@@ -11,5 +14,4 @@
       transform: translateY(var(--sticky-stacky-transform));
     }
   }
-
 }

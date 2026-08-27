@@ -1,0 +1,9 @@
+@use "system/utilities" as *;
+
+
+.podcast-cover {
+  max-width: 200px;
+  display: block;
+  margin-bottom: space(6);
+  width: 100%;
+}

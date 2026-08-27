@@ -1,0 +1,30 @@
+---
+title: "Git Tip: How To Git Merge Without Being Prompted For A Commit Message"
+description: "Do you get annoyed with merging two branches and being asked to add say something special about a simple merge? I do."
+date: 2018-11-03
+priority: 0.8
+pageClasses:
+  - 'posts'
+layout: base
+styles:
+  - 'main'
+  - 'posts/code'
+---
+
+<article class="content" itemscope itemtype="https://schema.org/BlogPosting">
+
+  <p>
+    What I have learned is that you can set your <var>GIT_EDITOR</var> environment variable in a way that accepts the standard git merge message.
+  </p>
+
+  <p>
+    In your <var>.bashrc</var> or <var>.zshrc</var>, add this:
+  </p>
+
+  <%- code(`export GIT_EDITOR='true git commit'`); %>
+
+  <p>
+    By exporting this <var>GIT_EDITOR</var> value, you are signalling to the Git prompt: 👍 and commit!
+  </p>
+
+</article>

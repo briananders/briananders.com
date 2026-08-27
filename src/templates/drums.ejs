@@ -1,0 +1,175 @@
+---
+title: "Drums"
+description: "I drum. This is the portion of my site dedicated to that art."
+date: 2022-02-18
+priority: 0.8
+pageClasses:
+  - 'drums'
+layout: base
+styles:
+  - 'main'
+scripts:
+  - 'drums'
+---
+
+
+<%- partial('head/styles', {...locals, path: 'drums', inlineStyles: true, }) %>
+
+<div class="drums-logo container">
+  <%- img({
+    src: '/images/drums/banders-drums-grey.svg',
+    alt: 'Banders Drums banner image',
+    width: '630',
+    height: '77'
+  }); %>
+</div>
+
+<section>
+  <div class="container">
+    <p>
+      Banders Drums is my channel for drum covers. I grew up loving all kinds of rock and punk music. When I was younger, I played in symphonic band, jazz band, and the orchestra. Over time, I have focused more and more time and energy on playing to the music that I love listening to.
+    </p>
+    <p>
+      Hardcore and emo bands like Emery and Underoath are my favorite to play to. I also play lots of music that features Travis Barker. Someday, I will write my own music, but for now I will continue posting drum cover videos.
+    </p>
+  </div>
+</section>
+
+<section>
+  <header class="container">
+    <h2>
+      Social Channels
+    </h2>
+  </header>
+  <div class="container social-profiles">
+    <%-
+      [
+        { copy: 'Instagram',    handle:locals.instagramHandle,           href: locals.instagram           },
+        { copy: 'Mastodon',     handle:locals.mastodonHandle,            href: locals.mastodon            },
+        { copy: 'Twitter',      handle:locals.twitterHandle,             href: locals.twitter             },
+        { copy: 'YouTube',      handle:locals.bandersDrums.youtubeHandle, href: locals.bandersDrums.youtube },
+      ].map(({copy, handle, href}) => {
+        const src = `/images/drums/${copy.toLowerCase()}-icon.svg`;
+        return cardLink(`
+          <span class="social-icon">${lazyImage({ src })}</span>
+          <span role="heading" aria-level="3" class="h6">${copy}</span>
+          <span>@${handle}</span>
+        `, {
+          class: "social-profile",
+          href
+        })
+      }).join("");
+    %>
+  </div>
+</section>
+
+<section>
+  <div class="container">
+    <header>
+      <h2>
+        Playlists
+      </h2>
+    </header>
+    <div class="video-grid playlists">
+      <button class="card-link yt-modal-trigger" data-playlist-id="PLetKrknUS6uORehWMWAOfojlwXGCsUXZw">
+        <%- lazyImage({ src: '/images/drums/drum-covers.webp' }); %>
+        Drum Covers
+      </button>
+      <button class="card-link yt-modal-trigger" data-playlist-id="PLetKrknUS6uPieWF-xk2z4-5O6Qknn9B9">
+        <%- lazyImage({ src: '/images/drums/glow-sticks.webp' }); %>
+        Glow Sticks
+      </button>
+    </div>
+  </div>
+</section>
+
+<%
+  const videoTitle = (title, artist) => {
+    if (artist) {
+      return `
+        <ul>
+          <li>${title}</li>
+          <li>By: ${artist}</li>
+        </ul>
+      `;
+    }
+    return title;
+  };
+
+  const videos = [
+    {
+      artist: "Underoath",
+      title: "I don’t feel very receptive today",
+      id: "loGe3CfA9r8",
+      date: "2020-12-23"
+    },
+    {
+      artist: "Queens of the Stone Age",
+      title: "Song for the Dead",
+      id: "ib--ZJhxoPU",
+      date: "2020-12-23"
+    },
+    {
+      artist: "Chumbawamba",
+      title: "Tubthumping (Drum Cover)",
+      id: "OYF05_zmLbg",
+      date: "2020-12-29"
+    },
+    {
+      artist: "Box Car Racer",
+      title: "All Systems Go",
+      id: "5efQM16xcNE",
+      date: "2020-12-29"
+    },
+    {
+      artist: "These Green Eyes",
+      title: "Something Perfect",
+      id: "FnJVUBm8TXg",
+      date: "2020-12-29"
+    },
+    {
+      artist: "Blink-182",
+      title: "Down",
+      id: "6CmnK_GC9YM",
+      date: "2021-02-28"
+    },
+    {
+      title: "What happens when your camera isn’t mounted very well",
+      id: "VIFcO2bItjU",
+      date: "2022-02-01"
+    },
+    {
+      artist: "Blink-182",
+      title: "What’s My Age Again",
+      id: "f8HAx-N4z28",
+      date: "2022-02-02"
+    },
+    {
+      artist: "Blink-182",
+      title: "Adam’s Song",
+      id: "NSZ8_1lQ_I8",
+      date: "2022-02-15"
+    },
+    {
+      artist: "Blink-182",
+      title: "All The Small Things",
+      id: "9ubiPRp5uto",
+      date: "2022-03-02"
+    },
+  ].sort((a, b) => (a.date < b.date) ? 1 : -1);
+%>
+
+<section class="videos">
+  <div class="container">
+    <header>
+      <h2>
+        Videos
+      </h2>
+    </header>
+    <div class="video-list">
+      <% videos.forEach(({ artist, title, id }) => { %>
+        <button class="card-link yt-modal-trigger" data-video-id="<%- id %>"><%- videoTitle(title, artist); %></button>
+      <% }); %>
+    </div>
+  </div>
+</section>

@@ -1,23 +1,37 @@
+<%
+  const inlineSVGs = locals.inlineSVGs || false;
+%>
+
+<div id="nav-overlay"></div>
 <div class="sticky-container">
   <nav class="nav main sticky-stacky" role="navigation" aria-label="Main navigation">
     <div class="content">
-    <%- link(img({
-      src: '/images/logo.svg',
-      alt: 'Brian Anders logo',
-      width: '200',
-      height: '68',
-    }), {
-      href: '/',
-      class: 'brand',
-      'aria-label': 'Brian Anders home page',
-    }); %>
-    <button id="activate-menu" class="menu link" aria-expanded="false" aria-controls="nav-tray">
+    <% if (inlineSVGs) { %>
+      <%- link(getFileContents('/images/logo.svg'), {
+        href: '/',
+        class: 'brand',
+        'aria-label': 'Brian Anders home page',
+      }); %>
+    <% } else { %>
+      <%- link(img({
+        src: '/images/logo.svg',
+        alt: 'Brian Anders logo',
+        width: '200',
+        height: '68',
+      }), {
+        href: '/',
+        class: 'brand',
+        'aria-label': 'Brian Anders home page',
+      }); %>
+    <% } %>
+    <button id="activate-menu" class="menu button-link" aria-expanded="false" aria-controls="nav-tray">
       Menu
     </button>
     <div aria-hidden="true" role="menu" id="nav-tray">
+      <span id="top-triangle"></span>
       <%- link('Main', {
         href: '/',
-        class: 'nav-link',
+        class: 'block-link',
         role: 'menuitem',
       }); %>
       <%
@@ -26,7 +40,7 @@
       %>
         <%- link(data.title, {
           href: `/${url}`,
-          class: 'nav-link',
+          class: 'block-link',
           role: 'menuitem',
         }); %>
       <% }); %>

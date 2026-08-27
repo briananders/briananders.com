@@ -1,10 +1,11 @@
-@import "system/utilities";
+@use "system/utilities" as *;
+@use "sass:math";
 
 $yt-video-width: 560;
 $yt-video-height: 315;
 
-$width-in-vh: $yt-video-width/$yt-video-height * 90vh;
-$height-in-vw: $yt-video-height/$yt-video-width * 90vw;
+$width-in-vh: math.div($yt-video-width, $yt-video-height) * 90vh;
+$height-in-vw: math.div($yt-video-height, $yt-video-width) * 90vw;
 
 html.youtube-modal-open,
 html.youtube-modal-open body {
@@ -19,11 +20,11 @@ html.youtube-modal-open body {
 
 .youtube-modal-close,
 .youtube-modal-container {
-  transition: opacity $transition-speed $transition-timing, top $transition-speed $transition-timing;
+  transition-property: opacity, top;
 }
 
 .youtube-modal-overlay {
-  transition: opacity $transition-speed $transition-timing;
+  transition-property: opacity;
 }
 
 html.youtube-modal-open {
@@ -46,10 +47,10 @@ html.youtube-modal-open {
   width: css-min(90vw, $width-in-vh);
   height: css-min(90vh, $height-in-vw);
   position: fixed;
-  z-index: 100000;
+  z-index: 100000-1;
   left: 50%;
   top: 100%;
-  background-color: $palette--primary-text-color--dark;
+  background-color: $palette--primary-grey;
   transform: translate(-50%, -50%);
 
   iframe {
@@ -65,15 +66,15 @@ html.youtube-modal-open {
   left: 0;
   top: 0;
   background-color: rgba(0, 0, 0, 0.7);
-  z-index: 99999;
+  z-index: 100000-2;
   cursor: pointer;
 }
 
 .youtube-modal-close {
   position: fixed;
-  z-index: 100001;
+  z-index: 100000;
   top: -100px;
   right: 10px;
-  @include button;
-  background-color: $palette--primary-text-color--dark;
+  @include button-link;
+  background-color: $palette--primary-grey;
 }

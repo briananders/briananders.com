@@ -1,27 +1,43 @@
-<link rel="preload" media="all" href="/styles/modules/footer.css" lazyload onload="this.onload=null;this.rel='stylesheet'" as="style">
-<noscript>
-  <link rel="stylesheet" media="all" href="/styles/modules/footer.css">
-</noscript>
+<%- partial('head/styles', {...locals, path: 'modules/footer' }); %>
 
-<footer class="<%- (locals.pageClasses) ? locals.pageClasses.toString().replace(/,/g,' ') : '' %>" role="navigation" aria-label="Site footer">
-  <ul class="content">
-    <li>
-      <% const date = new Date(); %>
-      &copy; <%- date.getFullYear(); %>
-    </li>
-    <li>
-      <% const contactLinks = [
-          { copy: 'Twitter', url: locals.twitter, },
-          { copy: 'Last.fm', url: locals.lastfm, },
-          { copy: 'Github', url: locals.github, },
-          { copy: 'LinkedIn', url: locals.linkedin, },
-        ].map(item => {
-          return externalLink(item.copy, {
-            href: item.url,
-          });
-        });
-      %>
-      <%- contactLinks.join(' - '); %>
-    </li>
-  </ul>
+<%
+  const date = new Date();
+  const thisYear = date.getFullYear();
+  const contactLinks = [
+    { copy: 'Bat Lessons',   href: locals.batLessons,           },
+    { copy: 'Banders Drums', href: locals.bandersDrums.path,    },
+    { copy: 'Github',        href: locals.github,               },
+    { copy: 'Instagram',     href: locals.instagram,            },
+    { copy: 'Last.fm',       href: locals.lastfm,               },
+    { copy: 'LinkedIn',      href: locals.linkedin,             },
+    { copy: 'Mastodon',      href: locals.mastodon, rel: 'me',  },
+    { copy: 'Bluesky',       href: locals.bluesky,              },
+    { copy: 'Twitter',       href: locals.twitter,              },
+    { copy: 'YouTube',       href: locals.bandersDrums.youtube, },
+  ].map(item => {
+    return blockLink(item.copy, item);
+  });
+%>
+
+<footer class="<%- (locals.pageClasses) ? locals.pageClasses.toString().replace(/,/g,' ') : '' %>" role="contentinfo" aria-label="Site footer">
+  <div class="content">
+    <div class="copyright">
+      <span>
+        <%- link(img({
+          src: '/images/logo.svg',
+          alt: 'Brian Anders logo',
+          width: '100',
+          height: '34',
+        }), {
+          href: '/',
+          class: 'brand',
+          'aria-label': 'Brian Anders home page',
+        }); %>
+      </span>
+      <span>&copy; <%- thisYear %></span>
+    </div>
+    <div class="links">
+      <%- contactLinks.join(''); %>
+    </div>
+  </div>
 </footer>

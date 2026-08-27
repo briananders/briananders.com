@@ -50,7 +50,7 @@ function watchVideoSizes(element) {
 
 module.exports = {
   init(specificQuery = 'body') {
-    if (urlParams.get('disable-lazy') !== null) {
+    if (urlParams.get('disable-lazy') !== null || window.IntersectionObserver === undefined) {
       document.querySelectorAll(`${specificQuery} [lazy]`).forEach((element) => {
         updateOnIntersect(element);
       });
@@ -65,10 +65,6 @@ module.exports = {
 
       document.querySelectorAll(`${specificQuery} [lazy]`).forEach((element) => {
         intersectionObserver.observe(element);
-      });
-    } else {
-      document.querySelectorAll(`${specificQuery} [lazy]`).forEach((element) => {
-        updateOnIntersect(element);
       });
     }
 

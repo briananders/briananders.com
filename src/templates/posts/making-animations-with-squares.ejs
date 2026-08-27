@@ -1,0 +1,53 @@
+---
+title: "Mesmerizing Circle Patterns... But With Squares"
+description: "This is a mesmerizing canvas experiment. It’s actually something I built a long time ago in school. One of
+my very first posts on this website in fact. But it’s modified to animate squares this time, instead of circles."
+date: 2022-03-26
+priority: 0.8
+pageClasses:
+- 'posts making-animations-with-squares'
+layout: base
+styles:
+- 'main'
+- 'posts/making-animations-with-squares'
+scripts:
+- 'posts/making-animations-with-squares'
+---
+
+<article class="content" itemscope itemtype="https://schema.org/BlogPosting">
+  <form>
+    <select id="border-style" aria-label="Square border style">
+      <option value="no-border">No Border</option>
+      <option value="border-white">Border White</option>
+      <option value="border-gray">Border Gray</option>
+      <option value="border-color" selected>Border Color</option>
+      <option value="epileptic">Epileptic</option>
+    </select>
+    <label for="alpha-border">
+      <input id="alpha-border" type="checkbox">Border Transparency
+    </label>
+    <select id="fill-style" aria-label="Square fill style">
+      <option value="no-fill" selected>No Fill</option>
+      <option value="fill-gray">Fill Gray</option>
+      <option value="fill-color">Fill Color</option>
+      <option value="epileptic">Epileptic</option>
+    </select>
+    <label for="alpha-fill">
+      <input id="alpha-fill" type="checkbox">Fill Transparency
+    </label>
+    <label for="fast-slow">
+      Slow&nbsp;<input id="fast-slow" type="checkbox" class="toggle">Fast
+    </label>
+    <span>
+      <button id="erase-button" type="button">Erase</button>
+      <button id="pause-button" type="button">Pause</button>
+      <button id="clear-button" type="button">Clear</button>
+    </span>
+  </form>
+</article>
+
+<section>
+  <div class="content">
+    <canvas id="canvas"></canvas>
+  </div>
+</section>

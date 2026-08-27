@@ -1,0 +1,17 @@
+<%
+  const customFontsDeferred = locals.customFontsDeferred || false;
+  const customFontsSwap = locals.customFontsSwap || false;
+  const fontDomain = 'https://fonts.googleapis.com';
+  const fontApi = `${fontDomain}/css?family=Roboto:300,500|Source+Serif+Pro${customFontsSwap ? '&display=swap' : ''}`;
+%>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="preconnect" href="<%- fontDomain %>" crossorigin />
+
+<% if (customFontsDeferred) { %>
+  <link rel="preload" media="all" href="<%- fontApi %>" lazyload onload="this.onload=null;this.rel='stylesheet'" as="style" />
+  <noscript>
+    <link rel="stylesheet" media="all" href="<%- fontApi %>" />
+  </noscript>
+<% } else { %>
+  <link rel="stylesheet" media="all" href="<%- fontApi %>" />
+<% } %>

@@ -1,5 +1,9 @@
+@use "system/utilities" as *;
+
 * {
   transition-timing-function: $transition-timing;
+  transition-duration: $transition-speed;
+  transition-property: none;
   border-radius: $border-radius;
 
   &,
@@ -8,4 +12,14 @@
     box-sizing: border-box;
     outline: none;
   }
+}
+
+::selection {
+  @include selection;
+}
+::-moz-selection {
+  @include selection;
+}
+::-webkit-selection {
+  @include selection;
 }

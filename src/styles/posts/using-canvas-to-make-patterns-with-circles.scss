@@ -1,0 +1,51 @@
+@use "sass:color";
+@use "system/utilities" as *;
+
+main.posts.using-canvas-to-make-patterns-with-circles {
+
+  canvas {
+    width: 100%;
+    @include border--light;
+    box-sizing: border-box;
+    height: calc(100vh - 120px);
+  }
+
+  #pause-button.paused {
+    color: $palette--primary-white;
+    background-color: $palette--primary-grey;
+  }
+
+  #clear-button {
+    color: $palette--primary-white;
+    background-color: color.adjust(red, $lightness: -15%);
+
+    &:focus {
+      background-color: color.adjust(red, $lightness: -30%)
+    }
+  }
+
+  form {
+    margin-bottom: space(6);
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    @include left-margins;
+
+    label {
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      padding: unset;
+    }
+
+    input[type=checkbox] {
+      margin-right: space(1);
+    }
+
+    >* {
+      display: block;
+      margin: 0 space(2) space(2);
+    }
+  }
+}

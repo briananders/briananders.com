@@ -1,0 +1,17 @@
+@use "system/utilities" as *;
+
+.example.ssr {
+
+  .square {
+    width: 20px;
+    height: 20px;
+    background-color: magenta;
+    float: left;
+    margin-left: 10px;
+    margin-top: 10px;
+  }
+
+  .container {
+    overflow: hidden;
+  }
+}

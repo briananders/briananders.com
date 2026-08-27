@@ -1,0 +1,44 @@
+---
+title: "Sound Frequency Slider"
+description: "From my earliest memories, music has woven itself into the very fabric of my existence, serving as a constant source of inspiration and solace. It's a realm where I've found both refuge and passion, shaping my identity in profound ways. In tandem with this profound connection to music, I've dedicated more than a decade of my life to the intricate craft of programming. The world of coding, with its infinite possibilities and creative problem-solving, has become my second home."
+date: 2023-10-17
+priority: 0.8
+layout: base
+styles:
+  - 'main'
+  - 'posts/sound-frequency-slider'
+scripts:
+  - 'posts/sound-frequency-slider/index'
+---
+
+<section>
+  <div class="content">
+    <p>
+      Yet, for all my exploration of the digital realm, a particular facet has remained curiously uncharted: the domain of the JavaScript Web Audio API. This omission, despite my deep-rooted enthusiasm for both music and technology, has long piqued my curiosity. This API, I've come to realize, provides a delightful and surprisingly accessible gateway into the captivating universe of sound frequencies and their intricate dance of harmonies and discord.
+    </p>
+    <p>
+      Exploring the JavaScript Web Audio API allows you to embark on a captivating journey into the realm of sound, a realm where you can experiment with frequencies and delve into the mesmerizing interplay of tones. It's a tool that invites you to not only create music but to unlock the secrets of how sound waves interact, and in doing so, enhance your understanding of the auditory world.
+    </p>
+    <p>
+      Moreover, this versatile tool offers a unique opportunity to gauge and evaluate your auditory faculties. Our remarkable human hearing, a remarkable sensory gift, is inherently bounded by a range spanning from the low rumble of 20 Hertz to the high-pitched resonance of 20,000 Hertz. The JavaScript Web Audio API thus becomes a means to test and celebrate the remarkable capabilities of our ears, shedding light on the subtle nuances and subtleties of the auditory experience that often go unnoticed. It's a journey that holds the promise of both discovery and appreciation for the multifaceted world of sound that surrounds us.
+    </p>
+    <p>
+      Experiment and have fun!
+    </p>
+  </div>
+</section>
+
+<section>
+  <div class="content" id="slider-holder">
+    <button value="add" class="button">+ Add</button>
+  </div>
+</section>
+
+<script>
+  window.soundSlider = `<div class="sound-slider">
+    <button value="play" class="play-pause button">⏯<span class='play'>Play</span><span class='pause'>Pause</span></button>
+    <button value="remove" class="button">&times;</button>
+    <input class="hertz-slider" type="range" min="0" max="20000" value="20" step="0.01" />
+    <input class="hertz-input" type='number' min="0" max="20000" value="20" step="0.01"/>
+  </div>`;
+</script>

@@ -1,129 +1,80 @@
 ---
 title: "Home"
-description: "Brian Anders is a Staff UX Engineer at Google"
+description: "Brian Anders is an Engineering Manager in the tech industry. I'm also a YouTuber, Podcaster, and
+Musician."
 priority: 1.0
 homepage: true
 pageClasses:
-  - 'main'
-  - 'home'
+- 'main'
+- 'home'
 layout: base
 styles:
-  - 'main'
-  - 'homepage'
+- 'main'
 scripts:
-  - 'homepage'
+- 'homepage'
 ---
 
 
-
-<section class="intro">
-  <div class="content">
-    <header>
-      <h2>
-        <%- noWidows('Who am I?'); %>
-      </h2>
-    </header>
-    <p>
-      I am a Staff UX Engineer at <%- externalLink('Google', { href: 'https://google.com' }); %>. From 2013 to 2018, I worked on <%- externalLink('nest.com', { href: 'https://nest.com' }); %>. Since 2018 I have been working on the <%- externalLink('Google Store', { href: 'https://store.google.com' }); %>; building and enhancing the web experience.
-    </p>
-    <p>
-      Outside of work, I listen to music, play some instruments, camp, and more or less try to enjoy the life I lead.
-    </p>
-    <p>
-      Two current areas of activity that excite me right now are my new podcast about Batman that I cohost with <%- externalLink('Alex Cash', { href: 'http://alexcash.com' }); %>, called <%- externalLink('Bat Lessons', { href: locals.batLessons }); %>, and a <%- externalLink('YouTube channel', { href: locals.coyoteDrums.youtube }); %> for my drum covers, called <%- link('Coyote Drums', { href: locals.coyoteDrums.path }); %>.
-    </p>
-    <p>
-      You can find him on the internet in some other places.
-      <% const contactLinks = [
-          { copy: 'Twitter', url: locals.twitter, },
-          { copy: 'Last.fm', url: locals.lastfm, },
-          { copy: 'Github', url: locals.github, },
-          { copy: 'LinkedIn', url: locals.linkedin, },
-        ].map(item => externalLink(item.copy, {
-          href: item.url,
-          itemprop: 'url',
-          target: 'blank',
-          rel: 'noopener',
-        }));
-      %>
-      <%- contactLinks.join(', '); %>.
-    </p>
-  </div>
-</section>
+<%- partial('head/styles', { ...locals, path: 'homepage', inlineStyles: true }) %>
 
 
 <section class="contributions">
-  <div class="content">
-    <h2><%- noWidows('Contributions to the internet.'); %></h2>
-    <div class="deck">
+  <div class="content deck">
     <%
       const model = [
         {
-          title: "Google Store",
-          image: "/images/experience/google-store.svg",
-          description: "Since 2018, I have been working on improving the customer experience across the Google Hardware Store e-commerce experience. My focus areas are new product launches, product pages, accessibility, site performance, SEO, and overall product quality.",
+          heading: "Bat Lessons",
+          image: "/images/about/contributions/batlessons.webp",
+          copyBlock: `Batman history, presented by ${inlineLink('Alex Cash', { href: 'https://alex.cash', external: true })} and myself.`,
           links: [
             {
-              label: "Google Store",
-              url: "https://store.google.com",
-            }
-          ]
-        }, {
-          title: "Podcast: Bat Lessons",
-          image: "/images/experience/contributions/batlessons.webp",
-          description: `My friend ${externalLink('Alex Cash', { href: 'http://alexcash.com' })} and I have started a podcast together about Batman; the context around the development of the character, the history of the character, and the impact that our world had on theirs. Check it out!`,
-          links: [
-            {
-              label: "Podcast site",
+              label: "Website",
               url: locals.batLessons,
+            },
+            {
+              label: "YouTube",
+              url: locals.batLessonsYT,
             }
           ]
         }, {
-          title: "YouTube: Coyote Drums",
-          image: "/images/coyote-drums/logo.svg",
-          description: "I have a YouTube channel where I post recordings of me playing the drums over music. I hope to compose my own music someday.",
+          heading: "Banders Drums",
+          image: "/images/drums/logo.png",
+          copyBlock: "A YouTube channel with videos of me playing drum covers.",
           links: [
             {
-              label: "Main Site",
-              path: locals.coyoteDrums.path,
+              label: "Website",
+              path: locals.bandersDrums.path,
             }, {
-              label: "YouTube Channel",
-              url: locals.coyoteDrums.youtube,
+              label: "YouTube",
+              url: locals.bandersDrums.youtube,
             }
           ]
         },
       ]
-      model.forEach(({ description, image, title, links }) => {
+      model.forEach(({ copyBlock, image, heading, links }) => {
     %>
-        <%- partial('contributions-card', Object.assign(locals, { description, image, title, links })); %>
-      <% }); %>
-    </div>
+    <%- partial('contributions-card', Object.assign(locals, { copyBlock, image, heading, links })); %>
+    <% }); %>
   </div>
-  <div class="content center">
-    <%- link('More experience', {
-      href: '/experience/',
-      class: 'button mega-button',
-    }); %>
-  </div>
-</section>
-
-
-<section class="thoughts">
   <div class="content">
-    <header>
-      <h2>
-        <%- noWidows('I have thoughts. Here are some recent ones.'); %>
-      </h2>
-    </header>
-  </div>
-  <%- partial('thoughts-list', Object.assign(locals, { thoughtCount: 6 })); %>
-  <div class="content center">
-    <%- link('More thoughts', {
-      href: '/thoughts/',
-      class: 'button mega-button',
+    <%- blockLink('More', {
+      href: '/about/',
     }); %>
   </div>
 </section>
+
+
+  <section class="posts">
+    <div class="content">
+      <header>
+        <h2>
+          <%- noWidows(`Recent posts`); %>
+        </h2>
+      </header>
+      <%- partial('posts-list', Object.assign(locals, { postCount: 6 })); %>
+      <%- blockLink('More posts', { href: '/posts/' }); %>
+    </div>
+  </section>
 
 
 <section class="index-music">
@@ -141,11 +92,4 @@ scripts:
         <%- defaultLastFMModule(); %>
       <% } %>
     </div>
-    <div class="center">
-      <%- link('More music details', {
-        href: '/thoughts/last-fm/',
-        class: 'button mega-button',
-      }); %>
-    </div>
-  </div>
-</section>
+  </section>

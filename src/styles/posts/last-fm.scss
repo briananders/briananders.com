@@ -1,0 +1,60 @@
+@use "system/utilities" as *;
+
+.last-fm-module {
+  display: grid;
+  gap: $s5;
+
+  .item {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: $s1 / 2;
+    gap: $s3;
+
+    @include palette--base;
+    @include card;
+
+    &.album,
+    &.artist {
+      grid-template-columns: 1fr 100px;
+    }
+
+    @include link-hover;
+    @include link-focus;
+
+    &:focus {
+      border: none;
+      box-shadow: 0 0 0 2px $palette--primary-grey, 0 0 0 4px $palette--secondary-grey;
+    }
+
+    .name {
+      font-family: $sans-serif;
+      font-weight: $bold;
+    }
+
+    .scrobbles {
+      font-family: $serif;
+    }
+
+    bar {
+      display: block;
+      height: space(2);
+      margin-top: space(1);
+      transition-property: background-color;
+      @include orange-gradient;
+    }
+
+    img {
+      width: 100px;
+      height: 100px;
+    }
+  }
+
+  .info {
+    display: grid;
+    position: relative;
+  }
+}
+
+form.time-selector {
+  margin: $paragraph-bottom auto;
+}

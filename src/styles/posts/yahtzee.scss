@@ -1,0 +1,139 @@
+@use "system/utilities" as *;
+@use "sass:math";
+
+ul li {
+  list-style: disc;
+  margin-left: space(4);
+}
+
+.posts.yahtzee {
+  display: grid;
+  align-items: center;
+
+  .game-container {
+    @include left-margins;
+    display: grid;
+    gap: $s2;
+    margin-top: $s6;
+
+    label {
+      @include type--body;
+      padding: 0 space(2);
+      width: 160px;
+      margin-bottom: unset;
+    }
+  }
+
+  button,
+  .button {
+    margin: unset;
+  }
+
+  #roll {
+    width: 100%;
+    height: 3em;
+
+    &::before {
+      content: attr(data-rolls-left);
+      display: inline-flex;
+      width: 1.5em;
+      height: 1.5em;
+      margin-left: 0.4em;
+      margin-right: 0.5em;
+      border: 2px solid;
+      border-radius: 1em;
+      align-items: center;
+      justify-content: center;
+    }
+
+    &.locked {
+      opacity: .7;
+      pointer-events: none !important;
+    }
+  }
+
+  #dice {
+    display: grid;
+    justify-content: center;
+    grid-template-columns: repeat(5, 1fr);
+    gap: $s2;
+
+    button {
+      @include button-link;
+      height: 37px;
+      padding: 0 space(2);
+      margin: unset;
+    }
+  }
+
+  [id^="die-"] {
+    &[value="0"] {
+      pointer-events: none !important;
+    }
+    &.locked {
+      border-color: transparent !important;
+    }
+  }
+
+  .locked button {
+    pointer-events: none !important;
+    border-color: transparent !important;
+  }
+
+  #score-board {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: $s2;
+
+    @include mq($medium) {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  [data-rolls-left="3"] {
+    button {
+      pointer-events: none !important;
+    }
+  }
+
+  .column {
+    > div {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: space(1);
+      position: relative;
+      align-items: center;
+    }
+  }
+  .score {
+    @include button-link;
+    min-width: 72px;
+    text-align: center;
+    margin-left: space(2);
+    display: inline-block;
+    padding: 0 space(3);
+    font-family: $sans-serif;
+    margin: unset;
+  }
+
+  #total {
+    display: flex;
+    justify-content: space-between;
+    padding-top: space(1);
+    border-top: math.div(space(1), 3) solid;
+    border-radius: 0;
+
+    @include mq($medium) {
+      width: calc(50% - #{space(3)});
+    }
+  }
+
+  #kind-total,
+  #bonus,
+  #total {
+    .score {
+      pointer-events: none !important;
+      border-color: transparent !important;
+    }
+  }
+}

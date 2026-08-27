@@ -1,18 +1,18 @@
 <%
-  const { description, image, title, links } = locals;
+  const { copyBlock, image, heading, links } = locals;
 %>
-<div class="card" data-card-id="<%- dasherize(title.toLowerCase()); %>">
+<div class="card" data-card-id="<%- dasherize(heading.toLowerCase()); %>">
   <%- lazyImage({ src: image }); %>
-  <h3><%- title %></h3>
-  <p class="description"><%- description %></p>
+  <h3 class="h5"><%- noWidows(heading); %></h3>
+  <p class="description"><%- copyBlock %></p>
   <div class="links">
-    <% links.forEach(({ label, url, path, className='', dataVideoId }) => { %>
+    <% links.forEach(({ label, url, path, dataVideoId }) => { %>
       <% if (url) { %>
-        <%- externalLink(label, { href: url, 'class': `link ${className}` }); %>
+        <%- blockLink(label, { href: url, external: true }); %>
       <% } else if (path) { %>
-        <%- link(label, { href: path, 'class': `link ${className}` }); %>
+        <%- blockLink(label, { href: path }); %>
       <% } else { %>
-        <button class="<%- `link ${className}` %>" <%- (dataVideoId) ? `data-video-id="${dataVideoId}"` : '' %> ><%- label %></button>
+        <button class="block-link <%- (dataVideoId) ? 'yt-modal-trigger' : '' %>" <%- (dataVideoId) ? `data-video-id="${dataVideoId}"` : '' %> type="button" ><%- label %>&nbsp;<b>&gt;</b></button>
       <% } %>
     <% }); %>
   </div>

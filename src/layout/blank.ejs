@@ -1,37 +1,16 @@
 <!DOCTYPE html>
-<html lang="en-US" itemscope="itemscope" itemtype="https://schema.org/WebPage" class="<%- locals.sitePalette %>">
+<html lang="en-US" itemscope="itemscope" itemtype="https://schema.org/WebPage">
 <head>
-  <% if (!locals.sitePalette) { %>
-  <script>
-    function setSitePalette() {
-      var palettes = [
-        'blue',
-        'blue-grey',
-        'cyan',
-        'deep-orange',
-        'deep-purple',
-        'green',
-        'grey',
-        'indigo',
-        'orange',
-        'purple',
-        'red',
-        'teal',
-      ];
-      var paletteIndex = Math.floor(Math.random() * palettes.length);
-      var palette = palettes[paletteIndex];
-      var urlParams = new URLSearchParams(window.location.search);
+  <%- partial('head/meta', locals); %>
 
-      if (urlParams.has('palette')) {
-        palette = urlParams.get('palette');
-      }
-
-      document.documentElement.classList.add(palette);
-    }
-    setSitePalette();
-  </script>
-  <% } %>
-  <%- partial('meta', locals); %>
+  <%- partial('head/fonts', {
+    customFontsDeferred: true,
+    customFontsSwap: true,
+  }); %>
+  
+  <% locals.styles.forEach((path) => { %>
+    <%- partial('head/styles', { ...locals, path, deferStyles: true, }); %>
+  <% }); %>
   <script>
     window.onerror = function (msg, url, lineNo, columnNo, error) {
       var string = msg.toLowerCase();
@@ -58,5 +37,13 @@
     <%# End Google Tag Manager (noscript); %>
   <% } %>
   <%- content %>
+  <% if(locals.devBuild) { %>
+    <script>
+      (function() {
+        var es = new EventSource('/livereload');
+        es.onmessage = function() { location.reload(); };
+      })();
+    </script>
+  <% } %>
 </body>
 </html>

@@ -1,19 +1,49 @@
-@import "../thoughts/sticky-stacky";
+@use "system/utilities" as *;
+@use "modules/sticky-stacky" as *;
 
-$nav-height: $s11;
+$nav-height: space(12);
 
 html {
   --nav-height: #{$nav-height};
   --window-height: calc(100vh - #{$nav-height});
 }
 
+#nav-overlay {
+  width: 100%;
+  height: 100%;
+  display: none;
+  position: fixed;
+  left: 0;
+  top: 0;
+
+  &.visible {
+    display: block;
+  }
+}
+
 nav.main {
   border-radius: 0;
   margin: 0;
   transition-property: opacity;
-  z-index: 5;
+  z-index: 1000;
   width: 100%;
-  background-color: var(--primary-color-dark);
+  position: relative;
+  @include palette--header;
+
+  * {
+    position: relative;
+    z-index: 1;
+  }
+
+  &::after {
+    content: '';
+    width: 100%;
+    height: 4px;
+    display: block;
+    position: absolute;
+    bottom: -4px;
+    @include orange-gradient;
+  }
 
   a,
   a:visited,
@@ -21,98 +51,114 @@ nav.main {
     padding: 0;
   }
 
-  .content, .container {
+  .content,
+  .container {
     overflow: visible;
     align-items: center;
     display: flex;
     justify-content: space-between;
     min-height: $nav-height;
-    background-color: var(--primary-color-dark);
 
     &::after {
       display: block;
       content: "";
       position: absolute;
-      background-color: var(--primary-color-dark);
       top: 0;
       bottom: 0;
       left: 100%;
       width: 100vw;
     }
   }
+
   .menu {
-    display: block;
-    background-color: transparent;
-    color: $palette--primary-color-text--white;
     font-weight: $regular;
     padding: 4px 8px;
-    box-shadow: 0 0 0 1px $color--white;
-    border-color: transparent;
+    cursor: pointer;
 
-    &::before {
-      content: unset;
-    }
+    @include link-focus;
+  }
+
+  #activate-menu {
+    border-width: 0px;
+    border-color: rgba(0, 0, 0, 0);
+    border-image: none;
+    border-style: none;
+    background-color: rgba(50, 50, 50, 1);
   }
 
   #nav-tray {
-    z-index: -1;
+    z-index: 0;
     position: absolute;
-    top: calc(100% + 12px);
-    transform-origin: calc(100% - #{$s2 + 20px}) -$s2;
-    transform: rotate(-180deg);
+    top: calc(100% + #{space(2)});
+    transform-origin: calc(100% - #{space(2) + 20px}) -#{space(2)};
+    transform: rotateY(90deg);
     display: grid;
-    right: $s2;
+    right: space(2);
     transition-property: transform;
-    transition-duration: $transition-speed;
-    transition-timing-function: $transition-timing;
-    background-color: var(--primary-color-dark);
-    box-shadow: 0 0 0 1px $color--white;
+    @include palette--base;
+    box-shadow: 0 0 0 2px $palette--primary-color-light;
+    padding: space(1);
 
-    &.slide-down {
-      transform: rotate(0deg);
+    &.slide-in {
+      transform: rotateY(0deg);
     }
 
     @include mq($medium) {
-      right: $s5;
+      right: space(6);
     }
 
-    &::before,
+    .block-link {
+      padding: 2px space(1) 0;
+      margin-left: 0;
+    }
+  }
+
+  #top-triangle {
+
+    &,
+    &::after {
+      position: absolute;
+      width: space(4);
+      height: space(4);
+      border-style: solid;
+      border-width: space(2);
+      border-radius: 0;
+      border-top-color: transparent;
+      border-left-color: transparent;
+      border-right-color: transparent;
+    }
+
     &::after {
       content: '';
-      position: absolute;
-      top: -$s4;
-      right: 20px;
-      width: $s4;
-      height: $s4;
-      border-style: solid;
-      border-width: $s2;
-      border-radius: 0;
-      border-color: transparent;
-      border-bottom-color: $color--white;
-    }
-    &::after {
-      border-bottom-color: var(--primary-color-dark);
+      left: -12px;
+      top: -12px;
+      border-bottom-color: $palette--primary-grey;
       transform: translateY(2px);
     }
+
+    top: -#{space(4)};
+    right: 20px;
+    border-bottom-color: $palette--primary-color-light;
   }
 
-  .nav-link {
-    background-color: transparent;
-    padding: 4px 8px;
-  }
+  .brand {
+    width: auto;
+    max-width: css-min(calc(100% - #{66px + space(2)}), 200px);
+    display: flex;
+    justify-content: flex-start;
+    align-items: middle;
+    border: none;
 
-
-  .link {
-    @include font-size;
-    font-family: $sans-serif;
-    color: var(--primary-color-text, #{$palette--primary-color-text--white});
-
-    &.brand {
-      width: auto;
-      max-width: css-min(calc(100% - #{66px + 12px}), 200px);
-      display: flex;
-      justify-content: flex-start;
-      align-items: middle;
+    &::after {
+      top: 4px;
+      height: calc(100% - 8px);
     }
+
+    svg {
+      width: 100%;
+      height: auto;
+    }
+
+    @include link-focus;
   }
 }

@@ -1,5 +1,2 @@
-@import "../utilities";
-
-@import "./colors";
-@import "./elements";
-@import "./type";
+@use "./elements";
+@use "./type";

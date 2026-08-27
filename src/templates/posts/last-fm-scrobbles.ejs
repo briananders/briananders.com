@@ -1,0 +1,63 @@
+---
+title: "Music Listening History"
+description: "I use an app to track my music listening history. I thought it would be fun to make my own interface for it, to let you do your own deep dives into my music taste. Why? Because I can."
+date: 2025-12-24
+priority: 0.8
+pageClasses:
+  - 'posts last-fm-scrobbles'
+layout: base
+styles:
+  - 'main'
+  - 'posts/last-fm-scrobbles'
+scripts:
+  - 'posts/last-fm-scrobbles'
+---
+
+<div class="container">
+  <p>
+    In a <%- inlineLink('separate post', { href: '/posts/last-fm' }) %>, you can look through the data in a slightly different way, with links to the entries for each item. But here, you can break down the history by year, quarter, month, and even week. Click on an item to see the monthly breakdown.
+  </p>
+</div>
+
+<div class="container">
+  <p>
+    This app is pretty experimental, and I'm not sure how long it will last. But it's a fun project to work on, and I'm glad I did it. There will be errors. Enjoy!
+  </p>
+</div>
+
+<div id="filters-container" class="container filters-container">
+  <div class="selector-container">
+    <label for="type-selector">Time Period Duration</label>
+    <select id="type-selector" name=type>
+      <option selected value="all-time">All Time</option>
+    </select>
+  </div>
+   
+  <div id="selector-container" class="selector-container"></div>
+</div>
+
+<section>
+  <div class="container">
+    <h2>Artists</h2>
+    <div id="artists"></div>
+  </div>
+</section>
+
+<section>
+  <div class="container">
+    <h2>Albums</h2>
+    <div id="albums"></div>
+  </div>
+</section>
+
+<section>
+  <div class="container">
+    <h2>Yearly Plays</h2>
+    <div id="yearly-scrobbles">
+    </div>
+  </div>
+
+  <div class="container">
+    <scrobbles-last-updated></scrobbles-last-updated>
+  </div>
+</section>

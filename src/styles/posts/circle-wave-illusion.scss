@@ -1,0 +1,132 @@
+@use "sass:color";
+@use "sass:math";
+@use "system/utilities" as *;
+
+$circle-count: 30;
+
+$circle-size: 26px;
+$circle-border-width: 3px;
+$circle-color: #ff9eed;
+
+$rotation-steps: 16;
+$rotation-step: math.div(360deg, $rotation-steps);
+
+$rotation-duration: 30s;
+$rotation-time-step: math.div($rotation-duration, $rotation-steps);
+
+
+@keyframes rotate {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.form {
+  display: flex;
+  align-items: flex-start;
+  @include paragraph;
+  padding-bottom: $paragraph-bottom;
+
+  label {
+    display: flex;
+    flex-flow: column;
+    justify-content: center;
+    align-items: center;
+
+    &:last-of-type {
+      flex-grow: 1;
+    }
+  }
+
+  span {
+    margin-bottom: space(2);
+  }
+
+  input {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    border: none;
+    height: 40px;
+  }
+
+  button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-right: 12px;
+    width: 40px;
+    height: 40px;
+    padding-top: 0;
+
+    img {
+      border-radius: 0;
+      width: 50%;
+    }
+
+    &.play {
+      .play {
+        display: none;
+      }
+    }
+
+    &:not(.play) {
+      .pause {
+        display: none;
+      }
+    }
+  }
+}
+
+.circle-container {
+  display: grid;
+  grid-template-columns: repeat($circle-count, calc(75% / $circle-count));
+  grid-template-rows: repeat($circle-count, 1fr);
+  background-color: #d6de1d;
+  gap: space(1);
+  justify-content: center;
+  padding: space(6) 0;
+  max-width: 100%;
+  aspect-ratio: 1 / 1;
+}
+
+.circle {
+  position: relative;
+  aspect-ratio: 1 / 1;
+
+  &::after {
+    content: '';
+    display: block;
+    width: 100%;
+    height: 100%;
+
+    border-radius: 100%;
+    background-color: color.adjust($circle-color, $lightness: -10%);
+    border-width: $circle-border-width;
+    border-style: solid;
+
+    border-top-color: $palette--primary-grey;
+    border-left-color: $palette--primary-grey;
+
+    border-right-color: $palette--primary-white;
+    border-bottom-color: $palette--primary-white;
+
+  }
+
+  @for $i from 0 through $rotation-steps {
+    &:nth-child(#{$rotation-steps}n + #{$i})::after {
+      transform: rotate($rotation-step * $i);
+    }
+  }
+
+  .animate & {
+    animation-name: rotate;
+    animation-duration: var(--duration, #{$rotation-duration});
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+  }
+}

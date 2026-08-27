@@ -8,29 +8,51 @@ const windowResize = require('./_modules/window-resize');
 function setupNavEvents() {
   const menuButton = document.getElementById('activate-menu');
   const navTray = document.getElementById('nav-tray');
+  const navOverlay = document.getElementById('nav-overlay');
+
+  function openMenu() {
+    analytics.pushEvent({
+      category: 'nav',
+      action: 'menu open',
+    });
+    menuButton.setAttribute('aria-expanded', 'true');
+    navTray.setAttribute('aria-hidden', 'false');
+    navOverlay.classList.add('visible');
+
+    setTimeout(() => {
+      navTray.classList.add('slide-in');
+    }, 100);
+  }
+
+  function closeMenu() {
+    analytics.pushEvent({
+      category: 'nav',
+      action: 'menu close',
+    });
+    navTray.classList.remove('slide-in');
+    navOverlay.classList.remove('visible');
+
+    setTimeout(() => {
+      menuButton.setAttribute('aria-expanded', 'false');
+      navTray.setAttribute('aria-hidden', 'true');
+    }, 300);
+  }
+
+  navOverlay.addEventListener('click', () => {
+    closeMenu();
+  });
+
   menuButton.addEventListener('click', () => {
     if (menuButton.getAttribute('aria-expanded') === 'true') { // it’s open
-      analytics.pushEvent({
-        category: 'nav',
-        action: 'menu close',
-      });
-      navTray.classList.remove('slide-down');
-
-      setTimeout(() => {
-        menuButton.setAttribute('aria-expanded', 'false');
-        navTray.setAttribute('aria-hidden', 'true');
-      }, 300);
+      closeMenu();
     } else { // it’s closed
-      analytics.pushEvent({
-        category: 'nav',
-        action: 'menu open',
-      });
-      menuButton.setAttribute('aria-expanded', 'true');
-      navTray.setAttribute('aria-hidden', 'false');
+      openMenu();
+    }
+  });
 
-      setTimeout(() => {
-        navTray.classList.add('slide-down');
-      }, 100);
+  document.addEventListener('keydown', (evt) => {
+    if (evt.key === 'Escape') {
+      closeMenu();
     }
   });
 }
@@ -54,21 +76,6 @@ function setUpSkipNav() {
   });
 }
 
-  // function navScrollWatcher() {
-  //   const mainNav = document.querySelector('nav.main');
-
-  //   const checkScrollDepth = () => {
-  //     if (window.scrollY <= 0) {
-  //       mainNav.classList.remove('shadow');
-  //     } else {
-  //       mainNav.classList.add('shadow');
-  //     }
-  //   };
-
-  //   window.addEventListener('scroll', checkScrollDepth);
-  //   checkScrollDepth();
-  // }
-
 function testForTouch() {
   if ('ontouchstart' in document.documentElement) {
     document.documentElement.classList.add('touch-events');
@@ -88,7 +95,7 @@ function setMainMinHeight() {
 
     const heightDelta = docHeight - bottom;
 
-    mainElement.style.minHeight = `${height + heightDelta}px`;
+    mainElement.style.minHeight = `min(${height + heightDelta}px, 100vh)`;
   };
 
   calculateMinHeight();

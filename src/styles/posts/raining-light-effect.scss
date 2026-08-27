@@ -1,0 +1,9 @@
+@use "system/utilities" as *;
+
+#canvas {
+  width: 100%;
+  height: calc(100vh - 120px);
+  @include border--light;
+  display: block;
+  @include left-margins;
+}

@@ -1,0 +1,40 @@
+---
+title: "Polar Clock"
+description: "Back when I was an intern at Nest, I ran across a Polar Clock that I liked a lot. I even made it my screensaver for a while. I finally decided to recreate it here."
+date: 2022-06-25
+priority: 0.8
+pageClasses:
+  - 'posts polar-clock'
+layout: base
+styles:
+  - 'main'
+  - 'posts/polar-clock'
+scripts:
+  - 'posts/polar-clock'
+---
+
+<div class="container center">
+  <div class="key">
+    <div class="seconds">seconds: <span data-time="seconds"></span></div>
+    <div class="minutes">minutes: <span data-time="minutes"></span></div>
+    <div class="hours">hours: <span data-time="hours"></span></div>
+    <div class="days">days: <span data-time="days"></span></div>
+    <div class="months">months: <span data-time="months"></span></div>
+    <div class="years">years: <span data-time="years"></span></div>
+  </div>
+
+  <svg class="clock" viewBox="0 0 140 140" xmlns="http://www.w3.org/2000/svg">
+    <circle id="seconds" cx="70" cy="70" r="65"/>
+    <circle id="minutes" cx="70" cy="70" r="55"/>
+    <circle id="hours" cx="70" cy="70" r="45"/>
+    <circle id="days" cx="70" cy="70" r="35"/>
+    <circle id="months" cx="70" cy="70" r="25"/>
+    <circle id="years" cx="70" cy="70" r="15"/>
+    <circle id="center" cx="70" cy="70" r="9.5"/>
+  </svg>
+
+  <div class="display-time">
+    <span data-time="months"></span>/<span data-time="days"></span>/<span data-time="years"></span>
+    <span data-time="hours"></span>:<span data-time="minutes"></span>:<span data-time="seconds"></span>
+  </div>
+</div>
