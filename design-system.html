@@ -1,0 +1,1818 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="color-scheme" content="dark" />
+<title>Banders Design System</title>
+<meta name="description" content="A dark, mobile-first, 12-column design system for briananders.com — tokens, components, interactions, and integration docs." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap" rel="stylesheet" />
+<style>
+/* ========================================================================
+   BANDERS DESIGN SYSTEM — v1.0
+   Dark-first, mobile-first, 12-column grid.
+   Everything is a token. Change tokens, not components.
+   ======================================================================== */
+
+/* --- 1. Design tokens --------------------------------------------------- */
+:root {
+  /* Base unit — every space and size derives from this. */
+  --unit: 4px;
+
+  /* Neutrals (dark palette) */
+  --color-bg:            #0B0D10;   /* page canvas */
+  --color-surface-1:     #12161C;   /* raised card */
+  --color-surface-2:     #1A2029;   /* elevated card / input */
+  --color-surface-3:     #232B36;   /* hover / active */
+  --color-border:        #2A3341;
+  --color-border-strong: #3A4657;
+  --color-divider:       rgba(255, 255, 255, 0.08);
+
+  /* Text */
+  --color-text:          #F2F5F8;
+  --color-text-muted:    #A6B0BE;
+  --color-text-subtle:   #6C7784;
+  --color-text-inverse:  #0B0D10;
+
+  /* Brand — orange gradient DNA from the existing site, upgraded */
+  --color-primary-50:  #FFE9D6;
+  --color-primary-100: #FFC79B;
+  --color-primary-300: #FF9955;
+  --color-primary-500: #F97316;   /* primary CTA */
+  --color-primary-600: #E85D0F;
+  --color-primary-700: #B24408;
+
+  /* Accents */
+  --color-accent-teal:  #22D3EE;   /* interactive highlight */
+  --color-accent-lime:  #A3E635;   /* success / affirm */
+  --color-accent-plum:  #C084FC;   /* editorial highlight */
+
+  /* Semantic */
+  --color-success: #34D399;
+  --color-warning: #FBBF24;
+  --color-danger:  #F87171;
+  --color-info:    #60A5FA;
+
+  /* Surfaces on brand */
+  --color-primary-tint:   rgba(249, 115, 22, 0.12);
+  --color-success-tint:   rgba(52, 211, 153, 0.14);
+  --color-warning-tint:   rgba(251, 191, 36, 0.14);
+  --color-danger-tint:    rgba(248, 113, 113, 0.14);
+  --color-info-tint:      rgba(96, 165, 250, 0.14);
+
+  /* Focus */
+  --color-focus-ring: #F97316;
+  --focus-ring: 0 0 0 2px var(--color-bg), 0 0 0 4px var(--color-focus-ring);
+
+  /* Elevation (dark elevation = lighter, more diffuse glow) */
+  --elev-1: 0 1px 2px rgba(0,0,0,0.5);
+  --elev-2: 0 4px 12px rgba(0,0,0,0.45), 0 1px 2px rgba(0,0,0,0.5);
+  --elev-3: 0 12px 32px rgba(0,0,0,0.5),  0 2px 6px rgba(0,0,0,0.6);
+  --elev-glow-primary: 0 0 0 1px rgba(249,115,22,0.4), 0 8px 24px rgba(249,115,22,0.18);
+
+  /* Radii */
+  --radius-xs: 4px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+  --radius-pill: 999px;
+
+  /* Spacing scale — derive from --unit (4px). Use these, not raw px. */
+  --space-0:  0;
+  --space-1:  calc(var(--unit) * 1);   /*  4px */
+  --space-2:  calc(var(--unit) * 2);   /*  8px */
+  --space-3:  calc(var(--unit) * 3);   /* 12px */
+  --space-4:  calc(var(--unit) * 4);   /* 16px */
+  --space-5:  calc(var(--unit) * 5);   /* 20px */
+  --space-6:  calc(var(--unit) * 6);   /* 24px */
+  --space-8:  calc(var(--unit) * 8);   /* 32px */
+  --space-10: calc(var(--unit) * 10);  /* 40px */
+  --space-12: calc(var(--unit) * 12);  /* 48px */
+  --space-16: calc(var(--unit) * 16);  /* 64px */
+  --space-20: calc(var(--unit) * 20);  /* 80px */
+  --space-24: calc(var(--unit) * 24);  /* 96px */
+
+  /* Typography */
+  --font-sans:  "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-serif: "Source Serif 4", ui-serif, Georgia, "Times New Roman", serif;
+  --font-mono:  "JetBrains Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+
+  /* Type scale — modular 1.200 (minor third), mobile-first */
+  --fs-2xs: 0.75rem;   /* 12 */
+  --fs-xs:  0.8125rem; /* 13 */
+  --fs-sm:  0.875rem;  /* 14 */
+  --fs-md:  1rem;      /* 16 — body */
+  --fs-lg:  1.125rem;  /* 18 */
+  --fs-xl:  1.375rem;  /* 22 */
+  --fs-2xl: 1.75rem;   /* 28 */
+  --fs-3xl: 2.25rem;   /* 36 */
+  --fs-4xl: 3rem;      /* 48 */
+  --fs-5xl: 3.75rem;   /* 60 */
+
+  --lh-tight:  1.15;
+  --lh-snug:   1.3;
+  --lh-normal: 1.55;
+  --lh-loose:  1.75;
+
+  --fw-regular: 400;
+  --fw-medium:  500;
+  --fw-semibold: 600;
+  --fw-bold:    700;
+
+  /* Grid */
+  --grid-cols-mobile:  4;
+  --grid-cols-tablet:  8;
+  --grid-cols-desktop: 12;
+  --grid-gap-mobile:   var(--space-3);   /* 12 */
+  --grid-gap-desktop:  var(--space-4);   /* 16 */
+  --gutter-mobile:     var(--space-4);   /* 16 */
+  --gutter-desktop:    var(--space-8);   /* 32 */
+  --content-max:       1200px;
+  --reading-max:       68ch;
+
+  /* Motion */
+  --dur-1: 120ms;
+  --dur-2: 200ms;
+  --dur-3: 320ms;
+  --dur-4: 480ms;
+  --ease-standard: cubic-bezier(0.2, 0.0, 0.0, 1.0);
+  --ease-emphasized: cubic-bezier(0.2, 0.0, 0.0, 1.2);
+
+  /* Layers */
+  --z-nav:    100;
+  --z-drawer: 500;
+  --z-modal:  900;
+  --z-toast:  1000;
+}
+
+/* Type scale — grows at desktop breakpoint */
+@media (min-width: 960px) {
+  :root {
+    --fs-xl:  1.5rem;    /* 24 */
+    --fs-2xl: 2rem;      /* 32 */
+    --fs-3xl: 2.75rem;   /* 44 */
+    --fs-4xl: 3.75rem;   /* 60 */
+    --fs-5xl: 4.75rem;   /* 76 */
+  }
+}
+
+/* --- 2. Reset & element defaults ---------------------------------------- */
+*, *::before, *::after { box-sizing: border-box; }
+html {
+  color-scheme: dark;
+  font-family: var(--font-sans);
+  font-size: 100%;
+  line-height: var(--lh-normal);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  scroll-behavior: smooth;
+}
+body {
+  margin: 0;
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-size: var(--fs-md);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+img, svg, video { max-width: 100%; height: auto; display: block; }
+button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; }
+a { color: var(--color-accent-teal); text-decoration: none; }
+a:hover { text-decoration: underline; text-underline-offset: 3px; }
+:focus-visible { outline: none; box-shadow: var(--focus-ring); border-radius: var(--radius-sm); }
+::selection { background: var(--color-primary-500); color: var(--color-text-inverse); }
+
+/* --- 3. Typography helpers ---------------------------------------------- */
+.h1, .h2, .h3, .h4, .h5, .h6, h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-sans);
+  font-weight: var(--fw-semibold);
+  line-height: var(--lh-tight);
+  letter-spacing: -0.02em;
+  margin: 0 0 var(--space-4);
+  color: var(--color-text);
+}
+.display, h1.display { font-size: var(--fs-5xl); letter-spacing: -0.03em; font-weight: var(--fw-bold); }
+h1, .h1 { font-size: var(--fs-4xl); }
+h2, .h2 { font-size: var(--fs-3xl); }
+h3, .h3 { font-size: var(--fs-2xl); }
+h4, .h4 { font-size: var(--fs-xl); }
+h5, .h5 { font-size: var(--fs-lg); }
+h6, .h6 { font-size: var(--fs-md); text-transform: uppercase; letter-spacing: 0.08em; color: var(--color-text-muted); }
+
+.body-lg { font-size: var(--fs-lg); line-height: var(--lh-normal); }
+.body    { font-size: var(--fs-md); line-height: var(--lh-normal); }
+.body-sm { font-size: var(--fs-sm); line-height: var(--lh-normal); color: var(--color-text-muted); }
+.caption { font-size: var(--fs-xs); color: var(--color-text-muted); letter-spacing: 0.02em; }
+.overline { font-size: var(--fs-2xs); font-weight: var(--fw-semibold); text-transform: uppercase; letter-spacing: 0.14em; color: var(--color-text-muted); }
+.serif { font-family: var(--font-serif); }
+.mono  { font-family: var(--font-mono); }
+.reading { font-family: var(--font-serif); font-size: var(--fs-lg); line-height: var(--lh-loose); max-width: var(--reading-max); }
+
+p { margin: 0 0 var(--space-4); max-width: var(--reading-max); }
+p:last-child { margin-bottom: 0; }
+
+hr {
+  border: 0;
+  height: 1px;
+  background: var(--color-divider);
+  margin: var(--space-8) 0;
+}
+
+/* --- 4. Grid & layout --------------------------------------------------- */
+.container {
+  width: 100%;
+  max-width: var(--content-max);
+  margin: 0 auto;
+  padding: 0 var(--gutter-mobile);
+}
+@media (min-width: 600px)  { .container { padding: 0 var(--space-6); } }
+@media (min-width: 960px)  { .container { padding: 0 var(--gutter-desktop); } }
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(var(--grid-cols-mobile), minmax(0, 1fr));
+  gap: var(--grid-gap-mobile);
+}
+@media (min-width: 600px) { .grid { grid-template-columns: repeat(var(--grid-cols-tablet), minmax(0, 1fr)); } }
+@media (min-width: 960px) { .grid { grid-template-columns: repeat(var(--grid-cols-desktop), minmax(0, 1fr)); gap: var(--grid-gap-desktop); } }
+
+/* Column-span utilities — mobile-first */
+.col-1 { grid-column: span 1; } .col-2 { grid-column: span 2; }
+.col-3 { grid-column: span 3; } .col-4 { grid-column: span 4; }
+@media (min-width: 600px) {
+  .t-col-1 { grid-column: span 1; } .t-col-2 { grid-column: span 2; }
+  .t-col-3 { grid-column: span 3; } .t-col-4 { grid-column: span 4; }
+  .t-col-5 { grid-column: span 5; } .t-col-6 { grid-column: span 6; }
+  .t-col-7 { grid-column: span 7; } .t-col-8 { grid-column: span 8; }
+}
+@media (min-width: 960px) {
+  .d-col-1 { grid-column: span 1; }   .d-col-2 { grid-column: span 2; }
+  .d-col-3 { grid-column: span 3; }   .d-col-4 { grid-column: span 4; }
+  .d-col-5 { grid-column: span 5; }   .d-col-6 { grid-column: span 6; }
+  .d-col-7 { grid-column: span 7; }   .d-col-8 { grid-column: span 8; }
+  .d-col-9 { grid-column: span 9; }   .d-col-10 { grid-column: span 10; }
+  .d-col-11 { grid-column: span 11; } .d-col-12 { grid-column: span 12; }
+}
+
+.stack > * + * { margin-top: var(--stack, var(--space-4)); }
+.cluster { display: flex; flex-wrap: wrap; gap: var(--space-3); align-items: center; }
+.flow > * + * { margin-top: var(--space-4); }
+.section { padding: var(--space-12) 0; border-top: 1px solid var(--color-divider); }
+.section:first-of-type { border-top: 0; }
+@media (min-width: 960px) { .section { padding: var(--space-20) 0; } }
+
+/* --- 5. Buttons --------------------------------------------------------- */
+.btn {
+  --btn-bg: var(--color-surface-2);
+  --btn-fg: var(--color-text);
+  --btn-border: var(--color-border);
+  --btn-bg-hover: var(--color-surface-3);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-5);
+  min-height: 44px;                         /* touch target */
+  font-family: var(--font-sans);
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-semibold);
+  letter-spacing: 0.01em;
+  color: var(--btn-fg);
+  background: var(--btn-bg);
+  border: 1px solid var(--btn-border);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: background-color var(--dur-2) var(--ease-standard),
+              transform var(--dur-1) var(--ease-standard),
+              box-shadow var(--dur-2) var(--ease-standard);
+  text-decoration: none;
+  white-space: nowrap;
+}
+.btn:hover  { background: var(--btn-bg-hover); text-decoration: none; }
+.btn:active { transform: translateY(1px); }
+.btn:disabled, .btn[aria-disabled="true"] { opacity: 0.45; cursor: not-allowed; }
+
+.btn--primary {
+  --btn-bg: var(--color-primary-500);
+  --btn-fg: var(--color-text-inverse);
+  --btn-border: transparent;
+  --btn-bg-hover: var(--color-primary-600);
+  box-shadow: var(--elev-glow-primary);
+}
+.btn--secondary { /* default outline is secondary — no override needed */ }
+.btn--ghost {
+  --btn-bg: transparent;
+  --btn-border: transparent;
+  --btn-bg-hover: var(--color-surface-2);
+}
+.btn--danger {
+  --btn-bg: var(--color-danger);
+  --btn-fg: var(--color-text-inverse);
+  --btn-border: transparent;
+  --btn-bg-hover: #EF4444;
+}
+.btn--sm { min-height: 32px; padding: var(--space-1) var(--space-3); font-size: var(--fs-xs); border-radius: var(--radius-sm); }
+.btn--lg { min-height: 56px; padding: var(--space-4) var(--space-8); font-size: var(--fs-md); border-radius: var(--radius-lg); }
+.btn--block { width: 100%; }
+
+.btn__icon { display: inline-flex; width: 1em; height: 1em; }
+
+/* --- 6. Links ----------------------------------------------------------- */
+.link-inline {
+  color: var(--color-accent-teal);
+  border-bottom: 1px solid rgba(34, 211, 238, 0.35);
+  padding-bottom: 1px;
+  transition: color var(--dur-2), border-color var(--dur-2);
+}
+.link-inline:hover { color: #6EE7F9; border-color: currentColor; text-decoration: none; }
+
+.link-block {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  color: var(--color-text);
+  border-radius: var(--radius-sm);
+  font-weight: var(--fw-medium);
+  transition: background-color var(--dur-2), transform var(--dur-2);
+}
+.link-block::after {
+  content: "→";
+  color: var(--color-primary-500);
+  transition: transform var(--dur-2) var(--ease-emphasized);
+}
+.link-block:hover { background: var(--color-surface-2); text-decoration: none; }
+.link-block:hover::after { transform: translateX(4px); }
+
+/* --- 7. Forms ----------------------------------------------------------- */
+.field { display: flex; flex-direction: column; gap: var(--space-2); }
+.field__label { font-size: var(--fs-sm); font-weight: var(--fw-medium); color: var(--color-text); }
+.field__hint  { font-size: var(--fs-xs); color: var(--color-text-muted); }
+.field__error { font-size: var(--fs-xs); color: var(--color-danger); }
+.field.is-invalid .input,
+.field.is-invalid .select,
+.field.is-invalid .textarea { border-color: var(--color-danger); background: var(--color-danger-tint); }
+
+.input, .select, .textarea {
+  width: 100%;
+  min-height: 44px;
+  padding: var(--space-3) var(--space-4);
+  background: var(--color-surface-2);
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  font-family: var(--font-sans);
+  font-size: var(--fs-md);
+  line-height: var(--lh-snug);
+  transition: border-color var(--dur-2), background-color var(--dur-2);
+}
+.input::placeholder, .textarea::placeholder { color: var(--color-text-subtle); }
+.input:hover, .select:hover, .textarea:hover { border-color: var(--color-border-strong); }
+.input:focus, .select:focus, .textarea:focus { border-color: var(--color-primary-500); background: var(--color-surface-1); }
+.textarea { min-height: 120px; padding: var(--space-3) var(--space-4); resize: vertical; line-height: var(--lh-normal); }
+.select {
+  appearance: none;
+  background-image: linear-gradient(45deg, transparent 50%, var(--color-text-muted) 50%),
+                    linear-gradient(-45deg, transparent 50%, var(--color-text-muted) 50%);
+  background-position: right var(--space-4) center, right calc(var(--space-4) + 6px) center;
+  background-size: 6px 6px, 6px 6px;
+  background-repeat: no-repeat;
+  padding-right: var(--space-10);
+}
+
+/* Checkbox / radio — style the native input */
+.check, .radio {
+  appearance: none;
+  width: 20px; height: 20px;
+  background: var(--color-surface-2);
+  border: 1px solid var(--color-border-strong);
+  display: inline-grid;
+  place-content: center;
+  cursor: pointer;
+  transition: background var(--dur-2), border-color var(--dur-2);
+}
+.check { border-radius: var(--radius-xs); }
+.radio { border-radius: var(--radius-pill); }
+.check:hover, .radio:hover { border-color: var(--color-primary-500); }
+.check:checked, .radio:checked { background: var(--color-primary-500); border-color: var(--color-primary-500); }
+.check:checked::after {
+  content: "";
+  width: 10px; height: 6px;
+  border-left: 2px solid var(--color-text-inverse);
+  border-bottom: 2px solid var(--color-text-inverse);
+  transform: rotate(-45deg) translate(1px, -1px);
+}
+.radio:checked::after {
+  content: "";
+  width: 8px; height: 8px;
+  background: var(--color-text-inverse);
+  border-radius: var(--radius-pill);
+}
+
+/* Toggle (styled checkbox) */
+.toggle {
+  appearance: none;
+  width: 44px; height: 24px;
+  background: var(--color-surface-3);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-pill);
+  position: relative;
+  cursor: pointer;
+  transition: background var(--dur-2);
+}
+.toggle::before {
+  content: "";
+  position: absolute;
+  top: 2px; left: 2px;
+  width: 18px; height: 18px;
+  background: var(--color-text);
+  border-radius: var(--radius-pill);
+  transition: left var(--dur-3) var(--ease-standard), background var(--dur-2);
+}
+.toggle:checked { background: var(--color-primary-500); border-color: var(--color-primary-500); }
+.toggle:checked::before { left: 22px; background: var(--color-text-inverse); }
+
+/* Range */
+.range {
+  appearance: none;
+  width: 100%;
+  height: 6px;
+  background: var(--color-surface-3);
+  border-radius: var(--radius-pill);
+  outline: none;
+}
+.range::-webkit-slider-thumb {
+  appearance: none;
+  width: 20px; height: 20px;
+  border-radius: var(--radius-pill);
+  background: var(--color-primary-500);
+  border: 2px solid var(--color-bg);
+  cursor: pointer;
+  box-shadow: var(--elev-1);
+}
+.range::-moz-range-thumb {
+  width: 20px; height: 20px;
+  border-radius: var(--radius-pill);
+  background: var(--color-primary-500);
+  border: 2px solid var(--color-bg);
+  cursor: pointer;
+}
+
+/* --- 8. Cards ----------------------------------------------------------- */
+.card {
+  background: var(--color-surface-1);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-6);
+  box-shadow: var(--elev-1);
+  transition: border-color var(--dur-2), transform var(--dur-2), box-shadow var(--dur-2);
+}
+.card--elevated { background: var(--color-surface-2); box-shadow: var(--elev-2); }
+.card--interactive { cursor: pointer; }
+.card--interactive:hover {
+  transform: translateY(-2px);
+  border-color: var(--color-primary-500);
+  box-shadow: var(--elev-3);
+}
+.card__eyebrow { color: var(--color-primary-500); font-size: var(--fs-xs); font-weight: var(--fw-semibold); text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: var(--space-2); }
+.card__title   { font-size: var(--fs-xl); margin-bottom: var(--space-2); }
+.card__body    { color: var(--color-text-muted); margin-bottom: var(--space-4); }
+.card__footer  { display: flex; gap: var(--space-3); align-items: center; margin-top: var(--space-4); padding-top: var(--space-4); border-top: 1px solid var(--color-divider); }
+
+/* --- 9. Badges & pills -------------------------------------------------- */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: 2px var(--space-2);
+  font-size: var(--fs-2xs);
+  font-weight: var(--fw-semibold);
+  border-radius: var(--radius-pill);
+  background: var(--color-surface-3);
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.badge--primary { background: var(--color-primary-tint); color: var(--color-primary-300); border-color: transparent; }
+.badge--success { background: var(--color-success-tint); color: var(--color-success); border-color: transparent; }
+.badge--warning { background: var(--color-warning-tint); color: var(--color-warning); border-color: transparent; }
+.badge--danger  { background: var(--color-danger-tint);  color: var(--color-danger);  border-color: transparent; }
+.badge--info    { background: var(--color-info-tint);    color: var(--color-info);    border-color: transparent; }
+.badge__dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+
+/* --- 10. Alerts --------------------------------------------------------- */
+.alert {
+  display: flex;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  background: var(--color-surface-1);
+  border: 1px solid var(--color-border);
+  border-left: 4px solid var(--color-info);
+  border-radius: var(--radius-md);
+  align-items: flex-start;
+}
+.alert--info    { border-left-color: var(--color-info); }
+.alert--success { border-left-color: var(--color-success); }
+.alert--warning { border-left-color: var(--color-warning); }
+.alert--danger  { border-left-color: var(--color-danger); }
+.alert__icon { flex: 0 0 auto; font-size: var(--fs-lg); line-height: 1; }
+.alert__title { font-weight: var(--fw-semibold); margin: 0 0 var(--space-1); }
+.alert__body  { color: var(--color-text-muted); margin: 0; font-size: var(--fs-sm); }
+
+/* --- 11. Code ----------------------------------------------------------- */
+code, pre, kbd { font-family: var(--font-mono); }
+.code-inline, code:not(pre code) {
+  padding: 2px 6px;
+  background: var(--color-surface-2);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xs);
+  font-size: 0.92em;
+  color: var(--color-accent-lime);
+}
+pre.code-block {
+  margin: 0;
+  padding: var(--space-4);
+  background: #05070A;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  overflow-x: auto;
+  font-size: var(--fs-sm);
+  line-height: var(--lh-normal);
+  color: #D6DCE5;
+}
+pre.code-block code { background: transparent; border: 0; padding: 0; color: inherit; }
+.tok-c  { color: #6C7784; }
+.tok-k  { color: #F97316; }
+.tok-s  { color: #A3E635; }
+.tok-p  { color: #C084FC; }
+.tok-t  { color: #22D3EE; }
+kbd {
+  display: inline-block;
+  padding: 2px 6px;
+  font-size: var(--fs-xs);
+  color: var(--color-text);
+  background: var(--color-surface-2);
+  border: 1px solid var(--color-border-strong);
+  border-bottom-width: 2px;
+  border-radius: var(--radius-xs);
+}
+
+/* --- 12. Nav ------------------------------------------------------------ */
+.nav {
+  position: sticky;
+  top: 0;
+  z-index: var(--z-nav);
+  background: rgba(11, 13, 16, 0.72);
+  backdrop-filter: blur(12px) saturate(140%);
+  -webkit-backdrop-filter: blur(12px) saturate(140%);
+  border-bottom: 1px solid var(--color-divider);
+}
+.nav__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  min-height: 64px;
+}
+.nav__brand { display: flex; align-items: center; gap: var(--space-2); font-weight: var(--fw-bold); }
+.nav__brand-mark {
+  width: 28px; height: 28px;
+  border-radius: var(--radius-sm);
+  background: linear-gradient(135deg, var(--color-primary-500), var(--color-accent-plum));
+}
+.nav__links { display: none; gap: var(--space-1); }
+@media (min-width: 720px) { .nav__links { display: flex; } }
+.nav__link {
+  padding: var(--space-2) var(--space-3);
+  color: var(--color-text-muted);
+  border-radius: var(--radius-sm);
+  font-weight: var(--fw-medium);
+}
+.nav__link:hover, .nav__link[aria-current="page"] {
+  color: var(--color-text);
+  background: var(--color-surface-2);
+  text-decoration: none;
+}
+.nav__toggle { display: inline-flex; align-items: center; padding: var(--space-2); border-radius: var(--radius-sm); }
+@media (min-width: 720px) { .nav__toggle { display: none; } }
+.nav__drawer {
+  display: none;
+  padding: var(--space-2) 0 var(--space-4);
+  border-top: 1px solid var(--color-divider);
+}
+.nav__drawer.is-open { display: block; }
+.nav__drawer .nav__link { display: block; padding: var(--space-3) 0; }
+
+/* --- 13. Tabs ----------------------------------------------------------- */
+.tabs__list {
+  display: flex;
+  gap: var(--space-1);
+  border-bottom: 1px solid var(--color-divider);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.tabs__list::-webkit-scrollbar { display: none; }
+.tab {
+  padding: var(--space-3) var(--space-4);
+  color: var(--color-text-muted);
+  font-weight: var(--fw-medium);
+  border-bottom: 2px solid transparent;
+  border-radius: 0;
+  white-space: nowrap;
+  transition: color var(--dur-2), border-color var(--dur-2);
+}
+.tab:hover { color: var(--color-text); }
+.tab[aria-selected="true"] {
+  color: var(--color-primary-500);
+  border-bottom-color: var(--color-primary-500);
+}
+.tab-panel { padding: var(--space-6) 0; }
+.tab-panel[hidden] { display: none; }
+
+/* --- 14. Accordion ------------------------------------------------------ */
+.accordion__item + .accordion__item { border-top: 1px solid var(--color-divider); }
+.accordion__trigger {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-4) 0;
+  text-align: left;
+  color: var(--color-text);
+  font-weight: var(--fw-semibold);
+  font-size: var(--fs-md);
+  border-radius: 0;
+}
+.accordion__trigger::after {
+  content: "+";
+  font-family: var(--font-mono);
+  font-size: var(--fs-xl);
+  color: var(--color-primary-500);
+  transition: transform var(--dur-3) var(--ease-emphasized);
+}
+.accordion__trigger[aria-expanded="true"]::after { transform: rotate(45deg); }
+.accordion__panel {
+  overflow: hidden;
+  max-height: 0;
+  transition: max-height var(--dur-4) var(--ease-standard), padding var(--dur-3);
+}
+.accordion__panel[data-open="true"] { max-height: 400px; padding-bottom: var(--space-4); }
+.accordion__panel-inner { color: var(--color-text-muted); }
+
+/* --- 15. Modal ---------------------------------------------------------- */
+.modal[hidden] { display: none; }
+.modal {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-modal);
+  display: grid;
+  place-items: end center;
+  padding: 0;
+}
+@media (min-width: 600px) { .modal { place-items: center; padding: var(--space-6); } }
+.modal__scrim {
+  position: absolute; inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(3px);
+  animation: fadeIn var(--dur-3) var(--ease-standard);
+}
+.modal__dialog {
+  position: relative;
+  width: 100%;
+  max-width: 480px;
+  background: var(--color-surface-1);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  box-shadow: var(--elev-3);
+  padding: var(--space-6);
+  animation: slideUp var(--dur-4) var(--ease-emphasized);
+}
+@media (min-width: 600px) { .modal__dialog { border-radius: var(--radius-lg); animation: popIn var(--dur-3) var(--ease-emphasized); } }
+.modal__title { margin: 0 0 var(--space-2); font-size: var(--fs-xl); }
+.modal__body  { color: var(--color-text-muted); margin: 0 0 var(--space-6); }
+.modal__footer { display: flex; gap: var(--space-3); justify-content: flex-end; }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes popIn  { from { opacity: 0; transform: scale(0.94); } to { opacity: 1; transform: scale(1); } }
+@keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+
+/* --- 16. Toast ---------------------------------------------------------- */
+.toast-region {
+  position: fixed;
+  bottom: var(--space-4);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: var(--z-toast);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  pointer-events: none;
+}
+.toast {
+  min-width: 260px;
+  max-width: 380px;
+  padding: var(--space-3) var(--space-4);
+  background: var(--color-surface-2);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-md);
+  box-shadow: var(--elev-3);
+  color: var(--color-text);
+  font-size: var(--fs-sm);
+  pointer-events: auto;
+  animation: toastIn var(--dur-3) var(--ease-emphasized);
+}
+@keyframes toastIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+/* --- 17. Progress & meters --------------------------------------------- */
+.progress {
+  width: 100%;
+  height: 6px;
+  background: var(--color-surface-2);
+  border-radius: var(--radius-pill);
+  overflow: hidden;
+}
+.progress__bar {
+  height: 100%;
+  background: linear-gradient(90deg, var(--color-primary-500), var(--color-primary-300));
+  border-radius: inherit;
+  transition: width var(--dur-4) var(--ease-standard);
+}
+.progress--indeterminate .progress__bar {
+  width: 40%;
+  animation: indeterminate 1.4s var(--ease-standard) infinite;
+}
+@keyframes indeterminate {
+  0%   { transform: translateX(-100%); }
+  100% { transform: translateX(300%); }
+}
+
+/* --- 18. Tables --------------------------------------------------------- */
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--fs-sm);
+}
+.table th, .table td {
+  padding: var(--space-3) var(--space-4);
+  text-align: left;
+  border-bottom: 1px solid var(--color-divider);
+}
+.table th {
+  font-weight: var(--fw-semibold);
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  font-size: var(--fs-2xs);
+  letter-spacing: 0.08em;
+  background: var(--color-surface-1);
+}
+.table tbody tr { transition: background var(--dur-2); }
+.table tbody tr:hover { background: var(--color-surface-1); }
+.table-wrap { border: 1px solid var(--color-border); border-radius: var(--radius-md); overflow: auto; }
+
+/* --- 19. Utility -------------------------------------------------------- */
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+.text-muted { color: var(--color-text-muted); }
+.text-subtle { color: var(--color-text-subtle); }
+.text-primary { color: var(--color-primary-500); }
+.text-center { text-align: center; }
+.mt-0 { margin-top: 0; } .mt-2 { margin-top: var(--space-2); } .mt-4 { margin-top: var(--space-4); } .mt-6 { margin-top: var(--space-6); } .mt-8 { margin-top: var(--space-8); }
+.mb-0 { margin-bottom: 0; } .mb-2 { margin-bottom: var(--space-2); } .mb-4 { margin-bottom: var(--space-4); } .mb-6 { margin-bottom: var(--space-6); } .mb-8 { margin-bottom: var(--space-8); }
+
+/* --- 20. Design-system-specific demo scaffolding ------------------------ */
+.hero {
+  padding: var(--space-16) 0 var(--space-12);
+  background:
+    radial-gradient(1000px 400px at 80% -100px, rgba(249,115,22,0.18), transparent 60%),
+    radial-gradient(600px 300px at 20% -50px,  rgba(192,132,252,0.14), transparent 60%);
+}
+@media (min-width: 960px) { .hero { padding: var(--space-24) 0 var(--space-16); } }
+
+.hero__eyebrow { color: var(--color-primary-300); }
+.hero__title { font-size: clamp(2.5rem, 6vw + 1rem, 5rem); font-weight: var(--fw-bold); letter-spacing: -0.035em; line-height: 1.02; margin: 0 0 var(--space-6); }
+.hero__title em { font-style: normal; background: linear-gradient(90deg, var(--color-primary-300), var(--color-accent-plum)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+
+.subsection { display: flex; flex-direction: column; gap: var(--space-6); }
+.subsection__header { display: flex; flex-wrap: wrap; gap: var(--space-2); align-items: baseline; justify-content: space-between; }
+.subsection__title { margin: 0; font-size: var(--fs-2xl); }
+
+/* Token swatches */
+.swatch-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: var(--space-3); }
+.swatch {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background: var(--color-surface-1);
+  cursor: pointer;
+  transition: transform var(--dur-2), border-color var(--dur-2);
+}
+.swatch:hover { transform: translateY(-2px); border-color: var(--color-border-strong); }
+.swatch__chip { height: 84px; }
+.swatch__meta { padding: var(--space-3); font-size: var(--fs-xs); }
+.swatch__name { color: var(--color-text); font-weight: var(--fw-semibold); font-size: var(--fs-sm); margin-bottom: 2px; }
+.swatch__value { font-family: var(--font-mono); color: var(--color-text-muted); }
+
+/* Spacing scale visualization */
+.space-row { display: flex; align-items: center; gap: var(--space-3); padding: var(--space-2) 0; }
+.space-row__bar { background: var(--color-primary-500); height: 12px; border-radius: var(--radius-xs); }
+.space-row__label { font-family: var(--font-mono); font-size: var(--fs-xs); color: var(--color-text-muted); min-width: 100px; }
+
+/* Type sample rows */
+.type-row { display: grid; grid-template-columns: 100px 1fr; gap: var(--space-4); align-items: baseline; padding: var(--space-3) 0; border-bottom: 1px solid var(--color-divider); }
+.type-row__label { font-family: var(--font-mono); font-size: var(--fs-2xs); color: var(--color-text-muted); text-transform: uppercase; }
+.type-row__sample { line-height: 1.1; margin: 0; }
+
+/* Grid demo boxes */
+.grid-demo { position: relative; padding: var(--space-4); background: var(--color-surface-1); border: 1px dashed var(--color-border-strong); border-radius: var(--radius-md); }
+.grid-demo__cell {
+  background: var(--color-primary-tint);
+  border: 1px solid rgba(249, 115, 22, 0.35);
+  padding: var(--space-3) 0;
+  text-align: center;
+  color: var(--color-primary-300);
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  border-radius: var(--radius-sm);
+}
+
+/* Table-of-contents rail */
+.toc {
+  position: sticky;
+  top: 84px;
+  align-self: start;
+  padding: var(--space-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface-1);
+  max-height: calc(100vh - 100px);
+  overflow-y: auto;
+  display: none;
+}
+@media (min-width: 960px) { .toc { display: block; } }
+.toc h4 { font-size: var(--fs-2xs); text-transform: uppercase; letter-spacing: 0.14em; color: var(--color-text-muted); margin: 0 0 var(--space-3); }
+.toc ul { list-style: none; padding: 0; margin: 0; }
+.toc li { margin-bottom: var(--space-1); }
+.toc a { display: block; padding: var(--space-1) var(--space-2); color: var(--color-text-muted); font-size: var(--fs-sm); border-radius: var(--radius-xs); }
+.toc a:hover, .toc a[aria-current="true"] { color: var(--color-text); background: var(--color-surface-2); text-decoration: none; }
+
+.layout { display: grid; grid-template-columns: 1fr; gap: var(--space-8); }
+@media (min-width: 960px) { .layout { grid-template-columns: 220px 1fr; gap: var(--space-10); } }
+
+/* Reduced-motion support */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+</style>
+</head>
+<body>
+
+<!-- =====================================================================
+     Global Nav
+     ===================================================================== -->
+<nav class="nav" aria-label="Design system navigation">
+  <div class="container">
+    <div class="nav__inner">
+      <a href="#top" class="nav__brand">
+        <span class="nav__brand-mark" aria-hidden="true"></span>
+        <span>Banders&nbsp;DS</span>
+      </a>
+      <div class="nav__links" role="menubar">
+        <a href="#foundations" class="nav__link" role="menuitem">Foundations</a>
+        <a href="#components"   class="nav__link" role="menuitem">Components</a>
+        <a href="#patterns"     class="nav__link" role="menuitem">Patterns</a>
+        <a href="#docs"         class="nav__link" role="menuitem">Docs</a>
+      </div>
+      <button class="btn btn--sm btn--ghost nav__toggle" id="navToggle" aria-expanded="false" aria-controls="navDrawer" aria-label="Toggle menu">
+        <span aria-hidden="true">☰</span>
+      </button>
+    </div>
+    <div class="nav__drawer" id="navDrawer" hidden>
+      <a href="#foundations" class="nav__link">Foundations</a>
+      <a href="#components"   class="nav__link">Components</a>
+      <a href="#patterns"     class="nav__link">Patterns</a>
+      <a href="#docs"         class="nav__link">Docs</a>
+    </div>
+  </div>
+</nav>
+
+<a id="top"></a>
+
+<!-- =====================================================================
+     Hero
+     ===================================================================== -->
+<header class="hero">
+  <div class="container">
+    <p class="overline hero__eyebrow">Banders Design System · v1.0</p>
+    <h1 class="hero__title">A calm, <em>dark-first</em><br />system for briananders.com</h1>
+    <p class="body-lg text-muted" style="max-width: 60ch;">
+      Tokens, a 12-column mobile-first grid, and a small, opinionated set of
+      components — designed to replace the ad-hoc mixin sprawl in
+      <code class="code-inline">src/styles/system/</code> with a single
+      source of truth.
+    </p>
+    <div class="cluster mt-8">
+      <a href="#components" class="btn btn--primary btn--lg">Browse components</a>
+      <a href="#docs"       class="btn btn--lg">Read the docs</a>
+      <span class="badge badge--success"><span class="badge__dot"></span>Ready to adopt</span>
+    </div>
+  </div>
+</header>
+
+<!-- =====================================================================
+     Body layout with sticky TOC
+     ===================================================================== -->
+<main class="container section" style="padding-top: var(--space-8);">
+  <div class="layout">
+
+    <aside class="toc" aria-label="On this page">
+      <h4>On this page</h4>
+      <ul id="tocList">
+        <li><a href="#foundations">Foundations</a></li>
+        <li><a href="#color">— Color</a></li>
+        <li><a href="#type">— Typography</a></li>
+        <li><a href="#space">— Space</a></li>
+        <li><a href="#grid">— 12-col grid</a></li>
+        <li><a href="#radii">— Radii &amp; elevation</a></li>
+        <li><a href="#motion">— Motion</a></li>
+        <li><a href="#components">Components</a></li>
+        <li><a href="#buttons">— Buttons</a></li>
+        <li><a href="#links">— Links</a></li>
+        <li><a href="#forms">— Forms</a></li>
+        <li><a href="#cards">— Cards</a></li>
+        <li><a href="#badges">— Badges</a></li>
+        <li><a href="#alerts">— Alerts</a></li>
+        <li><a href="#nav-c">— Nav</a></li>
+        <li><a href="#tabs">— Tabs</a></li>
+        <li><a href="#accordion">— Accordion</a></li>
+        <li><a href="#modal">— Modal</a></li>
+        <li><a href="#toast">— Toast</a></li>
+        <li><a href="#progress">— Progress</a></li>
+        <li><a href="#table">— Table</a></li>
+        <li><a href="#code">— Code</a></li>
+        <li><a href="#patterns">Patterns</a></li>
+        <li><a href="#docs">Documentation</a></li>
+      </ul>
+    </aside>
+
+    <div>
+
+      <!-- ============================================================
+           FOUNDATIONS
+           ============================================================ -->
+      <section id="foundations" aria-labelledby="foundations-h">
+        <div class="subsection__header">
+          <h2 id="foundations-h" class="subsection__title">Foundations</h2>
+          <span class="overline">Tokens</span>
+        </div>
+        <p class="text-muted">Design tokens are declared as CSS custom properties on <code class="code-inline">:root</code>. Every component pulls from them — don't hard-code values.</p>
+
+        <!-- ---- Color ---- -->
+        <div id="color" class="stack mt-8" style="--stack: var(--space-6);">
+          <h3>Color</h3>
+          <p class="text-muted">Dark-first neutrals for surfaces, an orange ramp inherited from the site's existing gradient DNA, and semantic accents. Click any swatch to copy its CSS variable name.</p>
+
+          <h4 class="h6">Neutrals &amp; surfaces</h4>
+          <div class="swatch-grid" data-copy-group>
+            <button class="swatch" data-var="--color-bg"><span class="swatch__chip" style="background:var(--color-bg); border-bottom:1px solid var(--color-divider)"></span><span class="swatch__meta"><div class="swatch__name">bg</div><div class="swatch__value">#0B0D10</div></span></button>
+            <button class="swatch" data-var="--color-surface-1"><span class="swatch__chip" style="background:var(--color-surface-1)"></span><span class="swatch__meta"><div class="swatch__name">surface-1</div><div class="swatch__value">#12161C</div></span></button>
+            <button class="swatch" data-var="--color-surface-2"><span class="swatch__chip" style="background:var(--color-surface-2)"></span><span class="swatch__meta"><div class="swatch__name">surface-2</div><div class="swatch__value">#1A2029</div></span></button>
+            <button class="swatch" data-var="--color-surface-3"><span class="swatch__chip" style="background:var(--color-surface-3)"></span><span class="swatch__meta"><div class="swatch__name">surface-3</div><div class="swatch__value">#232B36</div></span></button>
+            <button class="swatch" data-var="--color-border"><span class="swatch__chip" style="background:var(--color-border)"></span><span class="swatch__meta"><div class="swatch__name">border</div><div class="swatch__value">#2A3341</div></span></button>
+            <button class="swatch" data-var="--color-text"><span class="swatch__chip" style="background:var(--color-text)"></span><span class="swatch__meta"><div class="swatch__name">text</div><div class="swatch__value">#F2F5F8</div></span></button>
+            <button class="swatch" data-var="--color-text-muted"><span class="swatch__chip" style="background:var(--color-text-muted)"></span><span class="swatch__meta"><div class="swatch__name">text-muted</div><div class="swatch__value">#A6B0BE</div></span></button>
+            <button class="swatch" data-var="--color-text-subtle"><span class="swatch__chip" style="background:var(--color-text-subtle)"></span><span class="swatch__meta"><div class="swatch__name">text-subtle</div><div class="swatch__value">#6C7784</div></span></button>
+          </div>
+
+          <h4 class="h6 mt-8">Brand — Primary (orange)</h4>
+          <div class="swatch-grid">
+            <button class="swatch" data-var="--color-primary-50"><span class="swatch__chip" style="background:var(--color-primary-50)"></span><span class="swatch__meta"><div class="swatch__name">primary-50</div><div class="swatch__value">#FFE9D6</div></span></button>
+            <button class="swatch" data-var="--color-primary-100"><span class="swatch__chip" style="background:var(--color-primary-100)"></span><span class="swatch__meta"><div class="swatch__name">primary-100</div><div class="swatch__value">#FFC79B</div></span></button>
+            <button class="swatch" data-var="--color-primary-300"><span class="swatch__chip" style="background:var(--color-primary-300)"></span><span class="swatch__meta"><div class="swatch__name">primary-300</div><div class="swatch__value">#FF9955</div></span></button>
+            <button class="swatch" data-var="--color-primary-500"><span class="swatch__chip" style="background:var(--color-primary-500)"></span><span class="swatch__meta"><div class="swatch__name">primary-500</div><div class="swatch__value">#F97316</div></span></button>
+            <button class="swatch" data-var="--color-primary-600"><span class="swatch__chip" style="background:var(--color-primary-600)"></span><span class="swatch__meta"><div class="swatch__name">primary-600</div><div class="swatch__value">#E85D0F</div></span></button>
+            <button class="swatch" data-var="--color-primary-700"><span class="swatch__chip" style="background:var(--color-primary-700)"></span><span class="swatch__meta"><div class="swatch__name">primary-700</div><div class="swatch__value">#B24408</div></span></button>
+          </div>
+
+          <h4 class="h6 mt-8">Accents &amp; semantic</h4>
+          <div class="swatch-grid">
+            <button class="swatch" data-var="--color-accent-teal"><span class="swatch__chip" style="background:var(--color-accent-teal)"></span><span class="swatch__meta"><div class="swatch__name">accent-teal</div><div class="swatch__value">#22D3EE</div></span></button>
+            <button class="swatch" data-var="--color-accent-lime"><span class="swatch__chip" style="background:var(--color-accent-lime)"></span><span class="swatch__meta"><div class="swatch__name">accent-lime</div><div class="swatch__value">#A3E635</div></span></button>
+            <button class="swatch" data-var="--color-accent-plum"><span class="swatch__chip" style="background:var(--color-accent-plum)"></span><span class="swatch__meta"><div class="swatch__name">accent-plum</div><div class="swatch__value">#C084FC</div></span></button>
+            <button class="swatch" data-var="--color-success"><span class="swatch__chip" style="background:var(--color-success)"></span><span class="swatch__meta"><div class="swatch__name">success</div><div class="swatch__value">#34D399</div></span></button>
+            <button class="swatch" data-var="--color-warning"><span class="swatch__chip" style="background:var(--color-warning)"></span><span class="swatch__meta"><div class="swatch__name">warning</div><div class="swatch__value">#FBBF24</div></span></button>
+            <button class="swatch" data-var="--color-danger"><span class="swatch__chip" style="background:var(--color-danger)"></span><span class="swatch__meta"><div class="swatch__name">danger</div><div class="swatch__value">#F87171</div></span></button>
+            <button class="swatch" data-var="--color-info"><span class="swatch__chip" style="background:var(--color-info)"></span><span class="swatch__meta"><div class="swatch__name">info</div><div class="swatch__value">#60A5FA</div></span></button>
+          </div>
+
+          <div class="alert alert--info mt-6">
+            <span class="alert__icon">🎨</span>
+            <div>
+              <p class="alert__title">Contrast</p>
+              <p class="alert__body">All text tokens meet WCAG AA on <code class="code-inline">--color-bg</code>. <code class="code-inline">--color-text</code> on <code class="code-inline">--color-bg</code> is 15.6:1; <code class="code-inline">--color-text-muted</code> is 8.7:1.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- ---- Typography ---- -->
+        <div id="type" class="stack mt-8" style="--stack: var(--space-6);">
+          <h3>Typography</h3>
+          <p class="text-muted">Two-family stack: <strong>Inter</strong> for UI &amp; headings, <strong>Source Serif 4</strong> for long-form reading, <strong>JetBrains Mono</strong> for code. Scale is modular (1.200) and steps up at the 960px breakpoint.</p>
+
+          <div class="type-row"><span class="type-row__label">display</span><p class="type-row__sample display">Bat Lessons.</p></div>
+          <div class="type-row"><span class="type-row__label">h1 / 4xl</span><h1 class="type-row__sample" style="margin:0;">The quick brown fox</h1></div>
+          <div class="type-row"><span class="type-row__label">h2 / 3xl</span><h2 class="type-row__sample" style="margin:0;">The quick brown fox</h2></div>
+          <div class="type-row"><span class="type-row__label">h3 / 2xl</span><h3 class="type-row__sample" style="margin:0;">The quick brown fox</h3></div>
+          <div class="type-row"><span class="type-row__label">h4 / xl</span><h4 class="type-row__sample" style="margin:0;">The quick brown fox</h4></div>
+          <div class="type-row"><span class="type-row__label">body-lg</span><p class="type-row__sample body-lg">The quick brown fox jumps over the lazy dog.</p></div>
+          <div class="type-row"><span class="type-row__label">body</span><p class="type-row__sample body">The quick brown fox jumps over the lazy dog.</p></div>
+          <div class="type-row"><span class="type-row__label">body-sm</span><p class="type-row__sample body-sm">The quick brown fox jumps over the lazy dog.</p></div>
+          <div class="type-row"><span class="type-row__label">caption</span><p class="type-row__sample caption">The quick brown fox jumps over the lazy dog.</p></div>
+          <div class="type-row"><span class="type-row__label">overline</span><p class="type-row__sample overline">Section label</p></div>
+          <div class="type-row"><span class="type-row__label">reading</span><p class="type-row__sample reading">Reading serif: a long-form paragraph in Source Serif 4 to demonstrate the treatment for post bodies, articles, and the drum-cover write-ups.</p></div>
+        </div>
+
+        <!-- ---- Space ---- -->
+        <div id="space" class="stack mt-8" style="--stack: var(--space-6);">
+          <h3>Spacing scale</h3>
+          <p class="text-muted">All spacing derives from <code class="code-inline">--unit</code> (4px). Never write raw <code class="code-inline">px</code> or <code class="code-inline">rem</code> values for padding, margin, or gap.</p>
+          <div class="card">
+            <div class="space-row"><span class="space-row__label">--space-1  · 4</span><span class="space-row__bar" style="width:4px"></span></div>
+            <div class="space-row"><span class="space-row__label">--space-2  · 8</span><span class="space-row__bar" style="width:8px"></span></div>
+            <div class="space-row"><span class="space-row__label">--space-3  · 12</span><span class="space-row__bar" style="width:12px"></span></div>
+            <div class="space-row"><span class="space-row__label">--space-4  · 16</span><span class="space-row__bar" style="width:16px"></span></div>
+            <div class="space-row"><span class="space-row__label">--space-6  · 24</span><span class="space-row__bar" style="width:24px"></span></div>
+            <div class="space-row"><span class="space-row__label">--space-8  · 32</span><span class="space-row__bar" style="width:32px"></span></div>
+            <div class="space-row"><span class="space-row__label">--space-12 · 48</span><span class="space-row__bar" style="width:48px"></span></div>
+            <div class="space-row"><span class="space-row__label">--space-16 · 64</span><span class="space-row__bar" style="width:64px"></span></div>
+            <div class="space-row"><span class="space-row__label">--space-20 · 80</span><span class="space-row__bar" style="width:80px"></span></div>
+            <div class="space-row"><span class="space-row__label">--space-24 · 96</span><span class="space-row__bar" style="width:96px"></span></div>
+          </div>
+        </div>
+
+        <!-- ---- Grid ---- -->
+        <div id="grid" class="stack mt-8" style="--stack: var(--space-4);">
+          <h3>12-column grid · mobile-first</h3>
+          <p class="text-muted">
+            The grid is <strong>4 columns</strong> below 600px, <strong>8 columns</strong> from 600–959px, and <strong>12 columns</strong> at 960px and up.
+            Column-span utilities follow the same tiers: <code class="code-inline">.col-*</code>, <code class="code-inline">.t-col-*</code>, <code class="code-inline">.d-col-*</code>.
+          </p>
+
+          <div class="grid-demo">
+            <div class="grid" aria-hidden="true">
+              <div class="grid-demo__cell col-2 t-col-2 d-col-1">1</div>
+              <div class="grid-demo__cell col-2 t-col-2 d-col-1">2</div>
+              <div class="grid-demo__cell col-2 t-col-2 d-col-1">3</div>
+              <div class="grid-demo__cell col-2 t-col-2 d-col-1">4</div>
+              <div class="grid-demo__cell col-2 t-col-2 d-col-1">5</div>
+              <div class="grid-demo__cell col-2 t-col-2 d-col-1">6</div>
+              <div class="grid-demo__cell col-2 t-col-2 d-col-1">7</div>
+              <div class="grid-demo__cell col-2 t-col-2 d-col-1">8</div>
+              <div class="grid-demo__cell col-2 t-col-2 d-col-1">9</div>
+              <div class="grid-demo__cell col-2 t-col-2 d-col-1">10</div>
+              <div class="grid-demo__cell col-2 t-col-2 d-col-1">11</div>
+              <div class="grid-demo__cell col-2 t-col-2 d-col-1">12</div>
+            </div>
+          </div>
+
+          <p class="caption">Common layouts — resize your window to watch them collapse.</p>
+
+          <div class="grid-demo">
+            <div class="grid">
+              <div class="grid-demo__cell col-4 t-col-8 d-col-8">main · d-col-8</div>
+              <div class="grid-demo__cell col-4 t-col-8 d-col-4">side · d-col-4</div>
+            </div>
+          </div>
+
+          <div class="grid-demo">
+            <div class="grid">
+              <div class="grid-demo__cell col-2 t-col-4 d-col-4">card · 4</div>
+              <div class="grid-demo__cell col-2 t-col-4 d-col-4">card · 4</div>
+              <div class="grid-demo__cell col-4 t-col-8 d-col-4">card · 4</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ---- Radii / elevation ---- -->
+        <div id="radii" class="stack mt-8" style="--stack: var(--space-6);">
+          <h3>Radii &amp; elevation</h3>
+          <div class="grid">
+            <div class="col-2 t-col-4 d-col-3">
+              <div class="card text-center">
+                <div style="width:80px; height:80px; margin:0 auto var(--space-3); background:var(--color-primary-500); border-radius:var(--radius-xs);"></div>
+                <div class="caption">radius-xs · 4</div>
+              </div>
+            </div>
+            <div class="col-2 t-col-4 d-col-3">
+              <div class="card text-center">
+                <div style="width:80px; height:80px; margin:0 auto var(--space-3); background:var(--color-primary-500); border-radius:var(--radius-sm);"></div>
+                <div class="caption">radius-sm · 8</div>
+              </div>
+            </div>
+            <div class="col-2 t-col-4 d-col-3">
+              <div class="card text-center">
+                <div style="width:80px; height:80px; margin:0 auto var(--space-3); background:var(--color-primary-500); border-radius:var(--radius-md);"></div>
+                <div class="caption">radius-md · 12</div>
+              </div>
+            </div>
+            <div class="col-2 t-col-4 d-col-3">
+              <div class="card text-center">
+                <div style="width:80px; height:80px; margin:0 auto var(--space-3); background:var(--color-primary-500); border-radius:var(--radius-lg);"></div>
+                <div class="caption">radius-lg · 20</div>
+              </div>
+            </div>
+          </div>
+          <div class="grid">
+            <div class="col-4 t-col-4 d-col-4">
+              <div class="card" style="box-shadow: var(--elev-1);">
+                <div class="overline">elev-1</div>
+                <div class="body-sm text-muted">Low resting elevation. Cards.</div>
+              </div>
+            </div>
+            <div class="col-4 t-col-4 d-col-4">
+              <div class="card card--elevated">
+                <div class="overline">elev-2</div>
+                <div class="body-sm text-muted">Interactive / raised.</div>
+              </div>
+            </div>
+            <div class="col-4 t-col-8 d-col-4">
+              <div class="card" style="box-shadow: var(--elev-3);">
+                <div class="overline">elev-3</div>
+                <div class="body-sm text-muted">Modal, drawer, top-level.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ---- Motion ---- -->
+        <div id="motion" class="stack mt-8" style="--stack: var(--space-4);">
+          <h3>Motion</h3>
+          <p class="text-muted">Four durations, two easings. Interactions use <code class="code-inline">--dur-2</code>. Layout transitions and animations use <code class="code-inline">--dur-3</code> or <code class="code-inline">--dur-4</code>. Respect <code class="code-inline">prefers-reduced-motion</code>.</p>
+          <div class="grid">
+            <div class="col-2 t-col-2 d-col-3 card text-center"><div class="overline">dur-1</div><div class="mono mt-2">120ms</div><div class="caption mt-2">Micro-feedback</div></div>
+            <div class="col-2 t-col-2 d-col-3 card text-center"><div class="overline">dur-2</div><div class="mono mt-2">200ms</div><div class="caption mt-2">Buttons, links, hover</div></div>
+            <div class="col-2 t-col-2 d-col-3 card text-center"><div class="overline">dur-3</div><div class="mono mt-2">320ms</div><div class="caption mt-2">Panels, tabs</div></div>
+            <div class="col-2 t-col-2 d-col-3 card text-center"><div class="overline">dur-4</div><div class="mono mt-2">480ms</div><div class="caption mt-2">Modal, page-level</div></div>
+          </div>
+        </div>
+      </section>
+
+      <hr />
+
+      <!-- ============================================================
+           COMPONENTS
+           ============================================================ -->
+      <section id="components" aria-labelledby="components-h">
+        <div class="subsection__header">
+          <h2 id="components-h" class="subsection__title">Components</h2>
+          <span class="overline">Library</span>
+        </div>
+
+        <!-- Buttons -->
+        <div id="buttons" class="stack mt-8" style="--stack: var(--space-4);">
+          <h3>Buttons</h3>
+          <p class="text-muted">Minimum 44px tap target. Primary is orange with a soft glow; secondary is a bordered surface; ghost is chromeless.</p>
+          <div class="card">
+            <div class="cluster">
+              <button class="btn btn--primary">Primary</button>
+              <button class="btn btn--secondary">Secondary</button>
+              <button class="btn btn--ghost">Ghost</button>
+              <button class="btn btn--danger">Danger</button>
+              <button class="btn btn--primary" disabled>Disabled</button>
+            </div>
+            <div class="cluster mt-4">
+              <button class="btn btn--primary btn--sm">Small</button>
+              <button class="btn btn--primary">Default</button>
+              <button class="btn btn--primary btn--lg">Large</button>
+            </div>
+            <div class="mt-4">
+              <button class="btn btn--primary btn--block">Block button (full width)</button>
+            </div>
+          </div>
+<pre class="code-block"><code><span class="tok-p">&lt;button</span> <span class="tok-t">class</span>=<span class="tok-s">"btn btn--primary"</span><span class="tok-p">&gt;</span>Primary<span class="tok-p">&lt;/button&gt;</span>
+<span class="tok-p">&lt;a</span> <span class="tok-t">class</span>=<span class="tok-s">"btn btn--ghost btn--lg"</span> <span class="tok-t">href</span>=<span class="tok-s">"/about"</span><span class="tok-p">&gt;</span>Ghost link<span class="tok-p">&lt;/a&gt;</span></code></pre>
+        </div>
+
+        <!-- Links -->
+        <div id="links" class="stack mt-8" style="--stack: var(--space-4);">
+          <h3>Links</h3>
+          <div class="card">
+            <p>An <a href="#" class="link-inline">inline link</a> inside a paragraph. It's teal, underlined subtly, and brightens on hover.</p>
+            <a href="#" class="link-block">Read the full post</a>
+            <div class="mt-4">
+              <a href="#" class="card card--interactive" style="display:block; text-decoration:none;">
+                <div class="card__eyebrow">Card link</div>
+                <div class="card__title">The entire card is one focusable link →</div>
+                <p class="card__body">Use for post previews, contributions, and navigation.</p>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Forms -->
+        <div id="forms" class="stack mt-8" style="--stack: var(--space-4);">
+          <h3>Forms</h3>
+          <div class="card">
+            <div class="grid">
+              <div class="col-4 t-col-4 d-col-6">
+                <div class="field">
+                  <label class="field__label" for="ds-name">Full name</label>
+                  <input id="ds-name" class="input" type="text" placeholder="Brian Anders" />
+                  <span class="field__hint">Used only for greeting.</span>
+                </div>
+              </div>
+              <div class="col-4 t-col-4 d-col-6">
+                <div class="field is-invalid">
+                  <label class="field__label" for="ds-email">Email</label>
+                  <input id="ds-email" class="input" type="email" value="not-an-email" aria-invalid="true" />
+                  <span class="field__error">Enter a valid email address.</span>
+                </div>
+              </div>
+              <div class="col-4 t-col-4 d-col-6">
+                <div class="field">
+                  <label class="field__label" for="ds-topic">Topic</label>
+                  <select id="ds-topic" class="select">
+                    <option>Drums</option>
+                    <option>Podcasts</option>
+                    <option>Code experiments</option>
+                    <option>Something else</option>
+                  </select>
+                </div>
+              </div>
+              <div class="col-4 t-col-4 d-col-6">
+                <div class="field">
+                  <label class="field__label" for="ds-vol">Snare volume</label>
+                  <input id="ds-vol" class="range" type="range" min="0" max="100" value="72" />
+                </div>
+              </div>
+              <div class="col-4 t-col-8 d-col-12">
+                <div class="field">
+                  <label class="field__label" for="ds-msg">Message</label>
+                  <textarea id="ds-msg" class="textarea" placeholder="Say hi…"></textarea>
+                </div>
+              </div>
+              <div class="col-4 t-col-4 d-col-6">
+                <div class="cluster">
+                  <label class="cluster" style="gap: var(--space-2); cursor: pointer;"><input class="check" type="checkbox" checked> Subscribe to posts</label>
+                  <label class="cluster" style="gap: var(--space-2); cursor: pointer;"><input class="check" type="checkbox"> DM me</label>
+                </div>
+              </div>
+              <div class="col-4 t-col-4 d-col-6">
+                <div class="cluster">
+                  <label class="cluster" style="gap: var(--space-2); cursor: pointer;"><input class="radio" type="radio" name="ds-pref" checked> Weekly</label>
+                  <label class="cluster" style="gap: var(--space-2); cursor: pointer;"><input class="radio" type="radio" name="ds-pref"> Monthly</label>
+                  <label class="cluster" style="gap: var(--space-2); cursor: pointer;"><input class="radio" type="radio" name="ds-pref"> Never</label>
+                </div>
+              </div>
+              <div class="col-4 t-col-8 d-col-12">
+                <label class="cluster" style="gap: var(--space-3); cursor: pointer;">
+                  <input class="toggle" type="checkbox" id="ds-toggle" checked>
+                  <span>Enable dark mode <span class="text-subtle body-sm">(it's always on — this is a demo)</span></span>
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Cards -->
+        <div id="cards" class="stack mt-8" style="--stack: var(--space-4);">
+          <h3>Cards</h3>
+          <div class="grid">
+            <div class="col-4 t-col-4 d-col-4">
+              <article class="card">
+                <div class="card__eyebrow">Post · 2026</div>
+                <h4 class="card__title">Cellular automaton in canvas</h4>
+                <p class="card__body">A generative pattern that walks a grid, colouring pixels based on neighbourhood rules.</p>
+                <div class="card__footer">
+                  <span class="badge">canvas</span>
+                  <span class="badge">js</span>
+                </div>
+              </article>
+            </div>
+            <div class="col-4 t-col-4 d-col-4">
+              <a href="#" class="card card--interactive" style="display:block; text-decoration:none;">
+                <div class="card__eyebrow">Contribution</div>
+                <h4 class="card__title">Banders Drums →</h4>
+                <p class="card__body">A YouTube channel with videos of me playing drum covers.</p>
+              </a>
+            </div>
+            <div class="col-4 t-col-8 d-col-4">
+              <article class="card card--elevated">
+                <div class="card__eyebrow">Feature</div>
+                <h4 class="card__title">Elevated variant</h4>
+                <p class="card__body">Use for editorial callouts, "new" cards, or above-the-fold highlights.</p>
+                <div class="card__footer">
+                  <button class="btn btn--sm btn--primary">Primary</button>
+                  <button class="btn btn--sm">Details</button>
+                </div>
+              </article>
+            </div>
+          </div>
+        </div>
+
+        <!-- Badges -->
+        <div id="badges" class="stack mt-8" style="--stack: var(--space-4);">
+          <h3>Badges &amp; pills</h3>
+          <div class="card">
+            <div class="cluster">
+              <span class="badge">Default</span>
+              <span class="badge badge--primary"><span class="badge__dot"></span>Primary</span>
+              <span class="badge badge--success"><span class="badge__dot"></span>Live</span>
+              <span class="badge badge--warning"><span class="badge__dot"></span>Draft</span>
+              <span class="badge badge--danger"><span class="badge__dot"></span>Broken</span>
+              <span class="badge badge--info"><span class="badge__dot"></span>Info</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Alerts -->
+        <div id="alerts" class="stack mt-8" style="--stack: var(--space-3);">
+          <h3>Alerts</h3>
+          <div class="alert alert--info">   <span class="alert__icon">ℹ️</span><div><p class="alert__title">Heads up</p><p class="alert__body">This is a neutral information message.</p></div></div>
+          <div class="alert alert--success"><span class="alert__icon">✅</span><div><p class="alert__title">Build passed</p><p class="alert__body">All 42 tests green in 4.1s.</p></div></div>
+          <div class="alert alert--warning"><span class="alert__icon">⚠️</span><div><p class="alert__title">Almost out of budget</p><p class="alert__body">Page weight is at 92% of its budget.</p></div></div>
+          <div class="alert alert--danger"> <span class="alert__icon">⛔</span><div><p class="alert__title">Deploy failed</p><p class="alert__body">The S3 uploader could not authenticate.</p></div></div>
+        </div>
+
+        <!-- Nav (demoed inline) -->
+        <div id="nav-c" class="stack mt-8" style="--stack: var(--space-4);">
+          <h3>Navigation</h3>
+          <p class="text-muted">The sticky nav at the top of this page is the reference implementation. On mobile the primary links collapse into a drawer — try shrinking the viewport under 720px.</p>
+          <div class="alert alert--info">
+            <span class="alert__icon">🧭</span>
+            <div>
+              <p class="alert__title">Interaction</p>
+              <p class="alert__body">Click the <kbd>☰</kbd> button on mobile to expand / collapse. Uses <code class="code-inline">aria-expanded</code> + <code class="code-inline">aria-controls</code>.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tabs -->
+        <div id="tabs" class="stack mt-8" style="--stack: var(--space-4);">
+          <h3>Tabs</h3>
+          <div class="card" style="padding: 0;">
+            <div class="tabs" data-tabs>
+              <div class="tabs__list" role="tablist">
+                <button class="tab" role="tab" id="tab-a" aria-controls="panel-a" aria-selected="true"  tabindex="0">Overview</button>
+                <button class="tab" role="tab" id="tab-b" aria-controls="panel-b" aria-selected="false" tabindex="-1">Details</button>
+                <button class="tab" role="tab" id="tab-c" aria-controls="panel-c" aria-selected="false" tabindex="-1">Changelog</button>
+              </div>
+              <div class="tab-panel" role="tabpanel" id="panel-a" aria-labelledby="tab-a" style="padding: var(--space-6);">
+                <h4>Overview</h4>
+                <p class="text-muted">Tabs use ARIA roles and keyboard support: <kbd>←</kbd>/<kbd>→</kbd> to move focus, <kbd>Home</kbd>/<kbd>End</kbd> to jump to ends.</p>
+              </div>
+              <div class="tab-panel" role="tabpanel" id="panel-b" aria-labelledby="tab-b" hidden style="padding: var(--space-6);">
+                <h4>Details</h4>
+                <p class="text-muted">Second panel content.</p>
+              </div>
+              <div class="tab-panel" role="tabpanel" id="panel-c" aria-labelledby="tab-c" hidden style="padding: var(--space-6);">
+                <h4>Changelog</h4>
+                <p class="text-muted">Third panel content.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Accordion -->
+        <div id="accordion" class="stack mt-8" style="--stack: var(--space-4);">
+          <h3>Accordion</h3>
+          <div class="card" data-accordion>
+            <div class="accordion__item">
+              <button class="accordion__trigger" aria-expanded="true" aria-controls="acc-1">What is this design system for?</button>
+              <div class="accordion__panel" id="acc-1" data-open="true"><div class="accordion__panel-inner">A single source of truth for tokens and components across every page on briananders.com.</div></div>
+            </div>
+            <div class="accordion__item">
+              <button class="accordion__trigger" aria-expanded="false" aria-controls="acc-2">Where do I add a new token?</button>
+              <div class="accordion__panel" id="acc-2"><div class="accordion__panel-inner">Add it to the <code class="code-inline">:root</code> block in <code class="code-inline">src/styles/system/tokens.scss</code> and expose it as a CSS variable.</div></div>
+            </div>
+            <div class="accordion__item">
+              <button class="accordion__trigger" aria-expanded="false" aria-controls="acc-3">Can I override a component locally?</button>
+              <div class="accordion__panel" id="acc-3"><div class="accordion__panel-inner">Yes — override the component's tokens on a wrapper (e.g. <code class="code-inline">--btn-bg</code>) rather than restyling the element.</div></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Modal -->
+        <div id="modal" class="stack mt-8" style="--stack: var(--space-4);">
+          <h3>Modal</h3>
+          <div class="card">
+            <p class="text-muted">Click to open. Closes on scrim click, close button, or <kbd>Esc</kbd>.</p>
+            <button class="btn btn--primary" data-open-modal="dsModal">Open modal</button>
+          </div>
+        </div>
+
+        <!-- Toast -->
+        <div id="toast" class="stack mt-8" style="--stack: var(--space-4);">
+          <h3>Toast</h3>
+          <div class="card">
+            <p class="text-muted">Ephemeral feedback — auto-dismisses after 3s.</p>
+            <div class="cluster">
+              <button class="btn" data-toast="Copied to clipboard.">Trigger toast</button>
+              <button class="btn" data-toast="Build succeeded.">Success toast</button>
+              <button class="btn" data-toast="Something broke.">Danger toast</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Progress -->
+        <div id="progress" class="stack mt-8" style="--stack: var(--space-4);">
+          <h3>Progress</h3>
+          <div class="card stack" style="--stack: var(--space-4);">
+            <div>
+              <div class="caption mb-2">42% complete</div>
+              <div class="progress"><div class="progress__bar" style="width: 42%;"></div></div>
+            </div>
+            <div>
+              <div class="caption mb-2">Indeterminate</div>
+              <div class="progress progress--indeterminate"><div class="progress__bar"></div></div>
+            </div>
+            <div>
+              <div class="caption mb-2">Animated (interact with the range)</div>
+              <div class="progress"><div class="progress__bar" id="rangeProgress" style="width: 30%;"></div></div>
+              <input type="range" min="0" max="100" value="30" class="range mt-3" id="rangeProgressInput" aria-label="progress input">
+            </div>
+          </div>
+        </div>
+
+        <!-- Table -->
+        <div id="table" class="stack mt-8" style="--stack: var(--space-4);">
+          <h3>Table</h3>
+          <div class="table-wrap">
+            <table class="table">
+              <thead><tr><th>Post</th><th>Category</th><th>Date</th><th>Status</th></tr></thead>
+              <tbody>
+                <tr><td>Cellular automaton</td><td>Canvas</td><td>2026-01-11</td><td><span class="badge badge--success"><span class="badge__dot"></span>Live</span></td></tr>
+                <tr><td>Wordle solver v2</td><td>Puzzles</td><td>2025-11-04</td><td><span class="badge badge--warning"><span class="badge__dot"></span>Draft</span></td></tr>
+                <tr><td>Polar clock</td><td>Canvas</td><td>2025-08-22</td><td><span class="badge badge--success"><span class="badge__dot"></span>Live</span></td></tr>
+                <tr><td>Sound frequency slider</td><td>Audio</td><td>2025-05-30</td><td><span class="badge badge--info"><span class="badge__dot"></span>New</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Code -->
+        <div id="code" class="stack mt-8" style="--stack: var(--space-4);">
+          <h3>Code &amp; kbd</h3>
+          <p>Inline: <code class="code-inline">const foo = 42;</code></p>
+          <p>Keyboard shortcut: press <kbd>Cmd</kbd> + <kbd>K</kbd>.</p>
+<pre class="code-block"><code><span class="tok-c">// Grid utility</span>
+<span class="tok-k">const</span> <span class="tok-t">grid</span> = {
+  cols: { mobile: <span class="tok-p">4</span>, tablet: <span class="tok-p">8</span>, desktop: <span class="tok-p">12</span> },
+  breakpoints: [<span class="tok-s">'600px'</span>, <span class="tok-s">'960px'</span>],
+};</code></pre>
+        </div>
+      </section>
+
+      <hr />
+
+      <!-- ============================================================
+           PATTERNS
+           ============================================================ -->
+      <section id="patterns" aria-labelledby="patterns-h">
+        <div class="subsection__header">
+          <h2 id="patterns-h" class="subsection__title">Patterns</h2>
+          <span class="overline">Recipes</span>
+        </div>
+        <p class="text-muted">Composed patterns for the pages that already exist on the site: post lists, contributions decks, Last.fm module, and article layouts.</p>
+
+        <h3 class="mt-8">Contributions deck</h3>
+        <div class="grid">
+          <a href="#" class="card card--interactive col-4 t-col-4 d-col-6" style="text-decoration:none;">
+            <div class="card__eyebrow">Contribution</div>
+            <h4 class="card__title">Bat Lessons →</h4>
+            <p class="card__body">Batman history, presented by Alex Cash and myself.</p>
+            <div class="card__footer">
+              <span class="badge">Website</span>
+              <span class="badge">YouTube</span>
+            </div>
+          </a>
+          <a href="#" class="card card--interactive col-4 t-col-4 d-col-6" style="text-decoration:none;">
+            <div class="card__eyebrow">Contribution</div>
+            <h4 class="card__title">Banders Drums →</h4>
+            <p class="card__body">A YouTube channel with videos of me playing drum covers.</p>
+            <div class="card__footer">
+              <span class="badge">Website</span>
+              <span class="badge">YouTube</span>
+            </div>
+          </a>
+        </div>
+
+        <h3 class="mt-8">Post list</h3>
+        <div class="grid">
+          <div class="col-4 t-col-8 d-col-8">
+            <ul style="list-style:none; padding:0; margin:0;" class="stack" data-stack>
+              <li class="card"><div class="cluster" style="justify-content:space-between;"><div><div class="card__eyebrow">2026</div><h4 style="margin:0;">Cellular automaton in canvas</h4></div><a href="#" class="link-block">Read</a></div></li>
+              <li class="card"><div class="cluster" style="justify-content:space-between;"><div><div class="card__eyebrow">2025</div><h4 style="margin:0;">Wordle solver v2</h4></div><a href="#" class="link-block">Read</a></div></li>
+              <li class="card"><div class="cluster" style="justify-content:space-between;"><div><div class="card__eyebrow">2025</div><h4 style="margin:0;">Polar clock</h4></div><a href="#" class="link-block">Read</a></div></li>
+            </ul>
+          </div>
+          <aside class="col-4 t-col-8 d-col-4 stack" style="--stack: var(--space-4);">
+            <div class="card">
+              <div class="overline">Filter</div>
+              <div class="field mt-2"><label class="field__label" for="patt-cat">Category</label>
+                <select class="select" id="patt-cat"><option>All</option><option>Canvas</option><option>Puzzles</option><option>Audio</option></select>
+              </div>
+            </div>
+            <div class="card">
+              <div class="overline">Now playing</div>
+              <p class="body-sm mt-2">Last.fm scrobbles will render here with the same card treatment.</p>
+              <div class="progress mt-3"><div class="progress__bar" style="width:64%;"></div></div>
+            </div>
+          </aside>
+        </div>
+
+        <h3 class="mt-8">Long-form article</h3>
+        <article class="reading">
+          <p class="overline text-primary">2026 · Notes</p>
+          <h2 style="font-family:var(--font-serif);">On restraint in a busy design system</h2>
+          <p>The temptation with any component library is to grow it — but growth is the enemy of consistency. Every new component is a decision every consumer has to relearn, and the marginal value of the tenth badge variant is almost always negative.</p>
+          <p>The most useful thing a design system can do is <em>stay small enough to hold in your head</em>. This one has around twenty components, five type sizes, a single 4-px base grid, and one accent colour. That's enough for a personal site, a set of experiments, and the occasional editorial piece — and it's few enough to review in an afternoon.</p>
+        </article>
+      </section>
+
+      <hr />
+
+      <!-- ============================================================
+           DOCS
+           ============================================================ -->
+      <section id="docs" aria-labelledby="docs-h">
+        <div class="subsection__header">
+          <h2 id="docs-h" class="subsection__title">How to apply this to the site</h2>
+          <span class="overline">Docs</span>
+        </div>
+
+        <h3 class="mt-6">1. What we're replacing</h3>
+        <p>Today, <code class="code-inline">src/styles/system/</code> mixes:</p>
+        <ul>
+          <li>The full Google Material colour palette (256 variables you never use)</li>
+          <li>SCSS mixins that emit debug <code class="code-inline">mixin: name</code> properties</li>
+          <li>Component styles inlined into <code class="code-inline">_elements.scss</code> and <code class="code-inline">_type.scss</code></li>
+          <li><code class="code-inline">.text-center</code> that resolves to <code class="code-inline">text-align: left</code> (see <code class="code-inline">mixins/_grid.scss</code>)</li>
+        </ul>
+        <p>The new system replaces all of it with tokens on <code class="code-inline">:root</code> plus a small component sheet.</p>
+
+        <h3 class="mt-6">2. File layout</h3>
+<pre class="code-block"><code>src/styles/
+├── system/
+│   ├── tokens.scss           <span class="tok-c">// :root { --color-… --space-… --fs-… }</span>
+│   ├── reset.scss            <span class="tok-c">// element normalizer</span>
+│   ├── typography.scss       <span class="tok-c">// h1–h6, .body, .caption, .reading</span>
+│   ├── layout.scss           <span class="tok-c">// .container, .grid, .col-*, .stack</span>
+│   ├── components/
+│   │   ├── button.scss
+│   │   ├── card.scss
+│   │   ├── form.scss
+│   │   ├── badge.scss
+│   │   ├── alert.scss
+│   │   ├── nav.scss
+│   │   ├── tabs.scss
+│   │   ├── accordion.scss
+│   │   ├── modal.scss
+│   │   ├── toast.scss
+│   │   ├── progress.scss
+│   │   ├── table.scss
+│   │   └── code.scss
+│   └── all.scss
+└── main.scss                 <span class="tok-c">// @use "system/all"; @use "modules/…"; @use "posts/…"</span></code></pre>
+
+        <h3 class="mt-6">3. Migration steps</h3>
+        <ol>
+          <li>Copy the <code class="code-inline">:root</code> block from this page into <code class="code-inline">src/styles/system/tokens.scss</code>.</li>
+          <li>Delete <code class="code-inline">variables/_colors.scss</code> (the Material palette) and <code class="code-inline">variables/_palettes.scss</code>.</li>
+          <li>Point <code class="code-inline">palette--primary-*</code> callers to the new CSS variables via a compatibility shim (one week), then remove.</li>
+          <li>Delete the <code class="code-inline">mixin: name;</code> debug declarations from every mixin.</li>
+          <li>Replace <code class="code-inline">@include button-link</code> etc. with the <code class="code-inline">.btn</code> component classes in EJS templates.</li>
+          <li>Change the grid mixin's <code class="code-inline">grid-template-columns: repeat(4,1fr)</code> mobile / <code class="code-inline">repeat(12,1fr)</code> desktop to also add an 8-col tablet tier at 600px.</li>
+          <li>Fix <code class="code-inline">text-center</code> and <code class="code-inline">text-left</code> in <code class="code-inline">mixins/_grid.scss</code> — both currently emit <code class="code-inline">text-align: left</code>.</li>
+        </ol>
+
+        <h3 class="mt-6">4. How to use a token</h3>
+        <p>Always reference the CSS variable, never the raw value:</p>
+<pre class="code-block"><code><span class="tok-c">/* ✅ good */</span>
+.my-card {
+  background: <span class="tok-k">var</span>(<span class="tok-t">--color-surface-1</span>);
+  padding:    <span class="tok-k">var</span>(<span class="tok-t">--space-6</span>);
+  border-radius: <span class="tok-k">var</span>(<span class="tok-t">--radius-md</span>);
+}
+
+<span class="tok-c">/* ❌ bad */</span>
+.my-card { background: <span class="tok-p">#12161C</span>; padding: <span class="tok-p">24px</span>; border-radius: <span class="tok-p">12px</span>; }</code></pre>
+
+        <h3 class="mt-6">5. How to build a new component</h3>
+        <p>Every component defines <em>its own</em> tokens on the block, then references them internally. That makes it trivial to theme, subclass, or override:</p>
+<pre class="code-block"><code>.btn {
+  <span class="tok-c">/* component-owned tokens — override these to reskin */</span>
+  <span class="tok-t">--btn-bg</span>: <span class="tok-k">var</span>(--color-surface-2);
+  <span class="tok-t">--btn-fg</span>: <span class="tok-k">var</span>(--color-text);
+  <span class="tok-t">--btn-border</span>: <span class="tok-k">var</span>(--color-border);
+
+  background: <span class="tok-k">var</span>(--btn-bg);
+  color:      <span class="tok-k">var</span>(--btn-fg);
+  border: <span class="tok-p">1px</span> solid <span class="tok-k">var</span>(--btn-border);
+}
+.btn--primary { <span class="tok-t">--btn-bg</span>: <span class="tok-k">var</span>(--color-primary-500); <span class="tok-t">--btn-fg</span>: <span class="tok-k">var</span>(--color-text-inverse); }</code></pre>
+
+        <h3 class="mt-6">6. Grid — worked example</h3>
+        <p>The homepage's <code class="code-inline">.deck</code> becomes:</p>
+<pre class="code-block"><code><span class="tok-p">&lt;div</span> <span class="tok-t">class</span>=<span class="tok-s">"container"</span><span class="tok-p">&gt;</span>
+  <span class="tok-p">&lt;div</span> <span class="tok-t">class</span>=<span class="tok-s">"grid"</span><span class="tok-p">&gt;</span>
+    <span class="tok-p">&lt;a</span> <span class="tok-t">class</span>=<span class="tok-s">"card card--interactive col-4 t-col-4 d-col-6"</span> <span class="tok-t">href</span>=<span class="tok-s">"…"</span><span class="tok-p">&gt;</span>…<span class="tok-p">&lt;/a&gt;</span>
+    <span class="tok-p">&lt;a</span> <span class="tok-t">class</span>=<span class="tok-s">"card card--interactive col-4 t-col-4 d-col-6"</span> <span class="tok-t">href</span>=<span class="tok-s">"…"</span><span class="tok-p">&gt;</span>…<span class="tok-p">&lt;/a&gt;</span>
+  <span class="tok-p">&lt;/div&gt;</span>
+<span class="tok-p">&lt;/div&gt;</span></code></pre>
+
+        <h3 class="mt-6">7. Accessibility checklist</h3>
+        <ul>
+          <li>Every interactive element has a visible <code class="code-inline">:focus-visible</code> ring via <code class="code-inline">--focus-ring</code>.</li>
+          <li>Tap targets are ≥44px on all buttons, links, checkboxes, and radios.</li>
+          <li>Text tokens meet WCAG AA on <code class="code-inline">--color-bg</code>.</li>
+          <li>Motion respects <code class="code-inline">prefers-reduced-motion</code>.</li>
+          <li>Nav, tabs, accordion, and modal all wire up <code class="code-inline">aria-*</code> attributes and keyboard support.</li>
+        </ul>
+
+        <h3 class="mt-6">8. Breakpoints (canonical)</h3>
+        <div class="table-wrap">
+          <table class="table">
+            <thead><tr><th>Name</th><th>Min-width</th><th>Grid cols</th><th>Gutter</th></tr></thead>
+            <tbody>
+              <tr><td>mobile</td><td>—</td><td>4</td><td>16 (<code class="code-inline">--space-4</code>)</td></tr>
+              <tr><td>tablet</td><td>600px</td><td>8</td><td>24 (<code class="code-inline">--space-6</code>)</td></tr>
+              <tr><td>desktop</td><td>960px</td><td>12</td><td>32 (<code class="code-inline">--space-8</code>)</td></tr>
+              <tr><td>wide</td><td>1280px</td><td>12</td><td>32 (content maxes at 1200px)</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3 class="mt-6">9. Class-name convention</h3>
+        <p>BEM-lite: <code class="code-inline">.block</code>, <code class="code-inline">.block__element</code>, <code class="code-inline">.block--modifier</code>. Utility classes (<code class="code-inline">.mt-4</code>, <code class="code-inline">.text-muted</code>) stay one word and don't take modifiers.</p>
+
+        <h3 class="mt-6">10. Not in this system (yet)</h3>
+        <ul>
+          <li>Light mode — dark is canonical. A light theme can layer as an override on <code class="code-inline">html[data-theme="light"]</code> later.</li>
+          <li>Data-viz palette — the <code class="code-inline">/posts/*</code> canvas experiments keep their own local scales.</li>
+          <li>Icons — decide between an inline SVG sprite or a small icon component before adding.</li>
+        </ul>
+      </section>
+    </div>
+  </div>
+</main>
+
+<!-- =====================================================================
+     Modal (hidden until triggered)
+     ===================================================================== -->
+<div class="modal" id="dsModal" role="dialog" aria-modal="true" aria-labelledby="dsModal-title" hidden>
+  <div class="modal__scrim" data-close-modal></div>
+  <div class="modal__dialog">
+    <h3 class="modal__title" id="dsModal-title">Ship it?</h3>
+    <p class="modal__body">This will publish the new design system to production. You can undo from the deploy history at any time.</p>
+    <div class="modal__footer">
+      <button class="btn btn--ghost" data-close-modal>Cancel</button>
+      <button class="btn btn--primary" data-close-modal>Ship it</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast region -->
+<div class="toast-region" id="toastRegion" role="status" aria-live="polite"></div>
+
+<!-- Footer -->
+<footer class="section" style="margin-top: var(--space-16); padding-top: var(--space-8); padding-bottom: var(--space-8); border-top: 1px solid var(--color-divider);">
+  <div class="container cluster" style="justify-content: space-between;">
+    <div class="cluster">
+      <span class="nav__brand-mark" aria-hidden="true"></span>
+      <span class="text-muted">Banders Design System · v1.0</span>
+    </div>
+    <div class="cluster">
+      <a href="#top" class="link-block">Back to top</a>
+      <span class="badge badge--success"><span class="badge__dot"></span>Dark mode</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+/* ------------------------------------------------------------------ */
+/* Interactions — all vanilla, no dependencies.                        */
+/* ------------------------------------------------------------------ */
+
+/* Mobile nav drawer */
+(() => {
+  const toggle = document.getElementById('navToggle');
+  const drawer = document.getElementById('navDrawer');
+  if (!toggle || !drawer) return;
+  toggle.addEventListener('click', () => {
+    const open = drawer.hasAttribute('hidden');
+    if (open) { drawer.removeAttribute('hidden'); drawer.classList.add('is-open'); }
+    else      { drawer.setAttribute('hidden', ''); drawer.classList.remove('is-open'); }
+    toggle.setAttribute('aria-expanded', String(open));
+  });
+})();
+
+/* Swatch → clipboard */
+(() => {
+  document.querySelectorAll('.swatch[data-var]').forEach(el => {
+    el.addEventListener('click', async () => {
+      const v = el.dataset.var;
+      try {
+        await navigator.clipboard.writeText(`var(${v})`);
+        toast(`Copied var(${v})`);
+      } catch { toast(`Couldn't copy — ${v}`); }
+    });
+  });
+})();
+
+/* Tabs — arrow-key navigation */
+(() => {
+  document.querySelectorAll('[data-tabs]').forEach(root => {
+    const tabs = Array.from(root.querySelectorAll('[role="tab"]'));
+    const panels = tabs.map(t => document.getElementById(t.getAttribute('aria-controls')));
+    const select = (i) => {
+      tabs.forEach((t, idx) => {
+        const active = idx === i;
+        t.setAttribute('aria-selected', String(active));
+        t.setAttribute('tabindex', active ? '0' : '-1');
+        panels[idx].hidden = !active;
+      });
+      tabs[i].focus();
+    };
+    tabs.forEach((t, i) => {
+      t.addEventListener('click', () => select(i));
+      t.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight') { e.preventDefault(); select((i + 1) % tabs.length); }
+        if (e.key === 'ArrowLeft')  { e.preventDefault(); select((i - 1 + tabs.length) % tabs.length); }
+        if (e.key === 'Home')       { e.preventDefault(); select(0); }
+        if (e.key === 'End')        { e.preventDefault(); select(tabs.length - 1); }
+      });
+    });
+  });
+})();
+
+/* Accordion */
+(() => {
+  document.querySelectorAll('[data-accordion]').forEach(root => {
+    root.querySelectorAll('.accordion__trigger').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const expanded = btn.getAttribute('aria-expanded') === 'true';
+        btn.setAttribute('aria-expanded', String(!expanded));
+        const panel = document.getElementById(btn.getAttribute('aria-controls'));
+        if (panel) panel.dataset.open = String(!expanded);
+      });
+    });
+  });
+})();
+
+/* Modal */
+(() => {
+  const modal = document.getElementById('dsModal');
+  const open  = () => { modal.removeAttribute('hidden'); modal.querySelector('.btn--primary').focus(); document.addEventListener('keydown', onKey); };
+  const close = () => { modal.setAttribute('hidden', ''); document.removeEventListener('keydown', onKey); };
+  const onKey = (e) => { if (e.key === 'Escape') close(); };
+  document.querySelectorAll('[data-open-modal="dsModal"]').forEach(el => el.addEventListener('click', open));
+  modal.querySelectorAll('[data-close-modal]').forEach(el => el.addEventListener('click', close));
+})();
+
+/* Toast */
+function toast(message) {
+  const region = document.getElementById('toastRegion');
+  const t = document.createElement('div');
+  t.className = 'toast';
+  t.textContent = message;
+  region.appendChild(t);
+  setTimeout(() => { t.style.transition = 'opacity 300ms, transform 300ms'; t.style.opacity = '0'; t.style.transform = 'translateY(8px)'; }, 2700);
+  setTimeout(() => t.remove(), 3100);
+}
+document.querySelectorAll('[data-toast]').forEach(btn => btn.addEventListener('click', () => toast(btn.dataset.toast)));
+
+/* Range → progress bar */
+(() => {
+  const input = document.getElementById('rangeProgressInput');
+  const bar   = document.getElementById('rangeProgress');
+  if (!input || !bar) return;
+  input.addEventListener('input', () => { bar.style.width = input.value + '%'; });
+})();
+
+/* TOC scroll-spy */
+(() => {
+  const links = document.querySelectorAll('#tocList a[href^="#"]');
+  const map = new Map();
+  links.forEach(a => { const id = a.getAttribute('href').slice(1); const el = document.getElementById(id); if (el) map.set(el, a); });
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      const a = map.get(e.target);
+      if (!a) return;
+      if (e.isIntersecting) {
+        links.forEach(l => l.removeAttribute('aria-current'));
+        a.setAttribute('aria-current', 'true');
+      }
+    });
+  }, { rootMargin: '-40% 0px -55% 0px' });
+  map.forEach((_, el) => io.observe(el));
+})();
+</script>
+
+</body>
+</html>
