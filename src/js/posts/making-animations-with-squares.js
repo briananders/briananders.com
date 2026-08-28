@@ -217,11 +217,12 @@ function pauseUnpause() {
   }
 
   if (pauseCache !== paused) {
-    if (paused) {
-      pauseButton.classList.add('paused');
-    } else {
-      pauseButton.classList.remove('paused');
-    }
+    // Track internal state on `.paused`, and drive the design-system icon
+    // via `.play` (paused → ▶ = "click to play") vs `.pause` (playing → ⏸).
+    pauseButton.classList.toggle('paused', paused);
+    pauseButton.classList.toggle('play', paused);
+    pauseButton.classList.toggle('pause', !paused);
+    pauseButton.textContent = paused ? 'Resume' : 'Pause';
   }
 }
 

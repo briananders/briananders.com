@@ -23,28 +23,7 @@ input {
   align-items: center;
 }
 
+// The button element carries the icon component (.play / .pause).
 #play-pause {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-right: 12px;
-  width: 40px;
-  height: 40px;
-  padding-top: 0;
-
-  img {
-    border-radius: 0;
-  }
-
-  &.play {
-    .play {
-      display: none;
-    }
-  }
-
-  &:not(.play) {
-    .pause {
-      display: none;
-    }
-  }
+  margin-right: space(2);
 }

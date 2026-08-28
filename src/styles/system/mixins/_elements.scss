@@ -86,12 +86,17 @@
   border: 1px solid var(--color-border);
   font-size: var(--fs-sm);
   cursor: pointer;
-  transition-property: background-color, border-color, transform;
+  transition-property: background-color, border-color, translate;
   transition-duration: var(--dur-2);
   transition-timing-function: var(--ease-standard);
 
   &:hover  { background-color: var(--color-surface-3); }
-  &:active { transform: translateY(1px); }
+
+  // Use the individual `translate` property (not `transform`) so a caller
+  // that positions this button with `transform: translate(-50%, -50%)` for
+  // centering doesn't get its transform clobbered on press. `translate` is
+  // composed with any authored `transform` rather than replacing it.
+  &:active { translate: 0 1px; }
 }
 
 @mixin input {
@@ -253,12 +258,14 @@
   color: var(--color-text);
   background-color: var(--color-surface-2);
   border: 1px solid var(--color-border);
-  transition-property: background-color, border-color, transform, box-shadow;
+  transition-property: background-color, border-color, translate, box-shadow;
   transition-duration: var(--dur-2);
   transition-timing-function: var(--ease-standard);
 
   &:hover  { background-color: var(--color-surface-3); text-decoration: none; }
-  &:active { transform: translateY(1px); }
+  // Use `translate` (not `transform`) for press feedback so authored
+  // `transform` on a caller — e.g. a centered overlay button — is preserved.
+  &:active { translate: 0 1px; }
 
   @include link-focus;
 }

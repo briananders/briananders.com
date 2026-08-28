@@ -329,9 +329,10 @@
   }
 
   // -- Accordion --------------------------------------------------------------
-  .ds-accordion__item + .ds-accordion__item {
-    border-top: 1px solid var(--color-divider);
-  }
+  // Dividers live on the trigger's bottom edge (not the next item's top). That
+  // way the divider disappears cleanly whenever an item is open — no stray
+  // hairline between the trigger and its own panel — and the last item never
+  // draws a spurious line at the bottom of the whole accordion.
   .ds-accordion__trigger {
     width: 100%;
     display: flex;
@@ -346,8 +347,10 @@
     font-size: var(--fs-md);
     background: transparent;
     border: none;
+    border-bottom: 1px solid var(--color-divider);
     border-radius: 0;
     cursor: pointer;
+    transition: border-color var(--dur-2) var(--ease-standard);
 
     &::after {
       content: "+";
@@ -356,16 +359,32 @@
       color: var(--color-primary-500);
       transition: transform var(--dur-3) var(--ease-emphasized);
     }
-    &[aria-expanded="true"]::after { transform: rotate(45deg); }
+    &[aria-expanded="true"] {
+      border-bottom-color: transparent;
+
+      &::after { transform: rotate(45deg); }
+    }
     &:focus-visible { outline: none; box-shadow: var(--focus-ring); }
   }
+
+  // Last item's trigger never draws a bottom rule — it would land right
+  // against the card's own border and read as a doubled hairline.
+  .ds-accordion__item:last-child .ds-accordion__trigger { border-bottom: 0; }
+
   .ds-accordion__panel {
     overflow: hidden;
     max-height: 0;
     transition: max-height var(--dur-4) var(--ease-standard);
 
+    // Indent the panel content so the copy visually belongs to its trigger.
+    > * {
+      padding-left: space(3);
+      padding-right: space(2);
+    }
+
     &[data-open="true"] {
       max-height: 400px;
+      padding-top: space(2);
       padding-bottom: space(3);
     }
   }

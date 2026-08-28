@@ -189,6 +189,49 @@ scripts:
         <button class="button-link primary mega-button">Mega button</button>
       </div>
     </div>
+
+    <h4 style="margin-top: var(--space-6);">Play / Pause / PlayPause icons</h4>
+    <p>Add <code>.play</code>, <code>.pause</code>, or <code>.playpause</code> to any button to prefix it with a unicode media-control glyph. Use them for start/pause/toggle actions across post experiments.</p>
+    <div class="ds-card">
+      <div class="ds-cluster">
+        <button class="button play"      type="button">Play</button>
+        <button class="button pause"     type="button">Pause</button>
+        <button class="button playpause" type="button">Play&nbsp;/&nbsp;Pause</button>
+        <button class="button primary play" type="button">Start</button>
+      </div>
+      <p class="ds-caption" style="margin-top: var(--space-3);">The icon-only variant drops the text label. Toggle between <code>.play</code> and <code>.pause</code> in your JS to reflect the current state.</p>
+      <div class="ds-cluster">
+        <button class="button play-pause play"      type="button" aria-label="Play"></button>
+        <button class="button play-pause pause"     type="button" aria-label="Pause"></button>
+        <button class="button play-pause playpause" type="button" aria-label="Play/pause"></button>
+      </div>
+    </div>
+<pre class="ds-code-block"><code>&lt;!-- Text + icon --&gt;
+&lt;button class="button play"&gt;Start&lt;/button&gt;
+&lt;button class="button pause"&gt;Pause&lt;/button&gt;
+
+&lt;!-- Icon-only --&gt;
+&lt;button class="button play-pause play" aria-label="Play/pause"&gt;&lt;/button&gt;
+
+// JS: swap classes when state changes
+btn.classList.toggle('play',  !isPlaying);
+btn.classList.toggle('pause',  isPlaying);</code></pre>
+  </div>
+
+  <div class="content ds-subsection" id="column-widths">
+    <h3>Column-width tokens</h3>
+    <p>Every column at the desktop tier is 80px wide with 16px gaps. That gives a set of derived max-widths — <code>--max-1-column</code> through <code>--max-12-columns</code> — for capping a card or list to an integer number of grid columns:</p>
+<pre class="ds-code-block"><code>.recommended-list {
+  max-width: var(--max-8-columns);   /* 752px */
+}</code></pre>
+    <div class="ds-card">
+      <% [1,2,3,4,6,8,10,12].forEach((n) => { %>
+        <div class="ds-space-row">
+          <span class="ds-space-row__label">--max-<%- n %>-column<%- n === 1 ? '' : 's' %></span>
+          <span class="ds-space-row__bar" style="width: calc(<%- n %> * var(--col-width) + <%- n - 1 %> * var(--col-gap))"></span>
+        </div>
+      <% }); %>
+    </div>
   </div>
 
   <div class="content ds-subsection" id="links">

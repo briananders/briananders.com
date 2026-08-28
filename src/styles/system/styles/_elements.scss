@@ -124,21 +124,37 @@ textarea {
 input[type=range] { @include input-range; }
 
 // Toggle-styled checkbox — retains the .toggle class hook.
+// The base `input[type=checkbox]` mixin already declares a checkmark via
+// `::after` on `:checked`, and that pseudo-element was leaking into the
+// toggle: on active it inserted a hairline glyph into the inline flow, which
+// nudged the toggle a fraction of a pixel wider and reflowed everything
+// after it. Explicitly reset all the base checkbox properties the toggle
+// doesn't want (place-content, grid display, ::after content), and pin the
+// toggle's dimensions with box-sizing so a border-color change on :checked
+// can never touch its size.
 input[type=checkbox].toggle {
   appearance: none;
+  box-sizing: border-box;
   position: relative;
   display: inline-block;
+  place-content: initial;
+  vertical-align: middle;
   width: 44px;
+  min-width: 44px;
   height: 24px;
   background-color: var(--color-surface-3);
   border: 1px solid var(--color-border-strong);
   border-radius: var(--radius-pill);
-  transition: background-color var(--dur-2);
+  transition: background-color var(--dur-2), border-color var(--dur-2);
   cursor: pointer;
+  margin: 0;
+  padding: 0;
+  flex-shrink: 0;
 
   &::before {
     content: '';
     position: absolute;
+    box-sizing: border-box;
     width: 18px;
     height: 18px;
     border-radius: 50%;
@@ -146,6 +162,18 @@ input[type=checkbox].toggle {
     top: 2px;
     left: 2px;
     transition: left var(--dur-3) var(--ease-standard), background-color var(--dur-2);
+  }
+
+  // Kill the base-checkbox ::after checkmark — the toggle uses ::before as
+  // its knob and has no room for another pseudo-element in its inline flow.
+  &::after,
+  &:checked::after {
+    content: none;
+    display: none;
+    border: 0;
+    width: 0;
+    height: 0;
+    transform: none;
   }
 
   &:checked {

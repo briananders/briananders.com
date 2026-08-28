@@ -21,24 +21,11 @@
   }
 }
 
+// The button element itself is the play/pause component now — see
+// `system/classes/_elements.scss`. Only spacing tweaks live here.
 .play-pause {
-  display: inline-flex;
-  justify-content: center;
-  align-items: center;
-  margin-right: 12px;
-  width: 44px;
-  height: 44px;
-  padding: 0;
-  font-size: 20px;
-  line-height: 1;
-
-  // .play class is applied by the JS while the animation is running.
-  // When running (playing) → show the pause glyph.
-  // When paused          → show the play glyph.
-  .play, .pause { display: none; }
-
-  &.play  .pause { display: inline; }
-  &:not(.play) .play { display: inline; }
+  margin-right: space(2);
+  margin-bottom: 0;
 }
 
 .canvas {

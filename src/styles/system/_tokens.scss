@@ -122,6 +122,31 @@
   --content-max:       #{$grid--max-width};
   --reading-max:       68ch;
 
+  // Derived column widths at the desktop tier.
+  //
+  //   Available inner width = --content-max - 2 × --gutter-desktop
+  //                         = 1200 - 64 = 1136px
+  //   Column width          = (1136 - 11 × --grid-gap-desktop) / 12
+  //                         = (1136 - 176) / 12 = 80px
+  //
+  // Use these to cap the width of a card/list at an integer number of grid
+  // columns without hand-authoring a pixel value at the callsite:
+  //   .my-block { max-width: var(--max-6-columns); }
+  --col-width:      80px;
+  --col-gap:        16px;
+  --max-1-column:   var(--col-width);
+  --max-2-columns:  calc(2  * var(--col-width) + 1  * var(--col-gap));
+  --max-3-columns:  calc(3  * var(--col-width) + 2  * var(--col-gap));
+  --max-4-columns:  calc(4  * var(--col-width) + 3  * var(--col-gap));
+  --max-5-columns:  calc(5  * var(--col-width) + 4  * var(--col-gap));
+  --max-6-columns:  calc(6  * var(--col-width) + 5  * var(--col-gap));
+  --max-7-columns:  calc(7  * var(--col-width) + 6  * var(--col-gap));
+  --max-8-columns:  calc(8  * var(--col-width) + 7  * var(--col-gap));
+  --max-9-columns:  calc(9  * var(--col-width) + 8  * var(--col-gap));
+  --max-10-columns: calc(10 * var(--col-width) + 9  * var(--col-gap));
+  --max-11-columns: calc(11 * var(--col-width) + 10 * var(--col-gap));
+  --max-12-columns: calc(12 * var(--col-width) + 11 * var(--col-gap));
+
   // Motion
   --dur-1: 120ms;
   --dur-2: 200ms;

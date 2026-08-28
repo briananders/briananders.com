@@ -93,13 +93,9 @@ ready.document(() => {
 
   playButton.addEventListener('click', () => {
     playing = !playing;
-
-    if (playing) {
-      playButton.classList.add('play');
-    } else {
-      playButton.classList.remove('play');
-    }
-
+    // Class-driven icon: paused → `.play` (▶); playing → `.pause` (⏸).
+    playButton.classList.toggle('play', !playing);
+    playButton.classList.toggle('pause', playing);
     render();
   });
 

@@ -26,19 +26,9 @@ button[value=add] {
     width: 150px;
   }
 
-  button[value=remove] {
+  button[value=remove],
+  button.play-pause {
     margin: 0;
+    font-size: var(--fs-md);
   }
-
-  button[value=play],
-  button[value=pause] {
-    margin: 0;
-    min-width: 44px;
-    font-size: 20px;
-    line-height: 1;
-  }
-
-  // Only the glyph for the current state stays visible; the other is hidden.
-  button[value=play]  span.pause { display: none; }
-  button[value=pause] span.play  { display: none; }
 }

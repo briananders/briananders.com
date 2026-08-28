@@ -116,6 +116,79 @@
 .card-link { @include card-link; }
 .card      { @include card; }
 
+// -----------------------------------------------------------------------------
+// Play / Pause icon component.
+// Any button (or link) that carries `.play`, `.pause`, or `.playpause`
+// alongside a button style gets a leading unicode media-control glyph:
+//   .play      ▶  (U+25B6)
+//   .pause     ⏸  (U+23F8)
+//   .playpause ⏯  (U+23EF)
+//
+// The pseudo-element is scoped to `button.*` and `.button.*` selectors so
+// the icon never accidentally attaches to a nested `<span class="play">`
+// inside a custom control.
+// -----------------------------------------------------------------------------
+$_ctrl-glyph-font: "Apple Color Emoji", "Segoe UI Symbol", "Segoe UI Emoji",
+                   "Noto Color Emoji", system-ui, sans-serif;
+
+@mixin _control-glyph($char) {
+  &::before {
+    content: $char;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-family: #{$_ctrl-glyph-font};
+    font-weight: var(--fw-regular);
+    line-height: 1;
+    font-size: 1.15em;
+    // Optical alignment — the symbols sit fractionally low against a text
+    // baseline.
+    margin-top: -0.05em;
+  }
+
+  // If the button carries visible text alongside the icon, add a small gap.
+  &:not(.icon-only)::before {
+    margin-right: space(1);
+  }
+}
+
+button.play,      .button.play      { @include _control-glyph("\25B6"); }
+button.pause,     .button.pause     { @include _control-glyph("\23F8"); }
+button.playpause, .button.playpause { @include _control-glyph("\23EF"); }
+
+// Compact icon-only variant. Keeps the button square, hides any legacy
+// child spans that used to carry the icon.
+.button.icon-only,
+button.icon-only {
+  min-width: 44px;
+  padding: 0 space(2);
+
+  // Older markup had <span class="play">Play</span><span class="pause">Pause</span>
+  // as an in-flow label. When the icon-only modifier is set, hide them.
+  > span.play,
+  > span.pause { display: none; }
+}
+
+// Legacy container: keep `.play-pause` as a compact icon-only button whose
+// icon comes from the play/pause class on the button itself. This lets a
+// caller keep the historical class hook and get the new component behaviour
+// automatically.
+button.play-pause,
+.play-pause {
+  min-width: 44px;
+  padding: 0 space(2);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  // Legacy spans that used to render the icon — hide them; the ::before
+  // pseudo drives the visible glyph now.
+  > span.play,
+  > span.pause,
+  > img.play,
+  > img.pause { display: none; }
+}
+
 // Simple stack / cluster layout utilities.
 .stack > * + * { margin-top: var(--stack, space(3)); }
 .cluster {
