@@ -23,8 +23,12 @@
 .container    { @include content; }
 
 // Grid classes so templates can compose without any SCSS at all.
-.grid         { @include grid($no-padding: true); }
-.grid-padded  { @include grid; }
+// Prefixed to avoid colliding with the site's existing `.grid` hooks
+// (see `src/templates/posts/vertically-center-siblings.ejs` and
+// `src/styles/posts/vertically-center-siblings.scss`, where `.grid`
+// scopes a specific display-grid demo).
+.ds-grid         { @include grid($no-padding: true); }
+.ds-grid-padded  { @include grid; }
 
 // Column-span utilities — mobile-first tiers.
 @for $i from 1 through 4 {

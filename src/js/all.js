@@ -1,4 +1,5 @@
 const analytics = require('./_modules/analytics');
+const gridDebug = require('./_modules/grid-debug');
 const lazyLoader = require('./_modules/lazy-loader');
 const noAnimations = require('./_modules/no-animations');
 const ready = require('./_modules/document-ready');
@@ -123,4 +124,5 @@ ready.document(() => {
   lazyLoader.init();
   analytics.watchElements();
   stickyStack.init();
+  gridDebug.init();
 });

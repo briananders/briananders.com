@@ -132,6 +132,23 @@
 
   --transition-speed:  var(--dur-2);
   --transition-timing: var(--ease-standard);
+
+  // -------------------------------------------------------------------------
+  // Legacy palette aliases.
+  // Several shadow-DOM web components (year-listing, year-selector,
+  // trends-bar-chart) reference these older names. CSS custom properties
+  // inherit through Shadow DOM, so declaring them here keeps those components
+  // working without touching their internal styles.
+  // -------------------------------------------------------------------------
+  --palette--primary-white:       var(--color-text);
+  --palette--primary-grey:        var(--color-bg);
+  --palette--hover-grey:          var(--color-surface-3);
+  --palette--secondary-grey:      var(--color-text-muted);
+  --palette--divider-color:       var(--color-border);
+  --palette--error:               var(--color-danger);
+  --palette--primary-color-dark:  var(--color-primary-600);
+  --palette--primary-color-light: var(--color-primary-300);
+  --palette--accent-color:        var(--color-accent-lime);
 }
 
 @media (min-width: 960px) {

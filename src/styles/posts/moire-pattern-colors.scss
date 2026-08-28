@@ -22,30 +22,23 @@
 }
 
 .play-pause {
-  display: flex;
+  display: inline-flex;
   justify-content: center;
   align-items: center;
   margin-right: 12px;
-  width: 40px;
-  height: 40px;
-  padding-top: 0;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  font-size: 20px;
+  line-height: 1;
 
-  img {
-    border-radius: 0;
-    width: 50%;
-  }
+  // .play class is applied by the JS while the animation is running.
+  // When running (playing) → show the pause glyph.
+  // When paused          → show the play glyph.
+  .play, .pause { display: none; }
 
-  &.play {
-    .play {
-      display: none;
-    }
-  }
-
-  &:not(.play) {
-    .pause {
-      display: none;
-    }
-  }
+  &.play  .pause { display: inline; }
+  &:not(.play) .play { display: inline; }
 }
 
 .canvas {

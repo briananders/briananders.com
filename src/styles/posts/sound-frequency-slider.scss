@@ -33,21 +33,12 @@ button[value=add] {
   button[value=play],
   button[value=pause] {
     margin: 0;
-
-    span {
-      margin-left: space(1);
-    }
+    min-width: 44px;
+    font-size: 20px;
+    line-height: 1;
   }
 
-  button[value=play] {
-    span.pause {
-      display: none;
-    }
-  }
-
-  button[value=pause] {
-    span.play {
-      display: none;
-    }
-  }
+  // Only the glyph for the current state stays visible; the other is hidden.
+  button[value=play]  span.pause { display: none; }
+  button[value=pause] span.play  { display: none; }
 }

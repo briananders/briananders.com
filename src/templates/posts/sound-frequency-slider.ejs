@@ -36,8 +36,10 @@ scripts:
 
 <script>
   window.soundSlider = `<div class="sound-slider">
-    <button value="play" class="play-pause button">⏯<span class='play'>Play</span><span class='pause'>Pause</span></button>
-    <button value="remove" class="button">&times;</button>
+    <button value="play" class="play-pause button" aria-label="Play/pause tone">
+      <span class='play' aria-hidden='true'>&#x25B6;</span><span class='pause' aria-hidden='true'>&#x23F8;</span>
+    </button>
+    <button value="remove" class="button" aria-label="Remove tone">&times;</button>
     <input class="hertz-slider" type="range" min="0" max="20000" value="20" step="0.01" />
     <input class="hertz-input" type='number' min="0" max="20000" value="20" step="0.01"/>
   </div>`;
