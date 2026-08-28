@@ -21,9 +21,13 @@ html {
   position: fixed;
   left: 0;
   top: 0;
-  z-index: 999;
+  // Must sit BELOW .sticky-container (z-index: 998) so the nav bar and its
+  // tray — which live inside sticky-container — paint on top. If this
+  // outranks 998, the scrim covers the menu and eats every click.
+  z-index: 900;
   background-color: rgba(0, 0, 0, 0.4);
   backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
 
   &.visible { display: block; }
 }
