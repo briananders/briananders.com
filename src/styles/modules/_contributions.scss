@@ -3,6 +3,7 @@
 section.contributions {
   .deck {
     @include grid($no-padding: true);
+    gap: space(3);
   }
 
   .card {
@@ -16,7 +17,8 @@ section.contributions {
       "title"
       "description"
       "links";
-    column-gap: space(4);
+    column-gap: space(3);
+    row-gap: space(2);
 
     @include columns(12);
 
@@ -26,6 +28,7 @@ section.contributions {
         "image title"
         "image description"
         "image links";
+      @include columns(6, 4);
     }
 
     @include mq($large) {
@@ -35,36 +38,36 @@ section.contributions {
     img {
       grid-area: image;
       width: 100%;
-      margin-top: 9px;
+      border-radius: var(--radius-md);
 
       @include mq-max($medium) {
         width: css-min(100%, 100px);
-        margin: 0 auto #{space(4)};
+        margin: 0 auto space(2);
       }
     }
 
     h5 {
       text-align: left;
       grid-area: title;
-      margin-bottom: space(1);
+      margin-bottom: 0;
+      font-size: var(--fs-lg);
     }
 
     p {
       grid-area: description;
-      margin-bottom: space(1);
+      margin-bottom: 0;
+      color: var(--color-text-muted);
     }
 
     .links {
       grid-area: links;
-      line-height: 1.7;
+      display: flex;
+      gap: space(1);
+      flex-wrap: wrap;
 
-      a {
-        line-height: 27px;
-      }
+      a { line-height: 1.4; }
     }
 
-    button.link {
-      border: none;
-    }
+    button.link { border: none; }
   }
 }

@@ -4,30 +4,77 @@
 @use "posts/last-fm" as *;
 
 main.home {
-  margin-top: space(12);
+  margin-top: space(4);
 
-  .last-fm-module {
-    margin-top: space(6);
-  }
+  // Hero — sets the tone for the whole site.
+  .hero {
+    padding-top: space(8);
+    padding-bottom: space(8);
+    background:
+      radial-gradient(1000px 400px at 80% -100px, rgba(249, 115, 22, 0.18), transparent 60%),
+      radial-gradient(600px 300px at 20% -50px, rgba(192, 132, 252, 0.14), transparent 60%);
 
-  .deck {
-    margin-bottom: $paragraph-bottom;
-  }
-
-  .posts {
-    .content {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
+    .overline {
+      display: block;
+      margin-bottom: space(2);
+      font-size: var(--fs-xs);
+      font-weight: var(--fw-semibold);
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: var(--color-primary-300);
     }
 
-    .block-link-wrapper,
-    header {
+    &__title {
+      @include type--title;
+      font-size: clamp(2.5rem, 6vw + 1rem, 4.75rem);
+      margin-bottom: space(3);
+      line-height: 1.05;
+
+      em {
+        font-style: normal;
+        background: linear-gradient(90deg, var(--color-primary-300), var(--color-accent-plum));
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+      }
+    }
+
+    &__lede {
       @include readingWidth;
-      justify-content: flex-start;
+      color: var(--color-text-muted);
+      font-size: var(--fs-lg);
+      line-height: var(--lh-normal);
+      margin-bottom: space(4);
+    }
+
+    &__cta {
+      gap: space(2);
+    }
+
+    @include mq($large) {
+      padding-top: space(16);
+      padding-bottom: space(12);
     }
   }
 
+  .last-fm-module { margin-top: space(4); }
+
+  .deck { margin-bottom: $paragraph-bottom; }
+
+  .contributions > .content:first-of-type {
+    margin-bottom: space(2);
+
+    h2.overline {
+      font-size: var(--fs-xs);
+      color: var(--color-text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      font-weight: var(--fw-semibold);
+      margin: 0;
+    }
+  }
+
+  .posts,
   .index-music {
     .content {
       display: flex;
@@ -39,6 +86,7 @@ main.home {
     header {
       @include readingWidth;
       justify-content: flex-start;
+      margin-bottom: space(2);
     }
   }
 }

@@ -1,69 +1,66 @@
 @use "system/utilities" as *;
 
-.html {
-  @include html;
-}
+// -----------------------------------------------------------------------------
+// Utility class layer — thin wrappers around the mixins so EJS templates can
+// reach the same primitives without dropping into SCSS.
+// -----------------------------------------------------------------------------
+
+.html { @include html; }
 
 .section,
-.description {
-  @include section;
-}
+.description { @include section; }
 
-.description {
-  @include paragraph-margin;
-}
+.description  { @include paragraph-margin; }
 
 .p,
-.paragraph {
-  @include paragraph;
-}
+.paragraph    { @include paragraph; }
+.paragraph-margin { @include paragraph-margin; }
 
 .i,
-.italic {
-  @include italic;
-}
+.italic       { @include italic; }
 
 .content,
-.container {
-  @include content;
+.container    { @include content; }
+
+// Grid classes so templates can compose without any SCSS at all.
+.grid         { @include grid($no-padding: true); }
+.grid-padded  { @include grid; }
+
+// Column-span utilities — mobile-first tiers.
+@for $i from 1 through 4 {
+  .col-#{$i} { grid-column: span $i; }
 }
+@include mq($grid--tablet-break-point) {
+  @for $i from 1 through 8 { .t-col-#{$i} { grid-column: span $i; } }
+}
+@include mq($grid--start-break-point) {
+  @for $i from 1 through 12 { .d-col-#{$i} { grid-column: span $i; } }
+}
+
+// Alignment — fixed from the pre-refactor bug where both meant left.
+.text-center  { text-align: center; }
+.text-left    { text-align: left; }
+.text-right   { text-align: right; }
+
+.center       { text-align: center; justify-content: center; }
+.block        { display: block; }
+.inline-block { display: inline-block; }
+.flex         { display: flex; }
+.hidden       { display: none; }
+
+.block-center     { @include default-margins; text-align: center; }
 
 .error {
-  color: $color--red-500;
+  color: var(--color-danger);
   text-align: left;
 }
 
-.block {
-  display: block;
-}
+// Text-tone utilities
+.text-muted  { color: var(--color-text-muted); }
+.text-subtle { color: var(--color-text-subtle); }
+.text-primary { color: var(--color-primary-500); }
 
-.center {
-  text-align: left;
-  justify-content: center;
-}
-
-.block {
-  display: block;
-}
-
-.center {
-  text-align: left;
-  justify-content: center;
-}
-
-.block-center {
-  @include left-margins;
-}
-
-.p,
-.paragraph {
-  @include paragraph;
-
-  &-margin {
-    @include paragraph-margin;
-  }
-}
-
+// Video wrapper.
 .video-container {
   width: 100%;
   height: 0;
@@ -78,35 +75,59 @@
   }
 }
 
-.block-link-wrapper {
-  display: block;
-}
+.block-link-wrapper { display: block; }
 
-.select {
-  @include select;
-}
-
-.inline-link {
-  @include inline-link;
-}
-
-.block-link {
-  @include block-link;
-}
+// Link-shape components — expose mixins as classes.
+.select      { @include select; }
+.inline-link { @include inline-link; }
+.block-link  { @include block-link; }
 
 .button,
 .button-link {
   @include button-link;
 
-  &.mega-button {
-    @include mega-button;
+  &.mega-button { @include mega-button; }
+
+  // Primary CTA colour.
+  &.button-primary,
+  &.primary {
+    background-color: var(--color-primary-500);
+    color: var(--color-text-inverse);
+    border-color: transparent;
+    box-shadow: var(--elev-glow-primary);
+
+    &:hover {
+      background-color: var(--color-primary-600);
+    }
+  }
+
+  &.ghost {
+    background-color: transparent;
+    border-color: transparent;
+
+    &:hover { background-color: var(--color-surface-2); }
   }
 }
 
-.card-link {
-  @include card-link;
+.card-link { @include card-link; }
+.card      { @include card; }
+
+// Simple stack / cluster layout utilities.
+.stack > * + * { margin-top: var(--stack, space(3)); }
+.cluster {
+  display: flex;
+  flex-wrap: wrap;
+  gap: space(2);
+  align-items: center;
 }
 
-.card {
-  @include card;
+// Screen-reader only.
+.sr-only {
+  position: absolute;
+  width: 1px; height: 1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
 }

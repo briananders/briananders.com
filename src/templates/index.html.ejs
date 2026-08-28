@@ -18,7 +18,27 @@ scripts:
 <%- partial('head/styles', { ...locals, path: 'homepage', inlineStyles: true }) %>
 
 
+<section class="hero">
+  <div class="content">
+    <p class="overline text-primary">Engineer · YouTuber · Podcaster · Musician</p>
+    <h1 class="hero__title">Hi, I'm <em>Brian Anders</em>.</h1>
+    <p class="hero__lede">
+      I'm an engineering manager in the tech industry. In my off-hours I make
+      drum covers, host a Batman-history podcast, and cook up small code
+      experiments — most of which live somewhere on this site.
+    </p>
+    <div class="hero__cta cluster">
+      <%- link('About me', { href: '/about/', class: 'button button-link primary' }); %>
+      <%- link('Recent posts', { href: '#recent-posts', class: 'button button-link' }); %>
+    </div>
+  </div>
+</section>
+
+
 <section class="contributions">
+  <div class="content">
+    <h2 class="h5 overline">What I make</h2>
+  </div>
   <div class="content deck">
     <%
       const model = [
@@ -64,7 +84,7 @@ scripts:
 </section>
 
 
-  <section class="posts">
+  <section class="posts" id="recent-posts">
     <div class="content">
       <header>
         <h2>

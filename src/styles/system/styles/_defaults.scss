@@ -1,25 +1,16 @@
 @use "system/utilities" as *;
 
-* {
-  transition-timing-function: $transition-timing;
-  transition-duration: $transition-speed;
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  outline: none;
+
+  transition-timing-function: var(--ease-standard, $transition-timing);
+  transition-duration: var(--dur-2, $transition-speed);
   transition-property: none;
-  border-radius: $border-radius;
-
-  &,
-  &::before,
-  &::after {
-    box-sizing: border-box;
-    outline: none;
-  }
 }
 
-::selection {
-  @include selection;
-}
-::-moz-selection {
-  @include selection;
-}
-::-webkit-selection {
-  @include selection;
-}
+::selection        { @include selection; }
+::-moz-selection   { @include selection; }
+::-webkit-selection { @include selection; }

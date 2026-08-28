@@ -2,7 +2,16 @@
   const customFontsDeferred = locals.customFontsDeferred || false;
   const customFontsSwap = locals.customFontsSwap || false;
   const fontDomain = 'https://fonts.googleapis.com';
-  const fontApi = `${fontDomain}/css?family=Roboto:300,500|Source+Serif+Pro${customFontsSwap ? '&display=swap' : ''}`;
+
+  // Design-system font stack:
+  //   - Inter (400/500/600/700) for UI + headings
+  //   - Source Serif 4 (400/600) for long-form reading
+  //   - JetBrains Mono (400/600) for code samples
+  const fontApi = `${fontDomain}/css2`
+    + '?family=Inter:wght@400;500;600;700'
+    + '&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600'
+    + '&family=JetBrains+Mono:wght@400;600'
+    + (customFontsSwap ? '&display=swap' : '');
 %>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link rel="preconnect" href="<%- fontDomain %>" crossorigin />
