@@ -215,6 +215,47 @@ describe('ScrobblesLastUpdated', () => {
     );
   });
 
+  // ── getUrl() — source attribute routing ─────────────────────────────────────
+
+  test('getUrl() returns scrobbles URL when source="scrobbles"', () => {
+    const el = makeEl();
+    el.setAttribute('source', 'scrobbles');
+    assert.equal(
+      el.getUrl(),
+      '/last-fm-history/reports/last_updated.json',
+      'source="scrobbles" should use the last-fm-history URL',
+    );
+  });
+
+  test('getUrl() returns band-news URL when source="band-news"', () => {
+    const el = makeEl();
+    el.setAttribute('source', 'band-news');
+    assert.equal(
+      el.getUrl(),
+      '/band-news/last_updated.json',
+      'source="band-news" should use the band-news URL',
+    );
+  });
+
+  test('getUrl() defaults to scrobbles URL when source attribute is absent', () => {
+    const el = makeEl();
+    assert.equal(
+      el.getUrl(),
+      '/last-fm-history/reports/last_updated.json',
+      'missing source attribute should fall back to scrobbles URL',
+    );
+  });
+
+  test('getUrl() defaults to scrobbles URL when source attribute is unrecognized', () => {
+    const el = makeEl();
+    el.setAttribute('source', 'unknown-source');
+    assert.equal(
+      el.getUrl(),
+      '/last-fm-history/reports/last_updated.json',
+      'unrecognized source value should fall back to scrobbles URL',
+    );
+  });
+
   // ── fetchLastUpdated() — async integration ──────────────────────────────────
 
   test('fetchLastUpdated() renders the date when fetch succeeds', async () => {

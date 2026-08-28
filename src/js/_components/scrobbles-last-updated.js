@@ -6,7 +6,10 @@ const template = `
   <time id="datetime" class="loading">Loading\u2026</time>
 `;
 
-const LAST_UPDATED_URL = '/last-fm-history/reports/last_updated.json';
+const SOURCE_URLS = {
+  scrobbles: '/last-fm-history/reports/last_updated.json',
+  'band-news': '/band-news/last_updated.json',
+};
 
 class ScrobblesLastUpdated extends HTMLElement {
   constructor() {
@@ -19,8 +22,13 @@ class ScrobblesLastUpdated extends HTMLElement {
     this.fetchLastUpdated();
   }
 
+  getUrl() {
+    const source = this.getAttribute('source');
+    return SOURCE_URLS[source] || SOURCE_URLS.scrobbles;
+  }
+
   fetchLastUpdated() {
-    fetch(LAST_UPDATED_URL)
+    fetch(this.getUrl())
       .then((response) => {
         if (!response.ok) {
           this.renderError();

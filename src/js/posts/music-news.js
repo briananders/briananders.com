@@ -1,4 +1,5 @@
 const ready = require('../_modules/document-ready');
+require('../_components/scrobbles-last-updated').init();
 
 function escapeHTML(str) {
   const tempElement = document.createElement('temp');
