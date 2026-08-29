@@ -1,0 +1,98 @@
+---
+title: "Metronome widget"
+description: "A small metronome widget with an accented downbeat, built with the Web Audio API."
+date: 2025-12-14
+priority: 0.8
+pageClasses:
+  - 'posts metronome'
+layout: base
+styles:
+  - 'main'
+  - 'posts/metronome'
+scripts:
+  - 'posts/metronome'
+---
+
+<section>
+  <div class="content">
+    <header>
+      <h2>Foreword: how this metronome works</h2>
+    </header>
+
+    <p>
+      A metronome seems simple: play a click every <var>60 / BPM</var> seconds. In the browser, doing that with <var>setInterval</var> is deceptively unreliable because timers can drift, the tab can get throttled, and the audio pipeline has its own buffering.
+    </p>
+
+    <p>
+      This widget uses the Web Audio API and schedules clicks <i>slightly ahead of time</i>. The core loop wakes up frequently, looks ahead a short window, and asks the audio engine to play the next few clicks at precise timestamps. That’s the trick: instead of hoping JavaScript runs “on time”, we hand future times to the audio engine and let it do what it’s good at.
+    </p>
+
+    <p>
+      The first beat of each bar is accented with a higher pitch, and the UI flashes the current beat by lining up DOM updates with those same scheduled audio timestamps.
+    </p>
+
+    <p class="p">
+      Audio in most browsers requires a user gesture to start. Hit <b>Start</b> once to initialize audio, and after that it should behave like a normal metronome.
+    </p>
+  </div>
+</section>
+
+<section>
+  <div class="content">
+    <div class="metronome-widget" data-state="stopped">
+      <div class="metronome-header">
+        <h3 class="h2">Metronome</h3>
+        <button id="metronome-toggle" class="button" type="button">Start</button>
+      </div>
+
+      <div class="metronome-controls">
+        <div class="control bpm">
+          <label for="metronome-bpm">
+            <span class="label">BPM</span>
+          </label>
+          <div class="bpm-row">
+            <input id="metronome-bpm" class="bpm-input" type="number" inputmode="numeric" min="30" max="240" value="120" />
+            <input id="metronome-bpm-range" class="bpm-range" type="range" min="30" max="240" value="120" />
+          </div>
+        </div>
+
+        <div class="control time-signature">
+          <label class="label">Time signature</label>
+          <div class="time-row" role="group" aria-label="Time signature">
+            <select id="metronome-ts-top" aria-label="Beats per bar">
+              <% [2,3,4,5,6,7,8,9,10,11,12].forEach((n) => { %>
+                <option value="<%- n %>" <%- n === 4 ? 'selected' : '' %>><%- n %></option>
+              <% }); %>
+            </select>
+            <span class="slash" aria-hidden="true">/</span>
+            <select id="metronome-ts-bottom" aria-label="Beat unit">
+              <% [2,4,8].forEach((d) => { %>
+                <option value="<%- d %>" <%- d === 4 ? 'selected' : '' %>><%- d %></option>
+              <% }); %>
+            </select>
+          </div>
+        </div>
+
+        <div class="control options">
+          <label class="checkbox">
+            <input id="metronome-accent" type="checkbox" checked />
+            <span>Accent beat 1</span>
+          </label>
+        </div>
+      </div>
+
+      <div class="metronome-display" aria-live="off">
+        <div class="beat-readout">
+          <span class="beat-label">Beat</span>
+          <span id="metronome-beat" class="beat-value">—</span>
+        </div>
+        <div id="metronome-dots" class="beat-dots" aria-hidden="true"></div>
+      </div>
+
+      <p class="note">
+        Tip: if this sounds “late” on Bluetooth headphones, that’s normal — Bluetooth audio adds latency.
+      </p>
+    </div>
+  </div>
+</section>
+
