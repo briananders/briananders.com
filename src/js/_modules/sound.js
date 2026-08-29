@@ -1,17 +1,41 @@
 module.exports = function Sound() {
-  const AudioContext = window.AudioContext || window.webkitAudioContext;
-  const context = new AudioContext();
-  const oscillator = context.createOscillator();
-  const gain = context.createGain();
+  const {
+    getAudioContext,
+    unlockAudioContext,
+    installGlobalAudioUnlock,
+  } = require('./audio-context');
+
+  // Make sure iOS has a chance to unlock audio before any playback attempt.
+  installGlobalAudioUnlock();
+
+  let context = null;
+  let oscillator = null;
+  let gain = null;
   let frequency = 20;
-  // types: Sine Square Triangle Sawtooth
-  oscillator.type = 'sine';
-  oscillator.connect(gain);
-  gain.gain.value = 0.00001;
-  setFrequency(frequency);
-  oscillator.start();
 
   let isPlaying = false;
+
+  function ensureInitialized() {
+    if (context && oscillator && gain) return true;
+
+    context = getAudioContext();
+    if (!context) return false;
+
+    oscillator = context.createOscillator();
+    gain = context.createGain();
+
+    // types: Sine Square Triangle Sawtooth
+    oscillator.type = 'sine';
+    oscillator.connect(gain);
+    gain.gain.value = 0.00001;
+    oscillator.frequency.setValueAtTime(frequency, context.currentTime);
+
+    // Starting an oscillator before the first user gesture can break audio on iOS.
+    // We only create + start nodes after a playback attempt (which should be gesture-driven).
+    oscillator.start();
+
+    return true;
+  }
 
   function runLoop() {
     if (isPlaying) {
@@ -25,18 +49,24 @@ module.exports = function Sound() {
 
   function start() {
     if (isPlaying) { return; }
+    if (!ensureInitialized()) { return; }
     isPlaying = true;
     runLoop();
     // console.info(gain.gain.value);
-    context.resume().then(() => {
-      gain.connect(context.destination);
-      gain.gain.exponentialRampToValueAtTime(
-        1, context.currentTime + 0.04
-      );
-    });
+    // iOS Safari: resume/unlock must be initiated from a user gesture.
+    unlockAudioContext().then(() => {
+      try {
+        gain.connect(context.destination);
+      } catch {}
+      gain.gain.exponentialRampToValueAtTime(1, context.currentTime + 0.04);
+    }).catch(() => {});
   }
 
   function stop() {
+    if (!context || !gain) {
+      isPlaying = false;
+      return;
+    }
     // console.info(gain.gain.value);
     gain.gain.exponentialRampToValueAtTime(
       0.00001, context.currentTime + 0.04
@@ -51,7 +81,9 @@ module.exports = function Sound() {
 
   function setFrequency(newFrequency) {
     frequency = newFrequency;
-    oscillator.frequency.setValueAtTime(frequency, context.currentTime); // value in hertz
+    if (oscillator && context) {
+      oscillator.frequency.setValueAtTime(frequency, context.currentTime); // value in hertz
+    }
   }
 
   this.isPlaying = () => isPlaying;
