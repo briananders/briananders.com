@@ -1,6 +1,14 @@
 # briananders.com
 My personal website, built as a custom static site generator.
 
+## Documentation
+- **[DESIGN_SYSTEM.md](DESIGN_SYSTEM.md)** — full programmer reference for
+  the dark-first, token-driven design system that ships with the site
+  (tokens, mixins, class utilities, connective tissue, authoring guide).
+- **[design-system.html](design-system.html)** — standalone visual reference
+  at the repo root, or the in-site version at
+  [`/posts/design-system/`](https://briananders.com/posts/design-system/).
+
 ## Tech Stack
 - **Templating**: EJS (Embedded JavaScript) for HTML generation
 - **Styling**: Node-Sass for CSS pre-processing
