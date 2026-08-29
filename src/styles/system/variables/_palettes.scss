@@ -1,17 +1,27 @@
-@use "sass:color";
+// -----------------------------------------------------------------------------
+// Named palette mapping.
+//
+// Every legacy `$palette--*` name is preserved so per-post styles keep
+// compiling. The values now point at the dark-first design system defined in
+// `system/_tokens.scss` and `_colors.scss`.
+// -----------------------------------------------------------------------------
 @use "colors" as *;
 
+// Primary text / background
+$palette--primary-white:  $color--text;         // was #fff — now near-white
+$palette--primary-black:  $color--black;
+$palette--primary-grey:   $color--ink;          // page canvas
+$palette--hover-grey:     $color--ink-hover;    // interactive hover
+$palette--secondary-grey: $color--text-muted;   // muted text
 
-$palette--primary-white:  $color--white;
-$palette--primary-black:  #191919;
-$palette--primary-grey:   $color--grey-900;
-$palette--hover-grey:   $color--grey-800;
-$palette--secondary-grey: $color--grey-600;
-$palette--divider-color:  $color--yellow-900;
-$palette--error: $color--red-400;
+// Structural
+$palette--divider-color:  $color--ink-border;   // was yellow-900 (accent border)
+$palette--error:          $color--danger;
 
-$palette--primary-color-dark:  color.adjust($color--orange-900, $lightness: -5%);
-$palette--primary-color-light: $color--yellow-900;
-$palette--accent-color:        $color--green-a200;
+// Brand
+$palette--primary-color-dark:   $color--primary-600;
+$palette--primary-color-light:  $color--primary-300;
+$palette--accent-color:         $color--accent-lime;
 
-$palette--surface-color: rgba(0, 0, 0, 0.1);
+// Surfaces
+$palette--surface-color:  rgba(255, 255, 255, 0.04);

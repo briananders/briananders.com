@@ -54,31 +54,10 @@ $rotation-time-step: math.div($rotation-duration, $rotation-steps);
     height: 40px;
   }
 
+  // The play/pause button is a shared design-system component (see
+  // `system/classes/_elements.scss`). Just space it in the form.
   button {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-right: 12px;
-    width: 40px;
-    height: 40px;
-    padding-top: 0;
-
-    img {
-      border-radius: 0;
-      width: 50%;
-    }
-
-    &.play {
-      .play {
-        display: none;
-      }
-    }
-
-    &:not(.play) {
-      .pause {
-        display: none;
-      }
-    }
+    margin-right: space(2);
   }
 }
 

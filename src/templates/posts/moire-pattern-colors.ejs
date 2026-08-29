@@ -28,26 +28,17 @@ scripts:
 
 <div class="container">
   <div class="form" data-controller="red">
-    <button class="play-pause">
-      <%- img({ src: '/images/icons/play.svg' , classes: ['play'] }); %>
-        <%- img({ src: '/images/icons/pause.svg' , classes: ['pause'] }); %>
-    </button>
+    <button class="button play-pause play" type="button" aria-label="Play/pause red rotation"></button>
     Rotation (red): <span class="rotation-value">0.0</span>
     <input type="range" min="0" max="90" step="0.1" value="0" />
   </div>
   <div class="form" data-controller="green">
-    <button class="play-pause">
-      <%- img({ src: '/images/icons/play.svg' , classes: ['play'] }); %>
-        <%- img({ src: '/images/icons/pause.svg' , classes: ['pause'] }); %>
-    </button>
+    <button class="button play-pause play" type="button" aria-label="Play/pause green rotation"></button>
     Rotation (green): <span class="rotation-value">0.0</span>
     <input type="range" min="0" max="90" step="0.1" value="0" />
   </div>
   <div class="form" data-controller="blue">
-    <button class="play-pause">
-      <%- img({ src: '/images/icons/play.svg' , classes: ['play'] }); %>
-        <%- img({ src: '/images/icons/pause.svg' , classes: ['pause'] }); %>
-    </button>
+    <button class="button play-pause play" type="button" aria-label="Play/pause blue rotation"></button>
     Rotation (blue): <span class="rotation-value">0.0</span>
     <input type="range" min="0" max="90" step="0.1" value="0" />
   </div>

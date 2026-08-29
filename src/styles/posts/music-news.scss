@@ -117,7 +117,6 @@
 }
 
 .band-filter {
-  @include palette--base--inverted(0);
   @include type--body-tiny;
   @include type--bold-sans-serif;
   display: inline-flex;
@@ -125,31 +124,65 @@
   gap: space(1);
   padding: space(1) space(2);
   border-radius: 100px;
-  border: 2px solid $palette--accent-color;
   cursor: pointer;
   font-family: inherit;
 
-  &:hover,
-  &:focus-visible {
-    background-color: rgba($palette--accent-color, 0.15);
-    outline: none;
+  color: var(--color-text);
+  background-color: var(--color-surface-2);
+  border: 1px solid var(--color-border);
+  transition:
+    background-color var(--dur-2) var(--ease-standard),
+    border-color var(--dur-2) var(--ease-standard),
+    color var(--dur-2) var(--ease-standard),
+    transform var(--dur-1) var(--ease-standard);
+
+  &:hover {
+    background-color: var(--color-surface-3);
+    border-color: var(--color-border-strong);
   }
+
+  &:focus-visible {
+    outline: none;
+    box-shadow: var(--focus-ring);
+  }
+
+  &:active { transform: translateY(1px); }
 }
 
 .band-filter--selected {
-  @include palette--base--inverted;
-  background-color: $palette--accent-color;
+  color: var(--color-text-inverse);
+  background-color: var(--color-primary-500);
+  border-color: var(--color-primary-500);
+  box-shadow: var(--elev-glow-primary);
+
+  &:hover {
+    background-color: var(--color-primary-600);
+    border-color: var(--color-primary-600);
+  }
+
+  // Small check to reinforce the "on" affordance.
+  &::before {
+    content: '';
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: currentColor;
+    box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.15) inset;
+    flex: 0 0 auto;
+  }
 }
 
 .band-filter__count {
-  min-width: 1.25em;
+  min-width: 1.5em;
   padding: 0 space(1);
   border-radius: 100px;
-  background-color: rgba($palette--primary-grey, 0.2);
+  background-color: rgba(255, 255, 255, 0.06);
+  color: var(--color-text-muted);
   text-align: center;
 
   .band-filter--selected & {
-    background-color: rgba($palette--primary-grey, 0.25);
+    color: var(--color-text-inverse);
+    background-color: rgba(0, 0, 0, 0.15);
   }
 }
 

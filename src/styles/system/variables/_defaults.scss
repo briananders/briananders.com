@@ -1,6 +1,12 @@
+// -----------------------------------------------------------------------------
+// Design-system defaults.
+// The 6px `$base-unit` is preserved for `space()` back-compat with per-post
+// styles. New components pull spacing directly from the CSS custom properties
+// declared in `system/_tokens.scss` (which run on a 4px scale).
+// -----------------------------------------------------------------------------
 $base-unit: 6px;
 
-$transition-speed: 500ms;
-$transition-timing: ease;
+$transition-speed: 200ms;
+$transition-timing: cubic-bezier(0.2, 0.0, 0.0, 1.0);
 
 $border-radius: 12px;

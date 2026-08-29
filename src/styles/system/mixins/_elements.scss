@@ -6,44 +6,33 @@
 @use "./grid" as *;
 @use "system/functions/all" as *;
 
-@mixin html {
-  mixin: html;
+// -----------------------------------------------------------------------------
+// Element mixins — the shape of every UI primitive.
+// Every mixin name is preserved from the pre-refactor system.
+// -----------------------------------------------------------------------------
 
+@mixin html {
   min-height: 100%;
-  font-size: 62.5%;
+  font-size: 100%;
   position: relative;
   @include type--regular-serif;
-  @include type--body;
+  @include font-size(2);
   overflow-x: hidden;
   @include palette--base;
   text-wrap: pretty;
-
-  --palette--primary-white: #{$palette--primary-white};
-  --palette--primary-grey: #{$palette--primary-grey};
-  --palette--hover-grey: #{$palette--hover-grey};
-  --palette--secondary-grey: #{$palette--secondary-grey};
-  --palette--divider-color: #{$palette--divider-color};
-  --palette--error: #{$palette--error};
-  --palette--primary-color-dark: #{$palette--primary-color-dark};
-  --palette--primary-color-light: #{$palette--primary-color-light};
-  --palette--accent-color: #{$palette--accent-color};
-  --border-radius: #{$border-radius};
-  --transition-speed: #{$transition-speed};
-  --transition-timing: #{$transition-timing};
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  color-scheme: dark;
 }
 
 @mixin selection {
-  mixin: selection;
-
   text-shadow: none;
-  background-color: $palette--primary-color-light;
-  color: $palette--primary-grey;
-  -webkit-text-fill-color: $palette--primary-grey;
+  background-color: var(--color-primary-500);
+  color: var(--color-text-inverse);
+  -webkit-text-fill-color: var(--color-text-inverse);
 }
 
 @mixin section {
-  mixin: section;
-
   width: css-min($grid--max-width, 100%);
   margin: 0 auto $section-spacer;
 
@@ -53,69 +42,138 @@
 }
 
 @mixin checkbox {
-  mixin: checkbox;
-
   cursor: pointer;
-  height: space(4);
-  width: space(4);
-  margin: unset;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  margin: 0;
+  background: var(--color-surface-2);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-xs);
+  display: inline-grid;
+  place-content: center;
+  transition-property: background-color, border-color;
+  transition-duration: var(--dur-2);
+
+  &:hover {
+    border-color: var(--color-primary-500);
+  }
+
+  &:checked {
+    background: var(--color-primary-500);
+    border-color: var(--color-primary-500);
+
+    &::after {
+      content: '';
+      width: 10px;
+      height: 6px;
+      border-left: 2px solid var(--color-text-inverse);
+      border-bottom: 2px solid var(--color-text-inverse);
+      transform: rotate(-45deg) translate(1px, -1px);
+    }
+  }
 
   @include link-focus;
 }
 
 @mixin button-element {
-  /* basic button */
-  mixin: button-element;
+  @include type--bold-sans-serif;
+  color: var(--color-text);
+  background-color: var(--color-surface-2);
+  border-radius: var(--radius-md);
+  min-height: 44px;
+  padding: 0 space(3);
+  border: 1px solid var(--color-border);
+  font-size: var(--fs-sm);
+  cursor: pointer;
+  transition-property: background-color, border-color, translate;
+  transition-duration: var(--dur-2);
+  transition-timing-function: var(--ease-standard);
 
-  @include type--body;
-  @include palette--base;
-  border-radius: var(--border-radius, $border-radius);
-  height: calc(space(6) + math.div(space(1), 2));
-  padding: math.div(space(1), 3) space(1) 0;
-  border: 1px solid $palette--divider-color;
+  &:hover  { background-color: var(--color-surface-3); }
+
+  // Use the individual `translate` property (not `transform`) so a caller
+  // that positions this button with `transform: translate(-50%, -50%)` for
+  // centering doesn't get its transform clobbered on press. `translate` is
+  // composed with any authored `transform` rather than replacing it.
+  &:active { translate: 0 1px; }
 }
 
 @mixin input {
-  mixin: input;
-
-  @include type--body;
-  @include palette--base;
-
+  @include type--regular-sans-serif;
+  color: var(--color-text);
+  background-color: var(--color-surface-2);
   min-width: space(12);
-  border-radius: var(--border-radius, $border-radius);
-  height: calc(space(6) + math.div(space(1), 2));
-  padding: 0 space(1);
-  border: 1px solid $palette--secondary-grey;
+  min-height: 44px;
+  border-radius: var(--radius-md);
+  padding: 0 space(2);
+  border: 1px solid var(--color-border);
+  font-size: var(--fs-md);
+  transition-property: border-color, background-color;
+  transition-duration: var(--dur-2);
+
+  &::placeholder { color: var(--color-text-subtle); }
+  &:hover  { border-color: var(--color-border-strong); }
+  &:focus  { border-color: var(--color-primary-500); background-color: var(--color-surface-1); }
 }
 
 @mixin input-range {
-  mixin: input-range;
-
-  height: calc(space(6) + math.div(space(1), 2));
+  height: 24px;
   cursor: pointer;
+  appearance: none;
+  background: transparent;
+
+  &::-webkit-slider-runnable-track {
+    height: 6px;
+    background: var(--color-surface-3);
+    border-radius: var(--radius-pill);
+  }
+  &::-moz-range-track {
+    height: 6px;
+    background: var(--color-surface-3);
+    border-radius: var(--radius-pill);
+  }
+  &::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    background: var(--color-primary-500);
+    border: 2px solid var(--color-bg);
+    margin-top: -7px;
+    cursor: pointer;
+  }
+  &::-moz-range-thumb {
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    background: var(--color-primary-500);
+    border: 2px solid var(--color-bg);
+    cursor: pointer;
+  }
 
   @include link-focus;
 }
 
 @mixin select {
-  mixin: select;
-
-  @include type--body;
-  @include palette--base;
-
+  @include type--regular-sans-serif;
+  color: var(--color-text);
+  background-color: var(--color-surface-2);
   appearance: menulist;
-  border-radius: var(--border-radius, $border-radius);
-  height: calc(space(6) + math.div(space(1), 2));
-  padding: 0 space(1);
-  border: 1px solid $palette--secondary-grey;
+  border-radius: var(--radius-md);
+  min-height: 44px;
+  padding: 0 space(2);
+  border: 1px solid var(--color-border);
   cursor: pointer;
+  font-size: var(--fs-md);
+  transition-property: border-color, background-color;
+  transition-duration: var(--dur-2);
+
+  &:hover { border-color: var(--color-border-strong); }
+  &:focus { border-color: var(--color-primary-500); }
 
   @include link-focus;
 }
 
 @mixin link-base {
-  mixin: link-base;
-
   position: relative;
   background-color: transparent;
   text-decoration: none;
@@ -123,218 +181,211 @@
 }
 
 @mixin link-hover {
-  mixin: link-hover;
-
-  transition-property: background-color;
+  transition-property: background-color, color;
+  transition-duration: var(--dur-2);
 
   &:hover {
-    background-color: $palette--hover-grey;
+    background-color: var(--color-surface-2);
   }
 }
 
 @mixin link-focus {
-  mixin: link-focus;
-
-  &:focus {
-    box-shadow: 0px 0px 0px 2px $palette--primary-grey, 0px 0px 0px 4px $palette--secondary-grey;
+  &:focus-visible {
+    outline: none;
+    box-shadow: var(--focus-ring);
   }
 }
 
 @mixin inline-link {
-  mixin: inline-link;
-
   @include link-base;
 
-  padding: 2px 0 0;
-  display: inline-flex;
-  color: $palette--primary-color-light;
+  padding: 0;
+  display: inline;
+  color: var(--color-accent-teal);
+  border-bottom: 1px solid rgba(34, 211, 238, 0.35);
+  transition: color var(--dur-2), border-color var(--dur-2);
 
-  @include link-hover;
   @include link-focus;
 
   &:hover {
-    @include link-base;
-    text-decoration: underline;
+    color: #6EE7F9;
+    border-bottom-color: currentColor;
+    background-color: transparent;
   }
 }
 
 @mixin block-link {
-  mixin: block-link;
-
   @include link-base;
 
-  padding: 2px space(1) 0;
-  margin-left: -#{space(1)};
-  box-sizing: content-box;
+  padding: space(1) space(2);
+  margin-left: 0;
+  box-sizing: border-box;
   display: inline-flex;
-  color: $palette--primary-white;
+  align-items: center;
+  gap: space(1);
+  color: var(--color-text);
+  font-weight: var(--fw-medium);
+  border-radius: var(--radius-sm);
 
   @include link-hover;
   @include link-focus;
 
   b {
-    transition-property: transform;
+    transition: transform var(--dur-2) var(--ease-emphasized);
     padding-left: 0.2rem;
-    transform: scaleY(1.5) translateY(0.03rem);
-    color: $palette--primary-color-light;
+    color: var(--color-primary-500);
+    font-weight: var(--fw-bold);
   }
 
-  &:hover b {
-    transform: scaleY(1.5) translateY(0.03rem) translateX(0.2rem);
-  }
+  &:hover b { transform: translateX(4px); }
 }
 
 @mixin button-link {
-  mixin: button-link;
-
   @include link-base;
-
   @include type--bold-sans-serif;
-  @include text-center;
 
   display: inline-flex;
   justify-content: center;
   align-items: center;
-  padding: space(2) space(6);
-  margin: space(2);
-  border-radius: var(--border-radius, $border-radius);
+  gap: space(1);
+  min-height: 44px;
+  padding: 0 space(4);
+  margin: 0;
+  border-radius: var(--radius-md);
+  font-size: var(--fs-sm);
+  letter-spacing: 0.01em;
 
-  color: $palette--primary-white;
-  border: 2px solid $palette--divider-color;
+  color: var(--color-text);
+  background-color: var(--color-surface-2);
+  border: 1px solid var(--color-border);
+  transition-property: background-color, border-color, translate, box-shadow;
+  transition-duration: var(--dur-2);
+  transition-timing-function: var(--ease-standard);
 
-  @include link-hover;
+  &:hover  { background-color: var(--color-surface-3); text-decoration: none; }
+  // Use `translate` (not `transform`) for press feedback so authored
+  // `transform` on a caller — e.g. a centered overlay button — is preserved.
+  &:active { translate: 0 1px; }
+
   @include link-focus;
 }
 
 @mixin card-link {
-  mixin: card-link;
-
   @include link-base;
 
   display: grid;
-  border-radius: var(--border-radius, $border-radius);
+  border-radius: var(--radius-lg);
 
-  color: $palette--primary-white;
+  color: var(--color-text);
   width: 100%;
 
-  @include link-hover;
+  @include card;
   @include link-focus;
 
-  @include card;
+  transition-property: transform, border-color, box-shadow;
+  transition-duration: var(--dur-2);
+
+  &:hover {
+    transform: translateY(-2px);
+    border-color: var(--color-primary-500);
+    box-shadow: var(--elev-3);
+    text-decoration: none;
+  }
 }
 
 @mixin content-width {
-  mixin: content-width;
-
-  width: css-min(100%, #{$content-max-width});
+  width: css-min(100%, #{$grid--max-width});
   margin-left: auto;
   margin-right: auto;
 }
 
 @mixin content {
-  mixin: content;
-
   @include content-width;
   position: relative;
   padding: 0 space(2);
 
   @include mq($medium) {
+    padding: 0 space(4);
+  }
+
+  @include mq($large) {
     padding: 0 space(6);
   }
 }
 
 @mixin paragraph {
-  mixin: paragraph;
-
   width: 100%;
   @include readingWidth;
   margin-bottom: $paragraph-bottom;
   @include type--body;
 
-  &:last-child {
-    margin-bottom: 0;
-  }
+  &:last-child { margin-bottom: 0; }
 }
 
 @mixin paragraph-margin {
-  mixin: paragraph-margin;
-
   &,
-  &:last-child {
-    margin-bottom: $paragraph-bottom;
-  }
+  &:last-child { margin-bottom: $paragraph-bottom; }
 }
 
 @mixin citation {
-  mixin: citation;
-
   float: right;
 
   a {
-    @include type--body;
+    @include type--body-small;
     text-decoration: none;
   }
 }
 
 @mixin quotation {
-  mixin: quotation;
-
   @include paragraph-margin;
-
   @include card;
 
   overflow: hidden;
   max-width: 500px;
-  @include border--light;
-  color: $palette--primary-white;
+  color: var(--color-text);
+  border-left: 4px solid var(--color-primary-500);
 
   p {
-    &:last-of-type {
-      margin-bottom: 0;
-    }
-
-    &::after,
-    &::before {
-      content: '"';
-    }
+    &:last-of-type { margin-bottom: 0; }
+    &::after, &::before { content: '"'; }
   }
 }
 
 @mixin label {
-  mixin: label;
-
-  @include type--heading-6;
-  padding: 0 space(3);
   @include type--regular-sans-serif;
+  @include font-size(1);
+  color: var(--color-text);
+  padding: 0;
+  font-weight: var(--fw-medium);
+  display: block;
+  margin-bottom: space(1);
 }
 
 @mixin list {
-  mixin: list;
-
   @include paragraph;
 }
 
 @mixin list-item {
-  mixin: list-item;
+  margin-bottom: space(2);
 
-  margin-bottom: space(3);
-
-  &:last-of-type {
-    margin-bottom: 0;
-  }
+  &:last-of-type { margin-bottom: 0; }
 }
 
 @mixin mega-button {
-  mixin: mega-button;
-
-  padding: space(2) space(4);
+  min-height: 56px;
+  padding: 0 space(6);
+  font-size: var(--fs-md);
+  border-radius: var(--radius-lg);
 }
 
 @mixin card {
-  mixin: card;
+  padding: space(3);
+  border-radius: var(--radius-lg);
+  background-color: var(--color-surface-1);
+  border: 1px solid var(--color-border);
+  box-shadow: var(--elev-1);
 
-  padding: $grid--gutter;
-  border-radius: var(--border-radius, $border-radius);
-  @include surface;
-  @include border--light;
+  @include mq($medium) {
+    padding: space(4);
+  }
 }

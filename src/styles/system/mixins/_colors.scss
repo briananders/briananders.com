@@ -1,37 +1,58 @@
 @use "system/variables/all" as *;
 
+// -----------------------------------------------------------------------------
+// Palette mixins.
+// All of these keep their original names so per-post and per-module styles keep
+// compiling. Values now pull from the CSS custom properties on :root.
+// -----------------------------------------------------------------------------
+
 @mixin palette--base($background-alpha: 1) {
-  color: $palette--primary-white;
-  background-color: rgba($palette--primary-grey, $background-alpha);
+  color: var(--color-text, $palette--primary-white);
+  @if $background-alpha == 1 {
+    background-color: var(--color-bg, $palette--primary-grey);
+  } @else {
+    background-color: rgba($palette--primary-grey, $background-alpha);
+  }
 }
 
 @mixin palette--base--inverted($background-alpha: 1) {
-  color: $palette--primary-grey;
-  background-color: rgba($palette--primary-white, $background-alpha);
+  color: var(--color-text-inverse, $palette--primary-grey);
+  @if $background-alpha == 1 {
+    background-color: var(--color-text, $palette--primary-white);
+  } @else {
+    background-color: rgba($palette--primary-white, $background-alpha);
+  }
 }
 
 @mixin palette--primary($background-alpha: 1) {
-  color: $palette--primary-white;
-  background-color: rgba($palette--primary-color-dark, $background-alpha);
+  color: var(--color-text-inverse, $palette--primary-white);
+  @if $background-alpha == 1 {
+    background-color: var(--color-primary-500, $palette--primary-color-dark);
+  } @else {
+    background-color: rgba($palette--primary-color-dark, $background-alpha);
+  }
 }
 
+// Frosted glass nav.
 @mixin palette--header {
-  color: $palette--primary-white;
-  @include surface;
-  background-blend-mode: luminosity;
-  backdrop-filter: blur(10px);
+  color: var(--color-text, $palette--primary-white);
+  background-color: rgba(11, 13, 16, 0.72);
+  backdrop-filter: blur(12px) saturate(140%);
+  -webkit-backdrop-filter: blur(12px) saturate(140%);
 }
 
 @mixin orange-gradient {
-  background: linear-gradient(to left, $palette--primary-color-light, $palette--primary-color-dark);
+  background: linear-gradient(
+    to left,
+    var(--color-primary-300, $palette--primary-color-light),
+    var(--color-primary-600, $palette--primary-color-dark)
+  );
 }
 
 @mixin surface {
-  mixin: surface;
-
-  background-color: $palette--surface-color;
+  background-color: var(--color-surface-1, $palette--surface-color);
 }
 
 @mixin border--light {
-  border: 2px solid rgba($palette--divider-color, 0.2);
+  border: 1px solid var(--color-border, rgba($palette--divider-color, 0.2));
 }

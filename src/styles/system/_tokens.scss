@@ -1,0 +1,204 @@
+// -----------------------------------------------------------------------------
+// Design tokens.
+//
+// This is the single source of truth for the site's visual language. Every
+// component (and every per-post stylesheet) should read from these CSS custom
+// properties rather than hard-coding colours, radii, or motion values.
+//
+// See `/design-system.html` at the repo root for the full reference.
+// -----------------------------------------------------------------------------
+@use "variables/all" as *;
+
+:root {
+  // Base unit — every spacing value derives from this.
+  --unit: 4px;
+
+  // Neutrals + surfaces (dark)
+  --color-bg:            #{$color--ink};
+  --color-surface-1:     #{$color--ink-surface};
+  --color-surface-2:     #{$color--ink-raised};
+  --color-surface-3:     #{$color--ink-hover};
+  --color-border:        #{$color--ink-border};
+  --color-border-strong: #{$color--ink-strong};
+  --color-divider:       rgba(255, 255, 255, 0.08);
+
+  // Text
+  --color-text:          #{$color--text};
+  --color-text-muted:    #{$color--text-muted};
+  --color-text-subtle:   #{$color--text-subtle};
+  --color-text-inverse:  #{$color--ink};
+
+  // Brand — orange
+  --color-primary-50:    #{$color--primary-50};
+  --color-primary-100:   #{$color--primary-100};
+  --color-primary-300:   #{$color--primary-300};
+  --color-primary-500:   #{$color--primary-500};
+  --color-primary-600:   #{$color--primary-600};
+  --color-primary-700:   #{$color--primary-700};
+
+  // Accents
+  --color-accent-teal:   #{$color--accent-teal};
+  --color-accent-lime:   #{$color--accent-lime};
+  --color-accent-plum:   #{$color--accent-plum};
+
+  // Semantic
+  --color-success:       #{$color--success};
+  --color-warning:       #{$color--warning};
+  --color-danger:        #{$color--danger};
+  --color-info:          #{$color--info};
+
+  --color-primary-tint:  rgba(249, 115, 22, 0.12);
+  --color-success-tint:  rgba(52, 211, 153, 0.14);
+  --color-warning-tint:  rgba(251, 191, 36, 0.14);
+  --color-danger-tint:   rgba(248, 113, 113, 0.14);
+  --color-info-tint:     rgba(96, 165, 250, 0.14);
+
+  // Focus
+  --focus-ring: 0 0 0 2px var(--color-bg), 0 0 0 4px var(--color-primary-500);
+
+  // Elevation — soft, diffuse glow on dark surfaces
+  --elev-1: 0 1px 2px rgba(0, 0, 0, 0.5);
+  --elev-2: 0 4px 12px rgba(0, 0, 0, 0.45), 0 1px 2px rgba(0, 0, 0, 0.5);
+  --elev-3: 0 12px 32px rgba(0, 0, 0, 0.5), 0 2px 6px rgba(0, 0, 0, 0.6);
+  --elev-glow-primary: 0 0 0 1px rgba(249, 115, 22, 0.4), 0 8px 24px rgba(249, 115, 22, 0.18);
+
+  // Radii
+  --radius-xs:   4px;
+  --radius-sm:   8px;
+  --radius-md:   12px;
+  --radius-lg:   20px;
+  --radius-pill: 999px;
+  --border-radius: var(--radius-md);   // legacy alias
+
+  // Spacing — 4px scale
+  --space-0:  0;
+  --space-1:  calc(var(--unit) * 1);
+  --space-2:  calc(var(--unit) * 2);
+  --space-3:  calc(var(--unit) * 3);
+  --space-4:  calc(var(--unit) * 4);
+  --space-5:  calc(var(--unit) * 5);
+  --space-6:  calc(var(--unit) * 6);
+  --space-8:  calc(var(--unit) * 8);
+  --space-10: calc(var(--unit) * 10);
+  --space-12: calc(var(--unit) * 12);
+  --space-16: calc(var(--unit) * 16);
+  --space-20: calc(var(--unit) * 20);
+  --space-24: calc(var(--unit) * 24);
+
+  // Typography — clamped, mobile-first
+  --font-sans:  #{$sans-serif};
+  --font-serif: #{$serif};
+  --font-mono:  #{$mono};
+
+  --fs-2xs: 0.75rem;
+  --fs-xs:  0.8125rem;
+  --fs-sm:  0.875rem;
+  --fs-md:  1rem;
+  --fs-lg:  1.125rem;
+  --fs-xl:  1.375rem;
+  --fs-2xl: 1.75rem;
+  --fs-3xl: 2.25rem;
+  --fs-4xl: 3rem;
+  --fs-5xl: 3.75rem;
+
+  --lh-tight:  1.15;
+  --lh-snug:   1.3;
+  --lh-normal: 1.55;
+  --lh-loose:  1.75;
+
+  --fw-regular:  #{$regular};
+  --fw-medium:   #{$fw-medium};
+  --fw-semibold: #{$semibold};
+  --fw-bold:     #{$bold};
+
+  // Grid
+  --grid-cols-mobile:  4;
+  --grid-cols-tablet:  8;
+  --grid-cols-desktop: 12;
+  --grid-gap-mobile:   var(--space-3);
+  --grid-gap-desktop:  var(--space-4);
+  --gutter-mobile:     var(--space-4);
+  --gutter-desktop:    var(--space-8);
+  --content-max:       #{$grid--max-width};
+  --reading-max:       68ch;
+
+  // Derived column widths at the desktop tier.
+  //
+  //   Available inner width = --content-max - 2 × --gutter-desktop
+  //                         = 1200 - 64 = 1136px
+  //   Column width          = (1136 - 11 × --grid-gap-desktop) / 12
+  //                         = (1136 - 176) / 12 = 80px
+  //
+  // Use these to cap the width of a card/list at an integer number of grid
+  // columns without hand-authoring a pixel value at the callsite:
+  //   .my-block { max-width: var(--max-6-columns); }
+  --col-width:      80px;
+  --col-gap:        16px;
+  --max-1-column:   var(--col-width);
+  --max-2-columns:  calc(2  * var(--col-width) + 1  * var(--col-gap));
+  --max-3-columns:  calc(3  * var(--col-width) + 2  * var(--col-gap));
+  --max-4-columns:  calc(4  * var(--col-width) + 3  * var(--col-gap));
+  --max-5-columns:  calc(5  * var(--col-width) + 4  * var(--col-gap));
+  --max-6-columns:  calc(6  * var(--col-width) + 5  * var(--col-gap));
+  --max-7-columns:  calc(7  * var(--col-width) + 6  * var(--col-gap));
+  --max-8-columns:  calc(8  * var(--col-width) + 7  * var(--col-gap));
+  --max-9-columns:  calc(9  * var(--col-width) + 8  * var(--col-gap));
+  --max-10-columns: calc(10 * var(--col-width) + 9  * var(--col-gap));
+  --max-11-columns: calc(11 * var(--col-width) + 10 * var(--col-gap));
+  --max-12-columns: calc(12 * var(--col-width) + 11 * var(--col-gap));
+
+  // Motion
+  --dur-1: 120ms;
+  --dur-2: 200ms;
+  --dur-3: 320ms;
+  --dur-4: 480ms;
+  --ease-standard:  cubic-bezier(0.2, 0.0, 0.0, 1.0);
+  --ease-emphasized: cubic-bezier(0.2, 0.0, 0.0, 1.2);
+
+  --transition-speed:  var(--dur-2);
+  --transition-timing: var(--ease-standard);
+
+  // -------------------------------------------------------------------------
+  // Legacy palette aliases.
+  // Several shadow-DOM web components (year-listing, year-selector,
+  // trends-bar-chart) reference these older names. CSS custom properties
+  // inherit through Shadow DOM, so declaring them here keeps those components
+  // working without touching their internal styles.
+  // -------------------------------------------------------------------------
+  --palette--primary-white:       var(--color-text);
+  --palette--primary-grey:        var(--color-bg);
+  --palette--hover-grey:          var(--color-surface-3);
+  --palette--secondary-grey:      var(--color-text-muted);
+  --palette--divider-color:       var(--color-border);
+  --palette--error:               var(--color-danger);
+  --palette--primary-color-dark:  var(--color-primary-600);
+  --palette--primary-color-light: var(--color-primary-300);
+  --palette--accent-color:        var(--color-accent-lime);
+}
+
+@media (min-width: 960px) {
+  :root {
+    --fs-xl:  1.5rem;
+    --fs-2xl: 2rem;
+    --fs-3xl: 2.75rem;
+    --fs-4xl: 3.75rem;
+    --fs-5xl: 4.75rem;
+  }
+}
+
+// Reduced-motion — flatten everything to near-instant
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --dur-1: 0.01ms;
+    --dur-2: 0.01ms;
+    --dur-3: 0.01ms;
+    --dur-4: 0.01ms;
+    --transition-speed: 0.01ms;
+  }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

@@ -11,8 +11,10 @@ ready.document(() => {
   };
 
   triggerButton.addEventListener('click', () => {
-    circleContainer.classList.toggle('animate');
-    triggerButton.classList.toggle('play');
+    const nowPlaying = circleContainer.classList.toggle('animate');
+    // Class-driven icon: paused → `.play` (▶); playing → `.pause` (⏸).
+    triggerButton.classList.toggle('play', !nowPlaying);
+    triggerButton.classList.toggle('pause', nowPlaying);
   });
 
   slider.addEventListener('input', getSliderValue);

@@ -1,172 +1,533 @@
+// -----------------------------------------------------------------------------
+// Design-system post-only styles.
+// Purpose-built for /posts/design-system/ — every selector is `.ds-*` to avoid
+// colliding with other pages, and they layer on top of the site's global
+// design-system tokens (declared on :root in system/_tokens.scss).
+// -----------------------------------------------------------------------------
 @use "system/utilities" as *;
 
-@mixin ds-box-shadow {
-  box-shadow: 0 0 12px black;
-}
+.design-system {
 
-.palette,
-.palette-combos {
-  ul {
+  // A subsection under a foundation/component header. Vertical rhythm only.
+  .ds-subsection {
+    margin-top: space(6);
+  }
+
+  .ds-eyebrow {
+    font-family: var(--font-sans);
+    font-size: var(--fs-2xs);
+    font-weight: var(--fw-semibold);
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--color-primary-300);
+    margin-bottom: space(1);
+  }
+
+  .ds-overline {
+    font-family: var(--font-sans);
+    font-size: var(--fs-2xs);
+    font-weight: var(--fw-semibold);
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--color-text-muted);
+  }
+
+  .ds-caption {
+    font-size: var(--fs-xs);
+    color: var(--color-text-muted);
+  }
+
+  .ds-body-muted {
+    color: var(--color-text-muted);
+    margin-bottom: 0;
+  }
+
+  .ds-group-label {
+    font-family: var(--font-sans);
+    font-size: var(--fs-md);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--color-text-muted);
+    margin: space(4) 0 space(2);
+  }
+
+  .ds-mono {
+    font-family: var(--font-mono);
+    font-size: var(--fs-md);
+    margin: space(1) 0;
+    color: var(--color-text);
+  }
+
+  .ds-center {
+    text-align: center;
+  }
+
+  // -- Layout primitives, scoped ---------------------------------------------
+  .ds-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: space(2);
+
+    @include mq($medium) {
+      grid-template-columns: repeat(8, minmax(0, 1fr));
+    }
+
+    @include mq($large) {
+      grid-template-columns: repeat(12, minmax(0, 1fr));
+      gap: space(3);
+    }
+  }
+
+  .ds-stack > * + * {
+    margin-top: space(2);
+  }
+
+  .ds-cluster {
     display: flex;
     flex-wrap: wrap;
-    gap: space(4);
-    justify-content: center;
+    gap: space(2);
+    align-items: center;
   }
 
-  li {
-    margin-bottom: 0;
+  // -- Card (post-scoped so the site's `.card` mixin stays authoritative) ----
+  .ds-card {
+    background: var(--color-surface-1);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: space(3);
+    box-shadow: var(--elev-1);
+    color: var(--color-text);
+    display: block;
+    text-decoration: none;
+    transition:
+      transform var(--dur-2) var(--ease-standard),
+      border-color var(--dur-2),
+      box-shadow var(--dur-2);
+
+    @include mq($medium) { padding: space(4); }
+
+    h4 { margin-bottom: space(1); }
+  }
+  .ds-card--elevated { box-shadow: var(--elev-2); }
+  .ds-card--interactive {
+    cursor: pointer;
+
+    &:hover {
+      transform: translateY(-2px);
+      border-color: var(--color-primary-500);
+      box-shadow: var(--elev-3);
+      text-decoration: none;
+    }
+  }
+
+  // -- Color swatches ---------------------------------------------------------
+  .ds-swatch-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: space(2);
+    margin-bottom: space(3);
+  }
+  .ds-swatch {
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    background: var(--color-surface-1);
+    cursor: pointer;
+    padding: 0;
+    display: block;
+    text-align: left;
+    transition: transform var(--dur-2), border-color var(--dur-2);
+
+    &:hover { transform: translateY(-2px); border-color: var(--color-border-strong); }
+    &:focus-visible { outline: none; box-shadow: var(--focus-ring); }
+  }
+  .ds-swatch__chip {
+    display: block;
+    height: 72px;
+    width: 100%;
+  }
+  .ds-swatch__meta {
+    display: block;
+    padding: space(2);
+    line-height: 1.35;
+  }
+  .ds-swatch__name  { display: block; color: var(--color-text); font-weight: var(--fw-semibold); font-size: var(--fs-sm); }
+  .ds-swatch__value { display: block; font-family: var(--font-mono); font-size: var(--fs-xs); color: var(--color-text-muted); }
+
+  // -- Type samples -----------------------------------------------------------
+  .ds-type-row {
+    display: grid;
+    grid-template-columns: 100px 1fr;
+    gap: space(3);
+    align-items: baseline;
+    padding: space(2) 0;
+    border-bottom: 1px solid var(--color-divider);
+  }
+  .ds-type-row__label {
+    font-family: var(--font-mono);
+    font-size: var(--fs-2xs);
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+  }
+  .ds-type-row__sample {
+    line-height: 1.1;
+    margin: 0;
+  }
+
+  // -- Space bars -------------------------------------------------------------
+  .ds-space-row {
     display: flex;
-    flex-flow: column;
+    align-items: center;
+    gap: space(2);
+    padding: space(1) 0;
+  }
+  .ds-space-row__label {
+    font-family: var(--font-mono);
+    font-size: var(--fs-xs);
+    color: var(--color-text-muted);
+    min-width: 130px;
+  }
+  .ds-space-row__bar {
+    height: 10px;
+    background: var(--color-primary-500);
+    border-radius: var(--radius-xs);
+    display: inline-block;
+  }
+
+  // -- Grid demo cells --------------------------------------------------------
+  .ds-grid-demo {
+    padding: space(2);
+    background: var(--color-surface-1);
+    border: 1px dashed var(--color-border-strong);
+    border-radius: var(--radius-md);
+    margin-bottom: space(2);
+  }
+  .ds-grid-demo__cell {
+    background: var(--color-primary-tint);
+    border: 1px solid rgba(249, 115, 22, 0.35);
+    padding: space(2) 0;
+    text-align: center;
+    color: var(--color-primary-300);
+    font-family: var(--font-mono);
+    font-size: var(--fs-xs);
+    border-radius: var(--radius-sm);
+  }
+
+  // Column-span utilities used within the demo grid. They shadow the site's
+  // global col-*/t-col-*/d-col-* helpers with a scoped copy so this post
+  // still renders correctly even if those globals are ever renamed.
+  @for $i from 1 through 4 {
+    .col-#{$i} { grid-column: span $i; }
+  }
+  @include mq($medium) {
+    @for $i from 1 through 8 { .t-col-#{$i} { grid-column: span $i; } }
+  }
+  @include mq($large) {
+    @for $i from 1 through 12 { .d-col-#{$i} { grid-column: span $i; } }
+  }
+
+  // -- Radii swatch -----------------------------------------------------------
+  .ds-radius-swatch {
+    width: 72px;
+    height: 72px;
+    margin: 0 auto space(2);
+    background: var(--color-primary-500);
+  }
+
+  // -- Badge ------------------------------------------------------------------
+  .ds-badge {
+    display: inline-flex;
     align-items: center;
     gap: space(1);
+    padding: 2px space(2);
+    font-size: var(--fs-2xs);
+    font-weight: var(--fw-semibold);
+    border-radius: var(--radius-pill);
+    background: var(--color-surface-3);
+    color: var(--color-text);
+    border: 1px solid var(--color-border);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .ds-badge__dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: currentColor;
+  }
+  .ds-badge--primary { background: var(--color-primary-tint); color: var(--color-primary-300); border-color: transparent; }
+  .ds-badge--success { background: var(--color-success-tint); color: var(--color-success); border-color: transparent; }
+  .ds-badge--warning { background: var(--color-warning-tint); color: var(--color-warning); border-color: transparent; }
+  .ds-badge--danger  { background: var(--color-danger-tint);  color: var(--color-danger);  border-color: transparent; }
+  .ds-badge--info    { background: var(--color-info-tint);    color: var(--color-info);    border-color: transparent; }
+
+  // -- Alert ------------------------------------------------------------------
+  .ds-alert {
+    display: flex;
+    gap: space(2);
+    padding: space(3);
+    background: var(--color-surface-1);
+    border: 1px solid var(--color-border);
+    border-left: 4px solid var(--color-info);
+    border-radius: var(--radius-md);
+    align-items: flex-start;
+  }
+  .ds-alert--info    { border-left-color: var(--color-info); }
+  .ds-alert--success { border-left-color: var(--color-success); }
+  .ds-alert--warning { border-left-color: var(--color-warning); }
+  .ds-alert--danger  { border-left-color: var(--color-danger); }
+  .ds-alert__icon { flex: 0 0 auto; font-size: var(--fs-lg); line-height: 1; }
+  .ds-alert__title { font-weight: var(--fw-semibold); margin: 0 0 4px; color: var(--color-text); font-family: var(--font-sans); }
+  .ds-alert__body  { color: var(--color-text-muted); margin: 0; font-size: var(--fs-sm); }
+
+  // -- Inline check ------------------------------------------------------------
+  .ds-inline-check {
+    display: inline-flex;
+    align-items: center;
+    gap: space(1);
+    cursor: pointer;
+    color: var(--color-text);
+    font-size: var(--fs-sm);
+    padding: 0;
+    margin-bottom: 0;
   }
 
-  span {
-    display: block;
-    width: 50px;
-    height: 50px;
-    @include ds-box-shadow;
+  // -- Tabs -------------------------------------------------------------------
+  .ds-tabs__list {
+    display: flex;
+    gap: space(1);
+    border-bottom: 1px solid var(--color-divider);
+    overflow-x: auto;
+    scrollbar-width: none;
+
+    &::-webkit-scrollbar { display: none; }
+  }
+  .ds-tab {
+    padding: space(2) space(3);
+    color: var(--color-text-muted);
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid transparent;
+    border-radius: 0;
+    white-space: nowrap;
+    font-weight: var(--fw-medium);
+    font-family: var(--font-sans);
+    cursor: pointer;
+    transition: color var(--dur-2), border-color var(--dur-2);
+
+    &:hover { color: var(--color-text); }
+    &[aria-selected="true"] {
+      color: var(--color-primary-500);
+      border-bottom-color: var(--color-primary-500);
+    }
+    &:focus-visible { outline: none; box-shadow: var(--focus-ring); }
+  }
+  .ds-tab-panel {
+    padding: space(3);
+
+    &[hidden] { display: none; }
   }
 
-  .primary-white span {
-    background-color: $palette--primary-white;
-  }
-  .primary-grey span {
-    background-color: $palette--primary-grey;
-  }
-  .secondary-grey span {
-    background-color: $palette--secondary-grey;
-  }
-  .hover-grey span {
-    background-color: $palette--hover-grey;
-  }
-  .divider-color span {
-    background-color: $palette--divider-color;
-  }
-  .error-color span {
-    background-color: $palette--error;
-  }
-  .primary-color-dark span {
-    background-color: $palette--primary-color-dark;
-  }
-  .primary-color-light span {
-    background-color: $palette--primary-color-light;
-  }
-  .accent-color span {
-    background-color: $palette--accent-color;
-  }
-  [class^="palette--"] {
-    padding: space(1);
-    @include ds-box-shadow;
-  }
-  .palette--base {
-    @include palette--base;
-  }
-  .palette--base--inverted {
-    @include palette--base--inverted;
-  }
-  .palette--primary {
-    @include palette--primary;
-  }
-  .palette--header {
-    @include palette--header;
-  }
-  .palette--orange-gradient {
-    @include orange-gradient;
-  }
-}
-
-.defaults {
-  .container div {
-    @include palette--base--inverted;
-    @include ds-box-shadow;
+  // -- Accordion --------------------------------------------------------------
+  // Dividers live on the trigger's bottom edge (not the next item's top). That
+  // way the divider disappears cleanly whenever an item is open — no stray
+  // hairline between the trigger and its own panel — and the last item never
+  // draws a spurious line at the bottom of the whole accordion.
+  .ds-accordion__trigger {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: space(3);
+    padding: space(3) 0;
     text-align: left;
-    padding: space(1) 0;
-    margin: 0 auto $paragraph-bottom;
+    color: var(--color-text);
+    font-weight: var(--fw-semibold);
+    font-family: var(--font-sans);
+    font-size: var(--fs-md);
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid var(--color-divider);
+    border-radius: 0;
+    cursor: pointer;
+    transition: border-color var(--dur-2) var(--ease-standard);
+
+    &::after {
+      content: "+";
+      font-family: var(--font-mono);
+      font-size: var(--fs-xl);
+      color: var(--color-primary-500);
+      transition: transform var(--dur-3) var(--ease-emphasized);
+    }
+    &[aria-expanded="true"] {
+      border-bottom-color: transparent;
+
+      &::after { transform: rotate(45deg); }
+    }
+    &:focus-visible { outline: none; box-shadow: var(--focus-ring); }
   }
-  .content-max-width {
-    width: css-min(100%, $content-max-width);
+
+  // Last item's trigger never draws a bottom rule — it would land right
+  // against the card's own border and read as a doubled hairline.
+  .ds-accordion__item:last-child .ds-accordion__trigger { border-bottom: 0; }
+
+  .ds-accordion__panel {
+    overflow: hidden;
+    max-height: 0;
+    transition: max-height var(--dur-4) var(--ease-standard);
+
+    // Indent the panel content so the copy visually belongs to its trigger.
+    > * {
+      padding-left: space(3);
+      padding-right: space(2);
+    }
+
+    &[data-open="true"] {
+      max-height: 400px;
+      padding-top: space(2);
+      padding-bottom: space(3);
+    }
   }
-  .full-bleed {
-    width: css-min(100%, $full-bleed);
+
+  // -- Modal ------------------------------------------------------------------
+  .ds-modal[hidden] { display: none; }
+  .ds-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 900;
+    display: grid;
+    place-items: end center;
+    padding: 0;
   }
-  .full-width-small {
-    width: css-min(100%, $full-width-small);
+  @include mq($medium) {
+    .ds-modal { place-items: center; padding: space(4); }
   }
-  .full-width-medium {
-    width: css-min(100%, $full-width-medium);
+  .ds-modal__scrim {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(3px);
+    animation: ds-fade-in var(--dur-3) var(--ease-standard);
+  }
+  .ds-modal__dialog {
+    position: relative;
+    width: 100%;
+    max-width: 480px;
+    background: var(--color-surface-1);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    box-shadow: var(--elev-3);
+    padding: space(4);
+    animation: ds-slide-up var(--dur-4) var(--ease-emphasized);
+
+    @include mq($medium) {
+      border-radius: var(--radius-lg);
+      animation: ds-pop-in var(--dur-3) var(--ease-emphasized);
+    }
+  }
+  .ds-modal__title  { margin: 0 0 space(1); font-size: var(--fs-xl); }
+  .ds-modal__body   { color: var(--color-text-muted); margin: 0 0 space(4); }
+  .ds-modal__footer { display: flex; gap: space(2); justify-content: flex-end; flex-wrap: wrap; }
+
+  // -- Toast ------------------------------------------------------------------
+  .ds-toast-region {
+    position: fixed;
+    bottom: space(3);
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 950;
+    display: flex;
+    flex-direction: column;
+    gap: space(1);
+    pointer-events: none;
+  }
+  .ds-toast {
+    min-width: 260px;
+    max-width: 380px;
+    padding: space(2) space(3);
+    background: var(--color-surface-2);
+    border: 1px solid var(--color-border-strong);
+    border-radius: var(--radius-md);
+    box-shadow: var(--elev-3);
+    color: var(--color-text);
+    font-size: var(--fs-sm);
+    pointer-events: auto;
+    animation: ds-toast-in var(--dur-3) var(--ease-emphasized);
+  }
+
+  // -- Progress ---------------------------------------------------------------
+  .ds-progress {
+    width: 100%;
+    height: 6px;
+    background: var(--color-surface-2);
+    border-radius: var(--radius-pill);
+    overflow: hidden;
+    margin-top: space(1);
+  }
+  .ds-progress__bar {
+    height: 100%;
+    background: linear-gradient(90deg, var(--color-primary-500), var(--color-primary-300));
+    border-radius: inherit;
+    transition: width var(--dur-4) var(--ease-standard);
+  }
+  .ds-progress--indeterminate .ds-progress__bar {
+    width: 40%;
+    animation: ds-indeterminate 1.4s var(--ease-standard) infinite;
+  }
+
+  // -- Table ------------------------------------------------------------------
+  .ds-table-wrap {
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    overflow: auto;
+    margin-top: space(2);
+  }
+  .ds-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: var(--fs-sm);
+
+    th, td {
+      padding: space(2) space(3);
+      text-align: left;
+      border-bottom: 1px solid var(--color-divider);
+    }
+    th {
+      font-family: var(--font-sans);
+      font-weight: var(--fw-semibold);
+      color: var(--color-text-muted);
+      text-transform: uppercase;
+      font-size: var(--fs-2xs);
+      letter-spacing: 0.08em;
+      background: var(--color-surface-1);
+    }
+    tbody tr { transition: background var(--dur-2); }
+    tbody tr:hover { background: var(--color-surface-1); }
+  }
+
+  // -- Code block -------------------------------------------------------------
+  .ds-code-block {
+    margin: space(2) 0;
+    padding: space(3);
+    background: #05070A;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    overflow-x: auto;
+    font-family: var(--font-mono);
+    font-size: var(--fs-sm);
+    line-height: var(--lh-normal);
+    color: #D6DCE5;
+    white-space: pre;
+
+    code { background: transparent; border: 0; padding: 0; color: inherit; font-family: inherit; }
   }
 }
 
-.viewports {
-  .container div {
-    @include palette--base--inverted;
-    @include ds-box-shadow;
-    text-align: left;
-    padding: space(1) 0;
-    margin: 0 auto $paragraph-bottom;
-  }
-  .small {
-    width: css-min(100%, $small);
-  }
-  .medium {
-    width: css-min(100%, $medium);
-  }
-  .large {
-    width: css-min(100%, $large);
-  }
-}
-
-.fonts {
-  .serif-regular {
-    @include type--regular-serif;
-  }
-  .serif-bold {
-    @include type--bold-serif;
-  }
-  .sans-serif-regular {
-    @include type--regular-sans-serif;
-  }
-  .sans-serif-bold {
-    @include type--bold-sans-serif;
-  }
-}
-
-.type {
-  .type--headings {
-    @include type--headings;
-  }
-  .type--title {
-    @include type--title;
-  }
-  .type--heading-1 {
-    @include type--heading-1;
-  }
-  .type--heading-2 {
-    @include type--heading-2;
-  }
-  .type--heading-3 {
-    @include type--heading-3;
-  }
-  .type--heading-4 {
-    @include type--heading-4;
-  }
-  .type--heading-5 {
-    @include type--heading-5;
-  }
-  .type--heading-6 {
-    @include type--heading-6;
-  }
-  .type--body {
-    @include type--body;
-  }
-  .type--body-small {
-    @include type--body-small;
-  }
-  .type--body-tiny {
-    @include type--body-tiny;
-  }
-  .italic {
-    @include italic;
-  }
+@keyframes ds-fade-in  { from { opacity: 0; } to { opacity: 1; } }
+@keyframes ds-pop-in   { from { opacity: 0; transform: scale(0.94); } to { opacity: 1; transform: scale(1); } }
+@keyframes ds-slide-up { from { transform: translateY(100%); } to { transform: translateY(0); } }
+@keyframes ds-toast-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes ds-indeterminate {
+  0%   { transform: translateX(-100%); }
+  100% { transform: translateX(300%); }
 }

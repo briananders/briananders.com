@@ -1,7 +1,13 @@
 @use "system/utilities" as *;
 @use "modules/sticky-stacky" as *;
 
-$nav-height: space(12);
+// -----------------------------------------------------------------------------
+// Site navigation.
+// Sticky, frosted, with the orange gradient underline that ties it back to the
+// footer.
+// -----------------------------------------------------------------------------
+
+$nav-height: 64px;
 
 html {
   --nav-height: #{$nav-height};
@@ -15,10 +21,15 @@ html {
   position: fixed;
   left: 0;
   top: 0;
+  // Must sit BELOW .sticky-container (z-index: 998) so the nav bar and its
+  // tray — which live inside sticky-container — paint on top. If this
+  // outranks 998, the scrim covers the menu and eats every click.
+  z-index: 900;
+  background-color: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
 
-  &.visible {
-    display: block;
-  }
+  &.visible { display: block; }
 }
 
 nav.main {
@@ -29,27 +40,25 @@ nav.main {
   width: 100%;
   position: relative;
   @include palette--header;
+  border-bottom: 1px solid var(--color-divider);
 
-  * {
-    position: relative;
-    z-index: 1;
-  }
+  * { position: relative; z-index: 1; }
 
   &::after {
     content: '';
     width: 100%;
-    height: 4px;
+    height: 2px;
     display: block;
     position: absolute;
-    bottom: -4px;
+    bottom: -2px;
+    left: 0;
     @include orange-gradient;
+    opacity: 0.85;
   }
 
   a,
   a:visited,
-  button {
-    padding: 0;
-  }
+  button { padding: 0; }
 
   .content,
   .container {
@@ -58,105 +67,83 @@ nav.main {
     display: flex;
     justify-content: space-between;
     min-height: $nav-height;
-
-    &::after {
-      display: block;
-      content: "";
-      position: absolute;
-      top: 0;
-      bottom: 0;
-      left: 100%;
-      width: 100vw;
-    }
   }
 
   .menu {
-    font-weight: $regular;
-    padding: 4px 8px;
+    @include type--regular-sans-serif;
+    font-weight: var(--fw-medium);
+    padding: space(1) space(2);
     cursor: pointer;
+    color: var(--color-text);
+    background-color: transparent;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    transition: background-color var(--dur-2), border-color var(--dur-2);
+
+    &:hover { background-color: var(--color-surface-2); border-color: var(--color-border-strong); }
 
     @include link-focus;
   }
 
   #activate-menu {
-    border-width: 0px;
-    border-color: rgba(0, 0, 0, 0);
-    border-image: none;
-    border-style: none;
-    background-color: rgba(50, 50, 50, 1);
+    background-color: transparent;
   }
 
   #nav-tray {
     z-index: 0;
     position: absolute;
-    top: calc(100% + #{space(2)});
+    top: calc(100% + #{space(1)});
     transform-origin: calc(100% - #{space(2) + 20px}) -#{space(2)};
-    transform: rotateY(90deg);
+    transform: scale(0.94);
+    opacity: 0;
+    pointer-events: none;
     display: grid;
+    gap: space(1);
     right: space(2);
-    transition-property: transform;
-    @include palette--base;
-    box-shadow: 0 0 0 2px $palette--primary-color-light;
+    min-width: 220px;
+    transition-property: transform, opacity;
+    background-color: var(--color-surface-1);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    box-shadow: var(--elev-3);
     padding: space(1);
 
     &.slide-in {
-      transform: rotateY(0deg);
+      transform: scale(1);
+      opacity: 1;
+      pointer-events: auto;
     }
 
-    @include mq($medium) {
-      right: space(6);
-    }
+    @include mq($medium) { right: space(4); }
 
     .block-link {
-      padding: 2px space(1) 0;
+      display: flex;
+      padding: space(1) space(2);
       margin-left: 0;
+      color: var(--color-text);
+
+      &:hover { background-color: var(--color-surface-2); }
     }
   }
 
-  #top-triangle {
-
-    &,
-    &::after {
-      position: absolute;
-      width: space(4);
-      height: space(4);
-      border-style: solid;
-      border-width: space(2);
-      border-radius: 0;
-      border-top-color: transparent;
-      border-left-color: transparent;
-      border-right-color: transparent;
-    }
-
-    &::after {
-      content: '';
-      left: -12px;
-      top: -12px;
-      border-bottom-color: $palette--primary-grey;
-      transform: translateY(2px);
-    }
-
-    top: -#{space(4)};
-    right: 20px;
-    border-bottom-color: $palette--primary-color-light;
-  }
+  // Kill the legacy triangle indicator — the new tray is a clean popover.
+  #top-triangle { display: none; }
 
   .brand {
     width: auto;
-    max-width: css-min(calc(100% - #{66px + space(2)}), 200px);
+    max-width: css-min(calc(100% - #{80px + space(2)}), 200px);
     display: flex;
     justify-content: flex-start;
-    align-items: middle;
+    align-items: center;
     border: none;
-
-    &::after {
-      top: 4px;
-      height: calc(100% - 8px);
-    }
+    padding: space(1) space(1);
+    border-radius: var(--radius-sm);
 
     svg {
       width: 100%;
       height: auto;
+      max-height: 32px;
+      color: var(--color-text);
     }
 
     @include link-focus;

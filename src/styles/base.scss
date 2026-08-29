@@ -1,6 +1,9 @@
 @use "system/utilities" as *;
 
+// Pulls tokens onto :root and paints the page canvas.
+@use "system/tokens";
+
 html {
-  background-color: $palette--primary-grey;
-  color: $palette--primary-white;
+  background-color: var(--color-bg);
+  color: var(--color-text);
 }

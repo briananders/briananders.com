@@ -2,25 +2,50 @@
 @use "./media-queries" as *;
 @use "system/functions/all" as *;
 
+// 12-column grid — mobile-first.
+// 4 cols under 600px, 8 cols from 600–959px, 12 cols at 960px+.
 @mixin grid($no-padding: false) {
-  mixin: grid;
-
   display: grid;
   gap: $grid--gap;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(4, minmax(0, 1fr));
 
   @if not $no-padding {
     padding-left: $grid--gutter;
     padding-right: $grid--gutter;
   }
 
+  @include mq($grid--tablet-break-point) {
+    grid-template-columns: repeat(8, minmax(0, 1fr));
+  }
+
   @include mq($grid--start-break-point) {
-    grid-template-columns: repeat(12, 1fr);
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    gap: $grid--gap-desktop;
   }
 }
 
-@mixin columns($count:1) {
-  grid-column: span $count;
+// Column-span helper. Legacy call sites pass a single integer meaning "desktop"
+// — that keeps working. Optional args set mobile/tablet counts explicitly.
+@mixin columns($desktop: 1, $tablet: null, $mobile: null) {
+  @if $mobile != null {
+    grid-column: span $mobile;
+  } @else {
+    grid-column: span min($desktop, 4);
+  }
+
+  @if $tablet != null {
+    @include mq($grid--tablet-break-point) {
+      grid-column: span $tablet;
+    }
+  } @else {
+    @include mq($grid--tablet-break-point) {
+      grid-column: span min($desktop, 8);
+    }
+  }
+
+  @include mq($grid--start-break-point) {
+    grid-column: span $desktop;
+  }
 }
 
 @mixin default-margins {
@@ -35,12 +60,16 @@
 
 @mixin readingWidth {
   width: css-min($grid--copy-max-width, 100%);
+  max-width: var(--reading-max, $grid--copy-max-width);
 }
 
+// Alignment. These previously both returned `text-align: left` — bug.
 @mixin text-center {
-  text-align: left;
+  text-align: center;
+  justify-content: center;
 }
 
 @mixin text-left {
   text-align: left;
+  justify-content: flex-start;
 }

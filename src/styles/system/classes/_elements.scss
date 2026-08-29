@@ -1,69 +1,70 @@
 @use "system/utilities" as *;
 
-.html {
-  @include html;
-}
+// -----------------------------------------------------------------------------
+// Utility class layer — thin wrappers around the mixins so EJS templates can
+// reach the same primitives without dropping into SCSS.
+// -----------------------------------------------------------------------------
+
+.html { @include html; }
 
 .section,
-.description {
-  @include section;
-}
+.description { @include section; }
 
-.description {
-  @include paragraph-margin;
-}
+.description  { @include paragraph-margin; }
 
 .p,
-.paragraph {
-  @include paragraph;
-}
+.paragraph    { @include paragraph; }
+.paragraph-margin { @include paragraph-margin; }
 
 .i,
-.italic {
-  @include italic;
-}
+.italic       { @include italic; }
 
 .content,
-.container {
-  @include content;
+.container    { @include content; }
+
+// Grid classes so templates can compose without any SCSS at all.
+// Prefixed to avoid colliding with the site's existing `.grid` hooks
+// (see `src/templates/posts/vertically-center-siblings.ejs` and
+// `src/styles/posts/vertically-center-siblings.scss`, where `.grid`
+// scopes a specific display-grid demo).
+.ds-grid         { @include grid($no-padding: true); }
+.ds-grid-padded  { @include grid; }
+
+// Column-span utilities — mobile-first tiers.
+@for $i from 1 through 4 {
+  .col-#{$i} { grid-column: span $i; }
 }
+@include mq($grid--tablet-break-point) {
+  @for $i from 1 through 8 { .t-col-#{$i} { grid-column: span $i; } }
+}
+@include mq($grid--start-break-point) {
+  @for $i from 1 through 12 { .d-col-#{$i} { grid-column: span $i; } }
+}
+
+// Alignment — fixed from the pre-refactor bug where both meant left.
+.text-center  { text-align: center; }
+.text-left    { text-align: left; }
+.text-right   { text-align: right; }
+
+.center       { text-align: center; justify-content: center; }
+.block        { display: block; }
+.inline-block { display: inline-block; }
+.flex         { display: flex; }
+.hidden       { display: none; }
+
+.block-center     { @include default-margins; text-align: center; }
 
 .error {
-  color: $color--red-500;
+  color: var(--color-danger);
   text-align: left;
 }
 
-.block {
-  display: block;
-}
+// Text-tone utilities
+.text-muted  { color: var(--color-text-muted); }
+.text-subtle { color: var(--color-text-subtle); }
+.text-primary { color: var(--color-primary-500); }
 
-.center {
-  text-align: left;
-  justify-content: center;
-}
-
-.block {
-  display: block;
-}
-
-.center {
-  text-align: left;
-  justify-content: center;
-}
-
-.block-center {
-  @include left-margins;
-}
-
-.p,
-.paragraph {
-  @include paragraph;
-
-  &-margin {
-    @include paragraph-margin;
-  }
-}
-
+// Video wrapper.
 .video-container {
   width: 100%;
   height: 0;
@@ -78,35 +79,132 @@
   }
 }
 
-.block-link-wrapper {
-  display: block;
-}
+.block-link-wrapper { display: block; }
 
-.select {
-  @include select;
-}
-
-.inline-link {
-  @include inline-link;
-}
-
-.block-link {
-  @include block-link;
-}
+// Link-shape components — expose mixins as classes.
+.select      { @include select; }
+.inline-link { @include inline-link; }
+.block-link  { @include block-link; }
 
 .button,
 .button-link {
   @include button-link;
 
-  &.mega-button {
-    @include mega-button;
+  &.mega-button { @include mega-button; }
+
+  // Primary CTA colour.
+  &.button-primary,
+  &.primary {
+    background-color: var(--color-primary-500);
+    color: var(--color-text-inverse);
+    border-color: transparent;
+    box-shadow: var(--elev-glow-primary);
+
+    &:hover {
+      background-color: var(--color-primary-600);
+    }
+  }
+
+  &.ghost {
+    background-color: transparent;
+    border-color: transparent;
+
+    &:hover { background-color: var(--color-surface-2); }
   }
 }
 
-.card-link {
-  @include card-link;
+.card-link { @include card-link; }
+.card      { @include card; }
+
+// -----------------------------------------------------------------------------
+// Play / Pause icon component.
+// Any button (or link) that carries `.play`, `.pause`, or `.playpause`
+// alongside a button style gets a leading unicode media-control glyph:
+//   .play      ▶  (U+25B6)
+//   .pause     ⏸  (U+23F8)
+//   .playpause ⏯  (U+23EF)
+//
+// The pseudo-element is scoped to `button.*` and `.button.*` selectors so
+// the icon never accidentally attaches to a nested `<span class="play">`
+// inside a custom control.
+// -----------------------------------------------------------------------------
+$_ctrl-glyph-font: "Apple Color Emoji", "Segoe UI Symbol", "Segoe UI Emoji",
+                   "Noto Color Emoji", system-ui, sans-serif;
+
+@mixin _control-glyph($char) {
+  &::before {
+    content: $char;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-family: #{$_ctrl-glyph-font};
+    font-weight: var(--fw-regular);
+    line-height: 1;
+    font-size: 1.15em;
+    // Optical alignment — the symbols sit fractionally low against a text
+    // baseline.
+    margin-top: -0.05em;
+  }
+
+  // If the button carries visible text alongside the icon, add a small gap.
+  &:not(.icon-only)::before {
+    margin-right: space(1);
+  }
 }
 
-.card {
-  @include card;
+button.play,      .button.play      { @include _control-glyph("\25B6"); }
+button.pause,     .button.pause     { @include _control-glyph("\23F8"); }
+button.playpause, .button.playpause { @include _control-glyph("\23EF"); }
+
+// Compact icon-only variant. Keeps the button square, hides any legacy
+// child spans that used to carry the icon.
+.button.icon-only,
+button.icon-only {
+  min-width: 44px;
+  padding: 0 space(2);
+
+  // Older markup had <span class="play">Play</span><span class="pause">Pause</span>
+  // as an in-flow label. When the icon-only modifier is set, hide them.
+  > span.play,
+  > span.pause { display: none; }
+}
+
+// Legacy container: keep `.play-pause` as a compact icon-only button whose
+// icon comes from the play/pause class on the button itself. This lets a
+// caller keep the historical class hook and get the new component behaviour
+// automatically.
+button.play-pause,
+.play-pause {
+  min-width: 44px;
+  padding: 0 space(2);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  // Legacy spans that used to render the icon — hide them; the ::before
+  // pseudo drives the visible glyph now.
+  > span.play,
+  > span.pause,
+  > img.play,
+  > img.pause { display: none; }
+}
+
+// Simple stack / cluster layout utilities.
+.stack > * + * { margin-top: var(--stack, space(3)); }
+.cluster {
+  display: flex;
+  flex-wrap: wrap;
+  gap: space(2);
+  align-items: center;
+}
+
+// Screen-reader only.
+.sr-only {
+  position: absolute;
+  width: 1px; height: 1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
 }

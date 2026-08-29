@@ -2,14 +2,15 @@
 @use "modules/nav" as *;
 @use "modules/skip-nav" as *;
 
+// Page header (visible on non-homepage routes).
 header.main-header {
-  @include palette--base;
+  color: var(--color-text);
+  background: transparent;
   margin-top: space(6);
   @include left-margins;
 
   h1.name {
     @include type--title;
-    @include text-center;
+    text-align: left;
   }
 }
-

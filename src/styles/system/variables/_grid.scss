@@ -1,10 +1,16 @@
+// -----------------------------------------------------------------------------
+// 12-column grid parameters. Mobile-first: 4 cols → 8 cols → 12 cols.
+// -----------------------------------------------------------------------------
 @use "defaults" as *;
 @use "spaces" as *;
 @use "viewports" as *;
 @use "sass:math";
 
-$grid--gutter: space(2);
-$grid--gap: space(1);
-$grid--start-break-point: $medium;
-$grid--max-width: 1440px;
-$grid--copy-max-width: math.div($grid--max-width, 2);
+$grid--gutter:            space(3);   // 18px — used for content padding
+$grid--gutter-mobile:     space(2);   // 12px on very small viewports
+$grid--gap:               space(2);   // 12px — column gap on mobile
+$grid--gap-desktop:       space(3);   // 18px — column gap on desktop
+$grid--tablet-break-point: $medium;   // switch 4 → 8 cols
+$grid--start-break-point: $large;     // switch 8 → 12 cols
+$grid--max-width:         1200px;
+$grid--copy-max-width:    math.div($grid--max-width, 2);

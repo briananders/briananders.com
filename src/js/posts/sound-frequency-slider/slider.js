@@ -56,11 +56,16 @@ module.exports = function Slider(parent) {
       hertz.push(elements.select.value);
     });
     elements['play-pause'].addEventListener('click', () => {
+      const btn = elements['play-pause'];
       if (sound.isPlaying()) {
-        elements['play-pause'].value = 'play';
+        // Now paused → show the play icon (▶) via the .play class.
+        btn.classList.remove('pause');
+        btn.classList.add('play');
         sound.stop();
       } else {
-        elements['play-pause'].value = 'pause';
+        // Now playing → show the pause icon (⏸) via the .pause class.
+        btn.classList.remove('play');
+        btn.classList.add('pause');
         sound.start();
       }
     });

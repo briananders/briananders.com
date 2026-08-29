@@ -1,14 +1,19 @@
+// -----------------------------------------------------------------------------
+// SCSS `space()` helper.
+// Legacy 6px base is retained so per-post styles don't visually shift.
+// New components read from --space-* on :root (declared in _tokens.scss),
+// which run on a 4px scale.
+// -----------------------------------------------------------------------------
 @use "defaults" as *;
 
 @function space($size) {
   @return $base-unit * $size;
 }
 
-$section-spacer: space(20);
-$paragraph-bottom: space(6);
-$content-max-width: 1024px;
+$section-spacer:     space(20);
+$paragraph-bottom:   space(4);
+$content-max-width:  1024px;
 
-
-$full-bleed: $content-max-width;
-$full-width-small: $content-max-width - (2 * space(2));
-$full-width-medium: $content-max-width - (2 * space(6));
+$full-bleed:         $content-max-width;
+$full-width-small:   $content-max-width - (2 * space(2));
+$full-width-medium:  $content-max-width - (2 * space(6));

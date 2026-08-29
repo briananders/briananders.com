@@ -26,28 +26,9 @@ button[value=add] {
     width: 150px;
   }
 
-  button[value=remove] {
+  button[value=remove],
+  button.play-pause {
     margin: 0;
-  }
-
-  button[value=play],
-  button[value=pause] {
-    margin: 0;
-
-    span {
-      margin-left: space(1);
-    }
-  }
-
-  button[value=play] {
-    span.pause {
-      display: none;
-    }
-  }
-
-  button[value=pause] {
-    span.play {
-      display: none;
-    }
+    font-size: var(--fs-md);
   }
 }

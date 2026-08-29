@@ -49,11 +49,11 @@ class Variant {
     this.#elementPlayButton.addEventListener('click', () => {
       this.#playing = !this.#playing;
 
-      if (this.#playing) {
-        this.#elementPlayButton.classList.add('play');
-      } else {
-        this.#elementPlayButton.classList.remove('play');
-      }
+      // Class-driven icon: `.play` = paused (button shows ▶ meaning
+      // "click to play"), `.pause` = playing (button shows ⏸ meaning
+      // "click to pause"). See system/classes/_elements.scss.
+      this.#elementPlayButton.classList.toggle('play', !this.#playing);
+      this.#elementPlayButton.classList.toggle('pause', this.#playing);
 
       this.render();
     });

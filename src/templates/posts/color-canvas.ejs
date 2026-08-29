@@ -24,10 +24,7 @@ scripts:
     <canvas id="canvas"></canvas>
 
     <div class="form">
-      <button id="play-pause">
-        <%- img({ src: '/images/icons/play.svg', classes: ['play'] }); %>
-        <%- img({ src: '/images/icons/pause.svg', classes: ['pause'] }); %>
-      </button>
+      <button id="play-pause" class="button play-pause play" type="button" aria-label="Play/pause animation"></button>
       <input id='blue-slider' type="range" min="0" max="255" value="0" step="1" aria-label="Blue value">
     </div>
   </div>

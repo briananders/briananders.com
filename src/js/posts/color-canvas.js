@@ -67,9 +67,10 @@ ready.document(() => {
   }
 
   function playPause() {
-    playButton.classList.toggle('play');
     playing = !playing;
-
+    // Class-driven icon: paused → `.play` (▶); playing → `.pause` (⏸).
+    playButton.classList.toggle('play', !playing);
+    playButton.classList.toggle('pause', playing);
     play();
   }
 

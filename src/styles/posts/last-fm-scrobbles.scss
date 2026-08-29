@@ -24,7 +24,11 @@ p {
 }
 
 #albums, #artists, #yearly-scrobbles {
-  @include readingWidth;
+  // Wider than the reading measure so album covers and artist stats have
+  // room to breathe. Capped at 8 desktop columns (~752px) — see the
+  // --max-N-columns tokens in system/_tokens.scss.
+  width: 100%;
+  max-width: var(--max-8-columns);
 
   display: grid;
   gap: space(2);
