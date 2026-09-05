@@ -17,6 +17,21 @@ async function pathExists(p) {
   }
 }
 
+async function filesWithExtension(dir, extension) {
+  const entries = await fs.readdir(dir, { withFileTypes: true });
+  const files = [];
+  for (const entry of entries) {
+    const entryPath = path.join(dir, entry.name);
+    if (entry.isDirectory()) {
+      // eslint-disable-next-line no-await-in-loop
+      files.push(...await filesWithExtension(entryPath, extension));
+    } else if (entry.name.endsWith(extension)) {
+      files.push(entryPath);
+    }
+  }
+  return files;
+}
+
 // Run the production build with a generous timeout
 async function runProductionBuild() {
   return new Promise((resolve, reject) => {
@@ -90,4 +105,14 @@ test('production build completes and outputs expected artifacts', async (t) => {
   // Gzip artifacts for some files
   assert.equal(await pathExists(path.join(packageDir, 'sitemap.json.gz')), true, 'sitemap.json.gz should exist');
   assert.equal(await pathExists(path.join(packageDir, 'sitemap.xml.gz')), true, 'sitemap.xml.gz should exist');
+
+  const webpFiles = await filesWithExtension(path.join(packageDir, 'images'), '.webp');
+  const avifFiles = await filesWithExtension(path.join(packageDir, 'images'), '.avif');
+  assert.ok(webpFiles.length > 0, 'build should emit WebP image variants');
+  assert.equal(avifFiles.length, webpFiles.length, 'every WebP image should have an AVIF variant');
+
+  const aboutHtml = await fs.readFile(path.join(packageDir, 'about', 'index.html'), 'utf8');
+  assert.match(aboutHtml, /<picture>/, 'image tags should be wrapped in picture elements');
+  assert.match(aboutHtml, /type=image\/avif/, 'picture elements should include AVIF sources');
+  assert.match(aboutHtml, /type=image\/webp/, 'picture elements should include WebP sources');
 });

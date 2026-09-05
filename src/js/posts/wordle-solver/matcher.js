@@ -20,10 +20,17 @@ module.exports = function Matcher({
     return true;
   }
 
-  function none(word, letter) {
+  /**
+   * Confirms that none of the target letters appear in the candidate word.
+   *
+   * @param {string} word - The candidate word.
+   * @param {string[]} letters - The array of disallowed letters.
+   * @returns {boolean} True if no letter in letters is found within word.
+   */
+  function none(word, letters) {
     for (let i = 0; i < letters.length; i++) {
-      const letter = letters[i];
-      if (word.includes(letter)) return false;
+      const currentLetter = letters[i];
+      if (word.includes(currentLetter)) return false;
     }
     return true;
   }

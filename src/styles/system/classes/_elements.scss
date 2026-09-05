@@ -64,6 +64,15 @@
 .text-subtle { color: var(--color-text-subtle); }
 .text-primary { color: var(--color-primary-500); }
 
+// Overline label utility — always sans-serif, uppercase, tracking
+.overline {
+  font-family: var(--font-sans);
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+}
+
 // Video wrapper.
 .video-container {
   width: 100%;

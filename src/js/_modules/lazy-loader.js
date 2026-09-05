@@ -2,6 +2,12 @@ const urlParams = new URLSearchParams(window.location.search);
 
 function updateOnIntersect(element, observer) {
   if (element.tagName === 'IMG') {
+    const picture = element.parentElement;
+    if (picture && picture.tagName === 'PICTURE') {
+      picture.querySelectorAll('source[data-srcset]').forEach((source) => {
+        source.srcset = source.dataset.srcset;
+      });
+    }
     element.src = element.dataset.src;
   } else if (element.tagName === 'VIDEO') {
     element.dispatchEvent(new Event('can-load'));

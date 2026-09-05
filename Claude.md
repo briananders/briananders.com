@@ -52,7 +52,7 @@ The site also calls the **Last.fm API** directly from the browser for the real-t
 | Deployment | Custom `s3-uploader.js` using AWS SDK v3 (`@aws-sdk/client-s3`, `@aws-sdk/lib-storage`, `@aws-sdk/client-cloudfront`) |
 | Dev server | Express with express-static and http-proxy-middleware |
 | Linting | ESLint 8 (airbnb-base config — pinned to v8, airbnb does not support ESLint 9/10) |
-| Build optimization | HTML minification (html-minifier-terser), JS minification (uglify-js), SVG optimization (svgo), WebP conversion (webp-converter), gzip compression, content-hash asset naming (xxhash) |
+| Build optimization | HTML minification (html-minifier-terser), JS minification (uglify-js), SVG optimization (svgo), WebP/AVIF conversion (sharp), gzip compression, content-hash asset naming (xxhash) |
 | Analytics | Google Tag Manager (production only) |
 
 ## Project Structure
@@ -77,7 +77,7 @@ The site also calls the **Last.fm API** directly from the browser for the real-t
 │   │   ├── build-events.js     # String constants for all EventEmitter event names
 │   │   ├── completion-flags.js # Shared mutable booleans tracking stage completion
 │   │   ├── directories.js      # Path factory (package/ vs golden/ depending on mode)
-│   │   ├── file-formats.js     # Image/video extension lists, webpCandidates
+│   │   ├── file-formats.js     # Image/video extension lists and raster format lists
 │   │   └── site-data.js        # Author metadata, social links, domain, commitHash
 │   ├── helpers/
 │   │   ├── check-done.js       # Gate: exits process when all completion flags are true
@@ -93,12 +93,13 @@ The site also calls the **Last.fm API** directly from the browser for the real-t
 │   │   ├── hash-css.js         # XXHash CSS files (runs after CSS is updated with image hashes)
 │   │   └── update-css-with-image-hashes.js  # Rewrites CSS url() before CSS is hashed
 │   ├── optimize/
-│   │   ├── convert-to-webp.js  # webp-converter cwebp; skips non-candidates
+│   │   ├── convert-to-webp.js  # Sharp WebP conversion
+│   │   ├── convert-to-avif.js  # Sharp AVIF conversion at quality 80
 │   │   ├── gzip-files.js       # zlib gzip on html/xml/css/js/txt/json
 │   │   ├── minify-html.js      # html-minifier-terser (async minify())
 │   │   ├── minify-js.js        # UglifyJS
 │   │   └── optimize-svgs.js    # svgo preset-default; getSVG() for inline use
-│   ├── move-assets.js          # Copies images (SVG→SVGO, raster→WebP+copy), videos, txt, downloads
+│   ├── move-assets.js          # Copies images (SVG→SVGO, raster→WebP+AVIF+copy), videos, txt, downloads
 │   ├── page-mapping-data.js    # Front-matter index compiled from all EJS templates
 │   ├── prod-builder.js         # Production event listener wiring
 │   ├── preview-builder.js      # Dev mode: chokidar watchers + previewReady gate
@@ -396,7 +397,7 @@ Source file changes dispatch by path:
 
 #### Adding a new image/video format
 1. Add the extension to `build/constants/file-formats.js` in the `images` or `videos` array.
-2. If it should also produce a `.webp` sibling, add it to `webpCandidates` too.
+2. Raster image sources automatically receive `.webp` and `.avif` siblings during preview and production builds.
 
 #### Adding a new static asset type (e.g. fonts)
 1. Add a `moveAllFonts` / `moveOneFont` pair to `move-assets.js` following the same pattern as `moveAllVideos`.
@@ -431,7 +432,7 @@ Source file changes dispatch by path:
 | `html-minifier-terser` | HTML minification | v7 — `minify()` is async (returns Promise) |
 | `uglify-js` | JS minification | — |
 | `svgo` | SVG optimization | v4 — use `preset-default` only, no overrides |
-| `webp-converter` | PNG/JPG → WebP conversion | Wraps `cwebp` binary |
+| `sharp` | PNG/JPG/WebP → WebP/AVIF conversion | AVIF output uses quality 80 |
 | `image-size` | Read image dimensions at template render time | v2 — `sizeOf(fs.readFileSync(path))` |
 | `png-to-ico` | favicon.ico generation | v3 ESM — call `pngToIco.default(path)` |
 | `chokidar` | File system watcher | v5 ESM-compat — `require('chokidar').watch()` works |

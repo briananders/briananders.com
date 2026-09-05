@@ -65,7 +65,7 @@ new page, post, component, or JS interaction.
 - **Zero breaking-changes to per-post SCSS.** Every legacy mixin and variable
   name from before the 2026 overhaul still resolves — it just reads from
   tokens under the hood.
-- **Press `Ctrl+G` / `Cmd+G`** anywhere on the site to see the live grid.
+- **Press `g` / `Ctrl+G` / `Cmd+G`** (or append `?grid` to any URL) anywhere on the site to see the live grid.
 
 ---
 
@@ -260,7 +260,7 @@ Text:
 | Token                | Value     | Contrast on `--color-bg` | Use               |
 | -------------------- | --------- | ------------------------ | ----------------- |
 | `--color-text`       | `#F2F5F8` | 15.6 : 1                 | Body, headings    |
-| `--color-text-muted` | `#A6B0BE` | 8.7 : 1                  | Supporting copy   |
+| `--color-text-muted` | `#CBD5E1` | 11.2 : 1                 | Supporting copy   |
 | `--color-text-subtle`| `#6C7784` | 4.6 : 1                  | Placeholders      |
 | `--color-text-inverse`| `#0B0D10`|                          | Text on primary   |
 
@@ -303,8 +303,8 @@ Three families:
 
 | Token           | Family                                    | Use                    |
 | --------------- | ----------------------------------------- | ---------------------- |
-| `--font-sans`   | Inter, system UI stack                    | Headings, UI, controls |
-| `--font-serif`  | Source Serif 4, Georgia                   | Body copy, long reads  |
+| `--font-sans`   | Roboto, sans-serif                        | Headings, UI, controls |
+| `--font-serif`  | Source Serif Pro, serif                   | Body copy, long reads  |
 | `--font-mono`   | JetBrains Mono, `ui-monospace`, Menlo     | Code, kbd              |
 
 Sizes (mobile-first, step up at 960 px):

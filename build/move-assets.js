@@ -42,6 +42,20 @@ function makeFaviconIco({
 function deletePackageFile(srcPath, { dir }) {
   const destPath = srcPath.replace(dir.src, dir.package);
   fs.removeSync(destPath);
+
+  const { rasterImages } = require(`${dir.build}constants/file-formats`);
+  const extension = path.extname(srcPath).substring(1).toLowerCase();
+  if (!rasterImages.includes(extension)) return;
+
+  const sourceWithoutExtension = srcPath.substring(0, srcPath.lastIndexOf('.'));
+  const hasAlternateSource = rasterImages.some((candidate) => (
+    candidate !== extension && fs.existsSync(`${sourceWithoutExtension}.${candidate}`)
+  ));
+  if (!hasAlternateSource) {
+    const destinationWithoutExtension = destPath.substring(0, destPath.lastIndexOf('.'));
+    fs.removeSync(`${destinationWithoutExtension}.webp`);
+    fs.removeSync(`${destinationWithoutExtension}.avif`);
+  }
 }
 
 /**
@@ -49,8 +63,9 @@ function deletePackageFile(srcPath, { dir }) {
  *
  * Dispatch logic by file type:
  * - `.svg` → optimized via SVGO (`optimizeSvg`).
- * - `.jpg`/`.jpeg`/`.png` → converted to a sibling `.webp` AND copied as-is.
- * - All other image types → copied as-is.
+ * - Raster sources → copied as-is and converted to missing `.webp` and
+ *   `.avif` siblings.
+ * - `.svg` → optimized via SVGO.
  *
  * If the source file no longer exists the corresponding output file is
  * deleted and the callback is called immediately. Directories are skipped.
@@ -64,17 +79,39 @@ function moveOneImage(imagePath, configs, callback = () => { }) {
     dir, debug,
   } = configs;
 
-  const { webpCandidates } = require(`${dir.build}constants/file-formats`);
+  const {
+    rasterImages, rasterSourceImages,
+  } = require(`${dir.build}constants/file-formats`);
   const { optimizeSvg } = require(`${dir.build}optimize/optimize-svgs`);
   const convertToWebp = require(`${dir.build}optimize/convert-to-webp`);
+  const convertToAvif = require(`${dir.build}optimize/convert-to-avif`);
   const timestamp = require(`${dir.build}helpers/timestamp`);
 
-  const extn = path.extname(imagePath);
+  const extn = path.extname(imagePath).toLowerCase();
+  const extension = extn.substring(1);
   const destination = imagePath.replace(dir.src, dir.package);
+
+  function hasSourceWithExtension(extensionToCheck) {
+    const sourceWithoutExtension = imagePath.substring(0, imagePath.lastIndexOf('.'));
+    return fs.existsSync(`${sourceWithoutExtension}.${extensionToCheck}`);
+  }
+
+  function isCanonicalRasterSource() {
+    if (rasterSourceImages.includes(extension)) return true;
+    if (extension === 'webp') {
+      return !rasterSourceImages.some(hasSourceWithExtension)
+        && !hasSourceWithExtension('avif');
+    }
+    if (extension === 'avif') {
+      return !rasterSourceImages.some(hasSourceWithExtension)
+        && !hasSourceWithExtension('webp');
+    }
+    return false;
+  }
 
   if (!fs.existsSync(imagePath)) {
     log(`${timestamp.stamp()} ${imagePath} does not exist`);
-    deletePackageFile(destination, configs);
+    deletePackageFile(imagePath, configs);
     return callback();
   } if (fs.lstatSync(imagePath).isDirectory()) {
     log(`${timestamp.stamp()} ${imagePath} is a directory 1`);
@@ -89,21 +126,33 @@ function moveOneImage(imagePath, configs, callback = () => { }) {
     // SVGs are passed through SVGO for optimization before output.
     optimizeSvg(imagePath, { dir });
     return callback();
-  } if (webpCandidates.includes(extn.substring(1))) {
-    // Raster images: produce a .webp sibling AND keep the original format.
-    if (debug) log(`${timestamp.stamp()} convertToWebp(${imagePath}): ${destination}`);
-    convertToWebp(imagePath, { dir })
-      .then(() => fs.copyFile(imagePath, destination))
+  } if (rasterImages.includes(extension)) {
+    // Always keep the source format in the output. A canonical source also
+    // creates both delivery formats; derived siblings are not reconverted
+    // when a source/WebP pair exists, avoiding nondeterministic overwrites.
+    fs.copyFileSync(imagePath, destination);
+    if (!isCanonicalRasterSource()) return callback();
+
+    const conversions = [];
+    if (extn !== '.webp') {
+      if (debug) log(`${timestamp.stamp()} convertToWebp(${imagePath}): ${destination}`);
+      conversions.push(convertToWebp(imagePath, { dir }));
+    }
+    if (extn !== '.avif') {
+      if (debug) log(`${timestamp.stamp()} convertToAvif(${imagePath}): ${destination}`);
+      conversions.push(convertToAvif(imagePath, { dir }));
+    }
+
+    return Promise.all(conversions)
       .then(() => callback())
       .catch((err) => {
         error(`${timestamp.stamp()} moveOneImage() error:`, err);
         callback();
       });
-  } else {
-    // All other image types (e.g. .webp originals): copy as-is.
-    fs.copyFile(imagePath, destination);
-    return callback();
   }
+
+  fs.copyFileSync(imagePath, destination);
+  return callback();
 }
 
 /**

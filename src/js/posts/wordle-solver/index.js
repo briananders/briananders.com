@@ -11,7 +11,7 @@ ready.document(() => {
   const answersElement = document.getElementById('options');
   const resultsElement = document.getElementById('results-count');
   const lines = Array.from(boardElement.querySelectorAll('.line'));
-  const textInputs = Array.from(boardElement.querySelectorAll('input[type=text'));
+  const textInputs = Array.from(boardElement.querySelectorAll('input[type=text]'));
   const checkboxes = Array.from(boardElement.querySelectorAll('input[type=radio]'));
   const submitButton = document.getElementById('submit');
   const clearButton = document.getElementById('clear');

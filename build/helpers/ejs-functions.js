@@ -21,6 +21,8 @@ function squeakyClean(arr) {
   for (let i = 0; i < arr.length; i++) {
     if (arr[i] == null || arr[i] === '') {
       arr.splice(i, 1);
+      // Decrement index so the element shifted into position i is checked on the next pass.
+      i -= 1;
     }
   }
   return arr;
@@ -41,6 +43,58 @@ function cleanUpString(str) {
   str = str.replace(/^\s+/, '');
   str = str.replace(/\s+$/, '');
   return str.split(/\s/g).join(' ');
+}
+
+/**
+ * Returns the available delivery variants for a local image.
+ *
+ * Raster images are emitted as AVIF first, WebP second, and their original
+ * JPEG/PNG format last. SVGs and other non-raster assets remain unchanged.
+ *
+ * @param {string} src - Relative URL path to the image.
+ * @param {{ package: string }} dir - Build directory paths.
+ * @returns {{ sources: Array<{src: string, type: string}>, fallback: string }}
+ */
+function getImageSources(src, dir) {
+  const cleanSrc = src.split(/[?#]/)[0];
+  const extension = path.extname(cleanSrc).toLowerCase();
+  const rasterExtensions = ['.jpg', '.jpeg', '.png', '.webp', '.avif'];
+
+  if (!rasterExtensions.includes(extension)) {
+    return { sources: [], fallback: src };
+  }
+
+  const base = cleanSrc.substring(0, cleanSrc.length - extension.length);
+  const originalSources = ['.jpg', '.jpeg', '.png']
+    .map((originalExtension) => `${base}${originalExtension}`)
+    .filter((candidate) => fs.existsSync(path.join(dir.package, candidate)));
+  const variants = [
+    { src: `${base}.avif`, type: 'image/avif' },
+    { src: `${base}.webp`, type: 'image/webp' },
+    ...originalSources.map((originalSrc) => ({ src: originalSrc, type: null }))
+  ].filter((candidate) => fs.existsSync(path.join(dir.package, candidate.src)));
+
+  const fallback = variants.find((candidate) => candidate.type === null)
+    || variants.find((candidate) => candidate.type === 'image/webp')
+    || variants[0];
+
+  return {
+    sources: variants.filter((candidate) => candidate.type && candidate !== fallback),
+    fallback: (fallback || { src }).src,
+  };
+}
+
+/**
+ * Renders `<source>` elements in AVIF/WebP order.
+ *
+ * @param {Array<{src: string, type: string}>} sources - Picture sources.
+ * @param {boolean} lazy - Whether sources should use data-srcset.
+ * @returns {string}
+ */
+function renderPictureSources(sources, lazy = false) {
+  return sources.map(({ src, type }) => (
+    `<source ${lazy ? `data-srcset="${src}"` : `srcset="${src}"`} type="${type}" />`
+  )).join('');
 }
 
 /**
@@ -173,7 +227,7 @@ module.exports = (dir, pageMappingData) => ({
    * @param {string[]} [params.classes=[]] - CSS class names.
    * @param {number}   [params.width]   - Override the intrinsic width.
    * @param {number}   [params.height]  - Override the intrinsic height.
-   * @returns {string} An `<img>` HTML string.
+   * @returns {string} A `<picture>` HTML string.
    * @throws {Error} If `src` is not provided.
    */
   img({
@@ -183,16 +237,17 @@ module.exports = (dir, pageMappingData) => ({
       throw new Error('img is missing src attribute');
     }
     // image-size v2 requires a Buffer (synchronous read); it does not accept a path directly.
-    const dimensions = sizeOf(fs.readFileSync(path.join(dir.package, src)));
-    return `<img src="${src}" alt="${alt}" height="${height || dimensions.height}" width="${width || dimensions.width}" ${classes.length ? `class="${classes.join(' ')}"` : ''} />`;
+    const { sources, fallback } = getImageSources(src, dir);
+    const dimensions = sizeOf(fs.readFileSync(path.join(dir.package, fallback)));
+    return `<picture>${renderPictureSources(sources)}<img src="${fallback}" alt="${alt}" height="${height || dimensions.height}" width="${width || dimensions.width}" ${classes.length ? `class="${classes.join(' ')}"` : ''} /></picture>`;
   },
 
   /**
    * Renders a lazily-loaded `<img>` tag using an inline SVG placeholder.
    *
    * The placeholder SVG is sized to match the image's intrinsic dimensions
-   * (preventing layout shift), and the real image URL is placed in
-   * `data-src` for the lazy-loader JavaScript module to swap in.
+   * (preventing layout shift), and the real image URLs are placed in
+   * `data-src`/`data-srcset` for the lazy-loader JavaScript module to swap in.
    * A `<link rel="preload">` hint is prepended to prime the browser's
    * prefetch queue.
    *
@@ -211,10 +266,12 @@ module.exports = (dir, pageMappingData) => ({
     if (!src) {
       throw new Error('lazyImage is missing src attribute');
     }
-    const dimensions = sizeOf(fs.readFileSync(path.join(dir.package, src)));
+    const { sources, fallback } = getImageSources(src, dir);
+    const dimensions = sizeOf(fs.readFileSync(path.join(dir.package, fallback)));
+    const preload = sources[0] || { src: fallback };
     return `
-      <link rel="preload" href="${src}" as="image" />
-      <img lazy src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 ${width || dimensions.width} ${height || dimensions.height}'%3E%3C/svg%3E" data-src="${src}" alt="${alt}" height="${height || dimensions.height}" width="${width || dimensions.width}" ${classes.length ? `class="${classes.join(' ')}"` : ''} />
+      <link rel="preload" href="${preload.src}" as="image"${preload.type ? ` type="${preload.type}"` : ''} />
+      <picture>${renderPictureSources(sources, true)}<img lazy src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 ${width || dimensions.width} ${height || dimensions.height}'%3E%3C/svg%3E" data-src="${fallback}" alt="${alt}" height="${height || dimensions.height}" width="${width || dimensions.width}" ${classes.length ? `class="${classes.join(' ')}"` : ''} /></picture>
     `;
   },
 

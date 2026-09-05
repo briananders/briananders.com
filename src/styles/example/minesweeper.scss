@@ -79,6 +79,7 @@ section.minesweeper {
     border-radius: 0;
 
     background-image: url('/images/posts/minesweeper/sprite.png');
+    background-image: image-set(url('/images/posts/minesweeper/sprite.avif') type('image/avif'), url('/images/posts/minesweeper/sprite.webp') type('image/webp'), url('/images/posts/minesweeper/sprite.png') type('image/png'));
     background-repeat: no-repeat;
     background-size: 920%;
     image-rendering: pixelated;
@@ -131,6 +132,7 @@ section.minesweeper {
     display: block;
     float: left;
     background-image: url('/images/posts/minesweeper/sprite.png');
+    background-image: image-set(url('/images/posts/minesweeper/sprite.avif') type('image/avif'), url('/images/posts/minesweeper/sprite.webp') type('image/webp'), url('/images/posts/minesweeper/sprite.png') type('image/png'));
     background-repeat: no-repeat;
     background-size: 1100%;
     image-rendering: pixelated;
@@ -152,6 +154,7 @@ section.minesweeper {
     height: 52px;
     display: block;
     background-image: url('/images/posts/minesweeper/sprite.png');
+    background-image: image-set(url('/images/posts/minesweeper/sprite.avif') type('image/avif'), url('/images/posts/minesweeper/sprite.webp') type('image/webp'), url('/images/posts/minesweeper/sprite.png') type('image/png'));
     background-repeat: no-repeat;
     image-rendering: pixelated;
     padding: 0;

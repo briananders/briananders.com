@@ -4,14 +4,3 @@
   <button class="button">Skip navigation</button>
 </div>
 <%- partial('nav', locals); %>
-<% if(!locals.homepage) { %>
-  <header class="main-header <%- (locals.pageClasses) ? locals.pageClasses.toString().replace(/,/g,' ') : '' %>">
-    <h1 itemprop="headline" class="name content">
-      <% if (locals.altTitle !== undefined) { %>
-        <%- noWidows(locals.altTitle); %>
-      <% } else if (locals.title !== undefined) { %>
-        <%- noWidows(locals.title); %>
-      <% } %>
-    </h1>
-  </header>
-<% } %>

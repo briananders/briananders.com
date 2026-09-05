@@ -9,9 +9,9 @@ module.exports = {
   /**
    * Image file extensions that are copied (or optimised) into the output directory.
    * SVGs are optimised via SVGO; raster formats are copied as-is and also
-   * converted to WebP if they appear in `webpCandidates`.
+   * converted to WebP and AVIF when they are conversion sources.
    */
-  images: ['svg', 'jpg', 'jpeg', 'webp', 'png'],
+  images: ['svg', 'jpg', 'jpeg', 'webp', 'avif', 'png'],
 
   /**
    * Video file extensions copied into the output directory.
@@ -19,9 +19,11 @@ module.exports = {
   videos: ['webm', 'mp4'],
 
   /**
-   * Raster image formats that should also be converted to a `.webp` sibling.
-   * The original file is kept alongside the new WebP version so browsers
-   * without WebP support can fall back to it.
+   * Raster formats understood by the image pipeline. Every raster source is
+   * copied to the output and the missing WebP/AVIF siblings are generated.
    */
-  webpCandidates: ['jpg', 'png', 'jpeg'],
+  rasterImages: ['jpg', 'jpeg', 'png', 'webp', 'avif'],
+
+  /** Raster source formats that are preferred over derived formats. */
+  rasterSourceImages: ['jpg', 'jpeg', 'png'],
 };

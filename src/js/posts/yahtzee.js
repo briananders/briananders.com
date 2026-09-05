@@ -449,7 +449,10 @@ ready.document(() => {
       [yahtzeeElement, 'yahtzee', getYahtzeeTotal]
     ].forEach(([element, lockId, scoreFunction]) => {
       element.addEventListener('click', () => {
-        if (rollCount === 0) return;
+        // Prevent recording score if dice were not rolled or if this box is already locked.
+        if (rollCount === 0 || lockedScores[lockId] !== false) {
+          return;
+        }
         disable(element);
         lockedScores[lockId] = scoreFunction();
         updateScoreBoard();

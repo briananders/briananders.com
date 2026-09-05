@@ -6,7 +6,11 @@ const albumTemplate = `
   <style>${albumListingStyles}</style>
 
   <a href="#" itemprop="url" rel="noopener" target="blank">
-    <img src="" alt="" />
+    <picture>
+      <source data-format="avif" type="image/avif" />
+      <source data-format="webp" type="image/webp" />
+      <img src="" alt="" />
+    </picture>
     <span class="info">
       <slot>Loading Album Name...</slot>
       <div slot="artist">Loading Artist Name...</div>
@@ -52,7 +56,7 @@ class AlbumListing extends HTMLElement {
       this.shadowRoot.getElementById('bar').style.width = `${length}%`;
     }
     if (['name', 'artist'].includes(name)) {
-      const albumName = this.getAttribute('name');
+      const albumName = this.getAttribute('name') || '';
       const artistName = this.getAttribute('artist') || '';
       this.shadowRoot.querySelector('a').setAttribute('href', `?trends=albums/${dasherize(artistName.trim().toLowerCase())}/${dasherize(albumName.trim().toLowerCase())}`);
 
@@ -61,6 +65,17 @@ class AlbumListing extends HTMLElement {
     }
     if (name === 'img') {
       const imgElement = this.shadowRoot.querySelector('img');
+      const avifElement = this.shadowRoot.querySelector('[data-format="avif"]');
+      const webpElement = this.shadowRoot.querySelector('[data-format="webp"]');
+      if (!newValue) {
+        avifElement.removeAttribute('srcset');
+        webpElement.removeAttribute('srcset');
+        imgElement.removeAttribute('src');
+        return;
+      }
+      const imageBase = newValue.replace(/\.(jpg|jpeg|png|webp|avif)([?#].*)?$/, '');
+      avifElement.setAttribute('srcset', `${imageBase}.avif`);
+      webpElement.setAttribute('srcset', `${imageBase}.webp`);
       imgElement.setAttribute('src', newValue);
     }
   }

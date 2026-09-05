@@ -18,7 +18,7 @@ ready.document(() => {
           artist: { name: artistName },
           playcount: item.count || 0,
           url: `https://www.last.fm/music/${encodeURIComponent(artistName)}/${encodeURIComponent(albumName)}`,
-          imageSrc: item.albumImage ? `/last-fm-history/images/${item.albumImage}.webp` : (data.defaultImage || null),
+          imageSrc: item.albumImage ? `/last-fm-history/images/${item.albumImage}.jpg` : (data.defaultImage || null),
         };
       }).filter(Boolean);
     },

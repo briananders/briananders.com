@@ -91,6 +91,7 @@ const getContentType = (fileName) => {
       return `application/${xtn}`;
     case '.png':
     case '.webp':
+    case '.avif':
     case '.gif':
       return `image/${xtn}`;
     case '.mpeg':

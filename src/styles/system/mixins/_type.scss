@@ -11,9 +11,9 @@
 @mixin font-size($size: 2) {
   $token: map.get((
     0:  var(--fs-2xs),
-    1:  var(--fs-xs),
-    2:  var(--fs-md),
-    3:  var(--fs-lg),
+    1:  var(--fs-sm),
+    2:  var(--fs-lg),
+    3:  var(--fs-xl),
     4:  var(--fs-xl),
     5:  var(--fs-xl),
     6:  var(--fs-2xl),

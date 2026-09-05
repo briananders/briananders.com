@@ -120,11 +120,15 @@ class YearListing extends HTMLElement {
 
     const slotElement = this.shadowRoot.querySelector('slot');
 
+    /**
+     * Formats a numeric count with locale grouping separators.
+     *
+     * @param {number} num - The numeric count to format.
+     * @returns {string} Formatted number string.
+     */
     function formatNumber(num) {
       const rounded = Math.round(num);
-      const thousands = Math.floor(rounded / 1000);
-      const digits = `000${Math.floor(rounded % 1000)}`;
-      return `${thousands},${digits.substring(digits.length - 3, digits.length)}`;
+      return rounded.toLocaleString();
     }
 
     function run() {

@@ -53,6 +53,11 @@ module.exports = {
       const items = opts.customSerialize(dataWithDefault);
       const maxPlayCount = Math.max(...items.map((item) => Number(item.playcount || 0)));
       items.forEach((item) => {
+        if (item.imageSrc) {
+          const imageBase = item.imageSrc.replace(/\.[^.]+$/, '');
+          item.imageAvif = `${imageBase}.avif`;
+          item.imageWebp = `${imageBase}.webp`;
+        }
         const playCount = Number(item.playcount || 0);
         item.percent = maxPlayCount > 0 ? (playCount / maxPlayCount) * 100 : 0;
       });

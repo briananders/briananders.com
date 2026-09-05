@@ -7,7 +7,7 @@ function getRatingUrl(rating) {
 }
 
 function getImageUrl(movieId) {
-  return `${API_BASE}/images/${movieId}.webp`;
+  return `${API_BASE}/images/${movieId}.jpg`;
 }
 
 const TV_CONTENT_TYPES = new Set(['tvSeries', 'tvMiniSeries', 'tvMovie']);
@@ -22,6 +22,7 @@ function movieMatchesContentTypeFilter(movie, filterKey) {
 
 function renderMovie(movie) {
   const imgUrl = getImageUrl(movie.movieId);
+  const imageBase = imgUrl.replace(/\.(jpg|jpeg|png|webp|avif)$/, '');
 
   const isSeries = movie.contentType === 'tvSeries'
     || movie.contentType === 'tvMiniSeries'
@@ -47,7 +48,11 @@ function renderMovie(movie) {
       rel="noopener noreferrer"
       role="listitem"
     >
-      <img src="${imgUrl}" alt="${movie.title} poster" loading="lazy" width="240" height="356" />
+      <picture>
+        <source srcset="${imageBase}.avif" type="image/avif" />
+        <source srcset="${imageBase}.webp" type="image/webp" />
+        <img src="${imgUrl}" alt="${movie.title} poster" loading="lazy" width="240" height="356" />
+      </picture>
       <div class="movie-info">
         <h2 class="h6">${movie.title} ${typeLabel}</h2>
         <p class="year-runtime">${yearRuntime}</p>

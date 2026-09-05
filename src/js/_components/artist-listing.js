@@ -11,7 +11,11 @@ const artistTemplate = `
       <div><span slot="count">00</span> Plays</div>
       <div id="bar" style="--length: 100%"></div>
     </span>
-    <img src="" alt="" />
+    <picture>
+      <source data-format="avif" type="image/avif" />
+      <source data-format="webp" type="image/webp" />
+      <img src="" alt="" />
+    </picture>
   </a>
 `;
 
@@ -46,11 +50,23 @@ class ArtistListing extends HTMLElement {
     }
     if (name === 'name') {
       const imgElement = this.shadowRoot.querySelector('img');
-      imgElement.setAttribute('alt', newValue);
-      this.shadowRoot.querySelector('a').setAttribute('href', `?trends=artists/${dasherize(newValue.trim().toLowerCase())}`);
+      const artistName = newValue || '';
+      imgElement.setAttribute('alt', artistName);
+      this.shadowRoot.querySelector('a').setAttribute('href', `?trends=artists/${dasherize(artistName.trim().toLowerCase())}`);
     }
     if (name === 'img') {
       const imgElement = this.shadowRoot.querySelector('img');
+      const avifElement = this.shadowRoot.querySelector('[data-format="avif"]');
+      const webpElement = this.shadowRoot.querySelector('[data-format="webp"]');
+      if (!newValue) {
+        avifElement.removeAttribute('srcset');
+        webpElement.removeAttribute('srcset');
+        imgElement.removeAttribute('src');
+        return;
+      }
+      const imageBase = newValue.replace(/\.(jpg|jpeg|png|webp|avif)([?#].*)?$/, '');
+      avifElement.setAttribute('srcset', `${imageBase}.avif`);
+      webpElement.setAttribute('srcset', `${imageBase}.webp`);
       imgElement.setAttribute('src', newValue);
     }
   }

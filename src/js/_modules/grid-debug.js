@@ -130,6 +130,57 @@ function currentTier() {
   return '4 cols · mobile';
 }
 
+/**
+ * Determines if a keyboard event originated from a form field or editable element.
+ *
+ * @param {EventTarget} target - The target element of the event.
+ * @returns {boolean} True if the target is an editable input.
+ */
+function isEditableElement(target) {
+  if (!target || !target.tagName) {
+    return false;
+  }
+  const tagName = target.tagName.toLowerCase();
+  if (tagName === 'input' || tagName === 'textarea' || tagName === 'select') {
+    return true;
+  }
+  if (target.isContentEditable) {
+    return true;
+  }
+  return false;
+}
+
+/**
+ * Checks whether the pressed key matches the grid toggle shortcut.
+ * Supports Ctrl+G, Cmd+G, Alt+G, Shift combinations, or a bare 'g' outside inputs.
+ *
+ * @param {KeyboardEvent} evt - The keydown event.
+ * @returns {boolean} True if the key combination should toggle the grid.
+ */
+function isGridKey(evt) {
+  if (evt.repeat) {
+    return false;
+  }
+
+  const isGKey = evt.code === 'KeyG' || evt.key === 'g' || evt.key === 'G';
+  if (!isGKey) {
+    return false;
+  }
+
+  // If a modifier is held (Ctrl, Cmd/Meta, or Alt/Option), trigger unconditionally.
+  // We do not block Shift so that Ctrl+Shift+G or Cmd+Shift+G still works.
+  if (evt.ctrlKey || evt.metaKey || evt.altKey) {
+    return true;
+  }
+
+  // If no modifier is held, allow bare 'g' or 'G' as long as the user is not typing in an input.
+  if (!isEditableElement(evt.target)) {
+    return true;
+  }
+
+  return false;
+}
+
 module.exports.init = () => {
   let overlay;
   let label;
@@ -143,7 +194,9 @@ module.exports.init = () => {
       label = built.label;
       document.body.appendChild(overlay);
       window.addEventListener('resize', () => {
-        if (active && label) label.textContent = currentTier();
+        if (active && label) {
+          label.textContent = currentTier();
+        }
       });
     }
     active = !active;
@@ -151,23 +204,37 @@ module.exports.init = () => {
     label.textContent = currentTier();
   };
 
-  /**
-   * Match on `evt.code === 'KeyG'` (physical key, layout-independent) and
-   * `evt.key === 'g' | 'G'` (as a fallback for platforms where `code` is
-   * empty). Use capture-phase so the handler runs before any page-level
-   * ancestor stops propagation.
-   */
-  const isGridKey = (evt) => {
-    if (evt.repeat) return false;
-    if (!(evt.ctrlKey || evt.metaKey)) return false;
-    if (evt.shiftKey || evt.altKey) return false;
-    return evt.code === 'KeyG' || evt.key === 'g' || evt.key === 'G';
-  };
-
-  document.addEventListener('keydown', (evt) => {
-    if (!isGridKey(evt)) return;
+  const handleKeydown = (evt) => {
+    if (!isGridKey(evt)) {
+      return;
+    }
     evt.preventDefault();
     evt.stopPropagation();
     toggle();
-  }, true);
+  };
+
+  // Register in capture phase on both window and document to intercept before page listeners.
+  window.addEventListener('keydown', handleKeydown, true);
+
+  /**
+   * Checks for the "grid" query parameter in the URL.
+   * If present and not explicitly set to "false" or "0", automatically activate the overlay.
+   */
+  const checkQueryParameter = () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    if (!urlParams.has('grid')) {
+      return;
+    }
+    const paramValue = urlParams.get('grid');
+    if (paramValue === 'false' || paramValue === '0') {
+      return;
+    }
+    toggle();
+  };
+
+  if (document.body) {
+    checkQueryParameter();
+  } else {
+    document.addEventListener('DOMContentLoaded', checkQueryParameter);
+  }
 };

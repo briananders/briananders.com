@@ -7,3 +7,10 @@ html {
   background-color: var(--color-bg);
   color: var(--color-text);
 }
+
+main {
+  background:
+    radial-gradient(1000px 400px at 80% -100px, rgba(249, 115, 22, 0.18), transparent 60%),
+    radial-gradient(600px 300px at 20% -50px, rgba(192, 132, 252, 0.14), transparent 60%);
+  background-attachment: local;
+}

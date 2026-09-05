@@ -33,7 +33,7 @@
 }
 
 @mixin section {
-  width: css-min($grid--max-width, 100%);
+  width: 100%;
   margin: 0 auto $section-spacer;
 
   &:last-child {
@@ -230,14 +230,20 @@
   @include link-hover;
   @include link-focus;
 
+  // The chevron arrow suffix. Scaled vertically by 1.5 and shifted
+  // down by 0.03rem to produce the elongated, elegant chevron shape.
   b {
+    display: inline-block;
     transition: transform var(--dur-2) var(--ease-emphasized);
     padding-left: 0.2rem;
+    transform: scaleY(1.5) translateY(0.03rem);
     color: var(--color-primary-500);
-    font-weight: var(--fw-bold);
+    font-weight: var(--fw-medium);
   }
 
-  &:hover b { transform: translateX(4px); }
+  &:hover b {
+    transform: scaleY(1.5) translateY(0.03rem) translateX(4px);
+  }
 }
 
 @mixin button-link {
