@@ -173,7 +173,7 @@ src/js/
 │   ├── year-selector.js
 │   ├── album-listing.js
 │   ├── artist-listing.js
-│   └── scrobbles-last-updated.js
+│   └── last-updated.js
 └── posts/                          ← one .js per interactive post
     └── …
 ```
@@ -369,9 +369,11 @@ Three tiers, all mobile-first:
 | Tier    | Min width | Cols | Gap                            | Gutter                          |
 | ------- | --------- | ---- | ------------------------------ | ------------------------------- |
 | mobile  | —         | 4    | `--grid-gap-mobile` (12 px)    | `--gutter-mobile` (16 px)       |
-| tablet  | 600 px    | 8    | ↑                              | `space(4)` in `.content`        |
+| tablet  | 600 px    | 8    | ↑                              | `--gutter-tablet` (24 px)       |
 | desktop | 960 px    | 12   | `--grid-gap-desktop` (16 px)   | `--gutter-desktop` (32 px)      |
 | wide    | 1280 px   | 12   | (same)                         | content maxes at 1200 px        |
+
+**Responsive tokens on `:root`.** Rather than changing the referenced variable inside every mixin or component selector via nested media queries, the active CSS custom properties (`--gutter`, `--grid-gutter`, `--grid-gap`, `--grid-cols`, `--card-padding`) are declared on `:root` and updated within media queries at `600px` and `960px`. Components simply reference `var(--gutter)` or `var(--grid-gap)` and respond to viewport changes automatically.
 
 Breakpoint SCSS variables (from `variables/_viewports.scss`):
 
@@ -532,9 +534,9 @@ through `@use "system/utilities" as *`, so from any post SCSS you can:
 | ------------------ | ----------------------------------------------- |
 | `grid($no-padding)`| Full 4/8/12-column grid with tier-specific gaps |
 | `columns($d,$t,$m)`| `grid-column: span N` at each tier              |
-| `content` / `content-width` | Max-width + gutters (`.content` class hook) |
+| `grid-container` / `content` / `content-width` | Max-width + gutters (`.grid-container` class hook) |
 | `section`          | Full-width max container with `$section-spacer` |
-| `readingWidth`     | Cap width at `~68ch` — for body copy            |
+| `readingWidth`     | Cap width at 8 columns (`var(--max-8-columns)`) — for body copy |
 | `default-margins`  | `margin-left/right: auto`                       |
 | `left-margins`     | `margin-left: 0; margin-right: auto`            |
 | `text-center` / `text-left` | Alignment (fixed from pre-refactor bug)|

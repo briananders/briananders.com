@@ -56,8 +56,9 @@ main.home {
 
   .last-fm-module { margin-top: space(4); }
 
-  .deck { margin-bottom: $paragraph-bottom; }
+  .deck { margin-bottom: var(--paragraph-bottom); }
 
+  .contributions > .grid-container:first-of-type,
   .contributions > .content:first-of-type {
     margin-bottom: space(2);
 
@@ -74,6 +75,7 @@ main.home {
 
   .posts,
   .index-music {
+    .grid-container,
     .content {
       display: flex;
       flex-direction: column;

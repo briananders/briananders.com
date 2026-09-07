@@ -24,7 +24,7 @@ global.fetch = async (...args) => {
   return mockFetch(...args);
 };
 
-const ScrobblesLastUpdated = require('../src/js/_components/scrobbles-last-updated.js');
+const ScrobblesLastUpdated = require('../src/js/_components/last-updated.js');
 
 // ── ScrobblesLastUpdated ───────────────────────────────────────────────────────
 
@@ -39,17 +39,17 @@ describe('ScrobblesLastUpdated', () => {
   });
 
   function makeEl() {
-    const el = dom.window.document.createElement('scrobbles-last-updated');
+    const el = dom.window.document.createElement('last-updated');
     dom.window.document.body.appendChild(el);
     return el;
   }
 
   // ── registration ────────────────────────────────────────────────────────────
 
-  test('init() registers scrobbles-last-updated in the custom element registry', () => {
+  test('init() registers last-updated in the custom element registry', () => {
     assert.ok(
-      dom.window.customElements.get('scrobbles-last-updated'),
-      'scrobbles-last-updated should be defined after init()',
+      dom.window.customElements.get('last-updated'),
+      'last-updated should be defined after init()',
     );
   });
 
@@ -263,7 +263,7 @@ describe('ScrobblesLastUpdated', () => {
       ok: true,
       json: async () => ({ last_updated: '2025-06-15T10:00:00Z' }),
     });
-    const el = dom.window.document.createElement('scrobbles-last-updated');
+    const el = dom.window.document.createElement('last-updated');
     dom.window.document.body.appendChild(el); // triggers connectedCallback → fetchLastUpdated
     await new Promise((resolve) => setTimeout(resolve, 0)); // allow promise chain to settle
     const text = el.shadowRoot.getElementById('datetime').textContent;
@@ -273,7 +273,7 @@ describe('ScrobblesLastUpdated', () => {
 
   test('fetchLastUpdated() shows Unknown when response is not ok', async () => {
     mockFetch = async () => ({ ok: false, json: async () => ({}) });
-    const el = dom.window.document.createElement('scrobbles-last-updated');
+    const el = dom.window.document.createElement('last-updated');
     dom.window.document.body.appendChild(el);
     await new Promise((resolve) => setTimeout(resolve, 0));
     assert.equal(
@@ -285,7 +285,7 @@ describe('ScrobblesLastUpdated', () => {
 
   test('fetchLastUpdated() shows Unknown when fetch throws (network error)', async () => {
     mockFetch = null; // causes global.fetch to throw
-    const el = dom.window.document.createElement('scrobbles-last-updated');
+    const el = dom.window.document.createElement('last-updated');
     dom.window.document.body.appendChild(el);
     await new Promise((resolve) => setTimeout(resolve, 0));
     assert.equal(
@@ -300,7 +300,7 @@ describe('ScrobblesLastUpdated', () => {
       ok: true,
       json: async () => ({ unrecognized_field: 'some value' }),
     });
-    const el = dom.window.document.createElement('scrobbles-last-updated');
+    const el = dom.window.document.createElement('last-updated');
     dom.window.document.body.appendChild(el);
     await new Promise((resolve) => setTimeout(resolve, 0));
     assert.equal(

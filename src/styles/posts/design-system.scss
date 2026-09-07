@@ -66,7 +66,7 @@
   .ds-grid {
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: space(2);
+    gap: var(--grid-gap);
 
     @include mq($medium) {
       grid-template-columns: repeat(8, minmax(0, 1fr));
@@ -74,7 +74,6 @@
 
     @include mq($large) {
       grid-template-columns: repeat(12, minmax(0, 1fr));
-      gap: space(3);
     }
   }
 
@@ -94,7 +93,7 @@
     background: var(--color-surface-1);
     border: 1px solid var(--color-border);
     border-radius: var(--radius-lg);
-    padding: space(3);
+    padding: var(--card-padding);
     box-shadow: var(--elev-1);
     color: var(--color-text);
     display: block;
@@ -103,8 +102,6 @@
       transform var(--dur-2) var(--ease-standard),
       border-color var(--dur-2),
       box-shadow var(--dur-2);
-
-    @include mq($medium) { padding: space(4); }
 
     h4 { margin-bottom: space(1); }
   }

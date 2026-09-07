@@ -1,4 +1,5 @@
 const ready = require('../_modules/document-ready');
+require('../_components/api-image').init();
 
 const API_BASE = '/movies';
 
@@ -7,7 +8,7 @@ function getRatingUrl(rating) {
 }
 
 function getImageUrl(movieId) {
-  return `${API_BASE}/images/${movieId}.jpg`;
+  return `${API_BASE}/images/${movieId}`;
 }
 
 const TV_CONTENT_TYPES = new Set(['tvSeries', 'tvMiniSeries', 'tvMovie']);
@@ -21,8 +22,7 @@ function movieMatchesContentTypeFilter(movie, filterKey) {
 }
 
 function renderMovie(movie) {
-  const imgUrl = getImageUrl(movie.movieId);
-  const imageBase = imgUrl.replace(/\.(jpg|jpeg|png|webp|avif)$/, '');
+  const imageBase = getImageUrl(movie.movieId);
 
   const isSeries = movie.contentType === 'tvSeries'
     || movie.contentType === 'tvMiniSeries'
@@ -48,11 +48,7 @@ function renderMovie(movie) {
       rel="noopener noreferrer"
       role="listitem"
     >
-      <picture>
-        <source srcset="${imageBase}.avif" type="image/avif" />
-        <source srcset="${imageBase}.webp" type="image/webp" />
-        <img src="${imgUrl}" alt="${movie.title} poster" loading="lazy" width="240" height="356" />
-      </picture>
+      <api-image src="${imageBase}" alt="${movie.title} poster" loading="lazy" width="240" height="356"></api-image>
       <div class="movie-info">
         <h2 class="h6">${movie.title} ${typeLabel}</h2>
         <p class="year-runtime">${yearRuntime}</p>

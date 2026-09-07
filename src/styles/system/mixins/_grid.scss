@@ -6,12 +6,12 @@
 // 4 cols under 600px, 8 cols from 600–959px, 12 cols at 960px+.
 @mixin grid($no-padding: false) {
   display: grid;
-  gap: $grid--gap;
+  gap: var(--grid-gap);
   grid-template-columns: repeat(4, minmax(0, 1fr));
 
   @if not $no-padding {
-    padding-left: $grid--gutter;
-    padding-right: $grid--gutter;
+    padding-left: var(--gutter);
+    padding-right: var(--gutter);
   }
 
   @include mq($grid--tablet-break-point) {
@@ -20,7 +20,6 @@
 
   @include mq($grid--start-break-point) {
     grid-template-columns: repeat(12, minmax(0, 1fr));
-    gap: $grid--gap-desktop;
   }
 }
 
@@ -59,8 +58,8 @@
 }
 
 @mixin readingWidth {
-  width: css-min($grid--copy-max-width, 100%);
-  max-width: var(--reading-max, $grid--copy-max-width);
+  width: css-min(var(--reading-max, #{$grid--copy-max-width}), 100%);
+  max-width: var(--reading-max, #{$grid--copy-max-width});
 }
 
 // Alignment. These previously both returned `text-align: left` — bug.

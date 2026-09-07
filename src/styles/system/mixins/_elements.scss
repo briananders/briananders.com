@@ -34,7 +34,7 @@
 
 @mixin section {
   width: 100%;
-  margin: 0 auto $section-spacer;
+  margin: 0 auto var(--section-spacer, #{$section-spacer});
 
   &:last-child {
     margin-bottom: 0;
@@ -300,29 +300,32 @@
 }
 
 @mixin content-width {
-  width: css-min(100%, #{$grid--max-width});
+  width: css-min(100%, var(--content-max, #{$grid--max-width}));
   margin-left: auto;
   margin-right: auto;
 }
 
-@mixin content {
+// Grid container mixin setting max width and responsive gutters via CSS custom properties.
+@mixin grid-container {
   @include content-width;
   position: relative;
-  padding: 0 space(2);
+  padding-left: var(--gutter);
+  padding-right: var(--gutter);
+}
 
-  @include mq($medium) {
-    padding: 0 space(4);
-  }
+// Backward-compatible alias for grid-container.
+@mixin content {
+  @include grid-container;
+}
 
-  @include mq($large) {
-    padding: 0 space(6);
-  }
+@mixin container {
+  @include grid-container;
 }
 
 @mixin paragraph {
   width: 100%;
   @include readingWidth;
-  margin-bottom: $paragraph-bottom;
+  margin-bottom: var(--paragraph-bottom, #{$paragraph-bottom});
   @include type--body;
 
   &:last-child { margin-bottom: 0; }
@@ -330,7 +333,7 @@
 
 @mixin paragraph-margin {
   &,
-  &:last-child { margin-bottom: $paragraph-bottom; }
+  &:last-child { margin-bottom: var(--paragraph-bottom, #{$paragraph-bottom}); }
 }
 
 @mixin citation {
@@ -385,13 +388,9 @@
 }
 
 @mixin card {
-  padding: space(3);
+  padding: var(--card-padding, var(--space-3));
   border-radius: var(--radius-lg);
   background-color: var(--color-surface-1);
   border: 1px solid var(--color-border);
   box-shadow: var(--elev-1);
-
-  @include mq($medium) {
-    padding: space(4);
-  }
 }

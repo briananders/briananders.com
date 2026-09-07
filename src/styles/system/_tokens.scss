@@ -118,9 +118,21 @@
   --grid-gap-mobile:   var(--space-3);
   --grid-gap-desktop:  var(--space-4);
   --gutter-mobile:     var(--space-4);
+  --gutter-tablet:     var(--space-6);
   --gutter-desktop:    var(--space-8);
   --content-max:       #{$grid--max-width};
-  --reading-max:       68ch;
+  --reading-max:       var(--max-8-columns);
+
+  // Responsive layout values (mobile defaults, updated via media queries on :root)
+  --gutter:            var(--gutter-mobile);
+  --grid-gutter:       var(--gutter);
+  --grid-gap:          var(--grid-gap-mobile);
+  --grid-cols:         var(--grid-cols-mobile);
+  --card-padding:      var(--space-3);
+  --section-spacer:    var(--space-20);
+  --paragraph-bottom:  var(--space-4);
+  --nav-height:        64px;
+  --window-height:     calc(100vh - var(--nav-height));
 
   // Derived column widths at the desktop tier.
   //
@@ -169,20 +181,35 @@
   --palette--primary-grey:        var(--color-bg);
   --palette--hover-grey:          var(--color-surface-3);
   --palette--secondary-grey:      var(--color-text-muted);
-  --palette--divider-color:       var(--color-border);
+  --palette--divider-color:       var(--color-primary-500);
   --palette--error:               var(--color-danger);
   --palette--primary-color-dark:  var(--color-primary-600);
   --palette--primary-color-light: var(--color-primary-300);
   --palette--accent-color:        var(--color-accent-lime);
 }
 
+// Tablet breakpoint — update responsive CSS custom properties on :root
+@media (min-width: 600px) {
+  :root {
+    --gutter:          var(--gutter-tablet);
+    --grid-gutter:     var(--gutter);
+    --grid-cols:       var(--grid-cols-tablet);
+    --card-padding:    var(--space-4);
+  }
+}
+
+// Desktop breakpoint — update responsive CSS custom properties on :root
 @media (min-width: 960px) {
   :root {
-    --fs-xl:  1.5rem;
-    --fs-2xl: 2rem;
-    --fs-3xl: 2.75rem;
-    --fs-4xl: 3.75rem;
-    --fs-5xl: 4.75rem;
+    --gutter:          var(--gutter-desktop);
+    --grid-gutter:     var(--gutter);
+    --grid-gap:        var(--grid-gap-desktop);
+    --grid-cols:       var(--grid-cols-desktop);
+    --fs-xl:           1.5rem;
+    --fs-2xl:          2rem;
+    --fs-3xl:          2.75rem;
+    --fs-4xl:          3.75rem;
+    --fs-5xl:          4.75rem;
   }
 }
 

@@ -2,7 +2,7 @@
 
 footer {
   padding: space(6) 0 space(3);
-  margin-top: $section-spacer;
+  margin-top: var(--section-spacer);
   color: var(--color-text-muted);
   background-color: var(--color-surface-1);
   border-top: 1px solid var(--color-divider);
@@ -21,6 +21,7 @@ footer {
     opacity: 0.9;
   }
 
+  .grid-container,
   .content,
   .container {
     display: flex;

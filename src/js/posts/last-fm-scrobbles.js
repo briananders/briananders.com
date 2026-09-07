@@ -3,7 +3,7 @@ const TrendsBarChart = require('../_modules/trends-bar-chart');
 require('../_components/album-listing').init();
 require('../_components/artist-listing').init();
 require('../_components/year-listing').init();
-require('../_components/scrobbles-last-updated').init();
+require('../_components/last-updated').init();
 
 const lastFmHistoryUrl = '/last-fm-history/';
 const imageUrl = `${lastFmHistoryUrl}images/`;
@@ -29,8 +29,8 @@ function formatNumber(number) {
   return number.toLocaleString();
 }
 
-function getImageUrl(name, extension) {
-  return `${imageUrl}${name}.${extension}`;
+function getImageUrl(name) {
+  return `${imageUrl}${name}`;
 }
 
 function getData(fileName, callback, { _cacheBusted = false } = {}) {
@@ -529,7 +529,7 @@ function renderReport(fileName) {
       artistElement.innerHTML = artist.name;
       artistElement.setAttribute('name', artist.name);
       artistElement.setAttribute('count', artist.count);
-      artistElement.setAttribute('img', getImageUrl(artist.image, 'jpg'));
+      artistElement.setAttribute('img', getImageUrl(artist.image));
       artistElement.setAttribute('max', artistMax);
 
       artistsContainer.appendChild(artistElement);
@@ -546,7 +546,7 @@ function renderReport(fileName) {
       albumElement.setAttribute('artist', album.artist);
       albumElement.setAttribute('count', album.count);
       albumElement.setAttribute('max', albumMax);
-      albumElement.setAttribute('img', getImageUrl(album.albumImage, 'jpg'));
+      albumElement.setAttribute('img', getImageUrl(album.albumImage));
 
       albumsContainer.appendChild(albumElement);
     });

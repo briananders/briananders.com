@@ -128,9 +128,17 @@
   --grid-gap-mobile:   var(--space-3);   /* 12 */
   --grid-gap-desktop:  var(--space-4);   /* 16 */
   --gutter-mobile:     var(--space-4);   /* 16 */
+  --gutter-tablet:     var(--space-6);   /* 24 */
   --gutter-desktop:    var(--space-8);   /* 32 */
   --content-max:       1200px;
-  --reading-max:       68ch;
+  --reading-max:       752px;            /* 8 columns */
+
+  /* Responsive layout values (mobile defaults) */
+  --gutter:            var(--gutter-mobile);
+  --grid-gutter:       var(--gutter);
+  --grid-gap:          var(--grid-gap-mobile);
+  --grid-cols:         var(--grid-cols-mobile);
+  --card-padding:      var(--space-4);
 
   /* Motion */
   --dur-1: 120ms;
@@ -147,14 +155,27 @@
   --z-toast:  1000;
 }
 
-/* Type scale — grows at desktop breakpoint */
+/* Tablet breakpoint — update responsive CSS custom properties on :root */
+@media (min-width: 600px) {
+  :root {
+    --gutter:          var(--gutter-tablet);
+    --grid-gutter:     var(--gutter);
+    --grid-cols:       var(--grid-cols-tablet);
+  }
+}
+
+/* Desktop breakpoint — update responsive CSS custom properties on :root */
 @media (min-width: 960px) {
   :root {
-    --fs-xl:  1.5rem;    /* 24 */
-    --fs-2xl: 2rem;      /* 32 */
-    --fs-3xl: 2.75rem;   /* 44 */
-    --fs-4xl: 3.75rem;   /* 60 */
-    --fs-5xl: 4.75rem;   /* 76 */
+    --gutter:          var(--gutter-desktop);
+    --grid-gutter:     var(--gutter);
+    --grid-gap:        var(--grid-gap-desktop);
+    --grid-cols:       var(--grid-cols-desktop);
+    --fs-xl:           1.5rem;    /* 24 */
+    --fs-2xl:          2rem;      /* 32 */
+    --fs-3xl:          2.75rem;   /* 44 */
+    --fs-4xl:          3.75rem;   /* 60 */
+    --fs-5xl:          4.75rem;   /* 76 */
   }
 }
 
@@ -221,22 +242,22 @@ hr {
 }
 
 /* --- 4. Grid & layout --------------------------------------------------- */
+.grid-container,
 .container {
   width: 100%;
   max-width: var(--content-max);
   margin: 0 auto;
-  padding: 0 var(--gutter-mobile);
+  padding-left: var(--gutter);
+  padding-right: var(--gutter);
 }
-@media (min-width: 600px)  { .container { padding: 0 var(--space-6); } }
-@media (min-width: 960px)  { .container { padding: 0 var(--gutter-desktop); } }
 
 .grid {
   display: grid;
   grid-template-columns: repeat(var(--grid-cols-mobile), minmax(0, 1fr));
-  gap: var(--grid-gap-mobile);
+  gap: var(--grid-gap);
 }
 @media (min-width: 600px) { .grid { grid-template-columns: repeat(var(--grid-cols-tablet), minmax(0, 1fr)); } }
-@media (min-width: 960px) { .grid { grid-template-columns: repeat(var(--grid-cols-desktop), minmax(0, 1fr)); gap: var(--grid-gap-desktop); } }
+@media (min-width: 960px) { .grid { grid-template-columns: repeat(var(--grid-cols-desktop), minmax(0, 1fr)); } }
 
 /* Column-span utilities — mobile-first */
 .col-1 { grid-column: span 1; } .col-2 { grid-column: span 2; }

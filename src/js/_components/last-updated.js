@@ -1,4 +1,4 @@
-const scrobblesLastUpdatedStyles = require('./scrobbles-last-updated.scss');
+const scrobblesLastUpdatedStyles = require('./last-updated.scss');
 
 const template = `
   <style>${scrobblesLastUpdatedStyles}</style>
@@ -91,5 +91,5 @@ class ScrobblesLastUpdated extends HTMLElement {
 }
 
 module.exports.init = () => {
-  customElements.define('scrobbles-last-updated', ScrobblesLastUpdated);
+  customElements.define('last-updated', ScrobblesLastUpdated);
 };

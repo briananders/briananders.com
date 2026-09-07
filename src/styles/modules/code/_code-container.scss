@@ -22,11 +22,11 @@
 
   &::before {
     left: 0px;
-    background: linear-gradient(to left, rgba($palette--primary-grey, 0), rgba($palette--primary-grey, 1));
+    background: linear-gradient(to left, transparent, var(--color-bg));
   }
 
   &::after {
     right: 0px;
-    background: linear-gradient(to right, rgba($palette--primary-grey, 0), rgba($palette--primary-grey, 1));
+    background: linear-gradient(to right, transparent, var(--color-bg));
   }
 }

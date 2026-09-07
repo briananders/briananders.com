@@ -1,16 +1,13 @@
 const { dasherize } = require('underscore.string');
 
+const apiImage = require('./api-image');
 const albumListingStyles = require('./album-listing.scss');
 
 const albumTemplate = `
   <style>${albumListingStyles}</style>
 
   <a href="#" itemprop="url" rel="noopener" target="blank">
-    <picture>
-      <source data-format="avif" type="image/avif" />
-      <source data-format="webp" type="image/webp" />
-      <img src="" alt="" />
-    </picture>
+    <api-image></api-image>
     <span class="info">
       <slot>Loading Album Name...</slot>
       <div slot="artist">Loading Artist Name...</div>
@@ -60,23 +57,16 @@ class AlbumListing extends HTMLElement {
       const artistName = this.getAttribute('artist') || '';
       this.shadowRoot.querySelector('a').setAttribute('href', `?trends=albums/${dasherize(artistName.trim().toLowerCase())}/${dasherize(albumName.trim().toLowerCase())}`);
 
-      const imgElement = this.shadowRoot.querySelector('img');
-      imgElement.setAttribute('alt', `${albumName} album cover`);
+      const imageElement = this.shadowRoot.querySelector('api-image');
+      imageElement.setAttribute('alt', `${albumName} album cover`);
     }
     if (name === 'img') {
-      const imgElement = this.shadowRoot.querySelector('img');
-      const avifElement = this.shadowRoot.querySelector('[data-format="avif"]');
-      const webpElement = this.shadowRoot.querySelector('[data-format="webp"]');
+      const imageElement = this.shadowRoot.querySelector('api-image');
       if (!newValue) {
-        avifElement.removeAttribute('srcset');
-        webpElement.removeAttribute('srcset');
-        imgElement.removeAttribute('src');
+        imageElement.removeAttribute('src');
         return;
       }
-      const imageBase = newValue.replace(/\.(jpg|jpeg|png|webp|avif)([?#].*)?$/, '');
-      avifElement.setAttribute('srcset', `${imageBase}.avif`);
-      webpElement.setAttribute('srcset', `${imageBase}.webp`);
-      imgElement.setAttribute('src', newValue);
+      imageElement.setAttribute('src', newValue);
     }
   }
 
@@ -90,5 +80,6 @@ class AlbumListing extends HTMLElement {
 }
 
 module.exports.init = () => {
+  apiImage.init();
   customElements.define('album-listing', AlbumListing);
 };

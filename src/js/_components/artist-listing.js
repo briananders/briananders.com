@@ -1,21 +1,18 @@
 const { dasherize } = require('underscore.string');
 
+const apiImage = require('./api-image');
 const artistListingStyles = require('./artist-listing.scss');
 
 const artistTemplate = `
   <style>${artistListingStyles}</style>
 
   <a href="#" itemprop="url" rel="noopener" target="blank">
+    <api-image></api-image>
     <span class="info">
       <slot>Loading...</slot>
       <div><span slot="count">00</span> Plays</div>
       <div id="bar" style="--length: 100%"></div>
     </span>
-    <picture>
-      <source data-format="avif" type="image/avif" />
-      <source data-format="webp" type="image/webp" />
-      <img src="" alt="" />
-    </picture>
   </a>
 `;
 
@@ -49,25 +46,18 @@ class ArtistListing extends HTMLElement {
       this.shadowRoot.getElementById('bar').style.width = `${length}%`;
     }
     if (name === 'name') {
-      const imgElement = this.shadowRoot.querySelector('img');
+      const imageElement = this.shadowRoot.querySelector('api-image');
       const artistName = newValue || '';
-      imgElement.setAttribute('alt', artistName);
+      imageElement.setAttribute('alt', artistName);
       this.shadowRoot.querySelector('a').setAttribute('href', `?trends=artists/${dasherize(artistName.trim().toLowerCase())}`);
     }
     if (name === 'img') {
-      const imgElement = this.shadowRoot.querySelector('img');
-      const avifElement = this.shadowRoot.querySelector('[data-format="avif"]');
-      const webpElement = this.shadowRoot.querySelector('[data-format="webp"]');
+      const imageElement = this.shadowRoot.querySelector('api-image');
       if (!newValue) {
-        avifElement.removeAttribute('srcset');
-        webpElement.removeAttribute('srcset');
-        imgElement.removeAttribute('src');
+        imageElement.removeAttribute('src');
         return;
       }
-      const imageBase = newValue.replace(/\.(jpg|jpeg|png|webp|avif)([?#].*)?$/, '');
-      avifElement.setAttribute('srcset', `${imageBase}.avif`);
-      webpElement.setAttribute('srcset', `${imageBase}.webp`);
-      imgElement.setAttribute('src', newValue);
+      imageElement.setAttribute('src', newValue);
     }
   }
 
@@ -81,5 +71,6 @@ class ArtistListing extends HTMLElement {
 }
 
 module.exports.init = () => {
+  apiImage.init();
   customElements.define('artist-listing', ArtistListing);
 };

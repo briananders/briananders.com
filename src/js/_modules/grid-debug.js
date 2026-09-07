@@ -201,6 +201,7 @@ module.exports.init = () => {
     }
     active = !active;
     overlay.dataset.active = String(active);
+    overlay.setAttribute('aria-hidden', String(!active));
     label.textContent = currentTier();
   };
 

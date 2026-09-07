@@ -1,10 +1,4 @@
-const handlebars = require('handlebars');
-
-const lazyLoader = require('../lazy-loader');
-// const { log } = require('../log');
-
 const config = require('./config');
-const template = require('./template');
 
 let period = '30day'; // default
 const rawCache = {};
@@ -37,13 +31,9 @@ module.exports = {
       const url = getURL();
       const rawData = rawCache[url];
       const items = serialize(rawData);
-      const handlebarsData = { ...opts, items };
 
-      const compiledHandlebars = handlebars.compile(template);
-      const outputHTML = compiledHandlebars(handlebarsData);
-      containerElement.innerHTML = outputHTML;
-
-      lazyLoader.init('.last-fm-module');
+      containerElement.innerHTML = '';
+      opts.renderItems(items, containerElement);
     }
 
     function serialize(data) {
@@ -53,16 +43,11 @@ module.exports = {
       const items = opts.customSerialize(dataWithDefault);
       const maxPlayCount = Math.max(...items.map((item) => Number(item.playcount || 0)));
       items.forEach((item) => {
-        if (item.imageSrc) {
-          const imageBase = item.imageSrc.replace(/\.[^.]+$/, '');
-          item.imageAvif = `${imageBase}.avif`;
-          item.imageWebp = `${imageBase}.webp`;
-        }
         const playCount = Number(item.playcount || 0);
         item.percent = maxPlayCount > 0 ? (playCount / maxPlayCount) * 100 : 0;
+        item.max = maxPlayCount;
       });
-      const shortenedItem = items.filter((item, index) => index < opts.count);
-      return shortenedItem;
+      return items.filter((item, index) => index < opts.count);
     }
 
     function getData() {
@@ -78,7 +63,6 @@ module.exports = {
 
         request.onload = () => {
           if (request.status >= 200 && request.status < 400) {
-            // Success!
             try {
               const data = JSON.parse(request.response);
               rawCache[url] = data;
@@ -91,15 +75,10 @@ module.exports = {
               console.error(`Failed to parse response from ${url}:`, err);
               delete pendingRequests[url];
             }
-          } else {
-            // We reached our target server, but it returned an error
-            // log(`${url} returned ${request.status}`);
           }
         };
 
-        request.onerror = () => {
-          // There was a connection error of some sort
-        };
+        request.onerror = () => {};
 
         request.send();
       }

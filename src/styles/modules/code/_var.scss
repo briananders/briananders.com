@@ -3,9 +3,9 @@
 var {
   font-family: courier;
   display: inline-block;
-  border: 1px solid $palette--secondary-grey;
-  border-radius: 4px;
+  border: 1px solid var(--color-text-muted);
+  border-radius: var(--radius-xs);
   padding: 0 0.5rem;
   background-color: transparent;
-  color: $palette--primary-white;
+  color: var(--color-text);
 }

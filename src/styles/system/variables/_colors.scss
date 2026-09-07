@@ -12,29 +12,28 @@
 $color--white: #ffffff;
 $color--black: #000000;
 
-// The Banders dark ramp — mirrors the CSS custom properties in `_tokens.scss`
-// so per-post SCSS can still reference the SCSS syntax if it wants.
-$color--ink:          #0B0D10; // page canvas
-$color--ink-surface:  #12161C;
-$color--ink-raised:   #1A2029;
-$color--ink-hover:    #232B36;
-$color--ink-border:   #2A3341;
-$color--ink-strong:   #3A4657;
-$color--text:         #F2F5F8;
-$color--text-muted:   #CBD5E1;
-$color--text-subtle:  #6C7784;
+// Dark surface ramp — restored to the original grey scale.
+$color--ink:          #212121; // page canvas (was grey-900)
+$color--ink-surface:  #2D2D2D;
+$color--ink-raised:   #424242; // was grey-800
+$color--ink-hover:    #616161; // was grey-700
+$color--ink-border:   #757575; // was grey-600
+$color--ink-strong:   #9E9E9E; // was grey-500
+$color--text:         #FFFFFF; // pure white
+$color--text-muted:   #BDBDBD; // was grey-400
+$color--text-subtle:  #757575; // was grey-600
 
-// Brand ramp — orange
-$color--primary-50:   #FFE9D6;
-$color--primary-100:  #FFC79B;
-$color--primary-300:  #FF9955;
-$color--primary-500:  #F97316;
-$color--primary-600:  #E85D0F;
-$color--primary-700:  #B24408;
+// Brand ramp — orange/amber (primary-500 restored to old yellow-900)
+$color--primary-50:   #FFF3E0;
+$color--primary-100:  #FFE0B2;
+$color--primary-300:  #FFA726; // orange-400
+$color--primary-500:  #F57F17; // yellow-900 — the original primary
+$color--primary-600:  #E65100; // orange-900
+$color--primary-700:  #BF360C; // deep-orange-900
 
 // Accents
 $color--accent-teal:  #22D3EE;
-$color--accent-lime:  #A3E635;
+$color--accent-lime:  #69F0AE; // restored to old green-a200
 $color--accent-plum:  #C084FC;
 
 // Semantic

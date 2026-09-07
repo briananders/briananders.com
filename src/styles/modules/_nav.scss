@@ -7,13 +7,6 @@
 // footer.
 // -----------------------------------------------------------------------------
 
-$nav-height: 64px;
-
-html {
-  --nav-height: #{$nav-height};
-  --window-height: calc(100vh - #{$nav-height});
-}
-
 #nav-overlay {
   width: 100%;
   height: 100%;
@@ -60,13 +53,14 @@ nav.main {
   a:visited,
   button { padding: 0; }
 
+  .grid-container,
   .content,
   .container {
     overflow: visible;
     align-items: center;
     display: flex;
     justify-content: space-between;
-    min-height: $nav-height;
+    min-height: var(--nav-height);
   }
 
   .menu {

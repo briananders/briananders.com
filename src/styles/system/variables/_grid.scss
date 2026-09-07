@@ -6,11 +6,14 @@
 @use "viewports" as *;
 @use "sass:math";
 
-$grid--gutter:            space(3);   // 18px — used for content padding
-$grid--gutter-mobile:     space(2);   // 12px on very small viewports
+$grid--gutter-mobile:     space(2);   // 12px on mobile
+$grid--gutter-tablet:     space(4);   // 24px on tablet
+$grid--gutter-desktop:    space(6);   // 36px on desktop
+$grid--gutter:            space(3);   // 18px legacy alias
 $grid--gap:               space(2);   // 12px — column gap on mobile
 $grid--gap-desktop:       space(3);   // 18px — column gap on desktop
-$grid--tablet-break-point: $medium;   // switch 4 → 8 cols
-$grid--start-break-point: $large;     // switch 8 → 12 cols
+$grid--tablet-break-point: $medium;   // switch 4 → 8 cols (600px)
+$grid--start-break-point: $large;     // switch 8 → 12 cols (960px)
 $grid--max-width:         1200px;
-$grid--copy-max-width:    math.div($grid--max-width, 2);
+// Max reading width capped at 8 columns in the 12-column grid (800px).
+$grid--copy-max-width:    math.div($grid--max-width * 8, 12);
