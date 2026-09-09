@@ -7,6 +7,7 @@
 
 .rating-selector {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   gap: space(2);
   margin-bottom: space(2);
@@ -40,9 +41,12 @@
   @include grid($no-padding: true);
   gap: space(3);
   justify-content: center;
-  width: min(100%, $content-max-width);
-  margin-left: auto;
-  margin-right: auto;
+  @include grid-container;
+
+  @include mq-max($large) {
+    display: flex;
+    flex-wrap: wrap;
+  }
 
   @include mq($medium) {
     justify-content: flex-start;
@@ -54,6 +58,7 @@ a.movie {
   display: flex;
   flex-direction: column;
   gap: space(1);
+  max-width: var(--max-3-columns);
 
   img {
     display: block;

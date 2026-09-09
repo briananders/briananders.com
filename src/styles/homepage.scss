@@ -8,7 +8,6 @@ main.home {
   // Hero — sets the tone for the whole site.
   .hero {
     padding-top: space(8);
-    padding-bottom: space(8);
 
     .overline {
       font-family: var(--font-sans);
@@ -50,7 +49,6 @@ main.home {
 
     @include mq($large) {
       padding-top: space(16);
-      padding-bottom: space(12);
     }
   }
 
