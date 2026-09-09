@@ -4,12 +4,20 @@ require('../_components/last-updated').init();
 require('../_components/album-listing').init();
 require('../_components/artist-listing').init();
 
+/**
+ * Initializes the Last.fm top artists and top albums API modules on DOM ready.
+ */
 ready.document(() => {
   itemApi.init({
     count: 10,
-    description: true,
-    method: 'user.gettopartists',
     scope: '.last-fm-module[data-type=artists]',
+    /**
+     * Serializes artist response data into normalized item objects.
+     *
+     * @param {Object} data - Raw artist data object.
+     * @param {Array<Object>} [data.artists] - List of artist objects.
+     * @returns {Array<Object>} Normalized list of artist view objects.
+     */
     customSerialize(data) {
       if (!data || !data.artists) return [];
       return data.artists.map((item) => {
@@ -23,6 +31,12 @@ ready.document(() => {
         };
       }).filter(Boolean);
     },
+    /**
+     * Renders artist list elements into the specified container.
+     *
+     * @param {Array<Object>} items - Serialized artist objects.
+     * @param {HTMLElement} container - DOM element to receive artist-listing tags.
+     */
     renderItems(items, container) {
       items.forEach((item) => {
         const el = document.createElement('artist-listing');
@@ -38,9 +52,15 @@ ready.document(() => {
 
   itemApi.init({
     count: 10,
-    description: true,
-    method: 'user.gettopalbums',
     scope: '.last-fm-module[data-type=albums]',
+    /**
+     * Serializes album response data into normalized item objects.
+     *
+     * @param {Object} data - Raw album data object.
+     * @param {Array<Object>} [data.albums] - List of album objects.
+     * @param {string} [data.defaultImage] - Fallback image path.
+     * @returns {Array<Object>} Normalized list of album view objects.
+     */
     customSerialize(data) {
       if (!data || !data.albums) return [];
       return data.albums.map((item) => {
@@ -56,6 +76,12 @@ ready.document(() => {
         };
       }).filter(Boolean);
     },
+    /**
+     * Renders album list elements into the specified container.
+     *
+     * @param {Array<Object>} items - Serialized album objects.
+     * @param {HTMLElement} container - DOM element to receive album-listing tags.
+     */
     renderItems(items, container) {
       items.forEach((item) => {
         const el = document.createElement('album-listing');

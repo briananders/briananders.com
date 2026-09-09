@@ -19,6 +19,8 @@ const STYLE_ID = 'grid-debug-overlay-styles';
  * The container is a single-row grid so the columns run from top to bottom
  * of the viewport; columns beyond the current tier's count are hidden via
  * media queries.
+ *
+ * @returns {void}
  */
 function injectStyles() {
   if (document.getElementById(STYLE_ID)) return;
@@ -98,6 +100,8 @@ function injectStyles() {
 /**
  * Build the overlay element with 12 columns; the extras are hidden by CSS at
  * smaller breakpoints.
+ *
+ * @returns {{ overlay: HTMLElement, label: HTMLElement }} An object containing the overlay element and its label.
  */
 function buildOverlay() {
   const overlay = document.createElement('div');
@@ -122,6 +126,8 @@ function buildOverlay() {
 
 /**
  * Return the current grid tier as a string based on the viewport width.
+ *
+ * @returns {string} The description of the column count and breakpoint tier.
  */
 function currentTier() {
   const w = window.innerWidth;
@@ -181,11 +187,22 @@ function isGridKey(evt) {
   return false;
 }
 
+/**
+ * Initializes the grid debugging overlay module, setting up keyboard listeners
+ * and checking URL search parameters to activate if requested.
+ *
+ * @returns {void}
+ */
 module.exports.init = () => {
   let overlay;
   let label;
   let active = false;
 
+  /**
+   * Toggles the active state of the grid overlay, injecting styles and DOM if necessary.
+   *
+   * @returns {void}
+   */
   const toggle = () => {
     if (!overlay) {
       injectStyles();
@@ -205,6 +222,12 @@ module.exports.init = () => {
     label.textContent = currentTier();
   };
 
+  /**
+   * Handles keydown events to toggle the grid overlay when shortcut criteria are met.
+   *
+   * @param {KeyboardEvent} evt - The keydown event object.
+   * @returns {void}
+   */
   const handleKeydown = (evt) => {
     if (!isGridKey(evt)) {
       return;
@@ -220,6 +243,8 @@ module.exports.init = () => {
   /**
    * Checks for the "grid" query parameter in the URL.
    * If present and not explicitly set to "false" or "0", automatically activate the overlay.
+   *
+   * @returns {void}
    */
   const checkQueryParameter = () => {
     const urlParams = new URLSearchParams(window.location.search);

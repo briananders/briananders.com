@@ -18,21 +18,49 @@ const artistTemplate = `
 
 const attributes = ['name', 'count', 'max', 'img'];
 
+/**
+ * Formats a number with locale-specific thousand separators.
+ *
+ * @param {number|string} number - The numeric value to format.
+ * @returns {string} Formatted number string.
+ */
 function formatNumber(number) {
   return Number(number).toLocaleString();
 }
 
+/**
+ * Custom Web Component for displaying artist listing items with relative play count bars and image artwork.
+ *
+ * @class ArtistListing
+ * @extends {HTMLElement}
+ */
 class ArtistListing extends HTMLElement {
+  /**
+   * Initializes the ArtistListing component and attaches the shadow DOM.
+   */
   constructor() {
     super();
     const shadow = this.attachShadow({ mode: 'open' });
     shadow.innerHTML = artistTemplate;
   }
 
+  /**
+   * Returns list of observed attributes to monitor for changes.
+   *
+   * @static
+   * @returns {string[]} Array of attribute names.
+   */
   static get observedAttributes() {
     return attributes;
   }
 
+  /**
+   * Handles lifecycle updates when an observed attribute changes.
+   *
+   * @param {string} name - The attribute name.
+   * @param {string|null} oldValue - The prior value.
+   * @param {string|null} newValue - The updated value.
+   */
   attributeChangedCallback(name, oldValue, newValue) {
     // console.log(name, oldValue, newValue);
     if (['count'].includes(name)) {
@@ -70,6 +98,9 @@ class ArtistListing extends HTMLElement {
   // }
 }
 
+/**
+ * Registers the <artist-listing> custom element and initializes dependency components.
+ */
 module.exports.init = () => {
   apiImage.init();
   customElements.define('artist-listing', ArtistListing);
