@@ -1,3 +1,9 @@
+/**
+ * @fileoverview Configuration constants for the Ant Life Simulator.
+ * Defines entity types, initial population counts, reproduction rates,
+ * starvation thresholds, and animation timing.
+ */
+
 const ANT = 'ant';
 const ANT_EATER = 'anteater';
 

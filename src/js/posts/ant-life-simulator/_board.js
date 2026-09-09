@@ -11,6 +11,11 @@ const {
   DELAY,
 } = require('./_constants');
 
+/**
+ * Manages the simulation grid, creature movement, reproduction, predation, and rendering.
+ *
+ * @class Board
+ */
 class Board {
   /*
     Private variables
@@ -30,6 +35,13 @@ class Board {
   /*
     Constructor
   */
+  /**
+   * Initializes the simulation board with given dimensions, generates cell DOM elements,
+   * and seeds initial ant and ant eater populations.
+   *
+   * @param {HTMLElement} element - The container DOM element for the grid.
+   * @param {number} size - The width and height of the grid in number of cells.
+   */
   constructor(element, size) {
     // Set up
     this.#element = element;
@@ -63,6 +75,11 @@ class Board {
   /*
     Private functions
   */
+  /**
+   * Maps existing child elements in container to corresponding grid positions in board matrix.
+   *
+   * @private
+   */
   #mapElementsToBoard() {
     Array.from(this.#element.children).forEach((childElement) => {
       const x = Number(childElement.dataset.x);
@@ -72,6 +89,11 @@ class Board {
     });
   }
 
+  /**
+   * Randomly populates the grid with initial ant population.
+   *
+   * @private
+   */
   #initializeAnts() {
     let antsToPlace = STARTING_ANT_COUNT;
 
@@ -86,6 +108,11 @@ class Board {
     }
   }
 
+  /**
+   * Randomly populates the grid with initial ant eater population.
+   *
+   * @private
+   */
   #initializeAntEaters() {
     let antEatersToPlace = STARTING_ANT_EATER_COUNT;
 
@@ -100,6 +127,14 @@ class Board {
     }
   }
 
+  /**
+   * Relocates a creature from a source cell to a target cell.
+   *
+   * @private
+   * @param {[number, number]} param0 - Source coordinate [x, y].
+   * @param {[number, number]} param1 - Destination coordinate [newX, newY].
+   * @param {string} type - Creature type identifier.
+   */
   #moveFromTo([x, y], [newX, newY], type) {
     const oldCell = this.#getCell(x, y);
     const newCell = this.#getCell(newX, newY);
@@ -108,27 +143,70 @@ class Board {
     newCell.value = type;
   }
 
+  /**
+   * Moves creature at (x, y) one cell to the left if destination is in bounds and empty.
+   *
+   * @private
+   * @param {number} x - Current X coordinate.
+   * @param {number} y - Current Y coordinate.
+   * @param {string} type - Creature type identifier.
+   */
   #moveLeft(x, y, type) {
     if (x - 1 >= 0 && this.#getCell(x - 1, y).isEmpty()) {
       this.#moveFromTo([x, y], [x - 1, y], type);
     }
   }
+
+  /**
+   * Moves creature at (x, y) one cell to the right if destination is in bounds and empty.
+   *
+   * @private
+   * @param {number} x - Current X coordinate.
+   * @param {number} y - Current Y coordinate.
+   * @param {string} type - Creature type identifier.
+   */
   #moveRight(x, y, type) {
     if (x + 1 < this.width && this.#getCell(x + 1, y).isEmpty()) {
       this.#moveFromTo([x, y], [x + 1, y], type);
     }
   }
+
+  /**
+   * Moves creature at (x, y) one cell down if destination is in bounds and empty.
+   *
+   * @private
+   * @param {number} x - Current X coordinate.
+   * @param {number} y - Current Y coordinate.
+   * @param {string} type - Creature type identifier.
+   */
   #moveDown(x, y, type) {
     if (y - 1 >= 0 && this.#getCell(x, y - 1).isEmpty()) {
       this.#moveFromTo([x, y], [x, y - 1], type);
     }
   }
+
+  /**
+   * Moves creature at (x, y) one cell up if destination is in bounds and empty.
+   *
+   * @private
+   * @param {number} x - Current X coordinate.
+   * @param {number} y - Current Y coordinate.
+   * @param {string} type - Creature type identifier.
+   */
   #moveUp(x, y, type) {
     if (y + 1 < this.height && this.#getCell(x, y + 1).isEmpty()) {
       this.#moveFromTo([x, y], [x, y + 1], type);
     }
   }
 
+  /**
+   * Returns all valid adjacent neighbor cells surrounding coordinate (x, y) in the grid.
+   *
+   * @private
+   * @param {number} x - X coordinate.
+   * @param {number} y - Y coordinate.
+   * @returns {Cell[]} Array of surrounding Cell instances.
+   */
   #getSurroundingCells(x, y) {
     const returnArray = [];
     for (let i = -1; i < 2; i++) {
@@ -145,6 +223,12 @@ class Board {
     return returnArray;
   }
 
+  /**
+   * Executes reproduction step for ants. When adjacent to another ant and an empty space exists,
+   * spawns new ant based on probability rate.
+   *
+   * @private
+   */
   #multiplyAnts() {
     const ants = this.#getAnts();
     ants.forEach((ant) => {
@@ -166,6 +250,12 @@ class Board {
     });
   }
 
+  /**
+   * Executes reproduction step for ant eaters. When adjacent to another ant eater and an empty space exists,
+   * spawns new ant eater based on probability rate.
+   *
+   * @private
+   */
   #multiplyAntEaters() {
     const antEaters = this.#getAntEaters();
     antEaters.forEach((antEater) => {
@@ -187,6 +277,11 @@ class Board {
     });
   }
 
+  /**
+   * Moves each ant randomly in one of 4 cardinal directions.
+   *
+   * @private
+   */
   #moveAnts() {
     const ants = this.#getAnts();
     ants.forEach((ant) => {
@@ -208,6 +303,11 @@ class Board {
     });
   }
 
+  /**
+   * Causes ant eaters to consume adjacent ants and resets/increments hunger counters.
+   *
+   * @private
+   */
   #eatAnts() {
     const antEaters = this.#getAntEaters();
     antEaters.forEach((eater) => {
@@ -225,6 +325,11 @@ class Board {
     });
   }
 
+  /**
+   * Kills ant eaters that are swarmed by ants or have starved past the hunger threshold.
+   *
+   * @private
+   */
   #killAntEaters() {
     const antEaters = this.#getAntEaters();
     antEaters.forEach((eater) => {
@@ -251,6 +356,11 @@ class Board {
     });
   }
 
+  /**
+   * Moves each ant eater randomly in one of 4 cardinal directions.
+   *
+   * @private
+   */
   #moveAntEaters() {
     const antEaters = this.#getAntEaters();
     antEaters.forEach((antEater) => {
@@ -272,14 +382,44 @@ class Board {
     });
   }
 
+  /**
+   * Retrieves the Cell instance at grid coordinate (x, y).
+   *
+   * @private
+   * @param {number} x - X coordinate.
+   * @param {number} y - Y coordinate.
+   * @returns {Cell} Cell instance at (x, y).
+   */
   #getCell(x, y) { return this.#board[Number(x)][Number(y)]; }
 
+  /**
+   * Checks whether the cell at coordinate (x, y) is empty.
+   *
+   * @private
+   * @param {number} x - X coordinate.
+   * @param {number} y - Y coordinate.
+   * @returns {boolean} True if cell has no occupant, false otherwise.
+   */
   #cellIsEmpty(x, y) { return this.#getCell(Number(x), Number(y)).isEmpty(); }
 
+  /**
+   * Sets the occupant value of the cell at coordinate (x, y).
+   *
+   * @private
+   * @param {number} x - X coordinate.
+   * @param {number} y - Y coordinate.
+   * @param {string|undefined} value - Creature identifier or undefined.
+   */
   #setCell(x, y, value) {
     this.#getCell(Number(x), Number(y)).value = value;
   }
 
+  /**
+   * Collects all cells on the board currently occupied by ants.
+   *
+   * @private
+   * @returns {Cell[]} Array of ant cell instances.
+   */
   #getAnts() {
     const ants = [];
 
@@ -292,6 +432,12 @@ class Board {
     return ants;
   }
 
+  /**
+   * Collects all cells on the board currently occupied by ant eaters.
+   *
+   * @private
+   * @returns {Cell[]} Array of ant eater cell instances.
+   */
   #getAntEaters() {
     const antEaters = [];
 
@@ -304,6 +450,11 @@ class Board {
     return antEaters;
   }
 
+  /**
+   * Dispatches an 'end' event on the board element if either species population drops to 0.
+   *
+   * @private
+   */
   #checkForEnd() {
     const { antsCount, antEatersCount } = this.getScores();
     if (antsCount === 0 || antEatersCount === 0) {
@@ -316,6 +467,11 @@ class Board {
     Public functions
   */
 
+  /**
+   * Retrieves current simulation statistics and population counts.
+   *
+   * @returns {{antsCount: number, antEatersCount: number, antsEaten: number, antEatersEaten: number, antEatersKilled: number}} Current score snapshot.
+   */
   getScores() {
     return {
       antsCount: this.#getAnts().length,
@@ -326,6 +482,15 @@ class Board {
     };
   }
 
+  /**
+   * Executes a full simulation cycle through staggered timed phases:
+   * 1. Move ants
+   * 2. Move ant eaters
+   * 3. Kill starving/swarmed ant eaters
+   * 4. Ant eaters eat ants
+   * 5. Multiply ant eaters
+   * 6. Multiply ants
+   */
   move() {
     let index = 0;
 
@@ -378,6 +543,9 @@ class Board {
     this.#checkForEnd();
   }
 
+  /**
+   * Renders each cell on the board to reflect its current state in the DOM.
+   */
   render() {
     this.#board.forEach((row) => {
       row.forEach((cell) => {
@@ -386,6 +554,9 @@ class Board {
     });
   }
 
+  /**
+   * Clears the board DOM content and resets internal references.
+   */
   destroy() {
     this.#element.innerHTML = '';
     this.#board = undefined;

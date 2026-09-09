@@ -16,6 +16,12 @@ ready.document(() => {
 
   const FILL_STYLE = '#ffffff';
 
+  /**
+   * Converts degrees into radians.
+   *
+   * @param {number} [deg=0] - Angle in degrees.
+   * @returns {number} Angle in radians.
+   */
   function degreesToRadians(deg = 0) {
     return (deg * (2 * Math.PI)) / 360;
   }
@@ -24,18 +30,39 @@ ready.document(() => {
   //   return (radians * 360) / (2 * Math.PI);
   // }
 
+  /**
+   * Clears the full canvas drawing surface.
+   *
+   * @returns {void}
+   */
   function clearCanvas() {
     canvasContext.clearRect(0, 0, canvas.width, canvas.height);
   }
 
+  /**
+   * Computes the vertical scroll offset needed to center the canvas on screen.
+   *
+   * @returns {number} Y scroll offset in pixels.
+   */
   function scrollValue() {
     return window.pageYOffset + canvas.getBoundingClientRect().top - 80;
   }
 
+  /**
+   * Smoothly scrolls the window to the canvas position.
+   *
+   * @returns {void}
+   */
   function scroll() {
     scrollTo(scrollValue(), { easing: 'easeInOutQuint', duration: 350 });
   }
 
+  /**
+   * Computes the [x, y] coordinates of n equally spaced points on the circumference of a circle.
+   *
+   * @param {number} n - Number of vertices on the outer circle.
+   * @returns {Array<[number, number]>} Array of [x, y] vertex coordinate pairs.
+   */
   function getStarPoints(n) {
     const points = [];
     const r = canvas.width / 2;
@@ -60,6 +87,13 @@ ready.document(() => {
     return points;
   }
 
+  /**
+   * Generates the ordered vertex coordinates connecting points at intervals of `step`.
+   *
+   * @param {number} n - Total number of vertices.
+   * @param {number} step - Step stride between connected vertices.
+   * @returns {Array<[number, number]>} Ordered list of vertex coordinates forming the star polygon path.
+   */
   function getOrderedPoints(n, step) {
     const points = getStarPoints(n);
     const star = new Array(n).fill(0);
@@ -77,11 +111,24 @@ ready.document(() => {
     return orderedPoints;
   }
 
+  /**
+   * Animates drawing the connected star lines on the canvas one segment at a time.
+   *
+   * @param {number} n - Number of vertices.
+   * @param {number} step - Step interval for connecting vertices.
+   * @returns {void}
+   */
   function drawStar(n, step) {
     log(`drawStar(${n}, ${step})`);
     const points = getOrderedPoints(n, step);
     let i = 1;
 
+    /**
+     * Draws a line segment between points indexed at a and b.
+     *
+     * @param {number} a - Starting point index.
+     * @param {number} b - Ending point index.
+     */
     function drawLine(a, b) {
       const [xa, ya] = points[a];
       const [xb, yb] = points[b];
@@ -96,6 +143,9 @@ ready.document(() => {
 
     clearCanvas();
 
+    /**
+     * Animation frame handler that incrementally renders each star segment.
+     */
     function drawLines() {
       const [cn, cstep] = currentConfig;
       if (i < points.length && cn === n && cstep === step) {
@@ -108,6 +158,13 @@ ready.document(() => {
     drawLines();
   }
 
+  /**
+   * Tests whether connecting vertices with a step stride visits all vertices (forming a full star polygon).
+   *
+   * @param {number} length - Number of vertices (n).
+   * @param {number} step - Step size between connected vertices.
+   * @returns {boolean} True if all vertices are visited without premature closure.
+   */
   function calculateStars(length, step) {
     let index = 0;
     const star = new Array(length).fill(0);
@@ -118,6 +175,11 @@ ready.document(() => {
     return !star.includes(0);
   }
 
+  /**
+   * Evaluates valid star configurations for the current N value, updates UI, and triggers rendering.
+   *
+   * @returns {void}
+   */
   function go() {
     const n = Number(nInput.value);
 
@@ -162,6 +224,11 @@ ready.document(() => {
     }
   }
 
+  /**
+   * Registers event listeners for input changes and increment/decrement button clicks.
+   *
+   * @returns {void}
+   */
   function addEventListeners() {
     nInput.addEventListener('change', go);
     arrows.forEach((arrow) => {
@@ -177,6 +244,11 @@ ready.document(() => {
     });
   }
 
+  /**
+   * Reads URL hash parameters to restore saved star configuration if provided.
+   *
+   * @returns {void}
+   */
   function checkHash() {
     const { hash } = window.location;
     if (hash.length) {

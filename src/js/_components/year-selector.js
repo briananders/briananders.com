@@ -77,7 +77,16 @@ yearTemplate.innerHTML = `
 </div>
 `;
 
+/**
+ * Custom Web Component that provides interactive year navigation via forward/back buttons and dropdown select.
+ *
+ * @class YearSelector
+ * @extends {HTMLElement}
+ */
 class YearSelector extends HTMLElement {
+  /**
+   * Initializes the YearSelector component, attaches template clone, and binds DOM element references.
+   */
   constructor() {
     super();
     const shadow = this.attachShadow({ mode: 'open' });
@@ -96,10 +105,23 @@ class YearSelector extends HTMLElement {
     this.update();
   }
 
+  /**
+   * Returns list of observed attributes to monitor for changes.
+   *
+   * @static
+   * @returns {string[]} Array of attribute names.
+   */
   static get observedAttributes() {
     return ['min', 'max', 'value'];
   }
 
+  /**
+   * Handles updates when an observed attribute changes, with debounce protection against re-entry loops.
+   *
+   * @param {string} name - The attribute name.
+   * @param {string|null} oldValue - The prior value.
+   * @param {string|null} newValue - The updated value.
+   */
   attributeChangedCallback(name, oldValue, newValue) {
     // console.log(name, oldValue, newValue);
 
@@ -120,6 +142,10 @@ class YearSelector extends HTMLElement {
   //   console.log('disconnected');
   // }
 
+  /**
+   * Synchronizes component state: enables/disables navigation buttons,
+   * updates HTML attributes, renders slot text, and emits 'change' event.
+   */
   update() {
     this.checkDisabled();
     this.debounceDate = Date.now();
@@ -130,16 +156,26 @@ class YearSelector extends HTMLElement {
     this.dispatchEvent(new Event('change'));
   }
 
+  /**
+   * Increments the selected year value by 1 and updates the component.
+   */
   next() {
     this.value++;
     this.update();
   }
 
+  /**
+   * Decrements the selected year value by 1 and updates the component.
+   */
   back() {
     this.value--;
     this.update();
   }
 
+  /**
+   * Disables next/back navigation buttons when boundaries (max/min) are reached,
+   * and refreshes dropdown options.
+   */
   checkDisabled() {
     if (this.max === this.value) {
       this.nextButton.setAttribute('disabled', 'disabled');
@@ -156,6 +192,9 @@ class YearSelector extends HTMLElement {
     this.updateSelect();
   }
 
+  /**
+   * Rebuilds the <select> element's options from `max` down to `min` and sets current value.
+   */
   updateSelect() {
     this.selectElement.innerHTML = '';
     for (let i = this.max; i >= this.min; i--) {
@@ -167,11 +206,17 @@ class YearSelector extends HTMLElement {
     this.selectElement.value = this.value;
   }
 
+  /**
+   * Event handler when user selects a year from the dropdown element.
+   */
   selectChanged() {
     this.value = Number(this.selectElement.value);
     this.update();
   }
 
+  /**
+   * Attaches click, change, hover, and focus event listeners to buttons and select element.
+   */
   initEventListeners() {
     this.nextButton.addEventListener('click', this.next.bind(this));
     this.backButton.addEventListener('click', this.back.bind(this));
@@ -191,6 +236,9 @@ class YearSelector extends HTMLElement {
   }
 }
 
+/**
+ * Registers the <year-selector> custom element definition.
+ */
 module.exports.init = () => {
   customElements.define('year-selector', YearSelector);
 };

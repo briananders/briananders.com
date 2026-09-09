@@ -1,4 +1,10 @@
+/**
+ * Component that renders monthly data trends as a responsive bar chart grid.
+ */
 class TrendsBarChart {
+  /**
+   * 1-indexed list of month initial abbreviations for chart labels.
+   */
   static monthNames = [
     'Unknown',
     'J', // 'Jan',
@@ -15,6 +21,12 @@ class TrendsBarChart {
     'D', // 'Dec',
   ];
 
+  /**
+   * Generates inline CSS grid styles for the bar chart container based on total column count.
+   *
+   * @param {number} count - The number of month columns to render.
+   * @returns {string} CSS styling string for the container element.
+   */
   containerStyles(count) {
     return `
       display: grid;
@@ -29,6 +41,9 @@ class TrendsBarChart {
     `;
   }
 
+  /**
+   * Embedded CSS stylesheet for column and bar visual presentation.
+   */
   static columnStyles = `
     column {
       display: grid;
@@ -57,7 +72,16 @@ class TrendsBarChart {
     }
   `;
 
-  columnTemplate({year, month, value}) {
+  /**
+   * Creates a DOM element representing an individual bar column for a month.
+   *
+   * @param {Object} options - Month data.
+   * @param {number} options.year - Year of the month entry.
+   * @param {string} options.month - Month abbreviation label.
+   * @param {number} options.value - Numeric count/value for the month.
+   * @returns {HTMLElement} The column DOM element.
+   */
+  columnTemplate({ year, month, value }) {
     const columnElement = document.createElement('column');
     columnElement.innerHTML = `
       <bar style="--length: ${value / this.maximum * 100}%"></bar>
@@ -67,6 +91,14 @@ class TrendsBarChart {
     return columnElement;
   }
 
+  /**
+   * Creates an instance of TrendsBarChart.
+   *
+   * @param {HTMLElement} domElement - The target container element.
+   * @param {Array<Object>} monthsData - Raw array of month data objects (with .month and .count).
+   * @param {Object} [options={}] - Optional configuration.
+   * @param {boolean} [options.openInModal=true] - Whether to render inside a modal dialog.
+   */
   constructor(domElement, monthsData, { openInModal = true } = {}) {
     this.containerElement = domElement;
     this.monthsData = this.adaptData(monthsData);
@@ -82,13 +114,21 @@ class TrendsBarChart {
     this.render();
   }
 
+  /**
+   * Fills in missing chronological months between start date and current date with zero counts.
+   *
+   * @param {Array<Object>} monthsData - Raw month records with 'YYYY-MM' strings and counts.
+   * @returns {Array<{ value: number, month: string, year: number }>} Continuous adapted month data series.
+   */
   adaptData(monthsData) {
     const returnData = [];
     const firstYear = Math.min(...monthsData.map(item => Number(item.month.split('-')[0])));
     const firstMonth = Math.min(...monthsData.map(item => Number(item.month.split('-')[1])));
     for (let year = firstYear; year <= new Date().getFullYear(); year++) {
       for (let month = 1; month <= 12; month++) {
+        // Skip months before the starting month in the first year
         if (year === firstYear && month < firstMonth) continue;
+        // Skip future months beyond the current month in the current year
         if (year === new Date().getFullYear() && month > new Date().getMonth() + 1) continue;
         const monthData = monthsData.find(item => Number(item.month.split('-')[0]) === year && Number(item.month.split('-')[1]) === month);
         if (monthData) {
@@ -109,10 +149,21 @@ class TrendsBarChart {
     return returnData;
   }
 
+  /**
+   * Formats a raw number into a locale-formatted string with comma separators.
+   *
+   * @param {number|string} number - The number to format.
+   * @returns {string} Formatted number string.
+   */
   formatNumber(number) {
     return Number(number).toLocaleString();
   }
 
+  /**
+   * Renders bar columns and year spans into the container and displays in a modal if enabled.
+   *
+   * @returns {void}
+   */
   render() {
     const containerElement = this.containerElement;
     const years = [];
@@ -135,6 +186,9 @@ class TrendsBarChart {
 
 module.exports = TrendsBarChart;
 
+/**
+ * Modal dialog overlay for displaying embedded components.
+ */
 class Modal {
   static OVERLAY_STYLE = `
     position: fixed;
@@ -165,6 +219,9 @@ class Modal {
     z-index: 1002;
   `;
 
+  /**
+   * Creates an instance of Modal, preparing container, overlay, and close button elements.
+   */
   constructor() {
     this.containerElement = document.createElement('div');
     this.containerElement.style.cssText = Modal.CONTAINER_STYLE;
@@ -178,6 +235,12 @@ class Modal {
     this.boundClose = this.close.bind(this);
   }
 
+  /**
+   * Opens the modal dialog and appends the specified DOM element content.
+   *
+   * @param {HTMLElement} domElement - The content element to show inside the modal.
+   * @returns {void}
+   */
   open(domElement) {
     this.closeButton.addEventListener('click', this.boundClose);
     this.overlayElement.addEventListener('click', this.boundClose);
@@ -188,6 +251,11 @@ class Modal {
     document.body.appendChild(this.containerElement);
   }
 
+  /**
+   * Closes the modal dialog and removes overlay and container from the DOM.
+   *
+   * @returns {void}
+   */
   close() {
     this.closeButton.removeEventListener('click', this.boundClose);
     this.overlayElement.removeEventListener('click', this.boundClose);

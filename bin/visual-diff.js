@@ -36,14 +36,32 @@ const BRANCH_SCREENSHOTS = path.join(SCREENSHOTS_DIR, 'branch');
 const BASE_SCREENSHOTS = path.join(SCREENSHOTS_DIR, 'base');
 const DIFF_SCREENSHOTS = path.join(SCREENSHOTS_DIR, 'diff');
 
+/**
+ * Logs a styled progress step heading to standard output.
+ *
+ * @param {string} msg - The step description to display.
+ */
 function step(msg) {
   console.log(`\n▶ ${msg}`);
 }
 
+/**
+ * Executes a shell command synchronously in the specified working directory.
+ *
+ * @param {string} cmd - The command line string to run.
+ * @param {string} [cwd=ROOT] - Working directory in which to execute the command.
+ */
 function run(cmd, cwd = ROOT) {
   execSync(cmd, { cwd, stdio: 'inherit' });
 }
 
+/**
+ * Spawns a background HTTP static file server on the specified port.
+ *
+ * @param {string} dir - Directory path to serve files from.
+ * @param {number} port - Port number for the server to listen on.
+ * @returns {import('child_process').ChildProcess} The spawned child process.
+ */
 function startServer(dir, port) {
   const proc = spawn('node', [path.join(ROOT, 'bin', 'serve.js'), dir, String(port)], {
     cwd: ROOT,
@@ -55,9 +73,21 @@ function startServer(dir, port) {
   return proc;
 }
 
+/**
+ * Polls a TCP port until a connection succeeds or the timeout is reached.
+ *
+ * @param {number} port - The port number to check.
+ * @param {number} [timeoutMs=60000] - Maximum duration in milliseconds to wait before rejecting.
+ * @returns {Promise<void>} Resolves when the port is reachable.
+ */
 function waitForPort(port, timeoutMs = 60000) {
   return new Promise((resolve, reject) => {
     const deadline = Date.now() + timeoutMs;
+
+    /**
+     * Attempts a socket connection to localhost on the designated port,
+     * retrying periodically until deadline if connection fails.
+     */
     function attempt() {
       const socket = net.createConnection(port, 'localhost');
       socket.once('connect', () => {
@@ -77,6 +107,12 @@ function waitForPort(port, timeoutMs = 60000) {
   });
 }
 
+/**
+ * Runs the screenshot capture script against a local server port.
+ *
+ * @param {number} port - The port number where the target site is being served.
+ * @param {string} outputDir - Directory to save the captured screenshots.
+ */
 function capture(port, outputDir) {
   run(
     `node capture.js --domain=http://localhost:${port} --output="${outputDir}"`,
@@ -84,6 +120,12 @@ function capture(port, outputDir) {
   );
 }
 
+/**
+ * Main execution routine for orchestrating side-by-side visual diffs.
+ * Builds the current branch and base branch, captures screenshots, and pixel-diffs them.
+ *
+ * @returns {Promise<void>}
+ */
 async function main() {
   const baseBranch = args.base || 'main';
 

@@ -1,5 +1,8 @@
 const ready = require('../_modules/document-ready');
 
+/**
+ * Initializes the coin flip interactive component on DOM ready.
+ */
 ready.document(() => {
   const coin = document.getElementById('coin');
   const flipButton = document.getElementById('flip-button');
@@ -15,12 +18,18 @@ ready.document(() => {
   let currentFace = 'heads';
   let animEndHandler = null;
 
+  /**
+   * Updates the UI text nodes with the current counts for heads, tails, and total flips.
+   */
   function updateStats() {
     headsCount.textContent = heads;
     tailsCount.textContent = tails;
     totalCount.textContent = heads + tails;
   }
 
+  /**
+   * Performs a coin flip by triggering CSS 3D keyframe animations and randomly picking heads/tails.
+   */
   function flipCoin() {
     if (isFlipping) return;
 
@@ -37,6 +46,9 @@ ready.document(() => {
     coin.style.setProperty('--coin-start', currentIsHeads ? '0deg' : '180deg');
     coin.classList.add(changingSides ? 'flip-change' : 'flip-same');
 
+    /**
+     * Handles the animationend event to display results and update counters once the flip completes.
+     */
     animEndHandler = () => {
       animEndHandler = null;
       coin.classList.remove('flip-same', 'flip-change');
@@ -65,6 +77,9 @@ ready.document(() => {
     coin.addEventListener('animationend', animEndHandler, { once: true });
   }
 
+  /**
+   * Resets all flip statistics, cancels running animations, and restores the coin to its initial state.
+   */
   function resetStats() {
     if (animEndHandler) {
       coin.removeEventListener('animationend', animEndHandler);

@@ -1,5 +1,6 @@
 /**
- * class StickyStacky element controller
+ * Class representing an individual StickyStacky element controller.
+ * Manages sticky positioning, stuck states, and CSS custom properties for a sticky container.
  */
 class StickyStacky {
   #previousHeights;
@@ -9,17 +10,22 @@ class StickyStacky {
   height;
   isStuck;
 
-  /*
-    Simply get the peeking value stored in the CSS variable
-  */
+  /**
+   * Retrieves the current peeking translation value from the document CSS variable.
+   *
+   * @private
+   * @returns {number} The transform value in pixels (without 'px').
+   */
   #getCurrentTransform() {
     const valueString = document.documentElement.style.getPropertyValue('--sticky-stacky-transform');
     return Number(valueString.slice(0, -2)); // slice removes the 'px' from the value.
   }
 
-  /*
-    Recalculates the sticky-container-height CSS variable
-  */
+  /**
+   * Recalculates stuck status and updates the `--sticky-container-height` CSS variable on the container.
+   *
+   * @returns {void}
+   */
   update() {
     /* 
       Determine if the bar should be stuck by comparing the (scroll position 
@@ -40,16 +46,24 @@ class StickyStacky {
     this.#containerElement.style.setProperty('--sticky-container-height', `${this.height}px`);
   }
 
-  /*
-    Take the `heights` parameter and set it as a CSS variable.
-    Note: this value will be different for each StickyStack instance. 
-      It's the sum of the heights of the StickyStacks earlier in the DOM.
-  */
+  /**
+   * Sets the accumulated previous heights as a CSS custom property on the container element.
+   * Note: this value will be different for each StickyStack instance.
+   * It's the sum of the heights of the StickyStacks earlier in the DOM.
+   *
+   * @param {number} heights - The accumulated height of prior sticky elements in pixels.
+   * @returns {void}
+   */
   setPreviousHeights(heights) {
     this.#previousHeights = heights;
     this.#containerElement.style.setProperty('--previous-heights', `${heights}px`);
   }
 
+  /**
+   * Creates an instance of StickyStacky.
+   *
+   * @param {HTMLElement} containerElement - The container DOM element with class `.sticky-container`.
+   */
   constructor(containerElement) {
     this.#containerElement = containerElement;
     this.#previousHeights = 0;
@@ -60,13 +74,9 @@ class StickyStacky {
   }
 }
 
-
-
-
-
-
 /**
- * class StickyController global controller for StickyStacky elements
+ * Class representing the global controller for StickyStacky elements on the page.
+ * Manages scroll tracking, z-indices, stacking order, and accumulated offsets.
  */
 class StickyController {
   #scrollHeight;
@@ -74,19 +84,24 @@ class StickyController {
   #maxTransform;
   #stickyStacks;
 
-  /*
-    Simply filter the stuck StickyStacks (isStuck === true) from all StickyStacks
-  */
+  /**
+   * Filters all managed StickyStacky instances to return only those currently stuck.
+   *
+   * @private
+   * @returns {Array<StickyStacky>} Array of stuck StickyStacky instances.
+   */
   #getStuckStacks() {
     return this.#stickyStacks.filter((stickyStack) => stickyStack.isStuck);
   }
 
-  /*
-    Take the StickyStacks that are stuck (isStuck === true), then
-    sort them by visual order on the page. Finally, loop over
-    them to apply the shadows appropriately, and set the previous 
-    height for each stuck stack.
-  */
+  /**
+   * Takes the StickyStacks that are stuck (isStuck === true), then
+   * sorts them by visual order on the page. Finally, loops over
+   * them to set the previous height for each stuck stack.
+   *
+   * @private
+   * @returns {void}
+   */
   #calculateMaxTransform() {
     let height = 0;
     const stuckStacks = this.#getStuckStacks()
@@ -107,10 +122,13 @@ class StickyController {
     });
   }
 
-  /*
-    Loop through the StickyStacks, accumulate the heights of each
-    StickyStack and pass those previous height sums into the StickyStacks
-  */
+  /**
+   * Loops through all StickyStacks, accumulates their heights,
+   * and updates each instance's previous height value.
+   *
+   * @private
+   * @returns {void}
+   */
   #recalculateHeights() {
     let height = 0;
     this.#stickyStacks.forEach((stickyStack) => {
@@ -120,10 +138,13 @@ class StickyController {
     });
   }
 
-  /*
-    [Critical function] Calculates the scroll directin and adjusts
-    the sticky stack peeking depth.
-  */
+  /**
+   * [Critical function] Calculates the scroll direction and adjusts
+   * the sticky stack peeking depth.
+   *
+   * @private
+   * @returns {void}
+   */
   #update() {
     this.#calculateMaxTransform(); // sets maxTransform value.
 
@@ -142,6 +163,11 @@ class StickyController {
     this.#recalculateHeights(); // update the StickyStack height and previousHeights again
   }
 
+  /**
+   * Creates an instance of StickyController.
+   *
+   * @param {NodeList|Array<HTMLElement>} containerNodeList - List of `.sticky-container` elements.
+   */
   constructor(containerNodeList) {
     /* 
       Since the querySelectorAll function returns NodeLists,
@@ -182,13 +208,11 @@ class StickyController {
   }
 }
 
-
-
-
-
-/*
-  Module initializer function.
-*/
+/**
+ * Initializes sticky stack controller on all `.sticky-container` elements found in the document.
+ *
+ * @returns {void}
+ */
 module.exports.init = () => {
   /* get all of the .sticky-container elements on the page */
   const stickyContainers = document.querySelectorAll('.sticky-container');

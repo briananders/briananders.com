@@ -8,6 +8,11 @@ ready.document(() => {
 
   let dictionary;
 
+  /**
+   * Parses and stores the Wordscapes word dictionary from the XMLHttpRequest response.
+   *
+   * @returns {void}
+   */
   function reqListener() {
     dictionary = JSON.parse(this.responseText);
   }
@@ -17,6 +22,12 @@ ready.document(() => {
   req.open('GET', '/data/wordscapes-words.json');
   req.send();
 
+  /**
+   * Evaluates available letters against the dictionary to find valid anagram words of length >= 3.
+   *
+   * @param {Event} [evt] - Optional form submit or keyboard event.
+   * @returns {void}
+   */
   function calculateResults(evt) {
     if (evt) evt.preventDefault();
 
@@ -25,10 +36,10 @@ ready.document(() => {
 
     const matches = [];
 
-    dictionary.forEach(word => {
+    dictionary.forEach((word) => {
       let testWord = word;
 
-      inputLetters.forEach(letter => {
+      inputLetters.forEach((letter) => {
         testWord = testWord.replace(letter, '');
       });
 
@@ -42,6 +53,12 @@ ready.document(() => {
     }
   }
 
+  /**
+   * Groups matched words by character length, sorts alphabetically, and renders HTML sections.
+   *
+   * @param {string[]} results - Array of matched candidate words.
+   * @returns {void}
+   */
   function formatResults(results) {
     // sort results by the length
     const resultsByLength = results.sort((a, b) => ((a.length > b.length) ? -1 : 1));
@@ -58,7 +75,7 @@ ready.document(() => {
     }
 
     // split the data by length
-    resultsByLength.forEach(word => {
+    resultsByLength.forEach((word) => {
       splitResults[word.length].push(word);
     });
 
@@ -77,6 +94,11 @@ ready.document(() => {
     resultsElement.innerHTML = `<div>${htmlSections.join('</div><div>')}</div>`;
   }
 
+  /**
+   * Registers form submit and Enter key event listeners for the input element.
+   *
+   * @returns {void}
+   */
   function initEventListeners() {
     formElement.addEventListener('submit', calculateResults);
     inputElement.addEventListener('keydown', (evt) => {

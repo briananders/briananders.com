@@ -11,7 +11,7 @@ function logCompletionFlags({ dir, completionFlags }) {
   const { log } = console;
   const timestamp = require(`${dir.build}helpers/timestamp`);
 
-  log(`--------------------------------`);
+  log('--------------------------------');
   log(`${timestamp.stamp()} checkDone()`);
   log(`JS_IS_MINIFIED: ${completionFlags.JS_IS_MINIFIED}`);
   log(`CSS_IS_MINIFIED: ${completionFlags.CSS_IS_MINIFIED}`);
@@ -25,7 +25,7 @@ function logCompletionFlags({ dir, completionFlags }) {
   log(`SITE_MAP: ${completionFlags.SITE_MAP}`);
   log(`GZIP: ${completionFlags.GZIP}`);
   log(`PREVIEW_READY: ${completionFlags.PREVIEW_READY}`);
-  log(`--------------------------------`);
+  log('--------------------------------');
 }
 
 /**
@@ -43,7 +43,6 @@ function logCompletionFlags({ dir, completionFlags }) {
  * @returns {false|undefined} Returns `false` if build stages are still pending; otherwise exits.
  */
 module.exports = function checkDone({ dir, debug, completionFlags }) {
-
   if (debug) {
     logCompletionFlags({ dir, completionFlags });
   }
@@ -60,7 +59,7 @@ module.exports = function checkDone({ dir, debug, completionFlags }) {
     completionFlags.ASSET_HASH.JS,
     completionFlags.ASSET_HASH.DONE,
     completionFlags.SITE_MAP,
-    completionFlags.GZIP,
+    completionFlags.GZIP
   ];
 
   // If any flag is still false, the build isn't done yet — bail out early.

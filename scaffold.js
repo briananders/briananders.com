@@ -23,18 +23,24 @@ const ejsLocation = path.join(dir.src, `/templates/${pageName}.ejs`);
 const scssClass = argPath.replace(/\//g, '.');
 const htmlClass = pageName.replace(/\//g, ' ');
 
+// Create scripts file using JS template
 fs.mkdirpSync(path.dirname(scriptsLocation));
 fs.writeFile(scriptsLocation, jsTemplate(), (err) => {
   if (err) throw err;
   console.log(`${scriptsLocation} successfully created`);
 });
+
+// Create stylesheet file using SCSS template
 fs.mkdirpSync(path.dirname(stylesLocation));
 fs.writeFile(stylesLocation, cssTemplate({ className: scssClass }), (err) => {
   if (err) throw err;
   console.log(`${stylesLocation} successfully created`);
 });
+
+// Create template file using EJS/HTML template
 fs.mkdirpSync(path.dirname(ejsLocation));
 fs.writeFile(ejsLocation, htmlTemplate({ className: htmlClass, pageName }), (err) => {
   if (err) throw err;
   console.log(`${ejsLocation} successfully created`);
 });
+

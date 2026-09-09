@@ -1,19 +1,41 @@
 const ready = require('../_modules/document-ready');
 
+/**
+ * Calculates the total number of days in a specific month and year.
+ *
+ * @param {number} month - The month number (1-12).
+ * @param {number} year - The full four-digit year.
+ * @returns {number} The number of days in the specified month.
+ */
 function daysInMonth(month, year) {
+  // Day 0 of the following month gives the last day of the target month
   return new Date(year, month, 0).getDate();
 }
 
+/**
+ * Represents an SVG circular path used as a progress ring in the polar clock.
+ */
 class CirclePath {
 
   #element;
   #circumference;
   id;
 
+  /**
+   * Sets the stroke offset of the circle based on completion percentage.
+   *
+   * @param {number} percent - Progress fraction between 0 and 1.
+   * @returns {void}
+   */
   setPosition(percent) {
     this.#element.style.strokeDashoffset = this.#circumference * (1 - percent);
   }
 
+  /**
+   * Creates a new CirclePath instance and configures its strokeDasharray.
+   *
+   * @param {string} elementId - The DOM ID of the SVG circle element.
+   */
   constructor(elementId) {
     this.id = elementId;
     this.#element = document.getElementById(elementId);
@@ -26,13 +48,27 @@ class CirclePath {
   }
 }
 
+/**
+ * Formats a number into a zero-padded string of a minimum character length.
+ *
+ * @param {number} num - The number to format.
+ * @param {number} length - The required minimum number of digits.
+ * @returns {string} Zero-padded string representation of the number.
+ */
 function minCharacters(num, length) {
+  // Pad with leading zeroes by appending to a zero-filled array and taking the suffix
   const arr = new Array(10).fill(0);
   arr.push(num);
   const arrString = arr.join('');
   return arrString.substring(arrString.length - length);
 }
 
+/**
+ * Extracts and returns current date and time components.
+ *
+ * @returns {{ seconds: number, minutes: number, hours: number, days: number, months: number, years: number }}
+ *   Object containing current time and date parts.
+ */
 function getDate() {
   const date = new Date();
 
@@ -46,6 +82,13 @@ function getDate() {
   };
 }
 
+/**
+ * Updates stroke offsets and text readouts for all time unit rings.
+ *
+ * @param {CirclePath[]} polarClockInstances - Array of CirclePath ring instances.
+ * @param {Object.<string, NodeList>} displayInstances - Map of time unit keys to corresponding DOM text elements.
+ * @returns {void}
+ */
 function updateTimes(polarClockInstances, displayInstances) {
   const {
     seconds,
@@ -96,6 +139,13 @@ function updateTimes(polarClockInstances, displayInstances) {
   });
 }
 
+/**
+ * Starts a recurring interval timer to update clock displays.
+ *
+ * @param {CirclePath[]} polarClockInstances - Array of CirclePath instances.
+ * @param {Object.<string, NodeList>} displayInstances - Map of time unit keys to DOM elements.
+ * @returns {void}
+ */
 function startClocking(polarClockInstances, displayInstances) {
   setInterval(updateTimes.bind(this, polarClockInstances, displayInstances), 200);
 }

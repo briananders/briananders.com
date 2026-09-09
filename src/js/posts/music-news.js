@@ -1,16 +1,44 @@
 const ready = require('../_modules/document-ready');
 require('../_components/last-updated').init();
 
+/**
+ * Escapes HTML characters in a string using a temporary DOM element.
+ *
+ * @param {string} str - The raw string to escape.
+ * @returns {string} The escaped string safe for HTML rendering.
+ */
 function escapeHTML(str) {
   const tempElement = document.createElement('temp');
   tempElement.innerHTML = str;
   return tempElement.innerText;
 }
 
+/**
+ * Generates an HTML link markup string with proper attributes and escaping.
+ *
+ * @param {string} link - The target URL.
+ * @param {string} content - The inner HTML or text content of the link.
+ * @param {string} [classes=''] - Optional CSS class names to apply to the anchor.
+ * @returns {string} The generated HTML anchor string.
+ */
 function articleLink(link, content, classes = '') {
   return `<a href="${escapeHTML(link)}" class="${classes}" target="_blank" rel="noopener" itemprop="url">${content}</a>`;
 }
 
+/**
+ * Renders the HTML markup for an article card.
+ *
+ * @param {Object} article - The article data object.
+ * @param {string} [article.image_url] - URL to the article thumbnail image.
+ * @param {string} article.link - URL to the original article.
+ * @param {string} article.title - Title of the article.
+ * @param {string} article.source - Publisher or feed source name.
+ * @param {string} article.published - ISO publication date string.
+ * @param {string} article.published_formatted - Human-readable formatted date.
+ * @param {string[]} [article.matched_bands] - Array of band names matched in this article.
+ * @param {string} article.summary - Text summary of the article.
+ * @returns {string} HTML markup string for the article card.
+ */
 function renderArticle(article) {
   const bands = (article.matched_bands || [])
     .map((band) => `<span class="band-tag">${escapeHTML(band)}</span>`)
@@ -37,10 +65,24 @@ function renderArticle(article) {
   `;
 }
 
+/**
+ * Renders the metadata summary showing number of bands tracked and feeds checked.
+ *
+ * @param {Object} data - Metadata container object.
+ * @param {number} data.bands_tracked - Count of tracked bands.
+ * @param {number} data.feeds_checked - Count of RSS/Atom feeds checked.
+ * @returns {string} Summary text string.
+ */
 function renderMeta(data) {
   return `Tracking ${data.bands_tracked} bands across ${data.feeds_checked} feeds`;
 }
 
+/**
+ * Builds a frequency count map of band occurrences across all articles.
+ *
+ * @param {Array<Object>} articles - List of article objects.
+ * @returns {Map<string, number>} Map of band name to occurrence count.
+ */
 function buildBandHitCounts(articles) {
   const counts = new Map();
   articles.forEach((article) => {
@@ -70,6 +112,12 @@ const MARQUEE_AHEAD_BUFFER_VP = 4;
 // Never reduce a row below this many segments (prevents momentary gaps on slow frames).
 const MARQUEE_MIN_SEGMENTS = 4;
 
+/**
+ * Splits a list of band names round-robin into multiple rows for the marquee.
+ *
+ * @param {string[]} bandsList - Array of band names.
+ * @returns {string[][]} Array of band name arrays, one per marquee row.
+ */
 function splitBandsIntoMarqueeRows(bandsList) {
   const rows = Array.from({ length: MARQUEE_ROW_COUNT }, () => []);
   bandsList.forEach((band, i) => {
@@ -83,13 +131,24 @@ function splitBandsIntoMarqueeRows(bandsList) {
   return rows;
 }
 
+/**
+ * Generates HTML span tags for a list of band names within a marquee segment.
+ *
+ * @param {string[]} bands - Array of band names for this segment.
+ * @returns {string} HTML markup string of span tags.
+ */
 function renderMarqueeSegmentTags(bands) {
   return bands
     .map((band) => `<span class="band-tag band-tag--queried">${escapeHTML(band)}</span>`)
     .join('');
 }
 
-/** Create a single segment element (one full copy of a row's band list). */
+/**
+ * Create a single segment element (one full copy of a row's band list).
+ *
+ * @param {string[]} bands - Array of band names.
+ * @returns {HTMLDivElement} A newly created DOM div containing segment band tags.
+ */
 function makeSegmentEl(bands) {
   const el = document.createElement('div');
   el.className = 'music-news-marquee-segment';
@@ -97,6 +156,12 @@ function makeSegmentEl(bands) {
   return el;
 }
 
+/**
+ * Renders the initial HTML structure for the queried bands marquee rows and tracks.
+ *
+ * @param {string[][]} rows - Multi-row array of band names.
+ * @returns {string} HTML string representing the marquee viewport.
+ */
 function renderQueriedBandsMarquee(rows) {
   const rowsHtml = rows.map((rowBands) => {
     // Render MARQUEE_INITIAL_UNITS copies upfront; ensureBuffer() adds more after first measurement.
@@ -110,6 +175,14 @@ function renderQueriedBandsMarquee(rows) {
   return `<div class="music-news-marquee-viewport">${rowsHtml}</div>`;
 }
 
+/**
+ * Initializes and manages the animated multi-row bands marquee ticker.
+ * Sets up animation frames, scroll wheel acceleration, resize observers, and reduced-motion fallbacks.
+ *
+ * @param {HTMLElement|null} marqueeRootEl - The root container element for the marquee.
+ * @param {string[]} bandsList - Array of band names to display.
+ * @returns {Function} Cleanup function to cancel animations and remove event listeners.
+ */
 function initBandsMarquee(marqueeRootEl, bandsList) {
   if (!marqueeRootEl) return () => { };
 
@@ -132,8 +205,13 @@ function initBandsMarquee(marqueeRootEl, bandsList) {
   const trackEls = [...marqueeRootEl.querySelectorAll('.music-news-marquee-track')];
   if (!viewport || !trackEls.length) return () => { };
 
-  // The full-bleed element's getBoundingClientRect().width can be 0 during first layout.
-  // Fall back to window.innerWidth so we always have a usable viewport width.
+  /**
+   * Measures the current effective viewport width.
+   * The full-bleed element's getBoundingClientRect().width can be 0 during first layout.
+   * Fall back to window.innerWidth so we always have a usable viewport width.
+   *
+   * @returns {number} Viewport width in pixels.
+   */
   function getVpWidth() {
     return Math.max(
       marqueeRootEl.getBoundingClientRect().width,
@@ -162,6 +240,9 @@ function initBandsMarquee(marqueeRootEl, bandsList) {
    * Append segments until there are at least MARQUEE_AHEAD_BUFFER_VP viewport-widths
    * of content beyond the current scroll position. Called once on measurement and
    * every tick thereafter to handle resize and user boost.
+   *
+   * @param {Object} t - The track state object.
+   * @param {number} vpWidth - Viewport width in pixels.
    */
   function ensureBuffer(t, vpWidth) {
     const needed = t.position + vpWidth * MARQUEE_AHEAD_BUFFER_VP;
@@ -172,6 +253,11 @@ function initBandsMarquee(marqueeRootEl, bandsList) {
     }
   }
 
+  /**
+   * Main animation loop step function. Updates positions, handles wrap-around, and shifts transforms.
+   *
+   * @param {DOMHighResTimeStamp} ts - Current animation timestamp from requestAnimationFrame.
+   */
   function tick(ts) {
     if (lastTs == null) lastTs = ts;
     const dt = Math.min((ts - lastTs) / 1000, 0.1);
@@ -227,6 +313,12 @@ function initBandsMarquee(marqueeRootEl, bandsList) {
     rafId = requestAnimationFrame(tick);
   }
 
+  /**
+   * Normalizes WheelEvent delta values into pixel delta units.
+   *
+   * @param {WheelEvent} event - Wheel event object.
+   * @returns {number} Pixel delta for scrolling.
+   */
   function wheelPixels(event) {
     let dx = event.deltaX + (event.shiftKey ? event.deltaY : 0);
     if (event.deltaMode === 1) dx *= 16;
@@ -234,6 +326,11 @@ function initBandsMarquee(marqueeRootEl, bandsList) {
     return dx;
   }
 
+  /**
+   * Event handler for wheel/trackpad scrolling over the marquee container.
+   *
+   * @param {WheelEvent} event - The wheel event.
+   */
   function onWheel(event) {
     const dy = event.shiftKey ? 0 : event.deltaY;
     const dx = wheelPixels(event);
@@ -246,6 +343,9 @@ function initBandsMarquee(marqueeRootEl, bandsList) {
     event.preventDefault();
   }
 
+  /**
+   * Remeasures segment widths and refuels buffers on layout/font updates.
+   */
   function remeasure() {
     const vpWidth = getVpWidth();
     perTrack.forEach((t) => {
@@ -260,6 +360,9 @@ function initBandsMarquee(marqueeRootEl, bandsList) {
   }
 
   let resizeDebounce;
+  /**
+   * Debounced window resize handler to trigger remeasurement.
+   */
   function onResize() {
     clearTimeout(resizeDebounce);
     resizeDebounce = setTimeout(remeasure, 150);
@@ -292,6 +395,14 @@ function initBandsMarquee(marqueeRootEl, bandsList) {
   };
 }
 
+/**
+ * Generates HTML button markup for band filter buttons with count badges.
+ *
+ * @param {string[]} bandsOrdered - Sorted array of band names.
+ * @param {Map<string, number>} countsMap - Map of band names to article match counts.
+ * @param {string|null} selectedBand - Currently selected band name, or null if unfiltered.
+ * @returns {string} HTML markup string of button elements.
+ */
 function renderHitBandFilters(bandsOrdered, countsMap, selectedBand) {
   return bandsOrdered
     .map((band, index) => {
@@ -324,6 +435,9 @@ ready.document(() => {
   let bandsHitOrder = [];
   let selectedBand = null;
 
+  /**
+   * Filters articles by selectedBand (if any) and updates article list and filter button active states.
+   */
   function applyFilter() {
     const filtered = selectedBand
       ? articles.filter((a) => (a.matched_bands || []).includes(selectedBand))

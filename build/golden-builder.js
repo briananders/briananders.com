@@ -39,43 +39,79 @@ module.exports = (configs) => {
   const BUILD_EVENTS = require(`${dir.build}constants/build-events`);
 
   // JS bundled → minify, then checkDone.
-  buildEvents.on(BUILD_EVENTS.jsMoved,
-    minifyJS.bind(this, configs));
+  buildEvents.on(
+    BUILD_EVENTS.jsMoved,
+    minifyJS.bind(this, configs)
+  );
   // Templates rendered → minify HTML, then checkDone.
-  buildEvents.on(BUILD_EVENTS.templatesMoved,
-    minifyHTML.bind(this, configs));
+  buildEvents.on(
+    BUILD_EVENTS.templatesMoved,
+    minifyHTML.bind(this, configs)
+  );
 
   // All remaining events route straight to checkDone.
-  buildEvents.on(BUILD_EVENTS.assetHashCssListed,
-    checkDone.bind(this, configs));
-  buildEvents.on(BUILD_EVENTS.assetHashImagesListed,
-    checkDone.bind(this, configs));
-  buildEvents.on(BUILD_EVENTS.assetHashJsListed,
-    checkDone.bind(this, configs));
-  buildEvents.on(BUILD_EVENTS.gzipDone,
-    checkDone.bind(this, configs));
-  buildEvents.on(BUILD_EVENTS.hashingDone,
-    checkDone.bind(this, configs));
-  buildEvents.on(BUILD_EVENTS.htmlMinified,
-    checkDone.bind(this, configs));
-  buildEvents.on(BUILD_EVENTS.imagesMoved,
-    checkDone.bind(this, configs));
-  buildEvents.on(BUILD_EVENTS.indexCssForHashing,
-    checkDone.bind(this, configs));
-  buildEvents.on(BUILD_EVENTS.jsMinified,
-    checkDone.bind(this, configs));
-  buildEvents.on(BUILD_EVENTS.jsMoved,
-    checkDone.bind(this, configs));
-  buildEvents.on(BUILD_EVENTS.pageMappingDataCompiled,
-    checkDone.bind(this, configs));
-  buildEvents.on(BUILD_EVENTS.previewReady,
-    checkDone.bind(this, configs));
-  buildEvents.on(BUILD_EVENTS.sitemapDone,
-    checkDone.bind(this, configs));
-  buildEvents.on(BUILD_EVENTS.stylesMoved,
-    checkDone.bind(this, configs));
-  buildEvents.on(BUILD_EVENTS.templatesMoved,
-    checkDone.bind(this, configs));
-  buildEvents.on(BUILD_EVENTS.videosMoved,
-    checkDone.bind(this, configs));
+  buildEvents.on(
+    BUILD_EVENTS.assetHashCssListed,
+    checkDone.bind(this, configs)
+  );
+  buildEvents.on(
+    BUILD_EVENTS.assetHashImagesListed,
+    checkDone.bind(this, configs)
+  );
+  buildEvents.on(
+    BUILD_EVENTS.assetHashJsListed,
+    checkDone.bind(this, configs)
+  );
+  buildEvents.on(
+    BUILD_EVENTS.gzipDone,
+    checkDone.bind(this, configs)
+  );
+  buildEvents.on(
+    BUILD_EVENTS.hashingDone,
+    checkDone.bind(this, configs)
+  );
+  buildEvents.on(
+    BUILD_EVENTS.htmlMinified,
+    checkDone.bind(this, configs)
+  );
+  buildEvents.on(
+    BUILD_EVENTS.imagesMoved,
+    checkDone.bind(this, configs)
+  );
+  buildEvents.on(
+    BUILD_EVENTS.indexCssForHashing,
+    checkDone.bind(this, configs)
+  );
+  buildEvents.on(
+    BUILD_EVENTS.jsMinified,
+    checkDone.bind(this, configs)
+  );
+  buildEvents.on(
+    BUILD_EVENTS.jsMoved,
+    checkDone.bind(this, configs)
+  );
+  buildEvents.on(
+    BUILD_EVENTS.pageMappingDataCompiled,
+    checkDone.bind(this, configs)
+  );
+  buildEvents.on(
+    BUILD_EVENTS.previewReady,
+    checkDone.bind(this, configs)
+  );
+  buildEvents.on(
+    BUILD_EVENTS.sitemapDone,
+    checkDone.bind(this, configs)
+  );
+  buildEvents.on(
+    BUILD_EVENTS.stylesMoved,
+    checkDone.bind(this, configs)
+  );
+  buildEvents.on(
+    BUILD_EVENTS.templatesMoved,
+    checkDone.bind(this, configs)
+  );
+  buildEvents.on(
+    BUILD_EVENTS.videosMoved,
+    checkDone.bind(this, configs)
+  );
 };

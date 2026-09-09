@@ -1,6 +1,15 @@
 const ready = require('../_modules/document-ready');
 
+/**
+ * Initializes the Lissajous curve animation, canvases, and step controls on DOM ready.
+ */
 ready.document(() => {
+  /**
+   * Initializes a canvas element by selector query and configures its resolution.
+   *
+   * @param {string} query - CSS selector for the canvas element.
+   * @returns {[HTMLCanvasElement, CanvasRenderingContext2D]} Array containing the canvas and its 2D context.
+   */
   function setupCanvas(query) {
     const canvas = document.querySelector(query);
     canvas.width = 1000;
@@ -38,10 +47,22 @@ ready.document(() => {
 
   const FILL_STYLE = '#ffffff';
 
+  /**
+   * Rounds a number up to two decimal places.
+   *
+   * @param {number} num - Value to round.
+   * @returns {number} Value rounded to 2 decimal places.
+   */
   function moneyRound(num) {
     return Math.ceil(num * 100) / 100;
   }
 
+  /**
+   * Converts degrees into radians.
+   *
+   * @param {number} [deg=0] - Angle in degrees.
+   * @returns {number} Angle in radians.
+   */
   function degreesToRadians(deg = 0) {
     return (deg * (2 * Math.PI)) / 360;
   }
@@ -50,6 +71,9 @@ ready.document(() => {
   //   return (radians * 360) / (2 * Math.PI);
   // }
 
+  /**
+   * Clears the drawn curve areas and resets angle positions and cached coordinates.
+   */
   function reset() {
     mainContext.clearRect(525, 525, 450, 450);
     mainContext.clearRect(25, 25, 450, 450);
@@ -66,6 +90,13 @@ ready.document(() => {
     bStep = Number(bStepElement.value);
   }
 
+  /**
+   * Calculates the (X, Y) coordinates along a circle perimeter for a given degree and radius.
+   *
+   * @param {number} degrees - Angle along circumference in degrees.
+   * @param {number} radius - Radius of the circle.
+   * @returns {[number, number]} Computed [x, y] coordinates.
+   */
   function getCirclePoints(degrees, radius) {
     const cx = radius;
     const cy = radius;
@@ -83,10 +114,27 @@ ready.document(() => {
     return [returnX, returnY];
   }
 
+  /**
+   * Offsets coordinate values and rounds them to two decimal places.
+   *
+   * @param {number} xValue - Base X coordinate.
+   * @param {number} yValue - Base Y coordinate.
+   * @param {number} xOffset - X translation offset.
+   * @param {number} yOffset - Y translation offset.
+   * @returns {[number, number]} Offset and rounded [x, y] coordinates.
+   */
   function getWithOffset(xValue, yValue, xOffset, yOffset) {
     return [moneyRound(xValue + xOffset), moneyRound(yValue + yOffset)];
   }
 
+  /**
+   * Draws a stroke line segment connecting two points on the main canvas.
+   *
+   * @param {number} x1 - Starting point X.
+   * @param {number} y1 - Starting point Y.
+   * @param {number} x2 - Ending point X.
+   * @param {number} y2 - Ending point Y.
+   */
   function drawLine(x1, y1, x2, y2) {
     mainContext.beginPath();
     mainContext.fillStyle = FILL_STYLE;
@@ -100,6 +148,9 @@ ready.document(() => {
     mainContext.stroke();
   }
 
+  /**
+   * Main animation loop step: advances circle positions, aligns indicator lines, and draws curve segments.
+   */
   function runLoop() {
     // iterate
     aCircumferencePosition += aStep;

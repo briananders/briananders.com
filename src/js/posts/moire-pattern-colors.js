@@ -1,6 +1,9 @@
 const ready = require('../_modules/document-ready');
 const windowResize = require('../_modules/window-resize');
 
+/**
+ * Manages an individual color channel moiré pattern canvas, controls, and rotation animation.
+ */
 class Variant {
 
   #playing;
@@ -11,18 +14,41 @@ class Variant {
   #elementRotationSlider;
   #elementCanvas;
 
+  /**
+   * Retrieves the current client height in pixels of the canvas element.
+   *
+   * @private
+   * @returns {number} Pixel height of the canvas container.
+   */
   #getHeight() {
     return this.#elementCanvas.clientHeight;
   }
 
+  /**
+   * Reads the current rotation angle value from the range slider.
+   *
+   * @private
+   * @returns {number} Rotation angle in degrees.
+   */
   #getRotation() {
     return Number(this.#elementRotationSlider.value);
   }
 
+  /**
+   * Updates the range slider value.
+   *
+   * @private
+   * @param {number} value - The rotation angle in degrees.
+   */
   #setRotation(value) {
     this.#elementRotationSlider.value = value;
   }
 
+  /**
+   * Updates the text display and CSS variable `--rotation` to reflect the current angle.
+   *
+   * @private
+   */
   #updateValues() {
     const rotation = this.#getRotation();
 
@@ -30,6 +56,11 @@ class Variant {
     this.#elementCanvas.style.setProperty('--rotation', `${rotation}deg`);
   }
 
+  /**
+   * Advances the rotation angle back and forth between 0 and 90 degrees and schedules animation frames.
+   *
+   * @private
+   */
   #runLoop() {
     const rotation = this.#getRotation();
     if (rotation >= 90 || rotation <= 0) {
@@ -45,6 +76,11 @@ class Variant {
     }
   }
 
+  /**
+   * Attaches event listeners for play/pause toggling, window resize, and slider input.
+   *
+   * @private
+   */
   #addEventListener() {
     this.#elementPlayButton.addEventListener('click', () => {
       this.#playing = !this.#playing;
@@ -72,6 +108,12 @@ class Variant {
     });
   }
 
+  /**
+   * Fills the container element with alternating line divs based on its measured pixel height.
+   *
+   * @private
+   * @param {HTMLElement} element - The canvas container to populate.
+   */
   #fillWithLines(element) {
     const elementHeight = this.#getHeight();
     element.style.setProperty('--height', elementHeight);
@@ -84,12 +126,23 @@ class Variant {
     }
   }
 
+  /**
+   * Re-populates lines in the canvas and executes the animation loop.
+   */
   render() {
     this.#fillWithLines(this.#elementCanvas);
 
     this.#runLoop();
   }
 
+  /**
+   * Constructs a Variant instance for a color channel moiré pattern.
+   *
+   * @param {Object} options - Configuration options.
+   * @param {HTMLElement} options.controllerElement - The container element holding the UI controls.
+   * @param {HTMLElement} options.variantCanvasElement - The DOM container representing the pattern canvas.
+   * @param {number} [options.speed=1] - Rotation step speed multiplier.
+   */
   constructor({
     controllerElement,
     variantCanvasElement,
@@ -108,6 +161,9 @@ class Variant {
   }
 }
 
+/**
+ * Initializes moiré color channel variants (red, green, blue) on DOM ready.
+ */
 ready.document(() => {
   const colors = ['red', 'green', 'blue'];
   const instances = colors.map((color, index) =>

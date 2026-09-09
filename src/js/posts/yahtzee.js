@@ -50,61 +50,76 @@ ready.document(() => {
   const diceElementArray = [die0Element, die1Element, die2Element, die3Element, die4Element];
 
   /**
-     * Disables passed DOM element
-     * @param {HTMLElement} element DOM element to be disabled
-     */
+   * Disables passed DOM element by adding the 'locked' class.
+   *
+   * @param {HTMLElement} element - DOM element to be disabled.
+   * @returns {void}
+   */
   function disable(element) {
     element.classList.add('locked');
   }
 
   /**
-     * Removes disabled attribute from passed DOM element
-     * @param {HTMLElement} element DOM element to be re-enabled
-     */
+   * Removes disabled state from passed DOM element by removing the 'locked' class.
+   *
+   * @param {HTMLElement} element - DOM element to be re-enabled.
+   * @returns {void}
+   */
   function reenable(element) {
     element.classList.remove('locked');
   }
 
   /**
-     * Determines if the passed DOM element is disabled
-     * @param {HTMLElement} element element to test
-     * @returns {boolean}
-     */
+   * Determines if the passed DOM element is disabled/locked.
+   *
+   * @param {HTMLElement} element - Element to test.
+   * @returns {boolean} True if element contains the 'locked' class.
+   */
   function isDisabled(element) {
     return element.classList.contains('locked');
   }
 
   /**
-     * Determines if the passed DOM element is not disabled
-     * @param {HTMLElement} element element to test
-     */
+   * Determines if the passed DOM element is active/unlocked.
+   *
+   * @param {HTMLElement} element - Element to test.
+   * @returns {boolean} True if element is not locked.
+   */
   function isEnabled(element) {
     return !isDisabled(element);
   }
 
   /**
-     * Get array of dice that are not fixed
-     * @returns {Array}
-     */
+   * Returns an array of dice elements that are not currently held/locked.
+   *
+   * @returns {HTMLElement[]} Array of rollable dice elements.
+   */
   function getRollableDice() {
     return diceElementArray.filter((element) => isEnabled(element));
   }
 
   /**
-     * Rolls a single die and sets the new value.
-     * @param {HTMLElement} dieElement
-     */
+   * Rolls a single die and sets a new random integer value between 1 and 6.
+   *
+   * @param {HTMLElement} dieElement - The die element to update.
+   * @returns {void}
+   */
   function rollADie(dieElement) {
     dieElement.value = Math.floor(Math.random() * 6) + 1;
   }
 
   /**
-     * Rolls the dice
-     */
+   * Executes the animated dice rolling sequence over a duration, then triggers score recalculation.
+   *
+   * @returns {void}
+   */
   function roll() {
     const rollableDice = getRollableDice();
     const rollTimeOut = Date.now() + ROLL_DURATION;
 
+    /**
+     * Animation frame handler that randomizes unlocked dice values.
+     */
     const _oneRoll = () => {
       rollableDice.forEach((dieElement) => {
         rollADie(dieElement);
@@ -126,17 +141,21 @@ ready.document(() => {
   }
 
   /**
-     * Determines if all of the values are present in the rolled dice configuration
-     * @returns {boolean}
-     */
+   * Determines if all values in `valuesArray` are present in `mainArray`.
+   *
+   * @param {number[]} mainArray - Haystack array of dice numbers.
+   * @param {number[]} valuesArray - Needle array of target values.
+   * @returns {boolean} True if all target values are present.
+   */
   function hasAll(mainArray, valuesArray) {
     return !valuesArray.map((value) => mainArray.includes(value)).includes(false);
   }
 
   /**
-     * Calculate the grand total score of the locked/final score values
-     * @returns {Number}
-     */
+   * Calculates the grand total score across all locked score categories plus upper section bonus.
+   *
+   * @returns {number} Grand total score.
+   */
   function getGrandTotal() {
     const bonusScore = getBonus();
     return Object.keys(lockedScores)
@@ -145,76 +164,86 @@ ready.document(() => {
   }
 
   /**
-     * Calculates the total score of the rolled dice configuration
-     * @returns {Number}
-     */
+   * Calculates the sum total of all five currently rolled dice values.
+   *
+   * @returns {number} Sum of all dice.
+   */
   function getDiceTotal() {
     return diceElementArray.reduce((sum, element) => sum + Number(element.value), 0);
   }
 
   /**
-     * Simplifies the dice configuration to one of each present number in the rolled configuration
-     * @returns {Array}
-     */
+   * Returns a deduplicated array of face values present among the dice.
+   *
+   * @returns {number[]} Array of unique dice face values.
+   */
   function uniqueDice() {
     const arr = diceElementArray.map((element) => Number(element.value));
     return arr.filter((value, index) => arr.indexOf(value) === index);
   }
 
   /**
-     * Determines the number of unique dice numbers that are present in the rolled configuration
-     * @returns {Number}
-     */
+   * Counts the number of distinct face values present in the current roll.
+   *
+   * @returns {number} Count of unique dice values.
+   */
   function getDiceVariety() {
     return uniqueDice().length;
   }
 
   /**
-     * Counts how many dice are present of a certain number in the rolled configuration
-     * @returns {Number}
-     */
+   * Counts how many dice show the specified number face value.
+   *
+   * @param {number} num - The die face number (1-6).
+   * @returns {number} Number of matching dice.
+   */
   function countDiceOfNumber(num) {
     return diceElementArray.filter((element) => Number(element.value) === num).length;
   }
 
   /**
-     * Determines if a three of a kind is present in the dice configuration
-     * @returns {boolean}
-     */
+   * Checks if at least 3 dice share the same face value.
+   *
+   * @returns {boolean} True if roll contains 3 of a kind or better.
+   */
   function isThreeOfAKind() {
     const diceNumbers = uniqueDice();
     return diceNumbers.map((value) => countDiceOfNumber(value)).some((value) => (value >= 3));
   }
 
   /**
-     * Calculates the score for a three of a kind
-     * @returns {Number}
-     */
+   * Calculates the three of a kind score (sum of all dice if valid, 0 otherwise).
+   *
+   * @returns {number} Score for 3 of a kind.
+   */
   function getThreeOfAKindTotal() {
     return (isThreeOfAKind()) ? getDiceTotal() : 0;
   }
 
   /**
-     * Determines if a four of a kind is present in the dice configuration
-     * @returns {boolean}
-     */
+   * Checks if at least 4 dice share the same face value.
+   *
+   * @returns {boolean} True if roll contains 4 of a kind or better.
+   */
   function isFourOfAKind() {
     const diceNumbers = uniqueDice();
     return diceNumbers.map((value) => countDiceOfNumber(value)).some((value) => (value >= 4));
   }
 
   /**
-     * Calculates the score for a four of a kind
-     * @returns {Number}
-     */
+   * Calculates the four of a kind score (sum of all dice if valid, 0 otherwise).
+   *
+   * @returns {number} Score for 4 of a kind.
+   */
   function getFourOfAKindTotal() {
     return (isFourOfAKind()) ? getDiceTotal() : 0;
   }
 
   /**
-     * Determines if a full house is present in the dice configuration
-     * @returns {boolean}
-     */
+   * Checks if the dice configuration forms a full house (3 of one number and 2 of another).
+   *
+   * @returns {boolean} True if roll is a valid full house.
+   */
   function isFullHouse() {
     const diceNumbers = uniqueDice();
     if (diceNumbers.length !== 2) return false;
@@ -222,33 +251,37 @@ ready.document(() => {
   }
 
   /**
-     * Calculates the score for a full house
-     * @returns {Number}
-     */
+   * Calculates the score for a full house (fixed 25 points).
+   *
+   * @returns {number} 25 if valid full house, 0 otherwise.
+   */
   function getFullHouseTotal() {
     return (isFullHouse()) ? 25 : 0;
   }
 
   /**
-     * Determines if a Yahtzee is present in the dice configuration
-     * @returns {boolean}
-     */
+   * Checks if all 5 dice have the identical face value.
+   *
+   * @returns {boolean} True if roll is a Yahtzee.
+   */
   function isYahtzee() {
     return getDiceVariety() === 1;
   }
 
   /**
-     * Calculates the score for a Yahtzee
-     * @returns {Number}
-     */
+   * Calculates the score for a Yahtzee (fixed 50 points).
+   *
+   * @returns {number} 50 if valid Yahtzee, 0 otherwise.
+   */
   function getYahtzeeTotal() {
     return (isYahtzee()) ? 50 : 0;
   }
 
   /**
-     * Determines if a small straight is present in the dice configuration
-     * @returns {boolean}
-     */
+   * Checks if the dice contain a sequence of 4 consecutive numbers.
+   *
+   * @returns {number} Number of matching small straight patterns (0 or positive).
+   */
   function isSmallStraight() {
     const diceNumbers = uniqueDice();
     return [[1, 2, 3, 4], [2, 3, 4, 5], [3, 4, 5, 6]]
@@ -256,17 +289,19 @@ ready.document(() => {
   }
 
   /**
-     * Calculates the score for a small straight
-     * @returns {Number}
-     */
+   * Calculates the score for a small straight (fixed 30 points).
+   *
+   * @returns {number} 30 if valid small straight, 0 otherwise.
+   */
   function getSmallStraightTotal() {
     return (isSmallStraight()) ? 30 : 0;
   }
 
   /**
-     * Determines if a large straight is present in the dice configuration
-     * @returns {boolean}
-     */
+   * Checks if the dice contain a sequence of 5 consecutive numbers.
+   *
+   * @returns {number} Number of matching large straight patterns (0 or positive).
+   */
   function isLargeStraight() {
     const diceNumbers = uniqueDice();
     return [[1, 2, 3, 4, 5], [2, 3, 4, 5, 6]]
@@ -274,65 +309,73 @@ ready.document(() => {
   }
 
   /**
-     * Calculates the score for a large straight
-     * @returns {Number}
-     */
+   * Calculates the score for a large straight (fixed 40 points).
+   *
+   * @returns {number} 40 if valid large straight, 0 otherwise.
+   */
   function getLargeStraightTotal() {
     return (isLargeStraight()) ? 40 : 0;
   }
 
   /**
-     * Calculates the score for 1s
-     * @returns {Number}
-     */
+   * Calculates the sum of all dice with face value 1.
+   *
+   * @returns {number} Total points for ones.
+   */
   function getOnesTotal() {
     return countDiceOfNumber(1) * 1;
   }
 
   /**
-     * Calculates the score for 2s
-     * @returns {Number}
-     */
+   * Calculates the sum of all dice with face value 2.
+   *
+   * @returns {number} Total points for twos.
+   */
   function getTwosTotal() {
     return countDiceOfNumber(2) * 2;
   }
 
   /**
-     * Calculates the score for 3s
-     * @returns {Number}
-     */
+   * Calculates the sum of all dice with face value 3.
+   *
+   * @returns {number} Total points for threes.
+   */
   function getThreesTotal() {
     return countDiceOfNumber(3) * 3;
   }
 
   /**
-     * Calculates the score for 4s
-     * @returns {Number}
-     */
+   * Calculates the sum of all dice with face value 4.
+   *
+   * @returns {number} Total points for fours.
+   */
   function getFoursTotal() {
     return countDiceOfNumber(4) * 4;
   }
 
   /**
-     * Calculates the score for 5s
-     * @returns {Number}
-     */
+   * Calculates the sum of all dice with face value 5.
+   *
+   * @returns {number} Total points for fives.
+   */
   function getFivesTotal() {
     return countDiceOfNumber(5) * 5;
   }
 
   /**
-     * Calculates the score for 6s
-     * @returns {Number}
-     */
+   * Calculates the sum of all dice with face value 6.
+   *
+   * @returns {number} Total points for sixes.
+   */
   function getSixesTotal() {
     return countDiceOfNumber(6) * 6;
   }
 
   /**
-     * Calculates the total value of the 1-6s.
-     * @returns {Number}
-     */
+   * Calculates the cumulative total value of the locked upper section categories (1s through 6s).
+   *
+   * @returns {number} Upper section total score.
+   */
   function getKindTotal() {
     return [
       'ones',
@@ -345,17 +388,20 @@ ready.document(() => {
   }
 
   /**
-     * Calculates the bonus score. If the 1-6s add up to 63 or higher,
-     * the player receives an extra 35 points.
-     * @returns {Number}
-     */
+   * Calculates the bonus score. If the 1-6s add up to 63 or higher,
+   * the player receives an extra 35 points.
+   *
+   * @returns {number} 35 if upper section total is 63+, 0 otherwise.
+   */
   function getBonus() {
     return (getKindTotal() > 62) ? 35 : 0;
   }
 
   /**
-     * Update the various roll count locations to be in sync
-     */
+   * Synchronizes data-rolls-left attributes across roll button, scoreboard, and dice containers.
+   *
+   * @returns {void}
+   */
   function updateRollCounter() {
     rollElement.setAttribute('data-rolls-left', 3 - rollCount);
     scoreBoardElement.setAttribute('data-rolls-left', 3 - rollCount);
@@ -368,17 +414,23 @@ ready.document(() => {
   }
 
   /**
-     * Reset the roll count to zero, and update the counters.
-     */
+   * Resets the turn roll counter back to zero and updates UI counter indicators.
+   *
+   * @returns {void}
+   */
   function resetRollCount() {
     rollCount = 0;
     updateRollCounter();
   }
 
   /**
-     * Update one score. Checks for a locked score value before calculating a
-     * potential score value based on the current dice
-     */
+   * Updates display score for a single row, preserving locked values or displaying projected score.
+   *
+   * @param {HTMLElement} element - The score row element.
+   * @param {string|undefined} lockId - Key in lockedScores or undefined if calculated summary row.
+   * @param {Function} scoringFunction - Function computing the category score.
+   * @returns {void}
+   */
   function updateSingleScore(element, lockId, scoringFunction) {
     const scoreElement = element.querySelector('.score');
     const lock = lockedScores[lockId];
@@ -392,8 +444,10 @@ ready.document(() => {
   }
 
   /**
-     * Update the scores on the scoreboard
-     */
+   * Updates and synchronizes all score values and totals across the scoreboard.
+   *
+   * @returns {void}
+   */
   function updateScoreBoard() {
     updateSingleScore(onesElement, 'ones', getOnesTotal);
     updateSingleScore(twosElement, 'twos', getTwosTotal);
@@ -414,8 +468,10 @@ ready.document(() => {
   }
 
   /**
-     * Attach the event listeners
-     */
+   * Registers user click handlers for rolling dice, holding dice, and locking scoreboard boxes.
+   *
+   * @returns {void}
+   */
   function attachEventListeners() {
     rollElement.addEventListener('click', () => {
       if (rollCount < 3 && getRollableDice().length) {

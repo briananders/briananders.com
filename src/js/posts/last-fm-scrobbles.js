@@ -21,18 +21,44 @@ const EVENTS = {
   trendsChange: 'ba:lastfm:trendschange',
 };
 
+/**
+ * Capitalizes the first character of a string and converts the remainder to lowercase.
+ *
+ * @param {string} string - The input string to convert.
+ * @returns {string} Sentence-cased string.
+ */
 function sentenceCase(string) {
   return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
 }
 
+/**
+ * Formats a number with localized thousands separators.
+ *
+ * @param {number} number - The numerical value to format.
+ * @returns {string} Localized string representation of the number.
+ */
 function formatNumber(number) {
   return number.toLocaleString();
 }
 
+/**
+ * Constructs the full image asset URL for a given image file name.
+ *
+ * @param {string} name - The image filename or relative path.
+ * @returns {string} Full URL to the image resource.
+ */
 function getImageUrl(name) {
   return `${imageUrl}${name}`;
 }
 
+/**
+ * Fetches JSON data from the Last.fm history directory via XMLHttpRequest with optional cache busting.
+ *
+ * @param {string} fileName - Relative file name/path of the JSON resource.
+ * @param {function(?Object): void} callback - Callback receiving parsed JSON or null on error.
+ * @param {Object} [options] - Additional options.
+ * @param {boolean} [options._cacheBusted=false] - Internal flag to prevent infinite cache-bust retry loops.
+ */
 function getData(fileName, callback, { _cacheBusted = false } = {}) {
   const request = new XMLHttpRequest();
   const url = `${lastFmHistoryUrl}${fileName}`;
@@ -46,6 +72,7 @@ function getData(fileName, callback, { _cacheBusted = false } = {}) {
     // ignore
   }
 
+  /** Parses JSON response and passes data or null to callback. */
   request.onload = () => {
     if (request.status >= 200 && request.status < 400) {
       // Success!
@@ -77,6 +104,7 @@ function getData(fileName, callback, { _cacheBusted = false } = {}) {
     }
   };
 
+  /** Handles network error during JSON data fetching. */
   request.onerror = () => {
     // There was a connection error of some sort
     if (callback) callback(null);
@@ -85,10 +113,21 @@ function getData(fileName, callback, { _cacheBusted = false } = {}) {
   request.send();
 }
 
+/**
+ * Reads the 'trends' query parameter from the current window location.
+ *
+ * @returns {string|null} The raw trends query parameter or null if not present.
+ */
 function getTrendsParamValue() {
   return new URLSearchParams(window.location.search).get('trends');
 }
 
+/**
+ * Validates and sanitizes a trends path string, ensuring it adheres to expected prefixes and structure.
+ *
+ * @param {string|null} trendsValue - The raw trends query parameter value.
+ * @returns {string|null} Sanitized trend path or null if invalid.
+ */
 function sanitizeTrendsValue(trendsValue) {
   if (!trendsValue) return null;
   // We only support "artists/<slug>" and "albums/<artistSlug>/<albumSlug>"
@@ -103,6 +142,9 @@ function sanitizeTrendsValue(trendsValue) {
   return null;
 }
 
+/**
+ * Patches history.pushState and history.replaceState and listens to popstate to dispatch location change events.
+ */
 function installLocationChangeEvent() {
   // Emit a synthetic event for history API updates, plus back/forward.
   const emit = () => window.dispatchEvent(new Event(EVENTS.locationChange));
@@ -110,6 +152,7 @@ function installLocationChangeEvent() {
   ['pushState', 'replaceState'].forEach((method) => {
     const original = history[method];
     if (typeof original !== 'function') return;
+    /** Wraps history method to emit locationChange event. */
     history[method] = function (...args) {
       const result = original.apply(this, args);
       emit();
@@ -120,6 +163,9 @@ function installLocationChangeEvent() {
   window.addEventListener('popstate', emit);
 }
 
+/**
+ * Modal controller managing trends chart overlay display, state synchronization, and DOM lifecycle.
+ */
 const TrendsModal = (() => {
   const state = {
     isOpen: false,
@@ -179,6 +225,9 @@ const TrendsModal = (() => {
     pointer-events: auto;
   `;
 
+  /**
+   * Constructs the DOM hierarchy and elements for the trends modal overlay.
+   */
   const buildDom = () => {
     state.overlay = document.createElement('div');
     state.overlay.style.cssText = OVERLAY_STYLE;
@@ -218,6 +267,9 @@ const TrendsModal = (() => {
     state.container.appendChild(state.content);
   };
 
+  /**
+   * Removes the 'trends' query parameter from the URL bar and triggers modal closing.
+   */
   const setUrlWithoutTrends = () => {
     const url = new URL(window.location.href);
     url.searchParams.delete('trends');
@@ -227,6 +279,9 @@ const TrendsModal = (() => {
     window.dispatchEvent(new Event(EVENTS.locationChange));
   };
 
+  /**
+   * Closes the modal, detaches listeners, and removes modal elements from the DOM.
+   */
   const close = () => {
     if (!state.isOpen) return;
     state.isOpen = false;
@@ -242,6 +297,9 @@ const TrendsModal = (() => {
     state.overlayUi?.remove();
   };
 
+  /**
+   * Opens the trends modal and attaches event listeners for close button, backdrop click, and Escape key.
+   */
   const open = () => {
     if (!state.overlay) buildDom();
 
@@ -249,13 +307,17 @@ const TrendsModal = (() => {
     document.body.appendChild(state.container);
     document.body.appendChild(state.overlayUi);
 
+    /** Closes modal when close button is clicked. */
     state.closeButton.onclick = () => setUrlWithoutTrends();
     // Clicking outside the content area should close the modal.
+    /** Closes modal when clicking backdrop container. */
     state.container.onclick = (evt) => {
       if (evt.target === state.container) setUrlWithoutTrends();
     };
     // Prevent clicks inside the content from bubbling to the container.
+    /** Stops click propagation within modal content area. */
     state.content.onclick = (evt) => evt.stopPropagation();
+    /** Closes modal on Escape key press. */
     state.keydownHandler = (evt) => {
       if (evt.key === 'Escape') setUrlWithoutTrends();
     };
@@ -264,14 +326,30 @@ const TrendsModal = (() => {
     state.isOpen = true;
   };
 
+  /**
+   * Sets the status text inside the modal to indicate loading state.
+   *
+   * @param {string} [msg='Loading…'] - Status message to display.
+   */
   const setLoading = (msg = 'Loading…') => {
     state.statusEl.innerText = msg;
   };
 
+  /**
+   * Sets the status text inside the modal to indicate an error state.
+   *
+   * @param {string} [msg='Unable to load trends data.'] - Error message to display.
+   */
   const setError = (msg = 'Unable to load trends data.') => {
     state.statusEl.innerText = msg;
   };
 
+  /**
+   * Normalizes various monthly trend data structures into a unified array of `{ month, count }` objects.
+   *
+   * @param {Array|Object|null} months - Raw month data in array, tuple, or object format.
+   * @returns {Array<{month: string, count: number}>} Normalized array of monthly entries.
+   */
   const normalizeMonths = (months) => {
     if (!months) return [];
     if (Array.isArray(months)) {
@@ -297,6 +375,11 @@ const TrendsModal = (() => {
     return [];
   };
 
+  /**
+   * Fetches trend data and renders the trends bar chart inside the modal.
+   *
+   * @param {string} trendsValue - The cleaned trend resource path.
+   */
   const render = (trendsValue) => {
     const clean = sanitizeTrendsValue(trendsValue);
     if (!clean) return;
@@ -336,6 +419,9 @@ const TrendsModal = (() => {
     });
   };
 
+  /**
+   * Synchronizes the modal state with the 'trends' query parameter in the current URL.
+   */
   const syncToUrl = () => {
     const trendsValue = getTrendsParamValue();
     if (!trendsValue) {
@@ -348,6 +434,9 @@ const TrendsModal = (() => {
   return { syncToUrl };
 })();
 
+/**
+ * Intercepts clicks on links containing '?trends=' to update browser history without full page reload.
+ */
 function installTrendsLinkInterceptor() {
   // Intercept clicks on "?trends=..." links (including inside shadow DOM)
   // and convert them to history updates so we can open the modal without reload.
@@ -375,10 +464,23 @@ function installTrendsLinkInterceptor() {
 
 const EXCLUDED_TYPES = new Set(['all-time', 'listening history']);
 
+/**
+ * Checks whether a given report type key is valid and selectable in the UI.
+ *
+ * @param {string} type - Report category key (e.g., 'year', 'month').
+ * @returns {boolean} True if the type exists in reports data and is not excluded.
+ */
 function isSelectableType(type) {
   return !!reportsData && !!reportsData[type] && !EXCLUDED_TYPES.has(type);
 }
 
+/**
+ * Extracts the specific period slug from a report JSON filename.
+ *
+ * @param {string} filename - The filename (e.g., 'month_2023-05.json').
+ * @param {string} type - The report category prefix.
+ * @returns {string} The stripped slug identifier.
+ */
 function slugFromFilename(filename, type) {
   if (!filename) return '';
   return filename
@@ -386,6 +488,11 @@ function slugFromFilename(filename, type) {
     .replace(new RegExp(`^${type}_`), '');
 }
 
+/**
+ * Parses current URL query parameters for active filter selections.
+ *
+ * @returns {{type: string|null, period: string|null}} Object with type and period parameter values.
+ */
 function getFilterParams() {
   const params = new URLSearchParams(window.location.search);
   return {
@@ -394,6 +501,11 @@ function getFilterParams() {
   };
 }
 
+/**
+ * Updates URL search parameters in the browser history using replaceState without adding new entries.
+ *
+ * @param {Object.<string, string|null>} updates - Key-value map of parameters to set or remove.
+ */
 function updateFilterParams(updates) {
   const url = new URL(window.location.href);
   Object.entries(updates).forEach(([key, value]) => {
@@ -407,6 +519,9 @@ function updateFilterParams(updates) {
   history.replaceState(history.state, '', url.toString());
 }
 
+/**
+ * Populates the report type dropdown, attaches change listeners, and applies current URL filters.
+ */
 function initSelects() {
   Object.keys(reportsData).sort(customPeriodSort).forEach((type) => {
     if (EXCLUDED_TYPES.has(type)) return;
@@ -416,6 +531,9 @@ function initSelects() {
   applyFilterParams();
 }
 
+/**
+ * Reads filter values from URL search parameters and synchronizes the dropdowns and reports view.
+ */
 function applyFilterParams() {
   const { type, period } = getFilterParams();
 
@@ -426,6 +544,9 @@ function applyFilterParams() {
   buildPeriodSelectAndRender(period);
 }
 
+/**
+ * Handles user selection changes on the report type dropdown, resetting the period filter.
+ */
 function handleTypeChange() {
   const type = typeSelector.value;
   // Reset period whenever the type changes.
@@ -436,12 +557,24 @@ function handleTypeChange() {
   buildPeriodSelectAndRender();
 }
 
+/**
+ * Handles user selection changes on the period dropdown and fetches the corresponding report.
+ *
+ * @param {HTMLSelectElement} select - The period select dropdown element.
+ */
 function handlePeriodChange(select) {
   const type = selectorContainer.dataset.type;
   updateFilterParams({ period: select.value });
   renderReport(`${type}_${select.value}.json`);
 }
 
+/**
+ * Comparator function to sort report period categories in hierarchical order.
+ *
+ * @param {string} a - First category name.
+ * @param {string} b - Second category name.
+ * @returns {number} Comparison result (-1, 0, 1).
+ */
 function customPeriodSort(a, b) {
   // 0. all-time
   // 1. year
@@ -466,6 +599,11 @@ function customPeriodSort(a, b) {
   return 0;
 }
 
+/**
+ * Constructs the period selector dropdown for the current type and initiates rendering of the report.
+ *
+ * @param {string} [preferredPeriod] - Optional period slug to select by default.
+ */
 function buildPeriodSelectAndRender(preferredPeriod) {
   const type = typeSelector.value;
   const reports = (reportsData[type] || []).slice().sort((a, b) => a.filename < b.filename ? 1 : -1);
@@ -511,6 +649,11 @@ function buildPeriodSelectAndRender(preferredPeriod) {
   renderReport(`${type}_${select.value}.json`);
 }
 
+/**
+ * Fetches and renders top artist and album listings for a specified report JSON file.
+ *
+ * @param {string} fileName - Report JSON filename within the reports/ directory.
+ */
 function renderReport(fileName) {
   getData(`reports/${fileName}`, (data) => {
 
@@ -553,6 +696,9 @@ function renderReport(fileName) {
   });
 }
 
+/**
+ * Fetches and renders trends bar charts for inline artist and album trends containers.
+ */
 function updateTrends() {
   /* <div class="container" id="artist-trends-container" data-artist="the-beatles">
     <h2>Trends For <span class="trend-name"></span></h2>
@@ -590,6 +736,9 @@ function updateTrends() {
   });
 }
 
+/**
+ * Initializes Last.fm scrobble history views, listeners, routing, and year-by-year totals on DOM ready.
+ */
 ready.document(() => {
   typeSelector = document.getElementById('type-selector');
   selectorContainer = document.getElementById('selector-container');

@@ -17,6 +17,8 @@ const app = express();
 
 app.use(serve(dir));
 
+// Start the HTTP server to serve static files from the specified directory
 app.listen(port, () => {
   console.log(`Serving ${dir} on http://localhost:${port}`);
 });
+

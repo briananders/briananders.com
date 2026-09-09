@@ -14,7 +14,17 @@ let eraseButton;
 let paused = true;
 let pauseButton;
 
+/**
+ * Represents a dynamic color object providing random, grayscale, and RGB strings with alpha management.
+ *
+ * @constructor
+ */
 function ColorObject() {
+  /**
+   * Generates a random color component in the brighter range (128-255).
+   *
+   * @returns {number} An integer value between 128 and 255.
+   */
   function randomColor() {
     const color = Math.floor(Math.random() * 128);
     return color + 128;
@@ -27,15 +37,43 @@ function ColorObject() {
   const average = Math.floor((red + green + blue) / 3);
 
   this.alpha = alpha;
+
+  /**
+   * Returns an RGBA color string using the initial RGB components and current alpha.
+   *
+   * @returns {string} RGBA formatted string.
+   */
   this.rgb = () => `rgba(${red},${green},${blue},${this.alpha})`;
+
+  /**
+   * Returns an RGBA grayscale string based on the average component value and current alpha.
+   *
+   * @returns {string} RGBA grayscale string.
+   */
   this.gray = () => `rgba(${average},${average},${average},${this.alpha})`;
+
+  /**
+   * Returns an RGBA string with new random RGB components and current alpha.
+   *
+   * @returns {string} RGBA formatted string.
+   */
   this.random = () => `rgba(${randomColor()},${randomColor()},${randomColor()},${this.alpha})`;
+
+  /**
+   * Resets the alpha value back to its originally generated random value.
+   */
   this.resetAlpha = () => {
     this.alpha = alpha;
   };
 }
 
-// Square Class
+/**
+ * Square entity representing an animated bouncing square on the canvas.
+ *
+ * @constructor
+ * @param {number} [x=1] - Starting X coordinate.
+ * @param {number} [y=1] - Starting Y coordinate.
+ */
 function Square(x = 1, y = 1) {
   // size
   const radius = Math.floor(5 + (Math.random() * 100));
@@ -49,6 +87,9 @@ function Square(x = 1, y = 1) {
   let xVelocity = (Math.random() - 0.5) * speed;
   let yVelocity = (Math.random() - 0.5) * speed;
 
+  /**
+   * Renders the square to the canvas context according to current fill and border style settings.
+   */
   this.draw = () => {
     // canvasContext.beginPath();
     // canvasContext.arc(x, y, radius, 0, 2 * Math.PI, false);
@@ -98,6 +139,9 @@ function Square(x = 1, y = 1) {
     }
   };
 
+  /**
+   * Updates square position and handles bouncing against canvas boundaries.
+   */
   this.update = () => {
     if ((y + yVelocity) < radius) {
       yVelocity = Math.abs(yVelocity);
@@ -116,6 +160,9 @@ function Square(x = 1, y = 1) {
     x += xVelocity;
   };
 
+  /**
+   * Updates the border alpha based on the alphaBorder checkbox setting.
+   */
   this.updateAlphaBorder = () => {
     if (alphaBorder.checked) {
       border.resetAlpha();
@@ -124,6 +171,9 @@ function Square(x = 1, y = 1) {
     }
   };
 
+  /**
+   * Updates the fill alpha based on the alphaFill checkbox setting.
+   */
   this.updateAlphaFill = () => {
     if (alphaFill.checked) {
       fill.resetAlpha();
@@ -142,6 +192,9 @@ function Square(x = 1, y = 1) {
 // //////////////////////////////////////////////////////////////////////////////
 // //////////////////////////////////////////////////////////////////////////////
 
+/**
+ * Iterates through all existing squares and updates their border alpha setting.
+ */
 function updateAlphaBorder() {
   let i = squares.length;
 
@@ -150,6 +203,9 @@ function updateAlphaBorder() {
   }
 }
 
+/**
+ * Iterates through all existing squares and updates their fill alpha setting.
+ */
 function updateAlphaFill() {
   let i = squares.length;
 
@@ -158,11 +214,17 @@ function updateAlphaFill() {
   }
 }
 
+/**
+ * Resizes canvas dimensions for high-DPI (retina) displays (2x scale).
+ */
 function setCanvasDimensions() {
   canvas.width = canvas.clientWidth * 2; // x2 for retina displays
   canvas.height = canvas.clientHeight * 2; // x2 for retina displays
 }
 
+/**
+ * Iterates through all squares and triggers position updates.
+ */
 function update() {
   let i = squares.length;
 
@@ -171,6 +233,9 @@ function update() {
   }
 }
 
+/**
+ * Re-draws all active squares onto the canvas.
+ */
 function drawCanvas() {
   canvasContext.save();
 
@@ -183,6 +248,9 @@ function drawCanvas() {
   canvasContext.restore();
 }
 
+/**
+ * Animation loop step running two update/draw passes and scheduling next tick.
+ */
 function draw() {
   let i = 2;
   while (i--) {
@@ -199,6 +267,9 @@ function draw() {
   }
 }
 
+/**
+ * Toggles the pause/play state of the animation and synchronizes UI button text and classes.
+ */
 function pauseUnpause() {
   const pauseCache = paused;
 
@@ -226,6 +297,11 @@ function pauseUnpause() {
   }
 }
 
+/**
+ * Handles canvas clicks to spawn a new square at the clicked coordinates.
+ *
+ * @param {MouseEvent} e - Mouse click event.
+ */
 function createSquare(e) {
   squares.push(new Square(e.offsetX * 2, e.offsetY * 2)); // x2 for retina displays
 
@@ -234,17 +310,26 @@ function createSquare(e) {
   }
 }
 
+/**
+ * Re-computes canvas dimensions and re-renders active squares on window resize.
+ */
 function erase() {
   setCanvasDimensions();
   drawCanvas();
 }
 
+/**
+ * Clears the canvas, empties the square collection, and pauses animation.
+ */
 function clear() {
   canvasContext.clearRect(0, 0, canvas.width, canvas.height);
   squares = [];
   pauseUnpause();
 }
 
+/**
+ * Binds user interaction event listeners to controls, keyboard shortcuts, and canvas.
+ */
 function addEventListeners() {
   windowResize(erase.bind(this));
 
@@ -266,6 +351,9 @@ function addEventListeners() {
   eraseButton.addEventListener('click', erase, false);
 }
 
+/**
+ * Queries DOM elements, gets 2D context, and sets up canvas dimensions on initialization.
+ */
 function initialize() {
   fastSlow = document.getElementById('fast-slow');
   borderStyle = document.getElementById('border-style');

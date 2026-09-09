@@ -1,9 +1,17 @@
 const noAnimations = require('../_modules/no-animations');
 const ready = require('../_modules/document-ready');
 
+/**
+ * Initializes the line-circle rotator interactive illusion on DOM ready.
+ */
 ready.document(() => {
   const maxSet = 8;
 
+  /**
+   * Generates and mounts 2^power rotating line and span elements evenly spaced around 180 degrees.
+   *
+   * @param {number} power - Exponent specifying total elements (2^power).
+   */
   function a(power) {
     const containerElement = document.querySelector('.circle');
     containerElement.innerHTML = '';
@@ -28,6 +36,9 @@ ready.document(() => {
     }
   }
 
+  /**
+   * Populates the select dropdown with powers of two (2 to 128) and binds change events to re-render.
+   */
   function setUpSelect() {
     const select = document.getElementById('select');
     for (let i = 1; i < maxSet; i++) {

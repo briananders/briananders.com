@@ -1,3 +1,8 @@
+/**
+ * Sound synthesizer controller utilizing the Web Audio API oscillator and gain nodes.
+ *
+ * @constructor
+ */
 module.exports = function Sound() {
   const AudioContext = window.AudioContext || window.webkitAudioContext;
   const context = new AudioContext();
@@ -13,6 +18,11 @@ module.exports = function Sound() {
 
   let isPlaying = false;
 
+  /**
+   * Internal recurring loop running while sound is actively playing.
+   *
+   * @returns {void}
+   */
   function runLoop() {
     if (isPlaying) {
       // console.log(frequency);
@@ -23,6 +33,11 @@ module.exports = function Sound() {
     }
   }
 
+  /**
+   * Starts audio playback by ramping gain up and connecting output to audio destination.
+   *
+   * @returns {void}
+   */
   function start() {
     if (isPlaying) { return; }
     isPlaying = true;
@@ -36,6 +51,11 @@ module.exports = function Sound() {
     });
   }
 
+  /**
+   * Stops audio playback by ramping down gain to silence and disconnecting audio output.
+   *
+   * @returns {void}
+   */
   function stop() {
     // console.info(gain.gain.value);
     gain.gain.exponentialRampToValueAtTime(
@@ -49,13 +69,42 @@ module.exports = function Sound() {
     }, 200);
   }
 
+  /**
+   * Sets the oscillator frequency in Hertz.
+   *
+   * @param {number} newFrequency - Frequency in Hz.
+   * @returns {void}
+   */
   function setFrequency(newFrequency) {
     frequency = newFrequency;
     oscillator.frequency.setValueAtTime(frequency, context.currentTime); // value in hertz
   }
 
+  /**
+   * Returns whether audio is currently playing.
+   *
+   * @returns {boolean}
+   */
   this.isPlaying = () => isPlaying;
+
+  /**
+   * Starts sound playback.
+   *
+   * @type {Function}
+   */
   this.start = start;
+
+  /**
+   * Stops sound playback.
+   *
+   * @type {Function}
+   */
   this.stop = stop;
+
+  /**
+   * Updates oscillator pitch.
+   *
+   * @type {Function}
+   */
   this.setFrequency = setFrequency;
 };

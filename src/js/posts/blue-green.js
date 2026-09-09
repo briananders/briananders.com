@@ -1,6 +1,9 @@
 const noAnimations = require('../_modules/no-animations');
 const ready = require('../_modules/document-ready');
 
+/**
+ * Initializes the Blue-Green color boundary perception experiment.
+ */
 ready.document(() => {
   const {
     floor, min, max, random,
@@ -29,6 +32,9 @@ ready.document(() => {
     blue: 0,
   };
 
+  /**
+   * Resets color channels to randomized initial values and resets step size to 32.
+   */
   function reset() {
     colorDirection = null;
     step = 32;
@@ -36,6 +42,10 @@ ready.document(() => {
     colors.blue = floor((MAX_COLOR / 2) + (random() * (MAX_COLOR / 2)));
   }
 
+  /**
+   * Clamps color values to valid range [0, 255], applies background color to the canvas,
+   * and renders the difference indicator gradient charts.
+   */
   function updateColors() {
     colors.blue = max(min(colors.blue, MAX_COLOR), 0);
     colors.green = max(min(colors.green, MAX_COLOR), 0);
@@ -69,10 +79,21 @@ ready.document(() => {
     chartGreen.style.background = `linear-gradient(to right, green 0%, green ${greenDiff / 2}%, transparent ${greenDiff / 2}%)`;
   }
 
+  /**
+   * Halves the current search step size down to a minimum of 1.
+   *
+   * @param {number} currentStep - The current step increment.
+   * @returns {number} The halved step value.
+   */
   function halfStep(currentStep) {
     return max(floor(currentStep / 2), 1);
   }
 
+  /**
+   * Tracks chosen color direction and reduces step size via binary search whenever the user reverses choice.
+   *
+   * @param {string} color - The selected color ('blue' or 'green').
+   */
   function setDirection(color) {
     if (colorDirection === null) {
       colorDirection = color;
@@ -83,6 +104,9 @@ ready.document(() => {
     }
   }
 
+  /**
+   * Adjusts color balance towards green when the user perceives the swatch as blue.
+   */
   function moreGreen() {
     log('moreGreen()');
 
@@ -97,6 +121,9 @@ ready.document(() => {
     updateColors();
   }
 
+  /**
+   * Adjusts color balance towards blue when the user perceives the swatch as green.
+   */
   function moreBlue() {
     log('moreBlue()');
 

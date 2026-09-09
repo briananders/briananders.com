@@ -1,5 +1,8 @@
 const ready = require('../_modules/document-ready');
 
+/**
+ * Initializes the interactive color canvas visualization on DOM ready.
+ */
 ready.document(() => {
   const steps = 256; // squares per color spectrum
   const squareMax = 256;
@@ -14,11 +17,21 @@ ready.document(() => {
   blueSlider.setAttribute('step', squareMax / steps);
   blueSlider.setAttribute('max', squareMax);
 
+  /**
+   * Sets canvas dimensions according to color step resolution.
+   */
   function setCanvasDimensions() {
     canvas.width = steps;
     canvas.height = steps;
   }
 
+  /**
+   * Fills a 1x1 square at coordinates corresponding to red (X) and green (Y) channels.
+   *
+   * @param {number} r - Red channel value (0-256).
+   * @param {number} g - Green channel value (0-256).
+   * @param {number} b - Blue channel value (0-256).
+   */
   function draw(r, g, b) { // 0-256 for each
     context.fillStyle = `rgb(${r},${g},${b})`;
     context.fillRect(
@@ -30,6 +43,11 @@ ready.document(() => {
     );
   }
 
+  /**
+   * Loops through all red and green channel combinations to render the 2D color slice for a fixed blue value.
+   *
+   * @param {number} b - Current blue channel value.
+   */
   function drawLoop(b) {
     let r = 0;
     let g = 0;
@@ -44,6 +62,9 @@ ready.document(() => {
     }
   }
 
+  /**
+   * Checks the blue slider value, updates state, and redraws the canvas if the blue value changed.
+   */
   function updateSlider() {
     const newBlue = Number(blueSlider.value);
     if (newBlue !== blue) {
@@ -52,6 +73,9 @@ ready.document(() => {
     }
   }
 
+  /**
+   * Advances the animation by stepping the blue slider back and forth between 0 and 256.
+   */
   function play() {
     if (!playing) return;
     const sliderValue = Number(blueSlider.value);
@@ -66,6 +90,9 @@ ready.document(() => {
     window.requestAnimationFrame(play);
   }
 
+  /**
+   * Toggles the play/pause state and triggers the animation loop.
+   */
   function playPause() {
     playing = !playing;
     // Class-driven icon: paused → `.play` (▶); playing → `.pause` (⏸).

@@ -29,6 +29,11 @@ const FPS = 1000 / 15;
 let date;
 canvasContext.fillStyle = FILL_STYLE;
 
+/**
+ * Creates and returns a 2D array grid of size WIDTH x WIDTH initialized with zeroes.
+ *
+ * @returns {number[][]} A 2D array representing a blank plane.
+ */
 function resetPlane() {
   const returnArray = new Array(WIDTH);
   for (let i = 0; i < WIDTH; i++) {
@@ -37,6 +42,12 @@ function resetPlane() {
   return returnArray;
 }
 
+/**
+ * Generates an array of rule numbers between MIN and MAX whose binary representations
+ * end in the pattern '10110'. Used for step navigation between interesting rule sets.
+ *
+ * @returns {number[]} Array of rule integers matching the binary suffix condition.
+ */
 function setup10110Array() {
   const CHECK = '10110';
   const returnArray = [];
@@ -51,8 +62,15 @@ function setup10110Array() {
   return returnArray;
 }
 
+/**
+ * Computes the next state of cell (x, y) based on the von Neumann neighborhood (top, right, bottom, left)
+ * with toroidal boundary wrapping, and stores the result in thenPlane.
+ *
+ * @param {number} x - X coordinate (row index) in the grid.
+ * @param {number} y - Y coordinate (column index) in the grid.
+ */
 function calculate(x, y) {
-  // get parent 3 values
+  // get parent 4 orthogonal neighbor values (von Neumann neighborhood)
   let binary = '';
   [
     [0, -1],
@@ -60,16 +78,20 @@ function calculate(x, y) {
     [0, 1],
     [-1, 0]
   ].forEach(([xVal, yVal]) => {
-    // add width and mod width to account for array overflow
+    // add width and modulo width to wrap around grid edges toroidally
     binary += nowPlane[(x + xVal + WIDTH) % WIDTH][(y + yVal + WIDTH) % WIDTH];
   });
 
-  // convert to decimal
+  // convert 4-bit neighbor binary string to decimal index for rule lookup
   const ruleIndex = parseInt(binary, 2);
 
   thenPlane[x][y] = Number(ruleString.charAt(ruleIndex));
 }
 
+/**
+ * Renders the current grid state (nowPlane) to the canvas, computes the next state
+ * in thenPlane for every cell, and swaps the buffers.
+ */
 function drawPlane() {
   canvasContext.clearRect(0, 0, canvas.width, canvas.height);
   nowPlane.forEach((row, rIndex) => {
@@ -92,6 +114,12 @@ function drawPlane() {
   thenPlane = resetPlane();
 }
 
+/**
+ * Main animation loop throttled by FPS. Uses checkDate token to cancel stale animation chains.
+ *
+ * @param {number} checkDate - Timestamp token representing the active run session.
+ * @param {number} then - Timestamp of the previous frame render.
+ */
 function run(checkDate, then) {
   if (checkDate !== date) {
     return;
@@ -107,6 +135,12 @@ function run(checkDate, then) {
   });
 }
 
+/**
+ * Reverses a string character-by-character.
+ *
+ * @param {string} str - The string to reverse.
+ * @returns {string} The reversed string.
+ */
 function reverse(str) {
   let retString = '';
   for (let i = 0; i < str.length; i++) {
@@ -115,6 +149,9 @@ function reverse(str) {
   return retString;
 }
 
+/**
+ * Initializes the initial nowPlane with either a single center seed cell or random binary values.
+ */
 function setupFirstPlane() {
   const plane = resetPlane();
   const half = Math.floor(WIDTH / 2);
@@ -130,6 +167,9 @@ function setupFirstPlane() {
   nowPlane = plane;
 }
 
+/**
+ * Resets the canvas sizing, parses rule configuration, re-initializes planes, and restarts animation loop.
+ */
 function reset() {
   const rect = canvas.getClientRects()[0];
   cellWidth = rect.width / WIDTH;
@@ -147,6 +187,9 @@ function reset() {
   run(date, 0);
 }
 
+/**
+ * Registers event listeners for window resizing, rule adjustments, play toggle, and step navigation.
+ */
 function addEventListeners() {
   windowResize(reset);
 
@@ -178,6 +221,9 @@ function addEventListeners() {
   });
 }
 
+/**
+ * Initializes the 2D cellular automaton once DOM is fully loaded.
+ */
 ready.document(() => {
   reset(); // setup
   addEventListeners();

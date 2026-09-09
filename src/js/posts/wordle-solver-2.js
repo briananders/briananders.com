@@ -50,12 +50,23 @@ ready.document(() => {
   const SPACE = ' ';
   const DASH = '-';
 
+  /**
+   * Tests if a character is an alphabetical letter.
+   *
+   * @param {string} value - Character to test.
+   * @returns {boolean} True if character is a-z or A-Z.
+   */
   const isLetter = (value) => /[a-zA-Z]/.test(value);
 
   /// ////////////// get dictionary
 
   let dictionary;
 
+  /**
+   * Parses and loads the 5-letter word dictionary from the XMLHttpRequest response.
+   *
+   * @returns {void}
+   */
   function reqListener() {
     dictionary = JSON.parse(this.responseText);
   }
@@ -67,6 +78,12 @@ ready.document(() => {
 
   /// ////////////// functions
 
+  /**
+   * Inspects all word lines on the board to adjust the visible board height
+   * based on the last row containing entries.
+   *
+   * @returns {void}
+   */
   function checkLinesFull() {
     const lineFull = new Array(6);
     let lastFullLine = 0;
@@ -92,6 +109,12 @@ ready.document(() => {
     boardElement.style.height = `${lastFullLineElement.offsetHeight * (lastFullLine + 1)}px`;
   }
 
+  /**
+   * Populates the next available empty row with characters from the selected candidate word.
+   *
+   * @param {string} word - Five-letter word string.
+   * @returns {void}
+   */
   function fillFirstEmptyLine(word) {
     let firstEmpty;
     let emptyLineElements;
@@ -111,6 +134,12 @@ ready.document(() => {
     });
   }
 
+  /**
+   * Aggregates tile states (correct, close, wrong, position exclusions, and all entered letters) from the board inputs.
+   *
+   * @returns {{ closeLetters: string[], wrongLetters: string[], correctLetters: Array<string|undefined>, cannotBeLetters: string[][], allLetters: string[] }}
+   *   Constraint object used for dictionary filtering and letter exclusion.
+   */
   function getLetters() {
     const closeLetters = [];
     const wrongLetters = [];
@@ -150,6 +179,12 @@ ready.document(() => {
     };
   }
 
+  /**
+   * Resets an individual letter input cell to blank and its radio button state to 'wrong'.
+   *
+   * @param {HTMLInputElement} textInput - The letter input element to reset.
+   * @returns {void}
+   */
   function resetLetter(textInput) {
     const [, lineNumber, letterNumber] = textInput.id.split(DASH);
 
@@ -165,6 +200,11 @@ ready.document(() => {
     correctCheckbox.checked = false;
   }
 
+  /**
+   * Clears all letter inputs across the entire board.
+   *
+   * @returns {void}
+   */
   function clear() {
     const inputs = Array.from(boardElement.querySelectorAll('input[type=text]'));
 
@@ -173,10 +213,23 @@ ready.document(() => {
     checkLinesFull();
   }
 
+  /**
+   * Converts a word string to title case (capital first letter, lowercase remainder).
+   *
+   * @param {string} word - Word string to convert.
+   * @returns {string} Title-cased word.
+   */
   function titleCase(word) {
     return word.charAt(0).toUpperCase() + word.substring(1).toLowerCase();
   }
 
+  /**
+   * Updates the DOM section displaying weighted candidate words in descending score order.
+   *
+   * @param {Object} options - Options object.
+   * @param {Array<[string, number]>} options.weightedDictionary - Array of [word, score] tuples.
+   * @returns {void}
+   */
   function updateResultSection({ weightedDictionary }) {
     const wordElements = weightedDictionary.sort((a, b) => (a[1] > b[1] ? -1 : 1)).map((wordTuple) => `<span>${titleCase(wordTuple[0])} (${wordTuple[1]})</span>`);
     answersElement.innerHTML = wordElements.join(SPACE);
@@ -184,6 +237,12 @@ ready.document(() => {
     resultsElement.innerText = wordElements.length;
   }
 
+  /**
+   * Maps letter frequency rankings into relative weight scores.
+   *
+   * @param {Array<[string, number]>} letterFrequency - Sorted array of [letter, frequencyCount] pairs.
+   * @returns {Object.<string, number>} Map of uppercase letter characters to numeric score weights.
+   */
   function getLetterValues(letterFrequency) {
     let indexValue = 0;
     let lastValue = 0;
@@ -201,6 +260,15 @@ ready.document(() => {
     return returnObject;
   }
 
+  /**
+   * Computes an information-density score for each candidate word based on letter weights,
+   * penalizing repeated letters and adding a bonus for words with all distinct letters.
+   *
+   * @param {Object} options - Weighting options.
+   * @param {string[]} options.filteredDictionary - Array of candidate words.
+   * @param {Object.<string, number>} options.letterValues - Map of letter score values.
+   * @returns {Array<[string, number]>} Array of [word, score] tuples.
+   */
   function getWeightedDictionary({ filteredDictionary, letterValues }) {
     return filteredDictionary.map((word) => {
       const wordLetterValues = word.toUpperCase().split('').map((letter) => letterValues[letter]);
@@ -210,6 +278,11 @@ ready.document(() => {
     });
   }
 
+  /**
+   * Finds candidate words composed exclusively of untried letters to maximize information gain.
+   *
+   * @returns {void}
+   */
   function updateUnusedLetterWords() {
     const { allLetters } = getLetters();
 
@@ -241,6 +314,11 @@ ready.document(() => {
     untriedResultsElement.innerHTML = unusedLetterDictionary.length.toString();
   }
 
+  /**
+   * Filters the dictionary against current game board constraints using Matcher.
+   *
+   * @returns {string[]} Array of matching uppercase candidate words.
+   */
   function getFilteredDictionary() {
     const {
       closeLetters,
@@ -273,13 +351,33 @@ ready.document(() => {
     return potentialMatches;
   }
 
+  /**
+   * Renders the frequency count breakdown of letters appearing in the candidate set.
+   *
+   * @param {Object} options - Options object.
+   * @param {Array<[string, number]>} options.letterFrequency - Array of [letter, count] pairs.
+   * @returns {Array<[string, number]>} The input letter frequency array.
+   */
   function updateLetterFrequencySection({ letterFrequency }) {
     letterFrequencyElement.innerHTML = letterFrequency.map((pairs) => `<span>${pairs[0].toUpperCase()}: ${pairs[1]}</span>`).join(', ');
 
     return letterFrequency;
   }
 
+  /**
+   * Counts occurrences of each unique letter across candidate words and returns pairs sorted descending.
+   *
+   * @param {Object} options - Options object.
+   * @param {string[]} options.filteredDictionary - Candidate words list.
+   * @returns {Array<[string, number]>} Sorted array of [letter, count] tuples.
+   */
   function getLetterFrequency({ filteredDictionary }) {
+    /**
+     * Converts letter count object to sorted pair array.
+     *
+     * @param {Object.<string, number>} lets - Map of letter to count.
+     * @returns {Array<[string, number]>} Descending sorted array of [letter, count].
+     */
     function sortLetters(lets) {
       const keys = Object.keys(lets);
 
@@ -312,6 +410,13 @@ ready.document(() => {
     return sortLetters(letters);
   }
 
+  /**
+   * Radio button change handler that syncs the selected state (correct/close/wrong) to the text input dataset.
+   *
+   * @param {Object} event - The change event payload.
+   * @param {HTMLInputElement} event.srcElement - The changed radio input.
+   * @returns {void}
+   */
   function checkboxUpdated({ srcElement }) {
     if (!srcElement.checked) return;
     const [state, lineNumber, letterNumber] = srcElement.id.split(DASH);
@@ -319,6 +424,12 @@ ready.document(() => {
     letterInput.dataset.state = state;
   }
 
+  /**
+   * Shifts focus to the preceding letter input in the current word row.
+   *
+   * @param {HTMLInputElement} srcElement - Current active letter input.
+   * @returns {void}
+   */
   function previousInput(srcElement) {
     const [letterWord, lineNumber, letterNumber] = srcElement.id.split(DASH);
 
@@ -328,6 +439,12 @@ ready.document(() => {
     }
   }
 
+  /**
+   * Shifts focus to the succeeding letter input in the current word row.
+   *
+   * @param {HTMLInputElement} srcElement - Current active letter input.
+   * @returns {void}
+   */
   function nextInput(srcElement) {
     const [letterWord, lineNumber, letterNumber] = srcElement.id.split(DASH);
 
@@ -337,6 +454,12 @@ ready.document(() => {
     }
   }
 
+  /**
+   * Keydown event handler for letter typing, arrow key navigation, and backspace clearing.
+   *
+   * @param {KeyboardEvent} evt - Keyboard event.
+   * @returns {void}
+   */
   function inputKeydown(evt) {
     const { srcElement, key } = evt;
     const char = key.toUpperCase();
@@ -368,6 +491,11 @@ ready.document(() => {
     checkLinesFull();
   }
 
+  /**
+   * Executes the full Wordle solver pipeline and updates all recommendation and stats panels.
+   *
+   * @returns {void}
+   */
   function calculate() {
     checkLinesFull();
 
@@ -381,6 +509,11 @@ ready.document(() => {
     updateUnusedLetterWords();
   }
 
+  /**
+   * Registers all DOM event listeners for keyboard navigation, buttons, and radio controls.
+   *
+   * @returns {void}
+   */
   function initEventListeners() {
     textInputs.forEach((input) => {
       input.addEventListener(EVENTS.KEYDOWN, inputKeydown);

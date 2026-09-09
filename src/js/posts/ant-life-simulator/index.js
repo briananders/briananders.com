@@ -10,16 +10,29 @@ const {
   DELAY,
 } = require('./_constants');
 
+/**
+ * Hides an overlay element by adding the CSS hidden class.
+ *
+ * @param {HTMLElement} element - The overlay element to hide.
+ */
 function hideOverlay(element) {
   element.classList.add('hidden');
 }
 
+/**
+ * Displays the overlay element and changes its action button label to "Replay".
+ *
+ * @param {HTMLElement} element - The overlay element to show.
+ */
 function showOverlay(element) {
   element.classList.remove('hidden');
   const button = element.querySelector('button');
   button.innerText = 'Replay';
 }
 
+/**
+ * Initializes the Ant Life Simulator application once the DOM is loaded.
+ */
 ready.document(() => {
   let shouldReset = false;
   const overlayElement = document.getElementById('overlay');

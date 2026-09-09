@@ -34,13 +34,23 @@ const tones = [
 let AudioContext;
 let audioCtx;
 
+/**
+ * Color generator helper for computing gradient color shades and flash-to-white highlight colors.
+ *
+ * @constructor
+ * @param {number} position - Zero-based index of the circle in the column sequence.
+ */
 function ColorObject(position) {
   // rgb(205 72 0) dark
   // rgb(245 127 23) light
+  /** Computes interpolated red channel value. */
   const red = (x) => 205 + (((245 - 205) / numberOfCircles) * x);
+  /** Computes interpolated green channel value. */
   const green = (x) => 72 + (((127 - 72) / numberOfCircles) * x);
+  /** Computes interpolated blue channel value. */
   const blue = (x) => 0 + (((23 - 0) / numberOfCircles) * x);
 
+  /** Blends red channel towards pure white based on flash step. */
   const whiteRed = (x, step) => {
     const white = 255;
     const noWhite = red(x);
@@ -48,6 +58,7 @@ function ColorObject(position) {
 
     return noWhite + (delta * step);
   };
+  /** Blends green channel towards pure white based on flash step. */
   const whiteGreen = (x, step) => {
     const white = 255;
     const noWhite = green(x);
@@ -55,6 +66,7 @@ function ColorObject(position) {
 
     return noWhite + (delta * step);
   };
+  /** Blends blue channel towards pure white based on flash step. */
   const whiteBlue = (x, step) => {
     const white = 255;
     const noWhite = blue(x);
@@ -63,15 +75,33 @@ function ColorObject(position) {
     return noWhite + (delta * step);
   };
 
+  /**
+   * Computes RGBA color string with optional white highlight flash level.
+   *
+   * @param {number} white - Flash intensity between 0 (base color) and 1 (fully white).
+   * @returns {string} RGBA CSS color string.
+   */
   this.rgb = (white) => `rgba(${whiteRed(position, white)},${whiteGreen(position, white)},${whiteBlue(position, white)},1)`;
 }
 
+/**
+ * Calculates vertical speed for a given circle index to establish the polyrhythm relationship.
+ *
+ * @param {number} x - Index of the circle.
+ * @param {number} width - Diameter of the circle.
+ * @returns {number} Initial vertical velocity in pixels per tick.
+ */
 function velocityFunction(x, width) {
   const min = (WIDTH - width) / (numberOfCircles * 100);
   return min + ((min / 19) * x);
 }
 
-// Circle Class
+/**
+ * Represents a single oscillating tone circle in the polyrhythmic display.
+ *
+ * @constructor
+ * @param {number} [position=0] - Column index of the circle.
+ */
 function Circle(position = 0) {
   const numberOfGaps = numberOfCircles + 1;
 
@@ -89,6 +119,12 @@ function Circle(position = 0) {
   const fill = new ColorObject(position);
   const border = new ColorObject(position);
 
+  /**
+   * Calculates fade factor based on time elapsed since last wall collision.
+   *
+   * @param {number} lastDing - Timestamp of the last collision ding.
+   * @returns {number} Opacity / flash weight value from 0 to 1.
+   */
   function ballTransparency(lastDing) {
     const now = Date.now();
     const timeDelta = now - lastDing;
@@ -99,6 +135,11 @@ function Circle(position = 0) {
     return 1 - (timeDelta / 1000);
   }
 
+  /**
+   * Renders the circle path and outline to the 2D canvas context.
+   *
+   * @returns {void}
+   */
   this.draw = () => {
     canvasContext.beginPath();
     canvasContext.arc(x, y, radius, 0, 2 * Math.PI, false);
@@ -114,6 +155,11 @@ function Circle(position = 0) {
     canvasContext.closePath();
   };
 
+  /**
+   * Updates position, detects top/bottom wall collisions, inverts velocity, and triggers ding tone.
+   *
+   * @returns {void}
+   */
   this.update = () => {
     if ((y + velocity) - radius < 0) {
       y = Math.abs(y + velocity - radius) + radius;
@@ -140,11 +186,21 @@ function Circle(position = 0) {
 // //////////////////////////////////////////////////////////////////////////////
 // //////////////////////////////////////////////////////////////////////////////
 
+/**
+ * Sets fixed width and height pixel dimensions on the canvas element.
+ *
+ * @returns {void}
+ */
 function setCanvasDimensions() {
   canvas.width = WIDTH;
   canvas.height = WIDTH;
 }
 
+/**
+ * Updates physics and position of all active circles.
+ *
+ * @returns {void}
+ */
 function update() {
   let i = circles.length;
 
@@ -153,6 +209,11 @@ function update() {
   }
 }
 
+/**
+ * Draws all active circles onto the canvas context.
+ *
+ * @returns {void}
+ */
 function drawCanvas() {
   canvasContext.save();
 
@@ -165,6 +226,11 @@ function drawCanvas() {
   canvasContext.restore();
 }
 
+/**
+ * Main animation loop that clears canvas, updates positions, and repaints.
+ *
+ * @returns {void}
+ */
 function draw() {
   clear();
 
@@ -176,16 +242,34 @@ function draw() {
   // document.querySelector('debug').innerText += audioCtx.state.toString();
 }
 
+/**
+ * Creates and registers a new Circle instance.
+ *
+ * @param {number} position - Column index.
+ * @param {number} [velocity] - Velocity parameter (unused directly in constructor).
+ * @returns {void}
+ */
 function createCircle(position, velocity) {
   circles.push(new Circle(position, velocity));
 }
 
+/**
+ * Instantiates all circles across the polyrhythm grid.
+ *
+ * @returns {void}
+ */
 function createCircles() {
   for (let i = 0; i < numberOfCircles; i++) {
     createCircle(i);
   }
 }
 
+/**
+ * Plays a musical tone with decay envelope using Web Audio API when a circle bounces.
+ *
+ * @param {number} position - Circle tone index mapped to the `tones` array.
+ * @returns {void}
+ */
 function ding(position) {
   const frequency = tones[position];
 
@@ -209,10 +293,20 @@ function ding(position) {
   }, 2100); // 2 seconds fade-out + 100ms buffer
 }
 
+/**
+ * Clears the full rectangle area of the canvas.
+ *
+ * @returns {void}
+ */
 function clear() {
   canvasContext.clearRect(0, 0, canvas.width, canvas.height);
 }
 
+/**
+ * Binds UI click event listeners, such as the play button to start audio context.
+ *
+ * @returns {void}
+ */
 function setUpEvents() {
   playButton.addEventListener('click', () => {
     AudioContext = window.AudioContext || window.webkitAudioContext;
@@ -228,6 +322,11 @@ function setUpEvents() {
   });
 }
 
+/**
+ * Initializes canvas elements, contexts, circles, and user events.
+ *
+ * @returns {void}
+ */
 function initialize() {
   canvas = document.getElementById('canvas');
   canvasContext = canvas.getContext('2d');

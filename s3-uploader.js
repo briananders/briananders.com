@@ -81,6 +81,12 @@ const cloudfrontClient = new CloudFrontClient({
 
 const bucketName = (production) ? 'www.briananders.com' : 'staging.briananders.com';
 
+/**
+ * Resolves the MIME content type string based on the file extension.
+ *
+ * @param {string} fileName - File path or file name with extension.
+ * @returns {string} Corresponding MIME type header value with charset if applicable.
+ */
 const getContentType = (fileName) => {
   const extn = path.extname(fileName);
   const xtn = extn.substring(1);
@@ -125,6 +131,12 @@ const getContentType = (fileName) => {
   }
 };
 
+/**
+ * Constructs the public S3 HTTPS URL for a given object key.
+ *
+ * @param {string} key - S3 object key path.
+ * @returns {string} Fully qualified public HTTPS URL.
+ */
 function objectPublicUrl(key) {
   const host = awsRegion === 'us-east-1'
     ? `${bucketName}.s3.amazonaws.com`
@@ -161,6 +173,12 @@ async function listAllS3Keys() {
 const S3_DELETE_BATCH_SIZE = 1000;
 const DELETE_BATCH_CONCURRENCY = 8;
 
+/**
+ * Deletes a list of S3 objects in batches of up to 1000 with concurrency pool.
+ *
+ * @param {Array<{Key: string}>} fileList - List of object key descriptors to delete.
+ * @returns {Promise<void>}
+ */
 async function deleteS3Files(fileList) {
   if (fileList.length === 0) {
     return;
@@ -173,6 +191,9 @@ async function deleteS3Files(fileList) {
 
   let batchIndex = 0;
 
+  /**
+   * Concurrently processes and deletes chunks of S3 objects.
+   */
   const worker = async () => {
     while (batchIndex < batches.length) {
       const sliceStart = batchIndex;
@@ -193,6 +214,13 @@ async function deleteS3Files(fileList) {
   await Promise.all(Array.from({ length: pool }, () => worker()));
 }
 
+/**
+ * Determines the HTTP Cache-Control header value for a given file based on extension.
+ * Unwraps `.gz` so gzipped dynamic files receive `no-cache,no-store`.
+ *
+ * @param {string} fileName - The file name or path.
+ * @returns {string} Cache-Control header directive value.
+ */
 function getCacheControl(fileName) {
   const extn = path.extname(fileName);
   // Unwrap double extensions (e.g. .html.gz → .html) so gzipped dynamic files
@@ -219,12 +247,21 @@ const MAX_UPLOAD_CONCURRENCY = Math.min(
 
 const expiresHeader = new Date('2034-01-01T00:00:00.000Z');
 
+/**
+ * Uploads a list of local files to the target S3 bucket with concurrency pooling.
+ *
+ * @param {string[]} fileList - Array of absolute file paths to upload.
+ * @returns {Promise<string[]>} Array of uploaded file paths.
+ */
 async function uploadFiles(fileList) {
   fs.chmodSync(dir.package, '0755');
 
   const total = fileList.length;
   let completed = 0;
 
+  /**
+   * Logs upload progress percentage at intervals or upon completion.
+   */
   const logProgress = () => {
     if (completed % 10 === 0 || completed === total) {
       const pct = total ? Math.floor((completed / total) * 100) : 100;
@@ -232,6 +269,12 @@ async function uploadFiles(fileList) {
     }
   };
 
+  /**
+   * Streams and uploads a single file to S3 with appropriate headers.
+   *
+   * @param {string} fileName - Absolute path of file to upload.
+   * @returns {Promise<string>} S3 key location of the uploaded object.
+   */
   const uploadOne = async (fileName) => {
     const fileLocation = fileName.replace(dir.package, '');
     const fileStream = fs.createReadStream(fileName);
@@ -258,6 +301,9 @@ async function uploadFiles(fileList) {
 
   let fileIndex = 0;
 
+  /**
+   * Worker pool task runner that uploads files until the queue is exhausted.
+   */
   const worker = async () => {
     while (fileIndex < fileList.length) {
       const i = fileIndex;
@@ -272,6 +318,11 @@ async function uploadFiles(fileList) {
   return fileList;
 }
 
+/**
+ * Creates a CloudFront cache invalidation for all paths ('/*') on the configured distribution.
+ *
+ * @returns {Promise<void>}
+ */
 async function invalidateCloudFront() {
   console.log('Invalidate Cache');
 
@@ -302,8 +353,20 @@ const SWAP_FILES_REGEXES = [
   /\.ico$/
 ];
 
+/**
+ * Checks whether a given filename matches any of the dynamic file types that must always be swapped/re-uploaded.
+ *
+ * @param {string} fileName - File name or path to test.
+ * @returns {boolean} True if the file should always be re-uploaded.
+ */
 const alwaysSwapFiles = (fileName) => SWAP_FILES_REGEXES.some((regex) => regex.test(fileName));
 
+/**
+ * Main deployment entry point: scans S3 bucket and local package directory,
+ * calculates diffs, deletes obsolete objects, uploads new/changed objects, and invalidates CloudFront.
+ *
+ * @returns {Promise<void>}
+ */
 async function main() {
   const [s3FileList, packageGlob] = await Promise.all([
     listAllS3Keys(),
@@ -313,6 +376,12 @@ async function main() {
   const s3FileSet = new Set(s3FileList);
   const packageSet = new Set(packageGlob);
 
+  /**
+   * Helper to check if a given file path starts with an allowlisted path prefix.
+   *
+   * @param {string} filePath - S3 key or relative path.
+   * @returns {boolean} True if path is preserved in allowlist.
+   */
   const isAllowlisted = (filePath) => deleteAllowlist.some(
     (d) => filePath.startsWith(d) || filePath.startsWith(d.substring(1)),
   );
@@ -347,3 +416,4 @@ main().catch((err) => {
   console.error(err);
   process.exit(1);
 });
+

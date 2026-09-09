@@ -19,16 +19,28 @@ module.exports = function scssStringifyTransform(file) {
 
   const chunks = [];
   return new Transform({
+    /**
+     * Collects data chunks from the input stream.
+     *
+     * @param {Buffer} chunk - Buffer chunk being read.
+     * @param {string} _enc - Encoding (unused).
+     * @param {Function} cb - Callback to continue stream processing.
+     */
     transform(chunk, _enc, cb) {
       chunks.push(chunk);
       cb();
     },
+    /**
+     * Compiles the accumulated SCSS content and flushes the CSS module export string.
+     *
+     * @param {Function} cb - Callback invoked when flush completes or fails with error.
+     */
     flush(cb) {
       try {
         const result = sass.compile(path.resolve(file), {
           loadPaths: [
             path.join(__dirname, '..', '..', 'src', 'styles'),
-            path.join(__dirname, '..', '..', 'node_modules'),
+            path.join(__dirname, '..', '..', 'node_modules')
           ],
         });
         const escaped = JSON.stringify(result.css);

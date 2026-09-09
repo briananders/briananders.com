@@ -41,19 +41,19 @@ module.exports = function minifyHTML({
 
       // Minify asynchronously — html-minifier-terser v7+ returns a Promise.
       htmlMinify(data.toString(), {
-        caseSensitive: true,       // Preserve mixed-case attribute values
-        collapseWhitespace: true,  // Collapse runs of whitespace to a single space
+        caseSensitive: true, // Preserve mixed-case attribute values
+        collapseWhitespace: true, // Collapse runs of whitespace to a single space
         conservativeCollapse: true, // Keep at least one space between tokens
-        html5: true,               // Apply HTML5-specific optimizations
-        keepClosingSlash: true,    // Keep the slash on void elements (<br />)
-        minifyCSS: true,           // Minify inline <style> blocks
-        minifyJS: true,            // Minify inline <script> blocks
+        html5: true, // Apply HTML5-specific optimizations
+        keepClosingSlash: true, // Keep the slash on void elements (<br />)
+        minifyCSS: true, // Minify inline <style> blocks
+        minifyJS: true, // Minify inline <script> blocks
         preserveLineBreaks: false,
         quoteCharacter: '"',
         removeAttributeQuotes: true, // Remove quotes from attributes when safe
         removeComments: true,
-        sortClassName: true,       // Alphabetically sort class attributes
-        useShortDoctype: true,     // Replace full doctype with <!DOCTYPE html>
+        sortClassName: true, // Alphabetically sort class attributes
+        useShortDoctype: true, // Replace full doctype with <!DOCTYPE html>
       }).then((minifiedHtml) => {
         fs.writeFile(htmlFileName, minifiedHtml, (err) => {
           if (err) throw err;

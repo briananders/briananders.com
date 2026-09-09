@@ -6,6 +6,9 @@ const csrSquare = require('./csr-square');
 csrContainer.init();
 csrSquare.init();
 
+/**
+ * Initializes CSR experiment page once the document is ready.
+ */
 ready.document(() => {
   console.log('here');
 });

@@ -1,5 +1,8 @@
 const ready = require('../_modules/document-ready');
 
+/**
+ * Initializes browser and device diagnostic tool displays when the document is ready.
+ */
 ready.document(() => {
   const userAgent = window.navigator.userAgent.toString();
   const userAgentElement = document.getElementById('userAgent');
@@ -27,6 +30,12 @@ ready.document(() => {
 
   inputElement.value = window.location.href.toString();
 
+  /**
+   * Parses the given URL string (or falls back to window.location) and updates
+   * individual URL component elements in the DOM.
+   *
+   * @param {string} [urlParam] - The URL string to decompose.
+   */
   const calculateURL = (urlParam) => {
     let url = window.location;
     if (urlParam !== undefined && urlParam !== '') {
@@ -60,6 +69,9 @@ ready.document(() => {
     searchElement.innerText = search;
   };
 
+  /**
+   * Reads visualViewport metrics (height, width, scale) and renders them in the DOM.
+   */
   const updateViewport = () => {
     const viewport = window.visualViewport;
 
@@ -72,6 +84,9 @@ ready.document(() => {
     scaleElement.innerText = scale;
   };
 
+  /**
+   * Binds event listeners for URL input typing and viewport resizing, and runs initial measurements.
+   */
   const init = () => {
     inputElement.addEventListener('keyup', () => {
       const url = inputElement.value.toString();

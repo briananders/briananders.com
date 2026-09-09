@@ -19,21 +19,49 @@ const albumTemplate = `
 
 const attributes = ['name', 'artist', 'count', 'max', 'img'];
 
+/**
+ * Formats a number with locale-specific thousand separators.
+ *
+ * @param {number|string} number - The numeric value to format.
+ * @returns {string} Formatted number string.
+ */
 function formatNumber(number) {
   return Number(number).toLocaleString();
 }
 
+/**
+ * Custom Web Component for displaying album listing item with play count progress bar and artwork.
+ *
+ * @class AlbumListing
+ * @extends {HTMLElement}
+ */
 class AlbumListing extends HTMLElement {
+  /**
+   * Initializes the AlbumListing instance and attaches shadow DOM.
+   */
   constructor() {
     super();
     const shadow = this.attachShadow({ mode: 'open' });
     shadow.innerHTML = albumTemplate;
   }
 
+  /**
+   * Returns list of observed attributes to trigger attributeChangedCallback.
+   *
+   * @static
+   * @returns {string[]} Array of attribute names.
+   */
   static get observedAttributes() {
     return attributes;
   }
 
+  /**
+   * Handles lifecycle updates when an observed attribute changes.
+   *
+   * @param {string} name - The name of the attribute that changed.
+   * @param {string|null} oldValue - Previous value of the attribute.
+   * @param {string|null} newValue - New value of the attribute.
+   */
   attributeChangedCallback(name, oldValue, newValue) {
     // console.log(name, oldValue, newValue);
     if (name === 'name') {
@@ -79,6 +107,9 @@ class AlbumListing extends HTMLElement {
   // }
 }
 
+/**
+ * Registers the <album-listing> custom element definition and initializes child dependencies.
+ */
 module.exports.init = () => {
   apiImage.init();
   customElements.define('album-listing', AlbumListing);

@@ -1,3 +1,8 @@
+/**
+ * Creates an interactive sound frequency slider controller with playback and tone presets.
+ *
+ * @param {HTMLElement} parent - Container element where this slider component will be appended.
+ */
 module.exports = function Slider(parent) {
   let scope;
   const Sound = require('../../_modules/sound');
@@ -22,6 +27,11 @@ module.exports = function Slider(parent) {
 
   let mouseDownOnSlider = false;
 
+  /**
+   * Stops audio playback, dispatches removal event, and removes the component element from the DOM.
+   *
+   * @returns {void}
+   */
   function removeMe() {
     sound.stop();
     parent.dispatchEvent(events.removeMeEvent);
@@ -31,6 +41,11 @@ module.exports = function Slider(parent) {
     }, 250);
   }
 
+  /**
+   * Continuously samples slider values while user is holding mouse button down on the slider.
+   *
+   * @returns {void}
+   */
   function watchSlider() {
     hertz.push(elements.slider.value);
     if (mouseDownOnSlider) {
@@ -38,6 +53,11 @@ module.exports = function Slider(parent) {
     }
   }
 
+  /**
+   * Sets up event listeners for inputs, dropdowns, remove button, and play/pause toggle.
+   *
+   * @returns {void}
+   */
   function setupEventListeners() {
     elements.remove.addEventListener('click', removeMe);
     elements.slider.addEventListener('mousedown', () => {
@@ -71,6 +91,11 @@ module.exports = function Slider(parent) {
     });
   }
 
+  /**
+   * Updates Web Audio oscillator frequency and synchronizes input/slider visual values.
+   *
+   * @returns {void}
+   */
   function renderUpdatedValues() {
     const currentFrequency = hertz[0];
     sound.setFrequency(currentFrequency);
@@ -82,6 +107,13 @@ module.exports = function Slider(parent) {
     }
   }
 
+  /**
+   * Calculates dynamic padding dashes between tone note labels and frequency values for alignment.
+   *
+   * @param {string} startLabel - Leading note name label.
+   * @param {string} endLabel - Trailing frequency string.
+   * @returns {string} String of dash characters.
+   */
   function labelDashes(startLabel, endLabel) {
     const numberOfStartDashes = 8 - startLabel.length;
     const startDashes = new Array(numberOfStartDashes).fill('-').join('');
@@ -90,6 +122,11 @@ module.exports = function Slider(parent) {
     return startDashes + endDashes;
   }
 
+  /**
+   * Generates and populates the tone preset select dropdown options across all musical scales.
+   *
+   * @returns {void}
+   */
   function addToneSelect() {
     elements.select = document.createElement('select');
     scope.appendChild(elements.select);
@@ -115,6 +152,11 @@ module.exports = function Slider(parent) {
     });
   }
 
+  /**
+   * Polling loop that processes frequency change queues and updates visual/audio state.
+   *
+   * @returns {void}
+   */
   function runLoop() {
     if (hertz.length > 1) {
       hertz = [Number(hertz[hertz.length - 1])];
@@ -123,6 +165,12 @@ module.exports = function Slider(parent) {
     setTimeout(runLoop, 100);
   }
 
+  /**
+   * Parses HTML template, renders component into parent DOM, and captures DOM element references.
+   *
+   * @param {Function} [callback=() => {}] - Callback executed after markup is appended to the DOM.
+   * @returns {*} Return value of the callback.
+   */
   function buildAndRender(callback = () => {}) {
     const doc = new DOMParser().parseFromString(window.soundSlider, 'text/html');
     scope = doc.body.firstChild;
@@ -141,6 +189,11 @@ module.exports = function Slider(parent) {
     return callback();
   }
 
+  /**
+   * Initializes slider component lifecycle, template rendering, and event bindings.
+   *
+   * @returns {void}
+   */
   function init() {
     buildAndRender(setupEventListeners);
     runLoop();

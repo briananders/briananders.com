@@ -11,22 +11,42 @@ const SOURCE_URLS = {
   'band-news': '/band-news/last_updated.json',
 };
 
+/**
+ * Custom Web Component that fetches and formats the last-updated timestamp from JSON endpoints.
+ *
+ * @class ScrobblesLastUpdated
+ * @extends {HTMLElement}
+ */
 class ScrobblesLastUpdated extends HTMLElement {
+  /**
+   * Initializes the ScrobblesLastUpdated component and sets up the shadow root.
+   */
   constructor() {
     super();
     const shadow = this.attachShadow({ mode: 'open' });
     shadow.innerHTML = template;
   }
 
+  /**
+   * Lifecycle hook triggered when element is added to DOM; initiates data fetching.
+   */
   connectedCallback() {
     this.fetchLastUpdated();
   }
 
+  /**
+   * Resolves the JSON metadata endpoint URL based on the 'source' attribute.
+   *
+   * @returns {string} Target URL to fetch metadata from.
+   */
   getUrl() {
     const source = this.getAttribute('source');
     return SOURCE_URLS[source] || SOURCE_URLS.scrobbles;
   }
 
+  /**
+   * Fetches the last updated JSON metadata and triggers formatting or error display.
+   */
   fetchLastUpdated() {
     fetch(this.getUrl())
       .then((response) => {
@@ -44,6 +64,11 @@ class ScrobblesLastUpdated extends HTMLElement {
       });
   }
 
+  /**
+   * Parses various timestamp formats from API response and renders the localized date string.
+   *
+   * @param {Object} data - API response payload containing a timestamp or date field.
+   */
   renderDate(data) {
     const rawValue = data.last_updated !== undefined ? data.last_updated
       : data.epoch !== undefined ? data.epoch
@@ -82,6 +107,9 @@ class ScrobblesLastUpdated extends HTMLElement {
     });
   }
 
+  /**
+   * Displays fallback 'Unknown' state when data fetching or date parsing fails.
+   */
   renderError() {
     const timeEl = this.shadowRoot.getElementById('datetime');
     timeEl.classList.remove('loading');
@@ -90,6 +118,9 @@ class ScrobblesLastUpdated extends HTMLElement {
   }
 }
 
+/**
+ * Registers the <last-updated> custom element definition.
+ */
 module.exports.init = () => {
   customElements.define('last-updated', ScrobblesLastUpdated);
 };

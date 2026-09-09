@@ -187,8 +187,8 @@ module.exports = async function bundleEJS({
     const ejsFunctions = require(`${dir.build}helpers/ejs-functions`)(dir, pageMappingData);
     const ejsOptions = {
       compileDebug: true,
-      filename: templatePath,          // Required for EJS include() paths to resolve correctly
-      root: `${dir.src}templates/`,   // Allows absolute include paths within templates
+      filename: templatePath, // Required for EJS include() paths to resolve correctly
+      root: `${dir.src}templates/`, // Allows absolute include paths within templates
     };
 
     // Derive the output path, applying the *.html.ejs → direct / *.ejs → /index.html rule.

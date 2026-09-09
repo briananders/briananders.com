@@ -1,3 +1,13 @@
+/**
+ * Musical note frequencies (in Hertz), scale orders, and note labels for audio synthesis.
+ *
+ * @type {{
+ *   numberOfScales: number,
+ *   order: Array<string>,
+ *   hertz: Object.<string, number>,
+ *   labels: Object.<string, string>
+ * }}
+ */
 module.exports = {
   numberOfScales: 9,
   order: [

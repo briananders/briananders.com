@@ -3,16 +3,36 @@ require('../_components/api-image').init();
 
 const API_BASE = '/movies';
 
+/**
+ * Constructs the JSON endpoint URL for a given rating tier.
+ *
+ * @param {string|number} rating - The IMDb star rating value (e.g., '10', '9').
+ * @returns {string} URL to fetch rating JSON data.
+ */
 function getRatingUrl(rating) {
   return `${API_BASE}/rating-${rating}.json`;
 }
 
+/**
+ * Constructs the base image URL for a given IMDb title/movie ID.
+ *
+ * @param {string} movieId - The unique IMDb movie identifier.
+ * @returns {string} Image endpoint path.
+ */
 function getImageUrl(movieId) {
   return `${API_BASE}/images/${movieId}`;
 }
 
 const TV_CONTENT_TYPES = new Set(['tvSeries', 'tvMiniSeries', 'tvMovie']);
 
+/**
+ * Evaluates whether a movie object satisfies the given content type filter.
+ *
+ * @param {Object} movie - The movie data object.
+ * @param {string} movie.contentType - Content type string (e.g. 'movie', 'tvSeries').
+ * @param {string} filterKey - Selected filter key ('movies', 'tvSeries', or empty for all).
+ * @returns {boolean} True if the movie matches the filter criteria.
+ */
 function movieMatchesContentTypeFilter(movie, filterKey) {
   if (!filterKey) return true;
   if (filterKey === 'movies') {
@@ -21,6 +41,20 @@ function movieMatchesContentTypeFilter(movie, filterKey) {
   return movie.contentType === filterKey;
 }
 
+/**
+ * Generates an HTML string template for a single movie card.
+ *
+ * @param {Object} movie - The movie data object.
+ * @param {string} movie.movieId - Unique movie ID.
+ * @param {string} movie.imdbUrl - IMDb web URL.
+ * @param {string} movie.title - Title of the movie or series.
+ * @param {string} movie.contentType - Type classification (movie, tvSeries, etc.).
+ * @param {string|number} [movie.year] - Release year.
+ * @param {string} [movie.runtime] - Runtime string.
+ * @param {string} [movie.contentRating] - Age / content rating (e.g., PG-13, R).
+ * @param {string|number} [movie.imdbRating] - Numerical IMDb rating value.
+ * @returns {string} HTML markup string for rendering the movie card.
+ */
 function renderMovie(movie) {
   const imageBase = getImageUrl(movie.movieId);
 
@@ -58,9 +92,17 @@ function renderMovie(movie) {
   `;
 }
 
+/**
+ * Fetches movie rating data from the server via XMLHttpRequest.
+ *
+ * @param {string|number} rating - Rating tier to request.
+ * @param {function(Array<Object>): void} onSuccess - Callback invoked on successful JSON parsing.
+ * @param {function(Error): void} onError - Callback invoked on HTTP or network error.
+ */
 function fetchRating(rating, onSuccess, onError) {
   const xhr = new XMLHttpRequest();
   xhr.open('GET', getRatingUrl(rating), true);
+  /** Parses response JSON and invokes success or error callback. */
   xhr.onload = function () {
     if (xhr.status >= 200 && xhr.status < 400) {
       try {
@@ -72,12 +114,16 @@ function fetchRating(rating, onSuccess, onError) {
       onError(new Error(`HTTP ${xhr.status}`));
     }
   };
+  /** Handles network transport errors. */
   xhr.onerror = function () {
     onError(new Error('Network error'));
   };
   xhr.send();
 }
 
+/**
+ * Sets up IMDb ratings filter controls, caching, and grid display on DOM ready.
+ */
 ready.document(() => {
   const ratingDropdown = document.getElementById('rating-dropdown');
   const contentTypeDropdown = document.getElementById('content-type-dropdown');
@@ -88,6 +134,12 @@ ready.document(() => {
   let cachedRating = null;
   let cachedMovies = null;
 
+  /**
+   * Sorts, filters, and displays the list of movie items in the DOM grid.
+   *
+   * @param {Array<Object>} movies - Array of movie objects to display.
+   * @param {string} contentTypeFilter - Selected content type filter.
+   */
   function renderMoviesList(movies, contentTypeFilter) {
     const sorted = movies.slice().sort((a, b) => {
       const ya = parseInt(a.year, 10) || 0;
@@ -99,6 +151,9 @@ ready.document(() => {
     grid.innerHTML = filtered.map(renderMovie).join('');
   }
 
+  /**
+   * Refreshes the movie list, utilizing cached data when available or making a network request.
+   */
   function refreshList() {
     const rating = ratingDropdown.value;
     const contentTypeFilter = contentTypeDropdown.value;

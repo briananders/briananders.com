@@ -1,5 +1,9 @@
 const ready = require('../_modules/document-ready');
 
+/**
+ * Initializes button click handlers to dynamically append random Lorem Ipsum sentences
+ * to demonstrate vertical centering behavior when sibling content grows.
+ */
 ready.document(() => {
   const lipsum = [
     'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
@@ -29,6 +33,7 @@ ready.document(() => {
 
   buttons.forEach((button) => {
     button.addEventListener('click', () => {
+      // Append a randomly selected paragraph sentence to the preceding sibling element
       button.previousElementSibling.innerText += ` ${lipsum[Math.floor(Math.random() * lipsum.length)]}`;
     });
   });

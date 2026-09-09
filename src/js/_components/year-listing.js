@@ -79,7 +79,16 @@ const yearTemplate = `
 
 const attributes = ['year', 'value', 'maximum'];
 
+/**
+ * Custom Web Component for displaying historical annual play statistics with animated bar meters.
+ *
+ * @class YearListing
+ * @extends {HTMLElement}
+ */
 class YearListing extends HTMLElement {
+  /**
+   * Initializes YearListing component and attaches shadow DOM template.
+   */
   constructor() {
     super();
     const shadow = this.attachShadow({ mode: 'open' });
@@ -89,10 +98,23 @@ class YearListing extends HTMLElement {
     this.barElement = this.shadowRoot.querySelector('.bar');
   }
 
+  /**
+   * Returns list of observed attributes to monitor for changes.
+   *
+   * @static
+   * @returns {string[]} Array of attribute names.
+   */
   static get observedAttributes() {
     return attributes;
   }
 
+  /**
+   * Handles lifecycle updates when an observed attribute changes.
+   *
+   * @param {string} name - The attribute name.
+   * @param {string|null} oldValue - The prior value.
+   * @param {string|null} newValue - The updated value.
+   */
   attributeChangedCallback(name, oldValue, newValue) {
     this.barElement = this.shadowRoot.querySelector('.bar');
 
@@ -111,6 +133,11 @@ class YearListing extends HTMLElement {
     }
   }
 
+  /**
+   * Smoothly animates the numerical counter from its previous value to the target value.
+   *
+   * @param {number|string} value - The destination number value.
+   */
   animateToValue(value) {
     const oldValue = this.value;
     const valueDiff = value - oldValue;
@@ -131,6 +158,9 @@ class YearListing extends HTMLElement {
       return rounded.toLocaleString();
     }
 
+    /**
+     * Recursive animation frame step that calculates interpolated value.
+     */
     function run() {
       const now = Date.now();
       const runningValue = ((now - startTime) / duration) * valueDiff;
@@ -145,6 +175,9 @@ class YearListing extends HTMLElement {
     run();
   }
 
+  /**
+   * Calculates and sets the CSS custom property `--bar-width` relative to the maximum attribute.
+   */
   updateWidth() {
     const { barElement } = this;
     const maximum = Number(this.getAttribute('maximum') || 1);
@@ -155,6 +188,9 @@ class YearListing extends HTMLElement {
     }, 1);
   }
 
+  /**
+   * Lifecycle hook called when element is added to DOM; sets up in-view viewport observer.
+   */
   connectedCallback() {
     inView(this.barElement, this.updateWidth.bind(this), {
       rootMargin: '-70px 0px -20px 0px',
@@ -166,6 +202,9 @@ class YearListing extends HTMLElement {
   // }
 }
 
+/**
+ * Registers the <year-listing> custom element definition.
+ */
 module.exports.init = () => {
   customElements.define('year-listing', YearListing);
 };

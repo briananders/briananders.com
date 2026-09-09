@@ -46,12 +46,23 @@ ready.document(() => {
   const SPACE = ' ';
   const DASH = '-';
 
+  /**
+   * Tests if a character is an alphabetical letter.
+   *
+   * @param {string} value - Character to test.
+   * @returns {boolean} True if character is a-z or A-Z.
+   */
   const isLetter = (value) => /[a-zA-Z]/.test(value);
 
   /// ////////////// get dictionary
 
   let dictionary;
 
+  /**
+   * Parses and loads the 5-letter word dictionary from the XMLHttpRequest response.
+   *
+   * @returns {void}
+   */
   function reqListener() {
     dictionary = JSON.parse(this.responseText);
   }
@@ -63,6 +74,12 @@ ready.document(() => {
 
   /// ////////////// functions
 
+  /**
+   * Inspects all word lines on the board to adjust the visible board height
+   * based on the last row containing entries.
+   *
+   * @returns {void}
+   */
   function checkLinesFull() {
     const lineFull = new Array(6);
     let lastFullLine = 0;
@@ -88,6 +105,12 @@ ready.document(() => {
     boardElement.style.height = `${lastFullLineElement.offsetHeight * (lastFullLine + 1)}px`;
   }
 
+  /**
+   * Populates the next available empty row with characters from the selected candidate word.
+   *
+   * @param {string} word - Five-letter word string.
+   * @returns {void}
+   */
   function fillFirstEmptyLine(word) {
     let firstEmpty;
     let emptyLineElements;
@@ -107,6 +130,12 @@ ready.document(() => {
     });
   }
 
+  /**
+   * Checks whether a word contains any repeated letters.
+   *
+   * @param {string} word - Word to test.
+   * @returns {boolean} True if the word contains duplicate characters.
+   */
   function hasDoubleLetter(word) {
     for (let i = 0; i < word.length; i++) {
       if (word.indexOf(word.charAt(i)) !== i) return true;
@@ -114,6 +143,12 @@ ready.document(() => {
     return false;
   }
 
+  /**
+   * Aggregates tile states (correct, close, wrong, position exclusions) from the board inputs.
+   *
+   * @returns {{ closeLetters: string[], wrongLetters: string[], correctLetters: Array<string|undefined>, cannotBeLetters: string[][] }}
+   *   Constraint object used for dictionary filtering.
+   */
   function getLetters() {
     const closeLetters = [];
     const wrongLetters = [];
@@ -149,6 +184,12 @@ ready.document(() => {
     };
   }
 
+  /**
+   * Resets an individual letter input cell to blank and its radio button state to 'wrong'.
+   *
+   * @param {HTMLInputElement} textInput - The letter input element to reset.
+   * @returns {void}
+   */
   function resetLetter(textInput) {
     const [, lineNumber, letterNumber] = textInput.id.split(DASH);
 
@@ -164,6 +205,11 @@ ready.document(() => {
     correctCheckbox.checked = false;
   }
 
+  /**
+   * Clears all letter inputs across the entire board.
+   *
+   * @returns {void}
+   */
   function clear() {
     const inputs = Array.from(boardElement.querySelectorAll('input[type=text]'));
 
@@ -172,6 +218,11 @@ ready.document(() => {
     checkLinesFull();
   }
 
+  /**
+   * Evaluates current board constraints, filters dictionary words, and displays potential matches.
+   *
+   * @returns {void}
+   */
   function calculate() {
     checkLinesFull();
 
@@ -209,6 +260,13 @@ ready.document(() => {
     resultsElement.innerText = wordElements.length;
   }
 
+  /**
+   * Radio button change handler that syncs the selected state (correct/close/wrong) to the text input dataset.
+   *
+   * @param {Object} event - The change event payload.
+   * @param {HTMLInputElement} event.srcElement - The changed radio input.
+   * @returns {void}
+   */
   function checkboxUpdated({ srcElement }) {
     if (!srcElement.checked) return;
     const [state, lineNumber, letterNumber] = srcElement.id.split(DASH);
@@ -216,6 +274,12 @@ ready.document(() => {
     letterInput.dataset.state = state;
   }
 
+  /**
+   * Shifts focus to the preceding letter input in the current word row.
+   *
+   * @param {HTMLInputElement} srcElement - Current active letter input.
+   * @returns {void}
+   */
   function previousInput(srcElement) {
     const [letterWord, lineNumber, letterNumber] = srcElement.id.split(DASH);
 
@@ -225,6 +289,12 @@ ready.document(() => {
     }
   }
 
+  /**
+   * Shifts focus to the succeeding letter input in the current word row.
+   *
+   * @param {HTMLInputElement} srcElement - Current active letter input.
+   * @returns {void}
+   */
   function nextInput(srcElement) {
     const [letterWord, lineNumber, letterNumber] = srcElement.id.split(DASH);
 
@@ -234,6 +304,12 @@ ready.document(() => {
     }
   }
 
+  /**
+   * Keydown event handler for letter typing, arrow key navigation, and backspace clearing.
+   *
+   * @param {KeyboardEvent} evt - Keyboard event.
+   * @returns {void}
+   */
   function inputKeydown(evt) {
     const { srcElement, key } = evt;
     const char = key.toUpperCase();
@@ -265,6 +341,11 @@ ready.document(() => {
     checkLinesFull();
   }
 
+  /**
+   * Registers all DOM event listeners for keyboard navigation, buttons, and radio controls.
+   *
+   * @returns {void}
+   */
   function initEventListeners() {
     textInputs.forEach((input) => {
       input.addEventListener(EVENTS.KEYDOWN, inputKeydown);

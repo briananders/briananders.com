@@ -5,10 +5,19 @@ const BACKGROUND_STYLE = 'rgba(33,33,33,0.005)';
 
 const STEPS = 24; // squares per color spectrum
 
+/**
+ * Graph constructor that renders and simulates a real-time distribution histogram
+ * of random column selections.
+ *
+ * @constructor
+ */
 function Graph() {
   const graphElement = document.getElementById('graph');
   let count = 0;
 
+  /**
+   * Generates DOM column elements corresponding to each histogram bucket.
+   */
   function fill() {
     for (let i = 0; i < STEPS; i++) {
       const columnElement = document.createElement('column');
@@ -18,6 +27,9 @@ function Graph() {
     }
   }
 
+  /**
+   * Recalculates distribution percentages and updates column heights and percentage labels.
+   */
   function updateColumns() {
     const columnElements = Array.from(graphElement.children);
     columnElements.forEach((columnElement) => {
@@ -28,6 +40,9 @@ function Graph() {
     });
   }
 
+  /**
+   * Randomly increments a column value, recalculates distribution, and schedules next update.
+   */
   function play() {
     const column = Math.floor(Math.random() * STEPS);
     count++;
@@ -41,17 +56,26 @@ function Graph() {
     setTimeout(play, 2);
   }
 
+  /**
+   * Initializes graph columns and starts the continuous distribution loop.
+   */
   this.start = () => {
     fill();
     play();
   };
 }
 
+/**
+ * Initializes the static canvas noise animation and accompanying distribution graph.
+ */
 ready.document(() => {
   const canvas = document.getElementById('canvas');
   const context = canvas.getContext('2d');
   let cellWidth;
 
+  /**
+   * Measures canvas bounding box and adjusts internal canvas dimensions and cell unit width.
+   */
   function setCanvasDimensions() {
     const rect = canvas.getClientRects()[0];
     cellWidth = rect.width / STEPS;
@@ -59,6 +83,13 @@ ready.document(() => {
     canvas.height = rect.width;
   }
 
+  /**
+   * Draws an active noise pixel at grid coordinates (x, y) and overlays a faint translucent
+   * dark wash across the entire canvas to simulate phosphor decay / noise trail effect.
+   *
+   * @param {number} x - Grid X position.
+   * @param {number} y - Grid Y position.
+   */
   function draw(x, y) { // 0-256 for each
     context.fillStyle = FILL_STYLE;
     context.strokeStyle = FILL_STYLE;
@@ -69,6 +100,7 @@ ready.document(() => {
       cellWidth
     );
 
+    // Overlay faint background layer to create persistence / decay trail
     context.fillStyle = BACKGROUND_STYLE;
     context.strokeStyle = BACKGROUND_STYLE;
     context.fillRect(
@@ -79,6 +111,9 @@ ready.document(() => {
     );
   }
 
+  /**
+   * Selects random coordinates on the grid, renders the noise particle, and schedules next tick.
+   */
   function play() {
     const x = Math.floor(Math.random() * STEPS);
     const y = Math.floor(Math.random() * STEPS);
@@ -88,6 +123,9 @@ ready.document(() => {
     setTimeout(play, 1000 / 480);
   }
 
+  /**
+   * Renders the initial full-canvas fill and background trail layers.
+   */
   function firstDraw() {
     context.fillStyle = FILL_STYLE;
     context.strokeStyle = FILL_STYLE;
