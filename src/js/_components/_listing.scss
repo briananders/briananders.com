@@ -1,0 +1,59 @@
+// -----------------------------------------------------------------------------
+// Shared base styles for listing components (album-listing, artist-listing).
+// Defines the common card container, image dimensions, metadata column, and
+// progress meter animation.
+// -----------------------------------------------------------------------------
+
+@use "system/utilities" as *;
+
+$thumb-width: 120px;
+$bar-height: 10px;
+
+a {
+  color: inherit;
+  text-decoration: none;
+  display: grid;
+  grid-template-columns: $thumb-width 1fr;
+  gap: space(2);
+  border-radius: $border-radius;
+  outline: none;
+  padding: space(1);
+
+  transition-duration: $transition-speed;
+  transition-timing-function: $transition-timing;
+
+  @include link-focus;
+  @include card;
+
+  cursor: pointer;
+  transition-property: transform, border-color, box-shadow;
+
+  &:hover {
+    transform: translateY(-2px);
+    border-color: var(--color-primary-500);
+    box-shadow: var(--elev-3);
+  }
+}
+
+#bar {
+  width: 0%;
+  max-width: 100%;
+  height: $bar-height;
+  border-radius: $border-radius;
+  @include orange-gradient;
+
+  transition-duration: $transition-speed;
+  transition-timing-function: $transition-timing;
+  transition-property: width;
+}
+
+img {
+  display: block;
+  width: $thumb-width;
+}
+
+span.info {
+  display: flex;
+  flex-flow: column;
+  justify-content: space-around;
+}

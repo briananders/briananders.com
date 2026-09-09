@@ -28,7 +28,12 @@ section.contributions {
         "image title"
         "image description"
         "image links";
-      @include columns(6, 4);
+      @include columns(6, 8);
+      max-width: var(--max-8-columns);
+
+      picture {
+        grid-row: span 3;
+      }
     }
 
     @include mq($large) {

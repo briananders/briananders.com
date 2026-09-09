@@ -65,7 +65,8 @@ function watchForPreviewReady({ buildEvents, completionFlags, dir }) {
  *
  * 2. **Source directory watcher** (`src/`): dispatches to the appropriate
  *    incremental rebuild function based on which file changed:
- *    - `src/js/**` → `bundleJS` (re-bundle all JS entry points)
+ *    - JavaScript files under `src/js/` → `bundleJS` (re-bundle all JS entry points)
+ *    - SCSS files under `src/js/` → `bundleJS` (re-bundle JS components that import SCSS)
  *    - `src/styles/**` → `bundleSCSS` + `compilePageMappingData` (re-compile
  *      styles and refresh template data so inlined SCSS stays current)
  *    - `src/templates/**`, `src/partials/**`, `src/layout/**` →
@@ -108,6 +109,9 @@ module.exports = (configs) => {
     log(`${timestamp.stamp()} ${`File modified: ${filePath.split('briananders.com')[1]}`.yellow}`);
 
     const extn = path.extname(filePath);
+    const jsSourceDirectory = `${dir.src}js${path.sep}`;
+    const isJsSource = filePath.startsWith(jsSourceDirectory);
+    const isJsScss = isJsSource && extn.toLowerCase() === '.scss';
 
     // Refresh build.txt whenever a source file changes.
     if (filePath.startsWith(dir.src) && !filePath.includes('build.txt')) {
@@ -118,7 +122,12 @@ module.exports = (configs) => {
     switch (true) {
       case filePath.includes('.DS_Store'):
         break;
-      case filePath.includes(`${dir.src}js/`):
+      // SCSS co-located with JS components is bundled into the JS output by
+      // scss-stringify-transform, so a stylesheet change must rebuild JS.
+      case isJsScss:
+        bundleJS(configs);
+        break;
+      case isJsSource:
         bundleJS(configs);
         break;
       case filePath.includes(`${dir.src}styles/`):
