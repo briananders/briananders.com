@@ -67,7 +67,7 @@ const yearTemplate = `
     }
   </style>
 
-  <a href="" aria-label="" itemprop="url" rel="noopener" target="blank">
+  <a href="" aria-label="" aria-haspopup="dialog">
     <span slot="year">2000</span>
     <span class="bar-container">
       <span class="bar">
@@ -124,7 +124,7 @@ class YearListing extends HTMLElement {
     }
     if (name === 'year') {
       this.shadowRoot.querySelector(`[slot="${name}"]`).innerText = newValue;
-      this.shadowRoot.querySelector('a').setAttribute('href', `https://www.last.fm/user/imbanders/library/artists?from=${newValue}-01-01&rangetype=year`);
+      this.shadowRoot.querySelector('a').setAttribute('href', `?trends=years/${newValue}`);
     }
     if (['year', 'value'].includes(name)) {
       const year = this.getAttribute('year');

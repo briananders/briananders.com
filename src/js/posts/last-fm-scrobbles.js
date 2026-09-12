@@ -130,13 +130,14 @@ function getTrendsParamValue() {
  */
 function sanitizeTrendsValue(trendsValue) {
   if (!trendsValue) return null;
-  // We only support "artists/<slug>" and "albums/<artistSlug>/<albumSlug>"
+  // Support artist, album, and annual listening trends.
   const clean = String(trendsValue)
     .trim()
     .replace(/^\//, '')
     .replace(/\.\./g, '')
     .replace(/\/{2,}/g, '/');
 
+  if (/^years\/\d{4}$/.test(clean) && Number(clean.split('/')[1]) >= 2013) return clean;
   if (clean.startsWith('artists/')) return clean;
   if (clean.startsWith('albums/')) return clean;
   return null;
@@ -401,7 +402,10 @@ const TrendsModal = (() => {
         return;
       }
 
-      if (data.album && data.artist) {
+      const year = clean.startsWith('years/') ? Number(clean.split('/')[1]) : undefined;
+      if (year) {
+        state.titleEl.innerText = `History: ${year}`;
+      } else if (data.album && data.artist) {
         state.titleEl.innerText = `History: ${data.album} by ${data.artist}`;
       } else if (data.artist) {
         state.titleEl.innerText = `History: ${data.artist}`;
@@ -415,7 +419,7 @@ const TrendsModal = (() => {
 
       const chartContainer = document.createElement('div');
       state.chartEl.appendChild(chartContainer);
-      new TrendsBarChart(chartContainer, months, { openInModal: false });
+      new TrendsBarChart(chartContainer, months, { openInModal: false, year });
     });
   };
 

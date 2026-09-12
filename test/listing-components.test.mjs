@@ -379,12 +379,12 @@ describe('YearListing', () => {
     );
   });
 
-  test('setting year updates the href to the correct Last.fm URL', () => {
+  test('setting year updates the href to the year trends URL', () => {
     const el = makeYear({ year: '2022' });
     assert.equal(
       el.shadowRoot.querySelector('a').getAttribute('href'),
-      'https://www.last.fm/user/imbanders/library/artists?from=2022-01-01&rangetype=year',
-      'href should link to the Last.fm year page',
+      '?trends=years/2022',
+      'href should link to the year trends modal',
     );
   });
 
@@ -393,7 +393,7 @@ describe('YearListing', () => {
     el.setAttribute('year', '2023');
     assert.equal(
       el.shadowRoot.querySelector('a').getAttribute('href'),
-      'https://www.last.fm/user/imbanders/library/artists?from=2023-01-01&rangetype=year',
+      '?trends=years/2023',
       'href should update when year changes',
     );
   });
