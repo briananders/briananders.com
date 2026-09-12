@@ -54,11 +54,18 @@ a.movie {
   min-width: 0;
   overflow-wrap: anywhere;
 
+  api-image,
+  picture,
   img {
     display: block;
-    width: auto;
+    width: 100%;
     max-width: 100%;
     height: auto;
+    aspect-ratio: var(--poster-aspect-ratio);
+  }
+
+  api-image {
+    flex-shrink: 0;
   }
 
   .movie-info {

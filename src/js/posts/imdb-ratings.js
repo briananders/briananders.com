@@ -14,13 +14,13 @@ function getRatingUrl(rating) {
 }
 
 /**
- * Constructs the base image URL for a given IMDb title/movie ID.
+ * Constructs the base image URL for a poster basename.
  *
- * @param {string} movieId - The unique IMDb movie identifier.
+ * @param {string} basename - The poster image basename from the API.
  * @returns {string} Image endpoint path.
  */
-function getImageUrl(movieId) {
-  return `${API_BASE}/images/${movieId}`;
+function getImageUrl(basename) {
+  return `${API_BASE}/images/${basename}`;
 }
 
 const TV_CONTENT_TYPES = new Set(['tvSeries', 'tvMiniSeries', 'tvMovie']);
@@ -45,7 +45,10 @@ function movieMatchesContentTypeFilter(movie, filterKey) {
  * Generates an HTML string template for a single movie card.
  *
  * @param {Object} movie - The movie data object.
- * @param {string} movie.movieId - Unique movie ID.
+ * @param {Object} movie.image - Poster image metadata.
+ * @param {string} movie.image.basename - Poster basename shared by all image formats.
+ * @param {number} movie.image.width - Intrinsic poster width.
+ * @param {number} movie.image.height - Intrinsic poster height.
  * @param {string} movie.imdbUrl - IMDb web URL.
  * @param {string} movie.title - Title of the movie or series.
  * @param {string} movie.contentType - Type classification (movie, tvSeries, etc.).
@@ -56,7 +59,7 @@ function movieMatchesContentTypeFilter(movie, filterKey) {
  * @returns {string} HTML markup string for rendering the movie card.
  */
 function renderMovie(movie) {
-  const imageBase = getImageUrl(movie.movieId);
+  const imageBase = getImageUrl(movie.image.basename);
 
   const isSeries = movie.contentType === 'tvSeries'
     || movie.contentType === 'tvMiniSeries'
@@ -82,7 +85,7 @@ function renderMovie(movie) {
       rel="noopener noreferrer"
       role="listitem"
     >
-      <api-image src="${imageBase}" alt="${movie.title} poster" loading="lazy" width="240" height="356"></api-image>
+      <api-image src="${imageBase}" alt="${movie.title} poster" loading="lazy" width="${movie.image.width}" height="${movie.image.height}" style="--poster-aspect-ratio: ${movie.image.width} / ${movie.image.height}"></api-image>
       <div class="movie-info">
         <h2 class="h6">${movie.title} ${typeLabel}</h2>
         <p class="year-runtime">${yearRuntime}</p>
