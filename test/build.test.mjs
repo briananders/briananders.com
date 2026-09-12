@@ -115,4 +115,6 @@ test('production build completes and outputs expected artifacts', async (t) => {
   assert.match(aboutHtml, /<picture>/, 'image tags should be wrapped in picture elements');
   assert.match(aboutHtml, /type=image\/avif/, 'picture elements should include AVIF sources');
   assert.match(aboutHtml, /type=image\/webp/, 'picture elements should include WebP sources');
+  assert.match(aboutHtml, /loading=lazy/, 'lazy images should use native loading');
+  assert.doesNotMatch(aboutHtml, /data-src(?:set)?=/, 'lazy images should not use custom data-src attributes');
 });

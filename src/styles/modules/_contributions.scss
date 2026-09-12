@@ -23,17 +23,8 @@ section.contributions {
     @include columns(12);
 
     @include mq($medium) {
-      grid-template-columns: css-min(25%, 100px) 1fr;
-      grid-template-areas:
-        "image title"
-        "image description"
-        "image links";
       @include columns(6, 8);
       max-width: var(--max-8-columns);
-
-      picture {
-        grid-row: span 3;
-      }
     }
 
     @include mq($large) {
@@ -42,13 +33,9 @@ section.contributions {
 
     img {
       grid-area: image;
-      width: 100%;
+      width: css-min(100%, 100px);
       border-radius: var(--radius-md);
-
-      @include mq-max($medium) {
-        width: css-min(100%, 100px);
-        margin: 0 auto space(2);
-      }
+      margin: 0 auto space(2);
     }
 
     h5 {

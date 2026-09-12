@@ -50,7 +50,7 @@ function renderArticle(article) {
        role="listitem"
        itemscope
        itemtype="https://schema.org/Article">
-       ${article.image_url ? articleLink(article.link, `<img src="${escapeHTML(article.image_url)}" alt="${escapeHTML(article.title)}" class="article-image" />`, 'article-image-link') : ''}
+       ${article.image_url ? articleLink(article.link, `<img loading="lazy" decoding="async" src="${escapeHTML(article.image_url)}" alt="${escapeHTML(article.title)}" class="article-image" />`, 'article-image-link') : ''}
       <h2 class="article-title" itemprop="headline">${articleLink(article.link, escapeHTML(article.title.toLowerCase()), 'article-title-link')}</h2>
       <div class="article-metadata">
         <span class="article-source" itemprop="publisher">${escapeHTML(article.source)}</span> -

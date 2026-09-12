@@ -1,23 +1,15 @@
 const urlParams = new URLSearchParams(window.location.search);
 
 /**
- * Loads lazy-loaded attributes (data-src, data-srcset, data-lazy-style, or can-load event)
- * onto an element once it enters the viewport and unobserves it.
+ * Activates a deferred non-image element once it enters the viewport and
+ * unobserves it. Images use native `loading="lazy"` and are not handled here.
  *
  * @param {HTMLElement} element - The DOM element intersecting the viewport.
  * @param {IntersectionObserver} [observer] - The active IntersectionObserver instance.
  * @returns {void}
  */
 function updateOnIntersect(element, observer) {
-  if (element.tagName === 'IMG') {
-    const picture = element.parentElement;
-    if (picture && picture.tagName === 'PICTURE') {
-      picture.querySelectorAll('source[data-srcset]').forEach((source) => {
-        source.srcset = source.dataset.srcset;
-      });
-    }
-    element.src = element.dataset.src;
-  } else if (element.tagName === 'VIDEO') {
+  if (element.tagName === 'VIDEO') {
     element.dispatchEvent(new Event('can-load'));
   } else if (element.hasAttribute('data-lazy-style')) {
     element.style.cssText += element.dataset.lazyStyle;
@@ -76,15 +68,18 @@ function watchVideoSizes(element) {
 
 module.exports = {
   /**
-   * Initializes lazy loading on elements matching `[lazy]` within the specified DOM scope.
-   * Uses IntersectionObserver if supported and not disabled via query parameter.
+   * Initializes deferred non-image elements within the specified DOM scope.
+   * Images use native lazy loading; this observer remains for CSS backgrounds
+   * and responsive videos, which have no equivalent native image attribute.
    *
    * @param {string} [specificQuery='body'] - CSS selector defining the container scope to search.
    * @returns {void}
    */
   init(specificQuery = 'body') {
+    const deferredSelector = `${specificQuery} [data-lazy-style], ${specificQuery} video[lazy]`;
+
     if (urlParams.get('disable-lazy') !== null || window.IntersectionObserver === undefined) {
-      document.querySelectorAll(`${specificQuery} [lazy]`).forEach((element) => {
+      document.querySelectorAll(deferredSelector).forEach((element) => {
         updateOnIntersect(element);
       });
     } else if (window.IntersectionObserver) {
@@ -96,7 +91,7 @@ module.exports = {
         });
       });
 
-      document.querySelectorAll(`${specificQuery} [lazy]`).forEach((element) => {
+      document.querySelectorAll(deferredSelector).forEach((element) => {
         intersectionObserver.observe(element);
       });
     }

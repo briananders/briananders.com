@@ -33,6 +33,14 @@ describe('ApiImage', () => {
     assert.ok(dom.window.customElements.get('api-image'));
   });
 
+  test('defaults rendered images to native lazy loading', () => {
+    const el = makeImage({ src: '/images/poster' });
+    const img = el.querySelector('img');
+
+    assert.equal(img.getAttribute('loading'), 'lazy');
+    assert.equal(img.getAttribute('decoding'), 'async');
+  });
+
   test('adds AVIF, WebP, and JPG extensions to a basename', () => {
     const el = makeImage({ src: '/movies/images/tt123' });
 

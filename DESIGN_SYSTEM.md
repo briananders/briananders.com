@@ -766,7 +766,8 @@ Wired into every page via [`src/js/all.js`](src/js/all.js).
   Managed by [`_modules/sticky-stacky.js`](src/js/_modules/sticky-stacky.js).
 - **Skip nav.** Visible only on keyboard focus.
 - **Analytics.** All click/scroll events forwarded to GTM.
-- **Lazy-loader** for `[lazy]` images/videos.
+- **Deferred media loader.** Native `loading="lazy"` handles images; the
+  shared loader remains for CSS background images and responsive videos.
 - **`no-animations` mode.** Append `?disable-animations` to any URL to add
   `body.no-animations` and switch off transitions during a screenshot pass.
 

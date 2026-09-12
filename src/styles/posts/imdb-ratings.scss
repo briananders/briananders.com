@@ -1,10 +1,4 @@
 @use "system/utilities" as *;
-
-
-// .movies-container {
-
-// }
-
 .rating-selector {
   display: flex;
   flex-wrap: wrap;
@@ -38,32 +32,33 @@
 }
 
 .movies-grid {
-  @include grid($no-padding: true);
-  gap: space(3);
-  justify-content: center;
   @include grid-container;
-
-  @include mq-max($large) {
-    display: flex;
-    flex-wrap: wrap;
-  }
+  display: grid;
+  gap: space(3);
+  // Fluid cards, capped at the poster source width at every breakpoint.
+  grid-template-columns: repeat(2, minmax(0, 240px));
 
   @include mq($medium) {
-    justify-content: flex-start;
+    grid-template-columns: repeat(3, minmax(0, 240px));
+  }
+
+  @include mq($large) {
+    grid-template-columns: repeat(4, minmax(0, 240px));
   }
 }
 
 a.movie {
-  // width: 240px;
   display: flex;
   flex-direction: column;
   gap: space(1);
-  max-width: var(--max-3-columns);
+  min-width: 0;
+  overflow-wrap: anywhere;
 
   img {
     display: block;
-    width: 100%;
-    max-width: 240px;
+    width: auto;
+    max-width: 100%;
+    height: auto;
   }
 
   .movie-info {
@@ -86,6 +81,7 @@ a.movie {
 
   .ratings {
     display: flex;
+    flex-wrap: wrap;
     gap: space(1);
     align-items: center;
   }
@@ -100,17 +96,4 @@ a.movie {
     @include type--body-small;
   }
 
-  grid-column: span 4;
-
-  @include mq(480px) {
-    grid-column: span 2;
-  }
-
-  @include mq($medium) {
-    grid-column: span 4;
-  }
-
-  @include mq($large) {
-    grid-column: span 3;
-  }
 }

@@ -88,12 +88,11 @@ function getImageSources(src, dir) {
  * Renders `<source>` elements in AVIF/WebP order.
  *
  * @param {Array<{src: string, type: string}>} sources - Picture sources.
- * @param {boolean} lazy - Whether sources should use data-srcset.
  * @returns {string}
  */
-function renderPictureSources(sources, lazy = false) {
+function renderPictureSources(sources) {
   return sources.map(({ src, type }) => (
-    `<source ${lazy ? `data-srcset="${src}"` : `srcset="${src}"`} type="${type}" />`
+    `<source srcset="${src}" type="${type}" />`
   )).join('');
 }
 
@@ -243,13 +242,11 @@ module.exports = (dir, pageMappingData) => ({
   },
 
   /**
-   * Renders a lazily-loaded `<img>` tag using an inline SVG placeholder.
+   * Renders a natively lazy-loaded responsive image.
    *
-   * The placeholder SVG is sized to match the image's intrinsic dimensions
-   * (preventing layout shift), and the real image URLs are placed in
-   * `data-src`/`data-srcset` for the lazy-loader JavaScript module to swap in.
-   * A `<link rel="preload">` hint is prepended to prime the browser's
-   * prefetch queue.
+   * The browser receives the real `src`/`srcset` values immediately and uses
+   * the standard `loading="lazy"` hint to defer offscreen image requests.
+   * Explicit dimensions are retained to prevent cumulative layout shift.
    *
    * @param {object} params
    * @param {string}   params.src       - Relative URL path to the image.
@@ -257,7 +254,7 @@ module.exports = (dir, pageMappingData) => ({
    * @param {string[]} [params.classes=[]] - CSS class names.
    * @param {number}   [params.width]   - Override the intrinsic width.
    * @param {number}   [params.height]  - Override the intrinsic height.
-   * @returns {string} HTML string containing a `<link>` preload and a lazy `<img>`.
+   * @returns {string} HTML string containing a lazily-loaded `<picture>`.
    * @throws {Error} If `src` is not provided.
    */
   lazyImage({
@@ -268,10 +265,8 @@ module.exports = (dir, pageMappingData) => ({
     }
     const { sources, fallback } = getImageSources(src, dir);
     const dimensions = sizeOf(fs.readFileSync(path.join(dir.package, fallback)));
-    const preload = sources[0] || { src: fallback };
     return `
-      <link rel="preload" href="${preload.src}" as="image"${preload.type ? ` type="${preload.type}"` : ''} />
-      <picture>${renderPictureSources(sources, true)}<img lazy src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 ${width || dimensions.width} ${height || dimensions.height}'%3E%3C/svg%3E" data-src="${fallback}" alt="${alt}" height="${height || dimensions.height}" width="${width || dimensions.width}" ${classes.length ? `class="${classes.join(' ')}"` : ''} /></picture>
+      <picture>${renderPictureSources(sources)}<img loading="lazy" decoding="async" src="${fallback}" alt="${alt}" height="${height || dimensions.height}" width="${width || dimensions.width}" ${classes.length ? `class="${classes.join(' ')}"` : ''} /></picture>
     `;
   },
 

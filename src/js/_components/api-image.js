@@ -2,7 +2,7 @@ const imageTemplate = `
   <picture>
     <source data-format="avif" type="image/avif" />
     <source data-format="webp" type="image/webp" />
-    <img />
+    <img loading="lazy" decoding="async" />
   </picture>
 `;
 
@@ -62,9 +62,11 @@ class ApiImage extends HTMLElement {
       this.innerHTML = imageTemplate;
     }
     this.updateImage();
-    attributes.filter((attribute) => attribute !== 'src').forEach((attribute) => {
-      this.updateImageAttribute(attribute, this.getAttribute(attribute));
-    });
+    attributes
+      .filter((attribute) => attribute !== 'src' && this.hasAttribute(attribute))
+      .forEach((attribute) => {
+        this.updateImageAttribute(attribute, this.getAttribute(attribute));
+      });
   }
 
   /**
