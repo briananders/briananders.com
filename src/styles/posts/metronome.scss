@@ -1,0 +1,138 @@
+@import "system/utilities";
+
+.metronome-widget {
+  border: 2px solid $palette--divider-color;
+  padding: $s4;
+  border-radius: 14px;
+  background-color: $palette--hover-grey;
+
+  .metronome-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: $s3;
+    margin-bottom: $s4;
+
+    h3 {
+      margin: 0;
+    }
+  }
+
+  .metronome-controls {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: $s4;
+
+    @include mq($medium) {
+      grid-template-columns: 2fr 1fr 1fr;
+      align-items: end;
+    }
+
+    .label {
+      display: block;
+      margin-bottom: $s1;
+      font-weight: 600;
+    }
+
+    .bpm-row {
+      display: grid;
+      grid-template-columns: 92px 1fr;
+      gap: $s3;
+      align-items: center;
+    }
+
+    .bpm-input {
+      width: 92px;
+      padding: $s2;
+      border: 1px solid $palette--divider-color;
+      border-radius: 10px;
+      background: transparent;
+      color: inherit;
+    }
+
+    .bpm-range {
+      width: 100%;
+    }
+
+    .time-row {
+      display: flex;
+      align-items: center;
+      gap: $s2;
+
+      select {
+        padding: $s2;
+        border: 1px solid $palette--divider-color;
+        border-radius: 10px;
+        background: transparent;
+        color: inherit;
+      }
+
+      .slash {
+        opacity: 0.7;
+      }
+    }
+
+    .checkbox {
+      display: inline-flex;
+      gap: $s2;
+      align-items: center;
+      user-select: none;
+    }
+  }
+
+  .metronome-display {
+    margin-top: $s6;
+    display: grid;
+    gap: $s3;
+    align-items: center;
+  }
+
+  .beat-readout {
+    display: flex;
+    align-items: baseline;
+    gap: $s3;
+
+    .beat-label {
+      opacity: 0.8;
+      font-weight: 600;
+    }
+
+    .beat-value {
+      font-size: 44px;
+      line-height: 1;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+  }
+
+  .beat-dots {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $s2;
+    align-items: center;
+
+    .dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 999px;
+      border: 2px solid $palette--divider-color;
+      background: transparent;
+      transition: transform 120ms ease, background-color 120ms ease;
+
+      &.downbeat {
+        border-style: solid;
+      }
+
+      &.active {
+        background: $palette--primary-white;
+        transform: scale(1.25);
+      }
+    }
+  }
+
+  .note {
+    margin-top: $s4;
+    opacity: 0.85;
+  }
+}
+
