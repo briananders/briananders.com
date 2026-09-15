@@ -1,6 +1,6 @@
 ---
 title: "Earth Rotating Sprite Animation"
-description: "I wanted to animate a sprite by targeting a changing data attribute + unique css background-positioning. I
+description: "I wanted to animate a sprite by targeting a changing data attribute + unique CSS image positioning. I
 win."
 date: 2018-08-03
 priority: 0.8
@@ -34,9 +34,9 @@ scripts:
       Demo
     </h2>
     <div class="p">
-      <div lazy
-        style="--background-image: url('/images/posts/earth-rotating-sprite-animation/earth-sprite-color.png'); --background-image: image-set(url('/images/posts/earth-rotating-sprite-animation/earth-sprite-color.avif') type('image/avif'), url('/images/posts/earth-rotating-sprite-animation/earth-sprite-color.webp') type('image/webp'), url('/images/posts/earth-rotating-sprite-animation/earth-sprite-color.png') type('image/png'));"
-        data-lazy-style="background-image: var(--background-image);" id="frame-container" data-number="0"></div>
+      <div id="frame-container" data-number="0">
+        <%- lazyImage({ src: '/images/posts/earth-rotating-sprite-animation/earth-sprite-color.png', alt: 'Rotating Earth' }) %>
+      </div>
     </div>
   </div>
 </section>
@@ -73,10 +73,11 @@ scripts:
         <var>$frame-height = $sprite-height / $y-max</var>
       </li>
     </ul>
-    <%- code(`#frame-container { width: round($frame-width); height: round($frame-height); background-image:
-      url(/path/to/sprite.jpg); @for $frame from 0 to ($y-max * $x-max) { &[data-number="#{$frame}" ] { $x-position: 1 -
+    <%- code(`#frame-container { width: round($frame-width); height: round($frame-height); overflow: hidden;
+      position: relative; img { position: absolute; width: $sprite-width; height: $sprite-height; max-width: none; }
+      @for $frame from 0 to ($y-max * $x-max) { &[data-number="#{$frame}" ] img { $x-position: 1 -
       round(($frame % $x-max) * $frame-width); $y-position: 1 - round(floor($frame / $x-max) * $frame-height);
-      background-position: #{$x-position} #{$y-position}; } } }`); %>
+      left: $x-position; top: $y-position; } } }`); %>
   </div>
 </section>
 

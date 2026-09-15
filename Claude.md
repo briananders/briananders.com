@@ -124,7 +124,7 @@ The site also calls the **Last.fm API** directly from the browser for the real-t
 │   │   ├── modules/            # Shared module styles
 │   │   └── posts/              # Per-post styles
 │   ├── js/                     # JavaScript source
-│   │   ├── _modules/           # Shared modules (lazy-loader, analytics, dark-mode, etc.)
+│   │   ├── _modules/           # Shared modules (analytics, dark-mode, etc.)
 │   │   ├── _components/        # Reusable components (album-listing, year-listing, etc.)
 │   │   └── posts/              # Per-post entry scripts
 │   ├── images/                 # Source images

@@ -14,12 +14,22 @@ $frame-height: math.div($sprite-height, $y-max);
   height: math.round($frame-height);
   margin: auto;
   border-radius: 100%;
+  overflow: hidden;
+  position: relative;
+
+  img {
+    position: absolute;
+    width: $sprite-width;
+    height: $sprite-height;
+    max-width: none;
+  }
 
   @for $frame from 0 to ($y-max * $x-max) {
-    &[data-number="#{$frame}"] {
+    &[data-number="#{$frame}"] img {
       $x-position: 1 - math.round(($frame % $x-max) * $frame-width);
       $y-position: 1 - math.round(math.floor(math.div($frame, $x-max)) * $frame-height);
-      background-position: #{$x-position} #{$y-position};
+      left: $x-position;
+      top: $y-position;
     }
   }
 }

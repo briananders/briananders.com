@@ -277,13 +277,12 @@ module.exports = (dir, pageMappingData) => {
   /**
    * Renders a lazily-loaded responsive `<video>` element.
    *
-   * Supports separate mobile and desktop source videos and placeholder images.
+   * Supports separate mobile and desktop source videos and a desktop poster.
    * The video is wrapped in a `.video-container` div with a `padding-top`
    * percentage derived from the desktop placeholder's aspect ratio, which
    * creates a stable layout box before the video loads.
    *
-   * The lazy-loader JS module reads `data-mobile-*` / `data-desktop-*`
-   * attributes to select the appropriate source and poster based on viewport.
+   * Native source media queries select the video for the viewport.
    *
    * @param {object} params
    * @param {{ mobile: string, desktop: string }} params.srcs - Relative URLs to video sources.
@@ -301,21 +300,14 @@ module.exports = (dir, pageMappingData) => {
     const mobileDimensions = sizeOf(fs.readFileSync(path.join(dir.package, placeholders.mobile)));
     const videoType = path.extname(srcs.mobile).replace('.', '');
     return `
-    <link rel="preload" href="${srcs.mobile}" as="video" type="video/${videoType}" />
-    <link rel="preload" href="${srcs.desktop}" as="video" type="video/${videoType}" />
     <div class="video-container" style="padding-top: ${(desktopDimensions.height / desktopDimensions.width) * 100}%; --aspect-ratio: ${desktopDimensions.height / desktopDimensions.width};">
-      <video lazy ${attributes.join(' ')}
-        data-mobile-width="${mobileDimensions.width}"
-        data-mobile-height="${mobileDimensions.height}"
-        data-mobile-poster="${placeholders.mobile}"
-        data-desktop-width="${desktopDimensions.width}"
-        data-desktop-height="${desktopDimensions.height}"
-        data-desktop-poster="${placeholders.desktop}"
+      <video loading="lazy" preload="none" ${attributes.join(' ')}
+        width="${desktopDimensions.width}"
+        height="${desktopDimensions.height}"
+        poster="${placeholders.desktop}"
       >
-        <source
-          data-mobile-src="${srcs.mobile}"
-          data-desktop-src="${srcs.desktop}"
-        type="video/${videoType}">
+        <source src="${srcs.desktop}" media="(min-width: ${mobileDimensions.width}px)" type="video/${path.extname(srcs.desktop).replace('.', '')}">
+        <source src="${srcs.mobile}" type="video/${videoType}">
       </video>
     </div>`;
   },
