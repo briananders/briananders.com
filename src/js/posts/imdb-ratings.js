@@ -25,6 +25,49 @@ function getImageUrl(basename) {
 
 const TV_CONTENT_TYPES = new Set(['tvSeries', 'tvMiniSeries', 'tvMovie']);
 
+const MPAA_RANK = { G: 0, PG: 1, 'PG-13': 2, R: 3, 'NC-17': 4 };
+
+/**
+ * Parses a runtime string like "2h 15m" or "45m" into total minutes.
+ *
+ * @param {string} runtime - Runtime string from the movie data.
+ * @returns {number} Total minutes, or 0 if unparseable.
+ */
+function parseRuntime(runtime) {
+  if (!runtime) return 0;
+  const hours = runtime.match(/(\d+)h/);
+  const mins = runtime.match(/(\d+)m/);
+  return (hours ? parseInt(hours[1], 10) * 60 : 0) + (mins ? parseInt(mins[1], 10) : 0);
+}
+
+/**
+ * Returns a comparator function for sorting movies by the given sort key.
+ *
+ * @param {string} sortKey - Sort key in the format "field-direction" (e.g. "title-asc").
+ * @returns {function(Object, Object): number} Comparator function.
+ */
+function getSortComparator(sortKey) {
+  const [field, direction] = sortKey.split('-');
+  const dir = direction === 'desc' ? -1 : 1;
+
+  switch (field) {
+    case 'title':
+      return (a, b) => dir * a.title.localeCompare(b.title);
+    case 'year':
+      return (a, b) => dir * ((parseInt(a.year, 10) || 0) - (parseInt(b.year, 10) || 0));
+    case 'mpaa':
+      return (a, b) => {
+        const ra = MPAA_RANK[a.contentRating] !== undefined ? MPAA_RANK[a.contentRating] : 99;
+        const rb = MPAA_RANK[b.contentRating] !== undefined ? MPAA_RANK[b.contentRating] : 99;
+        return dir * (ra - rb);
+      };
+    case 'runtime':
+      return (a, b) => dir * (parseRuntime(a.runtime) - parseRuntime(b.runtime));
+    default:
+      return (a, b) => dir * ((parseInt(a.year, 10) || 0) - (parseInt(b.year, 10) || 0));
+  }
+}
+
 /**
  * Evaluates whether a movie object satisfies the given content type filter.
  *
@@ -130,9 +173,16 @@ function fetchRating(rating, onSuccess, onError) {
 ready.document(() => {
   const ratingDropdown = document.getElementById('rating-dropdown');
   const contentTypeDropdown = document.getElementById('content-type-dropdown');
+  const sortDropdown = document.getElementById('sort-dropdown');
   const grid = document.getElementById('movies-grid');
   const loading = document.getElementById('movies-loading');
   const count = document.getElementById('movies-count');
+
+  const params = new URLSearchParams(window.location.search);
+  const initialSort = params.get('sort');
+  if (initialSort && sortDropdown.querySelector('option[value="' + initialSort + '"]')) {
+    sortDropdown.value = initialSort;
+  }
 
   let cachedRating = null;
   let cachedMovies = null;
@@ -142,13 +192,17 @@ ready.document(() => {
    *
    * @param {Array<Object>} movies - Array of movie objects to display.
    * @param {string} contentTypeFilter - Selected content type filter.
+   * @param {string} sortKey - Sort key (e.g. "year-asc", "title-desc").
    */
-  function renderMoviesList(movies, contentTypeFilter) {
-    const sorted = movies.slice().sort((a, b) => {
-      const ya = parseInt(a.year, 10) || 0;
-      const yb = parseInt(b.year, 10) || 0;
-      return ya - yb;
-    });
+  function renderMoviesList(movies, contentTypeFilter, sortKey) {
+    const field = sortKey.split('-')[0];
+    const sorted = movies.slice().filter((m) => {
+      if (!m.year && !m.runtime && !m.contentRating) return false;
+      if (field === 'year') return !!m.year;
+      if (field === 'runtime') return !!m.runtime;
+      if (field === 'mpaa') return !!m.contentRating;
+      return true;
+    }).sort(getSortComparator(sortKey));
     const filtered = sorted.filter((m) => movieMatchesContentTypeFilter(m, contentTypeFilter));
     count.textContent = `${filtered.length} result${filtered.length === 1 ? '' : 's'}`;
     grid.innerHTML = filtered.map(renderMovie).join('');
@@ -160,10 +214,19 @@ ready.document(() => {
   function refreshList() {
     const rating = ratingDropdown.value;
     const contentTypeFilter = contentTypeDropdown.value;
+    const sortKey = sortDropdown.value;
+
+    const url = new URL(window.location);
+    if (sortKey === 'year-asc') {
+      url.searchParams.delete('sort');
+    } else {
+      url.searchParams.set('sort', sortKey);
+    }
+    window.history.replaceState(null, '', url);
 
     if (cachedRating === rating && cachedMovies) {
       loading.style.display = 'none';
-      renderMoviesList(cachedMovies, contentTypeFilter);
+      renderMoviesList(cachedMovies, contentTypeFilter, sortKey);
       return;
     }
 
@@ -176,7 +239,7 @@ ready.document(() => {
         cachedRating = rating;
         cachedMovies = movies;
         loading.style.display = 'none';
-        renderMoviesList(movies, contentTypeFilter);
+        renderMoviesList(movies, contentTypeFilter, sortKey);
       },
       () => {
         cachedRating = null;
@@ -189,6 +252,7 @@ ready.document(() => {
 
   ratingDropdown.addEventListener('change', refreshList);
   contentTypeDropdown.addEventListener('change', refreshList);
+  sortDropdown.addEventListener('change', refreshList);
 
   refreshList();
 });

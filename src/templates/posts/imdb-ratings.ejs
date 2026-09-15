@@ -39,6 +39,19 @@ scripts:
           <option value="tvSeries">TV Series</option>
         </select>
       </label>
+      <label for="sort-dropdown">
+        Sort:
+        <select id="sort-dropdown">
+          <option value="title-asc">Title (A→Z)</option>
+          <option value="title-desc">Title (Z→A)</option>
+          <option value="year-asc" selected>Year (Oldest)</option>
+          <option value="year-desc">Year (Newest)</option>
+          <option value="mpaa-asc">MPAA Rating (G→NC-17)</option>
+          <option value="mpaa-desc">MPAA Rating (NC-17→G)</option>
+          <option value="runtime-asc">Runtime (Shortest)</option>
+          <option value="runtime-desc">Runtime (Longest)</option>
+        </select>
+      </label>
       <span id="movies-count" class="movies-count"></span>
     </div>
 
