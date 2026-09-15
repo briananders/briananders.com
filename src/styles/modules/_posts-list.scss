@@ -12,6 +12,19 @@
   padding: 0;
   list-style: none;
 
+  // Keep offscreen entries in the document while deferring their rendering.
+  > [role="listitem"] {
+    content-visibility: auto;
+    contain-intrinsic-block-size: auto 80px;
+  }
+
+  @media print {
+    > [role="listitem"] {
+      content-visibility: visible;
+      contain-intrinsic-block-size: none;
+    }
+  }
+
   a {
     display: grid;
     @include readingWidth;

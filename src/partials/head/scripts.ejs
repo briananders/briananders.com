@@ -1,8 +1,8 @@
-<script src="/scripts/all.js" async defer></script>
+<script src="/scripts/all.js" defer></script>
 <%
   if(locals.scripts) {
     locals.scripts.forEach((path) => { %>
-  <script src="/scripts/<%- path %>.js" async defer></script>
+  <script src="/scripts/<%- path %>.js" defer></script>
 <%
     });
   }

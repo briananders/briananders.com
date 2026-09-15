@@ -2,8 +2,6 @@ const { log } = require('../_modules/log');
 const ready = require('../_modules/document-ready');
 
 ready.document(() => {
-  const scrollTo = require('../_modules/scroll-to');
-
   const nInput = document.getElementById('n');
   const answerTag = document.querySelector('answer');
   const answerArrayTag = document.querySelector('answer-array');
@@ -54,7 +52,10 @@ ready.document(() => {
    * @returns {void}
    */
   function scroll() {
-    scrollTo(scrollValue(), { easing: 'easeInOutQuint', duration: 350 });
+    window.scrollTo({
+      top: scrollValue(),
+      behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth',
+    });
   }
 
   /**
@@ -92,7 +93,8 @@ ready.document(() => {
    *
    * @param {number} n - Total number of vertices.
    * @param {number} step - Step stride between connected vertices.
-   * @returns {Array<[number, number]>} Ordered list of vertex coordinates forming the star polygon path.
+   * @returns {Array<[number, number]>} Ordered list of vertex coordinates forming the star polygon
+   * path.
    */
   function getOrderedPoints(n, step) {
     const points = getStarPoints(n);
@@ -159,7 +161,8 @@ ready.document(() => {
   }
 
   /**
-   * Tests whether connecting vertices with a step stride visits all vertices (forming a full star polygon).
+   * Tests whether connecting vertices with a step stride visits all vertices (forming a full star
+   * polygon).
    *
    * @param {number} length - Number of vertices (n).
    * @param {number} step - Step size between connected vertices.
@@ -176,7 +179,8 @@ ready.document(() => {
   }
 
   /**
-   * Evaluates valid star configurations for the current N value, updates UI, and triggers rendering.
+   * Evaluates valid star configurations for the current N value, updates UI, and triggers
+   * rendering.
    *
    * @returns {void}
    */
@@ -262,7 +266,7 @@ ready.document(() => {
         currentConfig = [Number(length), Number(step)];
         drawStar(...currentConfig);
 
-        scrollTo(scrollValue());
+        scroll();
       }, 10);
     }
   }

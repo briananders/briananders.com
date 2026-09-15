@@ -3,7 +3,6 @@ const gridDebug = require('./_modules/grid-debug');
 const noAnimations = require('./_modules/no-animations');
 const ready = require('./_modules/document-ready');
 const stickyStack = require('./_modules/sticky-stacky');
-const windowResize = require('./_modules/window-resize');
 
 /**
  * Sets up event listeners and state management for mobile navigation drawer,
@@ -99,7 +98,7 @@ function setUpSkipNav() {
 }
 
 /**
- * Detects touch screen support and adds corresponding class names ('touch-events' or 'no-touch-events')
+ * Detects touch support and adds 'touch-events' or 'no-touch-events'
  * to the root HTML element.
  *
  * @returns {void}
@@ -110,34 +109,6 @@ function testForTouch() {
   } else {
     document.documentElement.classList.add('no-touch-events');
   }
-}
-
-/**
- * Adjusts the main content element's minimum height so that the footer is pushed to the bottom of the viewport.
- *
- * @returns {void}
- */
-function setMainMinHeight() {
-  const mainElement = document.querySelector('main');
-  const footerElement = document.querySelector('footer');
-
-  /**
-   * Computes the viewport height delta and sets the minHeight CSS property on the main element.
-   *
-   * @returns {void}
-   */
-  const calculateMinHeight = () => {
-    const docHeight = document.documentElement.clientHeight;
-    const { bottom } = footerElement.getBoundingClientRect();
-    const { height } = mainElement.getBoundingClientRect();
-
-    const heightDelta = docHeight - bottom;
-
-    mainElement.style.minHeight = `min(${height + heightDelta}px, 100vh)`;
-  };
-
-  calculateMinHeight();
-  windowResize(calculateMinHeight.bind(this));
 }
 
 /**
@@ -162,7 +133,6 @@ ready.document(() => {
   setupNavEvents(analytics);
   testForTouch();
   // navScrollWatcher();
-  setMainMinHeight();
   setUpSkipNav();
   noAnimations.initBodyClass();
 

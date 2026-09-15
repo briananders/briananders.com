@@ -8,6 +8,24 @@ html {
   color: var(--color-text);
 }
 
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+body > main {
+  flex: 1 0 auto;
+  min-height: 0;
+  width: 100%;
+}
+
+body > .sticky-container,
+body > footer {
+  flex-shrink: 0;
+}
+
 main {
   background:
     radial-gradient(1000px 400px at 80% -100px, rgba(249, 115, 22, 0.18), transparent 60%),
