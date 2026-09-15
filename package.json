@@ -65,7 +65,6 @@
     "ejs": "^5.0.1",
     "empty-dir": "^3.0.0",
     "express": "^5.2.1",
-    "express-static": "^1.2.6",
     "fs-extra": "^11.3.4",
     "glob": "^13.0.6",
     "gray-matter": "^4.0.3",

@@ -32,7 +32,8 @@ const { log } = console;
 module.exports = function assetHashing({
   dir, completionFlags, buildEvents, hashingFileNameList, debug,
 }) {
-  // Reset sub-flags so re-runs in watch mode start clean.
+  if (completionFlags.ASSET_HASH.STARTED) return false;
+  // Reset sub-flags before the first hashing run.
   completionFlags.ASSET_HASH.IMAGES = false;
   completionFlags.ASSET_HASH.JS = false;
 
@@ -47,9 +48,11 @@ module.exports = function assetHashing({
       || !completionFlags.CSS_IS_MINIFIED
       || !completionFlags.HTML_IS_MINIFIED
       || !completionFlags.IMAGES_ARE_MOVED
-      || !completionFlags.VIDEOS_ARE_MOVED) {
+      || !completionFlags.VIDEOS_ARE_MOVED
+      || !completionFlags.SITE_MAP) {
     return false;
   }
+  completionFlags.ASSET_HASH.STARTED = true;
   log(`${timestamp.stamp()} assetHashing().images`);
   if (debug) {
     log(`completionFlags.JS_IS_MINIFIED :${completionFlags.JS_IS_MINIFIED}`);

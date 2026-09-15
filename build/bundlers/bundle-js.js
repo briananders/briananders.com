@@ -1,109 +1,126 @@
-/* eslint-disable no-console */
-const watchify = require('watchify');
-const source = require('vinyl-source-stream');
-const rename = require('gulp-rename');
-const notifier = require('node-notifier');
-const gulp = require('gulp');
+const fs = require('fs-extra');
 const { globSync } = require('glob');
-const buffer = require('vinyl-buffer');
+const path = require('path');
 const browserify = require('browserify');
 const babelify = require('babelify');
-const path = require('path');
+const watchify = require('watchify');
+const mapLimit = require('../helpers/map-limit');
 
-const { log } = console;
+const sessions = new WeakMap();
+function canonical(file) {
+  if (!file) return file;
+  try { return fs.realpathSync(file); } catch (error) {
+    try {
+      return path.join(fs.realpathSync(path.dirname(file)), path.basename(file));
+    } catch (parentError) {
+      return path.resolve(file);
+    }
+  }
+}
 
-/**
- * Bundles all JavaScript entry points with Browserify + Babel.
- *
- * Glob discovers every non-underscore-prefixed `.js` file directly under
- * `src/js/` (entry points). Each file is independently bundled through the
- * Browserify → Babelify pipeline and written to `package/scripts/` preserving
- * the source subdirectory structure.
- *
- * **Dev mode** (`NODE_ENV !== 'production'`): Watchify is added as a Browserify
- * plugin, enabling incremental rebuilds. Source maps are enabled (`debug: true`).
- *
- * **Production mode**: Watchify is omitted and source maps are disabled. The
- * resulting bundles are later minified by `minifyJS`.
- *
- * Babel presets applied:
- * - `@babel/preset-env` — transpiles modern JS syntax for broader browser support.
- * - `@babel/preset-react` — transpiles JSX (used by some interactive experiments).
- *
- * The gulp/vinyl pipeline (`source → buffer → rename → gulp.dest`) is used
- * here as a convenient stream-based file writer compatible with Browserify's
- * streaming output, not as a task runner.
- *
- * When all entry points have been bundled the `jsMoved` event is emitted.
- *
- * @param {{ dir: object, buildEvents: EventEmitter, debug: boolean }} configs
- */
-module.exports = function bundleJS({ dir, buildEvents, debug }) {
-  const BUILD_EVENTS = require(`${dir.build}constants/build-events`);
-  const timestamp = require(`${dir.build}helpers/timestamp`);
-  const production = require(`${dir.build}helpers/production`);
-  const scssStringifyTransform = require(`${dir.build}bundlers/scss-stringify-transform`);
-
-  const jsOutputPath = path.join(dir.package, 'scripts');
-
-  // Find all non-private JS entry points (files NOT starting with `_`).
-  const scriptGlob = globSync(`${dir.src}js/**/[^_]*.js`);
-  let processed = 0;
-
-  log(`${timestamp.stamp()} bundleJS()`);
-
-  scriptGlob.forEach((jsFilename, index, array) => {
-    const outFile = jsFilename.replace(`${dir.src}js/`, jsOutputPath);
-    if (debug) log(`${timestamp.stamp()} ${'REQUEST'.magenta} - Compiling JS - ${outFile.split(/scripts/)[1]}`);
-
-    const isProd = production;
-    const browserifyOptions = {
-      entries: [jsFilename],
-      debug: !isProd, // Source maps only in dev
+/** Reuse development bundlers and invalidate only modules affected by a source edit. */
+module.exports = async function bundleJS(configs, changedFile) {
+  const { dir, buildEvents, BUILD_EVENTS } = configs;
+  const production = require('../helpers/production');
+  let entries = sessions.get(configs);
+  if (!entries) {
+    entries = new Map();
+    sessions.set(configs, entries);
+  }
+  const files = globSync(`${dir.src}js/**/[^_]*.js`);
+  for (let index = 0, list = [...entries]; index < list.length; index++) {
+    const [file, entry] = list[index];
+    if (!files.includes(file)) {
+      entry.closed = true;
+      await entry.running;
+      if (entry.bundler.close) entry.bundler.close();
+      entries.delete(file);
+      await fs.remove(entry.output);
+    }
+  }
+  await mapLimit(files, 4, async (file) => {
+    let entry = entries.get(file);
+    if (entry) {
+      const affected = entry.dependencies.get(canonical(changedFile));
+      if (changedFile && (entry.failed || affected)) {
+        if (entry.failed) {
+          Object.keys(entry.bundler._options.cache).forEach((key) => {
+            entry.dirty.add(key);
+          });
+        } else {
+          affected.forEach((key) => entry.dirty.add(key));
+        }
+        await entry.rebuild();
+      }
+      return;
+    }
+    const bundler = browserify({
+      entries: [file],
+      debug: !production,
       cache: {},
       packageCache: {},
+      // The shared preview watcher dispatches changes; Watchify retains module caches.
+      ...(production ? {} : { plugin: [[watchify, { ignoreWatch: () => true }]] }),
+    });
+    bundler.transform(require('./scss-stringify-transform'))
+      .transform(babelify, { presets: ['@babel/preset-env', '@babel/preset-react'] });
+    entry = {
+      bundler,
+      output: path.join(dir.package, 'scripts', path.relative(`${dir.src}js`, file)),
+      running: null,
+      pending: false,
+      closed: false,
+      dependencies: new Map(),
+      dirty: new Set(),
     };
-
-    // In dev mode, watchify enables fast incremental re-bundling on file changes.
-    if (!isProd) {
-      browserifyOptions.plugin = [watchify];
+    entries.set(file, entry);
+    function track(dependency, owner) {
+      dependency = canonical(dependency);
+      if (!entry.dependencies.has(dependency)) entry.dependencies.set(dependency, new Set());
+      entry.dependencies.get(dependency).add(owner);
     }
-
-    browserify(browserifyOptions)
-      .transform(scssStringifyTransform)
-      .transform(babelify, { presets: ['@babel/preset-env', '@babel/preset-react'] })
-      .bundle()
-      .on('error', (error) => {
-        // In production, JS errors are fatal; in dev, show a notification and continue.
-        if (production) throw error;
-        else {
-          console.error(error.message.red);
-          notifier.notify({
-            title: 'JavaScript Error',
-            message: error.message,
-          });
+    bundler.on('file', (dependency) => track(dependency, dependency));
+    bundler.on('transform', (transform, owner) => {
+      transform.on('file', (dependency) => track(dependency, owner));
+    });
+    async function rebuild() {
+      entry.pending = true;
+      if (entry.running) return entry.running;
+      entry.running = (async () => {
+        while (entry.pending && !entry.closed) {
+          entry.pending = false;
+          entry.dirty.forEach((key) => { delete bundler._options.cache[key]; });
+          entry.dirty.clear();
+          try {
+            const result = await new Promise((resolve, reject) => {
+              bundler.bundle((error, buffer) => (error ? reject(error) : resolve(buffer)));
+            });
+            await fs.outputFile(entry.output, result);
+            entry.failed = false;
+          } catch (error) {
+            entry.failed = true;
+            if (production) throw error;
+            console.error(error);
+          }
         }
-        processed++;
-      })
-      // vinyl-source-stream converts the Browserify readable stream into a
-      // vinyl file object that gulp can work with.
-      .pipe(source(jsFilename))
-      // vinyl-buffer converts the streaming vinyl file to a buffered one,
-      // required by plugins that don't support streaming mode.
-      .pipe(buffer())
-      // Rename to just the relative path portion (strip the jsOutputPath prefix).
-      .pipe(rename(outFile.replace(jsOutputPath, '')))
-      .pipe(gulp.dest(jsOutputPath))
-      .on('end', (err) => {
-        if (err) throw err;
-        if (debug) log(`${timestamp.stamp()} ${'SUCCESS'.bold.green} - Compiled JS  - ${outFile.split(/scripts/)[1]}`);
-        processed++;
-
-        // Emit jsMoved only after the last entry point has been written.
-        if (processed === array.length) {
-          log(`${timestamp.stamp()} bundleJS(): ${'DONE'.bold.green}`);
-          buildEvents.emit(BUILD_EVENTS.jsMoved);
-        }
-      });
+      })();
+      try { await entry.running; } finally { entry.running = null; }
+    }
+    entry.rebuild = rebuild;
+    await rebuild();
   });
+  // Initial readiness also covers the empty-entry case.
+  buildEvents.emit(BUILD_EVENTS.jsMoved);
+};
+
+/** Release development watchers when a preview session is stopped. */
+module.exports.close = async (configs) => {
+  const entries = sessions.get(configs);
+  if (!entries) return;
+  await Promise.all([...entries.values()].map(async (entry) => {
+    entry.closed = true;
+    await entry.running;
+    if (entry.bundler.close) entry.bundler.close();
+  }));
+  sessions.delete(configs);
 };

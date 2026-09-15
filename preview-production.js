@@ -6,10 +6,9 @@ const dir = require('./build/constants/directories')(__dirname);
 
 const timestamp = require(`${dir.build}helpers/timestamp`);
 const express = require('express');
-const serve = require('express-static');
 const app = express();
 
-app.use(serve(dir.package));
+app.use(express.static(dir.package));
 
 // Start the HTTP server to preview the production package build
 const server = app.listen(3000, () => {

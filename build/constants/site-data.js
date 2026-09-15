@@ -1,4 +1,4 @@
-const { execSync } = require('child_process');
+const resolveCommitHash = require('../helpers/commit-hash');
 
 /**
  * Site-wide metadata factory.
@@ -21,18 +21,7 @@ module.exports = (dir) => {
 
   // Prefer an injected COMMIT_HASH env var (e.g., from GitHub Actions) so that
   // the git binary doesn't need to be available in every build environment.
-  let commitHash = process.env.COMMIT_HASH;
-  if (!commitHash) {
-    try {
-      commitHash = execSync('git rev-parse HEAD', {
-        encoding: 'utf8',
-        cwd: dir.root,
-      }).trim();
-    } catch (error) {
-      console.warn('Could not get git commit hash:', error.message);
-      commitHash = 'unknown';
-    }
-  }
+  const commitHash = resolveCommitHash(dir.root);
 
   // Build handle/URL pairs so both the bare handle and the full URL are
   // available in templates (e.g. for display text vs. href attributes).

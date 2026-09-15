@@ -77,7 +77,10 @@ module.exports = (configs) => {
   buildEvents.on(BUILD_EVENTS.jsMoved, minifyJS.bind(this, configs));
 
   // Sitemap done: check for overall build completion.
-  buildEvents.on(BUILD_EVENTS.sitemapDone, checkDone.bind(this, configs));
+  buildEvents.on(BUILD_EVENTS.sitemapDone, () => {
+    assetHashing(configs);
+    checkDone(configs);
+  });
 
   // CSS compiled: attempt asset hashing gate.
   buildEvents.on(BUILD_EVENTS.stylesMoved, assetHashing.bind(this, configs));

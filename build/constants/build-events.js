@@ -14,6 +14,7 @@
  *   sitemapDone / gzipDone → checkDone → process.exit()
  */
 module.exports = {
+  assetsMoved: 'assetsMoved',
   /** CSS files have been hashed and renamed. */
   assetHashCssListed: 'asset-hashing/hash-css-listed',
 

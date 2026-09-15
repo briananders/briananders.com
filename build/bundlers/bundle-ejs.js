@@ -2,7 +2,6 @@
 /* eslint-disable no-loop-func */
 const fs = require('fs-extra');
 const { globSync } = require('glob');
-const path = require('path');
 const merge = require('merge');
 const ejs = require('ejs');
 const matter = require('gray-matter');
@@ -87,73 +86,42 @@ async function renderTemplate({
   ejsOptions,
   pagePath,
   frontMatter,
+  layouts, compiled,
 }) {
-  return new Promise((resolve, reject) => {
-    // Merge all data sources into a single template context object.
-    const templateData = merge({}, ejsFunctions, siteData, frontMatter.data, { path: pagePath });
-
-    // In dev mode, a missing `layout` front-matter key is a developer error —
-    // surface it immediately via notification rather than silently producing bad output.
-    if (!production && !templateData.layout) {
-      const errorMessage = `You are missing a template definition in ${templatePath}`;
-      console.error(errorMessage.red);
-      notifier.notify({
-        title: 'Template undefined',
-        message: errorMessage,
-      });
-      reject();
-    }
-
-    // Read the layout file (e.g. src/layout/base.ejs) asynchronously.
-    readFile(`${dir.src}layout/${templateData.layout}.ejs`).then(async (fileBuffer) => {
-      const fileData = fileBuffer.toString();
-      let html;
-      try {
-        // Pass 1: render the page template content.
-        const renderedTemplate = ejs.render(frontMatter.content, templateData, ejsOptions);
-        // Pass 2: inject the rendered content into the layout.
-        html = ejs.render(fileData, merge({ content: renderedTemplate }, templateData), ejsOptions);
-      } catch (e) {
-        html = handleTemplateError(e);
-      }
-
-      // If the rendered HTML itself has front matter (recursive layouts),
-      // re-parse and render again with the merged data.
-      if (matter.test(html)) {
-        const nextFrontMatter = matter(html);
-        frontMatter.content = nextFrontMatter.content;
-        frontMatter.data = merge({}, frontMatter.data, nextFrontMatter.data);
-        html = await renderTemplate({
-          templatePath,
-          ejsFunctions,
-          siteData,
-          dir,
-          production,
-          ejsOptions,
-          pagePath,
-          frontMatter,
-        });
-      }
-      resolve(html);
-    }, (error) => {
-      if (production) throw error;
-      console.error(error.message.red);
-      notifier.notify({
-        title: 'Template Error',
-        message: error.message,
-      });
-      reject();
+  const templateData = merge({}, ejsFunctions, siteData, frontMatter.data, { path: pagePath });
+  if (!templateData.layout) throw new Error(`You are missing a template definition in ${templatePath}`);
+  const layoutPath = `${dir.src}layout/${templateData.layout}.ejs`;
+  // Cache by layout and include context; EJS resolves relative includes using filename.
+  const cacheKey = `${layoutPath}:${ejsOptions.filename}`;
+  if (!layouts.has(layoutPath)) layouts.set(layoutPath, readFile(layoutPath, 'utf8'));
+  const fileData = await layouts.get(layoutPath);
+  if (!compiled.has(cacheKey)) compiled.set(cacheKey, ejs.compile(fileData, ejsOptions));
+  const renderedTemplate = ejs.render(frontMatter.content, templateData, ejsOptions);
+  let html = compiled.get(cacheKey)(merge({ content: renderedTemplate }, templateData));
+  if (matter.test(html)) {
+    const next = matter(html);
+    html = await renderTemplate({
+      templatePath,
+      ejsFunctions,
+      siteData,
+      dir,
+      production,
+      ejsOptions,
+      pagePath,
+      layouts,
+      compiled,
+      frontMatter: { content: next.content, data: merge({}, frontMatter.data, next.data) },
     });
-  });
+  }
+  return html;
 }
 
 /**
  * Renders all EJS templates to HTML and writes them to the output directory.
  *
  * Globs every non-underscore-prefixed `.ejs` template in `src/templates/`.
- * Templates are processed sequentially (using `for…await`) rather than
- * concurrently to keep memory pressure low and avoid race conditions on the
- * shared `pageMappingData` array.
+ * Templates use bounded concurrency, build-scoped layout caches, and a
+ * snapshot of page mapping data. All output writes are awaited.
  *
  * Output path derivation:
  * - `*.html.ejs` (e.g. `index.html.ejs`) → output as `index.html`
@@ -162,10 +130,10 @@ async function renderTemplate({
  * When all templates have been written the `templatesMoved` event is emitted,
  * which triggers HTML minification in production.
  *
- * @param {{ dir: object, buildEvents: EventEmitter, pageMappingData: Array, debug: boolean }} configs
+ * @param {object} configs - Build directories, events, and page mapping snapshot.
  */
 module.exports = async function bundleEJS({
-  dir, buildEvents, pageMappingData, debug,
+  dir, buildEvents, pageMappingData,
 }) {
   const BUILD_EVENTS = require(`${dir.build}constants/build-events`);
   const siteData = require(`${dir.build}constants/site-data`)(dir);
@@ -177,64 +145,34 @@ module.exports = async function bundleEJS({
 
   log(`${timestamp.stamp()} bundleEJS()`);
 
-  let processed = 0;
-
-  for (let index = 0; index < templateGlob.length; index++) {
-    const templatePath = templateGlob[index];
-    if (debug) log(`${timestamp.stamp()} ${'REQUEST'.magenta} - Compiling Template - ${templatePath.split(/templates/)[1]}`);
-
-    // Build per-template EJS helpers (includes pageMappingData context).
-    const ejsFunctions = require(`${dir.build}helpers/ejs-functions`)(dir, pageMappingData);
-    const ejsOptions = {
-      compileDebug: true,
-      filename: templatePath, // Required for EJS include() paths to resolve correctly
-      root: `${dir.src}templates/`, // Allows absolute include paths within templates
-    };
-
-    // Derive the output path, applying the *.html.ejs → direct / *.ejs → /index.html rule.
+  const layouts = new Map();
+  const compiled = new Map();
+  const ejsFunctions = require(`${dir.build}helpers/ejs-functions`)(dir, pageMappingData);
+  await require('../helpers/map-limit')(templateGlob, 8, async (templatePath) => {
     const outputPath = templatePath
       .replace(`${dir.src}templates/`, dir.package)
-      .replace(/\.ejs$/, (templatePath.includes('.html.ejs')) ? '' : '/index.html');
+      .replace(/\.ejs$/, templatePath.includes('.html.ejs') ? '' : '/index.html');
     const pagePath = outputPath.replace(dir.package, '').replace('index.html', '');
-    const frontMatter = matter.read(templatePath);
-
-    const html = await renderTemplate({
-      templatePath,
-      ejsFunctions,
-      siteData,
-      dir,
-      production,
-      ejsOptions,
-      pagePath,
-      frontMatter,
-    }).catch((err) => {
-      if (err && production) throw err;
-      else if (err) {
-        console.error(err.message.red);
-        notifier.notify({
-          title: 'Template Error',
-          message: err.message,
-        });
-      }
-      processed++;
-    });
-
-    // Ensure the output directory exists, then write the rendered HTML.
-    fs.mkdirp(path.dirname(outputPath), (err) => {
-      if (err) throw err;
-
-      fs.writeFile(outputPath, html, (e) => {
-        if (e) throw e;
-
-        if (debug) log(`${timestamp.stamp()} ${'SUCCESS'.bold.green} - Compiled Template - ${outputPath.split(/package/)[1]}`);
-        processed++;
-
-        // Emit templatesMoved only after every template has been written.
-        if (processed >= templateGlob.length) {
-          log(`${timestamp.stamp()} bundleEJS(): ${'DONE'.bold.green}`);
-          buildEvents.emit(BUILD_EVENTS.templatesMoved);
-        }
+    let html;
+    try {
+      html = await renderTemplate({
+        templatePath,
+        ejsFunctions,
+        siteData,
+        dir,
+        production,
+        pagePath,
+        layouts,
+        compiled,
+        frontMatter: matter.read(templatePath),
+        ejsOptions: { compileDebug: true, filename: templatePath, root: `${dir.src}templates/` },
       });
-    });
-  }
+    } catch (err) {
+      if (production) throw err;
+      html = handleTemplateError(err);
+    }
+    await fs.outputFile(outputPath, html);
+  });
+  log(`${timestamp.stamp()} bundleEJS(): ${'DONE'.bold.green}`);
+  buildEvents.emit(BUILD_EVENTS.templatesMoved);
 };

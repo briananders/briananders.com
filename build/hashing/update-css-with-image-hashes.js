@@ -22,50 +22,22 @@ const { log } = console;
  * When all CSS files have been updated the `indexCssForHashing` event is
  * emitted, which triggers `hashCSS` to hash the (now-updated) CSS files.
  *
- * @param {{ dir: object, buildEvents: EventEmitter, hashingFileNameList: object, debug: boolean }} configs
+ * @param {object} configs - Build directories, events, and asset path mappings.
  */
-module.exports = function updateCSSwithImageHashes({
-  dir, buildEvents, hashingFileNameList, debug,
+module.exports = async function updateCSSwithImageHashes({
+  dir, buildEvents, hashingFileNameList,
 }) {
   const BUILD_EVENTS = require(`${dir.build}constants/build-events`);
   const timestamp = require(`${dir.build}helpers/timestamp`);
 
   log(`${timestamp.stamp()} hashingUpdateCSS()`);
 
-  const cssGlob = globSync(`${dir.package}**/*.css`);
-  let processedCss = 0;
-  cssGlob.forEach((file, index, array) => {
-    const fileBuffer = fs.readFileSync(file);
-    let fileContents = fileBuffer.toString();
-    let keysProcessed = 0;
-
-    // Iterate every known original→hashed mapping and substitute in this file.
-    (Object.keys(hashingFileNameList)).forEach((key, keyIndex, keyArray) => {
-      // Strip the package directory prefix to get the path as it appears in CSS.
-      const fileName = key.split(dir.package)[1];
-      const fileNameHash = hashingFileNameList[key].split(dir.package)[1];
-      if (debug) log(`${timestamp.stamp()} hashingUpdateCSS():: ${fileName}`);
-
-      // Bitwise NOT of indexOf: truthy when the substring is found (indexOf >= 0).
-      // eslint-disable-next-line no-bitwise
-      if (~fileContents.indexOf(fileName)) {
-        // Replace all occurrences of the original filename with the hashed one.
-        fileContents = fileContents.split(fileName).join(fileNameHash);
-      }
-
-      keysProcessed++;
-      if (keysProcessed >= keyArray.length) {
-        // All mappings processed for this file — write it back to disk.
-        fs.writeFile(file, fileContents, (err) => {
-          if (err) throw err;
-          if (debug) log(`${timestamp.stamp()} hashingUpdateCSS()::: ${file}: ${'DONE'.bold.green}`);
-          processedCss++;
-          if (processedCss >= array.length) {
-            log(`${timestamp.stamp()} hashingUpdateCSS(): ${'DONE'.bold.green}`);
-            buildEvents.emit(BUILD_EVENTS.indexCssForHashing);
-          }
-        });
-      }
-    });
+  const mappings = new Map(Object.entries(hashingFileNameList).map(([from, to]) => [
+    from.slice(dir.package.length), to.slice(dir.package.length)
+  ]));
+  await require('../helpers/map-limit')(globSync(`${dir.package}**/*.css`), 8, async (file) => {
+    const contents = await fs.readFile(file, 'utf8');
+    await fs.writeFile(file, require('./finish-hashing').replacePaths(contents, mappings));
   });
+  buildEvents.emit(BUILD_EVENTS.indexCssForHashing);
 };

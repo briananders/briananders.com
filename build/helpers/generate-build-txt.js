@@ -1,5 +1,5 @@
 const fs = require('fs-extra');
-const { execSync } = require('child_process');
+const resolveCommitHash = require('./commit-hash');
 const { log } = console;
 
 const timestamp = require('./timestamp');
@@ -29,12 +29,7 @@ module.exports = function generateBuildTxt(configs) {
     const buildDateTime = new Date().toISOString();
 
     // Try to resolve the current git commit SHA for traceability.
-    let commitHash = 'unknown';
-    try {
-      commitHash = execSync('git rev-parse HEAD', { encoding: 'utf-8' }).trim();
-    } catch (error) {
-      log(`${timestamp.stamp()} Warning: Could not get git commit hash: ${error.message}`);
-    }
+    const commitHash = resolveCommitHash(dir.root);
 
     // Assemble the file content.
     const buildTxtContent = `Build Date-Time: ${buildDateTime}

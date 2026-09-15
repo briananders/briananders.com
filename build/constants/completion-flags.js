@@ -9,6 +9,8 @@
  * that re-running a stage (e.g. in watch mode) clears the previous state.
  */
 module.exports = {
+  ASSETS_ARE_MOVED: false,
+  FAVICON_ICO: false,
   /** True once all JS entry points have been minified by UglifyJS. */
   JS_IS_MINIFIED: false,
 

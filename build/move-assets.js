@@ -3,7 +3,8 @@ const { globSync } = require('glob');
 const path = require('path');
 const pngToIco = require('png-to-ico');
 
-const { log, error } = console;
+const { log } = console;
+const mapLimit = require('./helpers/map-limit');
 
 /**
  * Converts `src/images/favicon_base.png` to `favicon.ico` and writes it to
@@ -11,23 +12,21 @@ const { log, error } = console;
  *
  * Uses `png-to-ico` (which exports an async default function in v3+) to
  * perform the PNG → ICO conversion. The resulting buffer is written
- * synchronously once the promise resolves.
+ * asynchronously and awaited before image completion is emitted.
  *
  * @param {{ dir: object, completionFlags: object }} params
  */
-function makeFaviconIco({
+async function makeFaviconIco({
   dir, completionFlags,
 }) {
   const timestamp = require(`${dir.build}helpers/timestamp`);
   log(`${timestamp.stamp()} makeFaviconIco()`);
   completionFlags.FAVICON_ICO = false;
   // png-to-ico v3 ships as ESM with a default export — call via `.default()`.
-  pngToIco.default(`${dir.src}images/favicon_base.png`)
-    .then((buffer) => {
-      fs.writeFileSync(`${dir.package}favicon.ico`, buffer);
-      log(`${timestamp.stamp()} makeFaviconIco(): ${'MOVED'.bold.green}`);
-    })
-    .catch(error);
+  const buffer = await pngToIco.default(`${dir.src}images/favicon_base.png`);
+  await fs.outputFile(`${dir.package}favicon.ico`, buffer);
+  completionFlags.FAVICON_ICO = true;
+  log(`${timestamp.stamp()} makeFaviconIco(): ${'MOVED'.bold.green}`);
 }
 
 /**
@@ -64,7 +63,7 @@ function deletePackageFile(srcPath, { dir }) {
  * Dispatch logic by file type:
  * - `.svg` → optimized via SVGO (`optimizeSvg`).
  * - Raster sources → copied as-is and converted to missing `.webp` and
- *   `.avif` siblings.
+ *   `.avif` siblings from one canonical source.
  * - `.svg` → optimized via SVGO.
  *
  * If the source file no longer exists the corresponding output file is
@@ -74,7 +73,7 @@ function deletePackageFile(srcPath, { dir }) {
  * @param {object} configs - Build configuration object.
  * @param {Function} [callback] - Called once the image has been processed.
  */
-function moveOneImage(imagePath, configs, callback = () => { }) {
+async function moveOneImage(imagePath, configs, callback = () => { }) {
   const {
     dir, debug,
   } = configs;
@@ -97,7 +96,10 @@ function moveOneImage(imagePath, configs, callback = () => { }) {
   }
 
   function isCanonicalRasterSource() {
-    if (rasterSourceImages.includes(extension)) return true;
+    if (rasterSourceImages.includes(extension)) {
+      return !rasterSourceImages.slice(0, rasterSourceImages.indexOf(extension))
+        .some(hasSourceWithExtension);
+    }
     if (extension === 'webp') {
       return !rasterSourceImages.some(hasSourceWithExtension)
         && !hasSourceWithExtension('avif');
@@ -124,13 +126,17 @@ function moveOneImage(imagePath, configs, callback = () => { }) {
 
   if (extn === '.svg') {
     // SVGs are passed through SVGO for optimization before output.
-    optimizeSvg(imagePath, { dir });
+    await optimizeSvg(imagePath, { dir });
     return callback();
   } if (rasterImages.includes(extension)) {
     // Always keep the source format in the output. A canonical source also
     // creates both delivery formats; derived siblings are not reconverted
     // when a source/WebP pair exists, avoiding nondeterministic overwrites.
-    fs.copyFileSync(imagePath, destination);
+    // Original sources own the generated formats, even when supplied siblings exist.
+    // Skipping their copies prevents concurrent writes to the same destination.
+    if (['webp', 'avif'].includes(extension)
+      && rasterSourceImages.some(hasSourceWithExtension)) return callback();
+    await fs.copyFile(imagePath, destination);
     if (!isCanonicalRasterSource()) return callback();
 
     const conversions = [];
@@ -143,15 +149,11 @@ function moveOneImage(imagePath, configs, callback = () => { }) {
       conversions.push(convertToAvif(imagePath, { dir }));
     }
 
-    return Promise.all(conversions)
-      .then(() => callback())
-      .catch((err) => {
-        error(`${timestamp.stamp()} moveOneImage() error:`, err);
-        callback();
-      });
+    await Promise.all(conversions);
+    return callback();
   }
 
-  fs.copyFileSync(imagePath, destination);
+  await fs.copyFile(imagePath, destination);
   return callback();
 }
 
@@ -165,41 +167,23 @@ function moveOneImage(imagePath, configs, callback = () => { }) {
  *
  * @param {object} configs - Build configuration object.
  */
-function moveAllImages(configs) {
+async function moveAllImages(configs) {
   const {
-    dir, completionFlags, buildEvents, debug,
+    dir, completionFlags, buildEvents, BUILD_EVENTS,
   } = configs;
-
-  const BUILD_EVENTS = require(`${dir.build}constants/build-events`);
-  const { images } = require(`${dir.build}constants/file-formats`);
-  const timestamp = require(`${dir.build}helpers/timestamp`);
-
   completionFlags.IMAGES_ARE_MOVED = false;
-  log(`${timestamp.stamp()} moveAllImages()`);
-
-  function checkDone(processed, maximum) {
-    if (processed >= maximum) {
-      log(`${timestamp.stamp()} moveAllImages(): ${'DONE'.bold.green}`);
-      completionFlags.IMAGES_ARE_MOVED = true;
-      buildEvents.emit(BUILD_EVENTS.imagesMoved);
-    }
-  }
-
-  fs.mkdirpSync(`${dir.package}images/`);
-
-  makeFaviconIco({ dir, completionFlags, buildEvents });
-
-  const imagesGlob = globSync(`${dir.src}images/**/*.{${images.join(',')}}`);
-  const progress = { completed: 0 };
-
-  for (let i = 0; i < imagesGlob.length; i++) {
-    const imagePath = imagesGlob[i];
-    moveOneImage(imagePath, configs, () => {
-      progress.completed += 1;
-      if (debug) log(`${timestamp.stamp()} ${progress.completed}/${imagesGlob.length}: ${imagePath}`);
-      checkDone(progress.completed, imagesGlob.length);
-    });
-  }
+  const { images } = require(`${dir.build}constants/file-formats`);
+  await fs.ensureDir(`${dir.package}images/`);
+  await Promise.all([
+    makeFaviconIco(configs),
+    mapLimit(
+      globSync(`${dir.src}images/**/*.{${images.join(',')}}`),
+      4,
+      (file) => moveOneImage(file, configs)
+    )
+  ]);
+  completionFlags.IMAGES_ARE_MOVED = true;
+  buildEvents.emit(BUILD_EVENTS.imagesMoved);
 }
 
 /**
@@ -212,7 +196,7 @@ function moveAllImages(configs) {
  * @param {object} configs - Build configuration object.
  * @param {Function} [callback] - Called once the video has been processed.
  */
-function moveOneVideo(videoPath, configs, callback = () => { }) {
+async function moveOneVideo(videoPath, configs, callback = () => { }) {
   const {
     dir, debug,
   } = configs;
@@ -232,7 +216,7 @@ function moveOneVideo(videoPath, configs, callback = () => { }) {
   if (debug) log(`${timestamp.stamp()} moveOneVideo(${videoPath})`);
 
   fs.mkdirpSync(path.dirname(destination));
-  fs.copyFile(videoPath, destination);
+  await fs.copyFile(videoPath, destination);
 
   return callback();
 }
@@ -246,39 +230,20 @@ function moveOneVideo(videoPath, configs, callback = () => { }) {
  *
  * @param {object} configs - Build configuration object.
  */
-function moveAllVideos(configs) {
+async function moveAllVideos(configs) {
   const {
-    dir, completionFlags, buildEvents, debug,
+    dir, completionFlags, buildEvents, BUILD_EVENTS,
   } = configs;
-
-  const timestamp = require(`${dir.build}helpers/timestamp`);
-  const BUILD_EVENTS = require(`${dir.build}constants/build-events`);
-  const { videos } = require(`${dir.build}constants/file-formats`);
-
   completionFlags.VIDEOS_ARE_MOVED = false;
-  log(`${timestamp.stamp()} moveAllVideos()`);
-
-  function checkDone(processed, maximum) {
-    if (processed >= maximum) {
-      log(`${timestamp.stamp()} moveAllVideos(): ${'DONE'.bold.green}`);
-      completionFlags.VIDEOS_ARE_MOVED = true;
-      buildEvents.emit(BUILD_EVENTS.videosMoved);
-    }
-  }
-
-  fs.mkdirpSync(`${dir.package}videos/`);
-
-  const videoGlob = globSync(`${dir.src}videos/**/*.{${videos.join(',')}}`);
-  const progress = { completed: 0 };
-
-  for (let i = 0; i < videoGlob.length; i++) {
-    const videoPath = videoGlob[i];
-    moveOneVideo(videoPath, configs, () => {
-      progress.completed += 1;
-      if (debug) log(`${timestamp.stamp()} ${progress.completed}/${videoGlob.length}: ${videoPath}`);
-      checkDone(progress.completed, videoGlob.length);
-    });
-  }
+  const { videos } = require(`${dir.build}constants/file-formats`);
+  await fs.ensureDir(`${dir.package}videos/`);
+  await mapLimit(
+    globSync(`${dir.src}videos/**/*.{${videos.join(',')}}`),
+    8,
+    (file) => moveOneVideo(file, configs)
+  );
+  completionFlags.VIDEOS_ARE_MOVED = true;
+  buildEvents.emit(BUILD_EVENTS.videosMoved);
 }
 
 /**
@@ -291,7 +256,7 @@ function moveAllVideos(configs) {
  * @param {object} configs - Build configuration object.
  * @param {Function} [callback] - Called once the file has been processed.
  */
-function moveOneTxtFile(filePath, configs, callback = () => { }) {
+async function moveOneTxtFile(filePath, configs, callback = () => { }) {
   const {
     dir, debug,
   } = configs;
@@ -311,7 +276,7 @@ function moveOneTxtFile(filePath, configs, callback = () => { }) {
   if (debug) log(`${timestamp.stamp()} moveOneTxtFile(${filePath})`);
 
   fs.mkdirpSync(path.dirname(destination));
-  fs.copyFile(filePath, destination);
+  await fs.copyFile(filePath, destination);
 
   return callback();
 }
@@ -325,32 +290,13 @@ function moveOneTxtFile(filePath, configs, callback = () => { }) {
  *
  * @param {object} configs - Build configuration object.
  */
-function moveAllTxtFiles(configs) {
-  const {
-    dir, debug,
-  } = configs;
-
-  const timestamp = require(`${dir.build}helpers/timestamp`);
-
-  log(`${timestamp.stamp()} moveAllTxtFiles()`);
-
-  function checkDone(processed, maximum) {
-    if (processed >= maximum) {
-      log(`${timestamp.stamp()} moveAllTxtFiles(): ${'DONE'.bold.green}`);
-    }
-  }
-
-  const txtGlob = globSync(`${dir.src}*.txt`);
-  const progress = { completed: 0 };
-
-  for (let i = 0; i < txtGlob.length; i++) {
-    const filePath = txtGlob[i];
-    moveOneTxtFile(filePath, configs, () => {
-      progress.completed += 1;
-      if (debug) log(`${timestamp.stamp()} ${progress.completed}/${txtGlob.length}: ${filePath}`);
-      checkDone(progress.completed, txtGlob.length);
-    });
-  }
+async function moveAllTxtFiles(configs) {
+  const { dir } = configs;
+  await mapLimit(
+    globSync(`${dir.src}*.txt`),
+    8,
+    (file) => moveOneTxtFile(file, configs)
+  );
 }
 
 /**
@@ -364,7 +310,7 @@ function moveAllTxtFiles(configs) {
  * @param {object} configs - Build configuration object.
  * @param {Function} [callback] - Called once the file has been processed.
  */
-function moveOneDownload(filePath, configs, callback = () => { }) {
+async function moveOneDownload(filePath, configs, callback = () => { }) {
   const {
     dir, debug,
   } = configs;
@@ -384,7 +330,7 @@ function moveOneDownload(filePath, configs, callback = () => { }) {
   if (debug) log(`${timestamp.stamp()} moveOneDownload(${filePath})`);
 
   fs.mkdirpSync(path.dirname(destination));
-  fs.copyFile(filePath, destination);
+  await fs.copyFile(filePath, destination);
 
   return callback();
 }
@@ -398,36 +344,14 @@ function moveOneDownload(filePath, configs, callback = () => { }) {
  *
  * @param {object} configs - Build configuration object.
  */
-function moveAllDownloads(configs) {
-  const {
-    dir, debug,
-  } = configs;
-
-  const timestamp = require(`${dir.build}helpers/timestamp`);
-
-  log(`${timestamp.stamp()} moveAllDownloads()`);
-
-  function checkDone(processed, maximum) {
-    if (processed >= maximum) {
-      log(`${timestamp.stamp()} moveAllDownloads(): ${'DONE'.bold.green}`);
-    }
-  }
-
-  fs.mkdirpSync(`${dir.package}downloads/`);
-
-  // `nodir: true` prevents glob from returning the base `downloads/` directory
-  // itself, which would trigger the "is a directory" guard in moveOneDownload.
-  const downloadsGlob = globSync(`${dir.src}downloads/**`, { nodir: true });
-  const progress = { completed: 0 };
-
-  for (let i = 0; i < downloadsGlob.length; i++) {
-    const filePath = downloadsGlob[i];
-    moveOneDownload(filePath, configs, () => {
-      progress.completed += 1;
-      if (debug) log(`${timestamp.stamp()} ${progress.completed}/${downloadsGlob.length}: ${filePath}`);
-      checkDone(progress.completed, downloadsGlob.length);
-    });
-  }
+async function moveAllDownloads(configs) {
+  const { dir } = configs;
+  await fs.ensureDir(`${dir.package}downloads/`);
+  await mapLimit(
+    globSync(`${dir.src}downloads/**`, { nodir: true }),
+    8,
+    (file) => moveOneDownload(file, configs)
+  );
 }
 
 module.exports = {
@@ -437,11 +361,14 @@ module.exports = {
    *
    * @param {object} configs - Build configuration object.
    */
-  moveAssets: (configs) => {
-    moveAllImages(configs);
-    moveAllVideos(configs);
-    moveAllTxtFiles(configs);
-    moveAllDownloads(configs);
+  moveAssets: async (configs) => {
+    configs.completionFlags.ASSETS_ARE_MOVED = false;
+    await Promise.all([
+      moveAllImages(configs), moveAllVideos(configs),
+      moveAllTxtFiles(configs), moveAllDownloads(configs)
+    ]);
+    configs.completionFlags.ASSETS_ARE_MOVED = true;
+    configs.buildEvents.emit(configs.BUILD_EVENTS.assetsMoved);
   },
 
   // Individual move functions exposed for incremental updates in watch mode.

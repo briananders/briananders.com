@@ -43,6 +43,9 @@ module.exports = function scssStringifyTransform(file) {
             path.join(__dirname, '..', '..', 'node_modules')
           ],
         });
+        result.loadedUrls.forEach((url) => {
+          if (url.protocol === 'file:') this.emit('file', require('url').fileURLToPath(url));
+        });
         const escaped = JSON.stringify(result.css);
         this.push(Buffer.from(`module.exports = ${escaped};\n`, 'utf8'));
         cb();

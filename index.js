@@ -5,7 +5,6 @@
 require('colors');
 const fs = require('fs-extra');
 const express = require('express');
-const serve = require('express-static');
 const { createProxyMiddleware } = require('http-proxy-middleware');
 const EventEmitter = require('events');
 const chokidar = require('chokidar');
@@ -92,34 +91,11 @@ const configs = {
 
 /* ////////////////////////////// event listeners /////////////////////////// */
 
-/**
- * Starts the EJS template bundling stage once both images and videos have
- * been moved to the output directory.
- *
- * EJS templates often reference image dimensions via `img()` / `lazyImage()`
- * helper functions, which read image files from the output directory. Those
- * reads would fail if templates were compiled before the images were copied.
- *
- * This gate is triggered by both `imagesMoved` and `videosMoved` events so
- * that whichever fires last actually starts the bundle.
- *
- * @param {object} configs - Build configuration object.
- */
-function shouldBundleEjs(configs) {
-  const { completionFlags } = configs;
-
-  if (completionFlags.IMAGES_ARE_MOVED
-    && completionFlags.VIDEOS_ARE_MOVED) {
-    bundleEJS(configs);
-  }
-}
-
-// Start EJS bundling once images and videos are both ready.
-buildEvents.on(BUILD_EVENTS.videosMoved, shouldBundleEjs.bind(this, configs));
-buildEvents.on(BUILD_EVENTS.imagesMoved, shouldBundleEjs.bind(this, configs));
-
-// Re-bundle EJS whenever page-mapping data is recompiled (e.g. on template changes in dev).
-buildEvents.on(BUILD_EVENTS.pageMappingDataCompiled, shouldBundleEjs.bind(this, configs));
+// Render from a page-mapping snapshot after every asset write has completed.
+// The scheduler serializes preview renders and coalesces edits during a render.
+const scheduleTemplates = require('./build/helpers/schedule-templates')(configs, bundleEJS);
+buildEvents.on(BUILD_EVENTS.assetsMoved, scheduleTemplates.assetsReady);
+buildEvents.on(BUILD_EVENTS.pageMappingDataCompiled, scheduleTemplates.mappingReady);
 
 // Build the sitemap as soon as front-matter data is available.
 buildEvents.on(BUILD_EVENTS.pageMappingDataCompiled, compileSitemap.bind(this, configs));
@@ -148,14 +124,14 @@ if (!production) {
 log(`production: ${production}`.toUpperCase().brightBlue.bold);
 
 // Clean the output directory, then kick off all parallel build stages.
-clean(configs).then(() => {
+clean(configs).then(async () => {
   if (debug) log(`${timestamp.stamp()} clean().then()`);
-  fs.mkdirp(dir.package);
+  await fs.mkdirp(dir.package);
   generateBuildTxt(configs);
   compilePageMappingData(configs);
   bundleJS(configs);
   bundleSCSS(configs);
-  moveAssets(configs);   // Starts images + videos + txt + downloads in parallel
+  await moveAssets(configs);
 });
 
 /* /////////////////////// dev server + live reload ///////////////////////// */
@@ -218,7 +194,7 @@ if (!production) {
   }));
 
   // Serve the built output directory as static files.
-  app.use(serve(dir.package));
+  app.use(express.static(dir.package));
 
   const server = app.listen(3000, () => {
     log(`${timestamp.stamp()} server is running at http://localhost:%s`, server.address().port);
@@ -226,7 +202,7 @@ if (!production) {
 
   // Once the initial build finishes, watch for output file changes and
   // push a reload event to all connected browser tabs.
-  buildEvents.on(BUILD_EVENTS.previewReady, () => {
+  buildEvents.once(BUILD_EVENTS.previewReady, () => {
     chokidar.watch(dir.package, { ignoreInitial: true })
       .on('change', () => liveReloadClients.forEach((client) => client.write('data: reload\n\n')))
       .on('add', () => liveReloadClients.forEach((client) => client.write('data: reload\n\n')));

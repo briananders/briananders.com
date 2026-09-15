@@ -58,9 +58,7 @@ function optimizeSvg(filePath, { dir }) {
   // Ensure the destination subdirectory exists before writing.
   mkdirpSync(path.dirname(destination));
 
-  writeFile(destination, data, (e) => {
-    if (e) throw e;
-  });
+  return writeFile(destination, data);
 }
 
 module.exports = {

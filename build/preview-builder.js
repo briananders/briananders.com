@@ -26,6 +26,7 @@ function watchForPreviewReady({ buildEvents, completionFlags, dir }) {
 
   /** Emits `previewReady` once all four watched events have fired. */
   function check() {
+    if (completionFlags.PREVIEW_READY) return;
     // Every value in eventsToWatch must be true (no `false` values remain).
     if (Object.keys(eventsToWatch)
       .map((key) => eventsToWatch[key])
@@ -65,7 +66,7 @@ function watchForPreviewReady({ buildEvents, completionFlags, dir }) {
  *
  * 2. **Source directory watcher** (`src/`): dispatches to the appropriate
  *    incremental rebuild function based on which file changed:
- *    - JavaScript files under `src/js/` → `bundleJS` (re-bundle all JS entry points)
+ *    - JavaScript files under `src/js/` → `bundleJS` (reconcile entries and rebuild affected dependencies)
  *    - SCSS files under `src/js/` → `bundleJS` (re-bundle JS components that import SCSS)
  *    - `src/styles/**` → `bundleSCSS` + `compilePageMappingData` (re-compile
  *      styles and refresh template data so inlined SCSS stays current)
@@ -115,6 +116,7 @@ module.exports = (configs) => {
 
     // Refresh build.txt whenever a source file changes.
     if (filePath.startsWith(dir.src) && !filePath.includes('build.txt')) {
+      require('./helpers/commit-hash').clear();
       generateBuildTxt(configs);
     }
 
@@ -125,14 +127,15 @@ module.exports = (configs) => {
       // SCSS co-located with JS components is bundled into the JS output by
       // scss-stringify-transform, so a stylesheet change must rebuild JS.
       case isJsScss:
-        bundleJS(configs);
+        bundleJS(configs, filePath);
         break;
       case isJsSource:
-        bundleJS(configs);
+        bundleJS(configs, filePath);
         break;
       case filePath.includes(`${dir.src}styles/`):
         // Re-compile styles AND re-render templates (inlined SCSS may have changed).
         bundleSCSS(configs);
+        bundleJS(configs, filePath);
         compilePageMappingData(configs);
         break;
       case filePath.includes(`${dir.src}templates/`):
@@ -199,3 +202,5 @@ module.exports = (configs) => {
       .on('unlinkDir', update);
   });
 };
+
+module.exports.watchForPreviewReady = watchForPreviewReady;

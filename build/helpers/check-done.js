@@ -49,6 +49,8 @@ module.exports = function checkDone({ dir, debug, completionFlags }) {
 
   // All flags that must be true before the build is considered complete.
   const flagsToCheck = [
+    completionFlags.ASSETS_ARE_MOVED,
+    completionFlags.FAVICON_ICO,
     completionFlags.JS_IS_MINIFIED,
     completionFlags.CSS_IS_MINIFIED,
     completionFlags.HTML_IS_MINIFIED,

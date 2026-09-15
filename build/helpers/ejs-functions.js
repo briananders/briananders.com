@@ -109,7 +109,10 @@ function renderPictureSources(sources) {
  *   The compiled front-matter index of every page, used by `getChildPages`.
  * @returns {object} Object of EJS helper functions.
  */
-module.exports = (dir, pageMappingData) => ({
+module.exports = (dir, pageMappingData) => {
+  const partials = new Map();
+  const styles = new Map();
+  return ({
 
   /**
    * Renders an EJS partial from `src/partials/`.
@@ -121,9 +124,10 @@ module.exports = (dir, pageMappingData) => ({
   partial(partialPath, data) {
     const newPath = path.join(dir.src, 'partials/', `${partialPath}.ejs`);
 
-    return ejs.render(fs.readFileSync(newPath).toString(), data, {
-      compileDebug: true,
-    });
+    if (!partials.has(newPath)) {
+      partials.set(newPath, ejs.compile(fs.readFileSync(newPath).toString(), { compileDebug: true }));
+    }
+    return partials.get(newPath)(data);
   },
 
   /**
@@ -489,10 +493,13 @@ module.exports = (dir, pageMappingData) => ({
    * @returns {string} Compiled CSS string.
    */
   inlineScss(src) {
+    if (styles.has(src)) return styles.get(src);
     const fileData = fs.readFileSync(path.join(dir.src, src)).toString();
     const result = sass.compileString(fileData, {
       loadPaths: [`${dir.src}styles/`, dir.nodeModules],
     });
+    styles.set(src, result.css);
     return result.css;
   },
 });
+};
