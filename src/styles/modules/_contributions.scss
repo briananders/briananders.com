@@ -56,6 +56,7 @@ section.contributions {
       display: flex;
       gap: space(1);
       flex-wrap: wrap;
+      margin-left: -#{space(2)};
 
       a { line-height: 1.4; }
     }

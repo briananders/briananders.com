@@ -43,7 +43,7 @@ footer {
     display: flex;
     gap: space(1);
     flex-wrap: wrap;
-    margin: 0;
+    margin: 0 -#{space(2)};
   }
 
   a.brand {

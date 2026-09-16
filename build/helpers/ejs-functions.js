@@ -177,22 +177,6 @@ module.exports = (dir, pageMappingData) => {
   },
 
   /**
-   * Prevents widowed words in headings by replacing the last space with `&nbsp;`.
-   *
-   * Also replaces double underscores (`__`) with regular spaces, which is a
-   * convention used in front-matter strings where a literal space would
-   * otherwise be stripped.
-   *
-   * @param {string} str - The heading or title string.
-   * @returns {string} The string with the last word attached via a non-breaking space.
-   */
-  noWidows(str) {
-    // Replace the last space with &nbsp; so the last word doesn't appear alone on a new line.
-    // Replace __ with regular spaces (an escape convention for front-matter strings).
-    return str.replace(/\s([^\s]+)$/, '&nbsp;$1').replace(/__/g, ' ');
-  },
-
-  /**
    * Renders a syntax-highlighted code block using highlight.js.
    *
    * If `locals.language` is provided the block is highlighted with that

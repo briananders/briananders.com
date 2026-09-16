@@ -202,7 +202,6 @@ Available in all templates via `build/helpers/ejs-functions.js`:
 | `blockLink(str, { href })` | Block nav link with `>` arrow (`.block-link`) |
 | `cardLink(str, { href })` | Card-style link (`.card-link`) |
 | `buttonLink(str, { href })` | Button-style link (`.button`) |
-| `noWidows(str)` | Replaces last space with `&nbsp;`; `__` → ` ` |
 | `formattedDate(dateString)` | Formats as `YYYY-MM-DD` |
 | `getChildPages(parentPath)` | Returns direct children from `pageMappingData` |
 | `defaultLastFMModule(albums)` | Last.fm loading placeholder markup |

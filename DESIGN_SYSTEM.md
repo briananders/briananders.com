@@ -847,7 +847,7 @@ system via classes:
 <section class="posts" id="recent-posts">
   <div class="content">
     <header>
-      <h2><%- noWidows(`Recent posts`) %></h2>
+      <h2>Recent posts</h2>
     </header>
     …
   </div>
