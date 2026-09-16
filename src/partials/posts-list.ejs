@@ -1,4 +1,4 @@
-<div id="posts-list" role="list">
+<div id="posts-list">
   <%
     const basePages = getChildPages('posts');
     let newestPages = basePages.sort((pageA, pageB) => {
@@ -22,7 +22,6 @@
       href: `/${url}`,
       itemscope: '',
       itemtype: 'https://schema.org/BlogPosting',
-      role: 'listitem',
       class: 'block',
     }); %>
   <% }); %>

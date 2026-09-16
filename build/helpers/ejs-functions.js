@@ -262,7 +262,7 @@ module.exports = (dir, pageMappingData) => {
    * @throws {Error} If `src` is not provided.
    */
   lazyImage({
-    src, alt = '', classes = [], width, height,
+    src, alt = '', classes = [], width, height, lazy = true,
   } = {}) {
     if (!src) {
       throw new Error('lazyImage is missing src attribute');
@@ -270,7 +270,7 @@ module.exports = (dir, pageMappingData) => {
     const { sources, fallback } = getImageSources(src, dir);
     const dimensions = sizeOf(fs.readFileSync(path.join(dir.package, fallback)));
     return `
-      <picture>${renderPictureSources(sources)}<img loading="lazy" decoding="async" src="${fallback}" alt="${alt}" height="${height || dimensions.height}" width="${width || dimensions.width}" ${classes.length ? `class="${classes.join(' ')}"` : ''} /></picture>
+      <picture>${renderPictureSources(sources)}<img ${lazy ? 'loading="lazy" decoding="async"' : 'fetchpriority="high" loading="eager"'} src="${fallback}" alt="${alt}" height="${height || dimensions.height}" width="${width || dimensions.width}" ${classes.length ? `class="${classes.join(' ')}"` : ''} /></picture>
     `;
   },
 

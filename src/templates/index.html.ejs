@@ -73,7 +73,7 @@ scripts:
       ]
       model.forEach(({ copyBlock, image, heading, links }) => {
     %>
-    <%- partial('contributions-card', Object.assign(locals, { copyBlock, image, heading, links })); %>
+    <%- partial('contributions-card', Object.assign(locals, { copyBlock, image, heading, links, lazyLoadTheThumbnail: false })); %>
     <% }); %>
   </div>
   <div class="content">

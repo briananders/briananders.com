@@ -1,8 +1,8 @@
 <%
-  const { copyBlock, image, heading, links } = locals;
+  const { copyBlock, image, heading, links, lazyLoadTheThumbnail = true } = locals;
 %>
 <div class="card" data-card-id="<%- dasherize(heading.toLowerCase()); %>">
-  <%- lazyImage({ src: image }); %>
+  <%- lazyImage({ src: image, lazy: lazyLoadTheThumbnail }); %>
   <h3 class="h5"><%- noWidows(heading); %></h3>
   <p class="description"><%- copyBlock %></p>
   <div class="links">
