@@ -35,10 +35,10 @@
 @for $i from 1 through 4 {
   .col-#{$i} { grid-column: span $i; }
 }
-@include mq($grid--tablet-break-point) {
+@include cq($grid--tablet-break-point) {
   @for $i from 1 through 8 { .t-col-#{$i} { grid-column: span $i; } }
 }
-@include mq($grid--start-break-point) {
+@include cq($grid--start-break-point) {
   @for $i from 1 through 12 { .d-col-#{$i} { grid-column: span $i; } }
 }
 

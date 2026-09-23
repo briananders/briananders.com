@@ -17,8 +17,6 @@ ready.document(() => {
   const clearButton = document.getElementById('clear');
   const toastNotification = document.querySelector('toast-notification');
 
-  const breakpoint = matchMedia('(max-width: 500px)');
-
   /// //////////////////////// CONSTANTS
 
   const STATES = {
@@ -365,7 +363,9 @@ ready.document(() => {
         toastNotification.classList.remove('animate');
       }, 1500);
     });
-    breakpoint.addEventListener('change', checkLinesFull);
+    // Row height can change when the available container width changes.
+    const rowObserver = new ResizeObserver(checkLinesFull);
+    lines.forEach((line) => rowObserver.observe(line));
   }
 
   initEventListeners();

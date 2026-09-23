@@ -86,7 +86,7 @@ ul li {
     grid-template-columns: 1fr;
     grid-gap: space(6);
 
-    @include mq($medium) {
+    @include cq($medium) {
       grid-template-columns: 1fr 1fr;
     }
   }
@@ -124,7 +124,7 @@ ul li {
     border-top: math.div(space(1), 3) solid;
     border-radius: 0;
 
-    @include mq($medium) {
+    @include cq($medium) {
       width: calc(50% - #{space(3)});
     }
   }

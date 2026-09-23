@@ -1,0 +1,20 @@
+@use "system/variables/all" as *;
+
+// Size queries share a named container so nested grids keep matching spans.
+@mixin cq($query) {
+  @container site-layout (min-width: #{$query}) {
+    @content;
+  }
+}
+
+@mixin cq-max($query) {
+  @container site-layout (max-width: #{$query - 1}) {
+    @content;
+  }
+}
+
+@mixin dark-mode() {
+  @media (prefers-color-scheme: dark) {
+    @content;
+  }
+}

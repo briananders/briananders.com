@@ -47,7 +47,7 @@ main.home {
       gap: space(2);
     }
 
-    @include mq($large) {
+    @include cq($large) {
       padding-top: space(16);
     }
   }

@@ -26,7 +26,7 @@ main-stroke {
   grid-template-columns: repeat(8, 36px);
   grid-template-rows: repeat(3, 36px);
 
-  @include mq($medium) {
+  @include cq($medium) {
     grid-template-columns: repeat(12, 36px);
     grid-template-rows: repeat(2, 36px);
   }
@@ -35,7 +35,7 @@ main-stroke {
     grid-row: span 3;
     grid-column: span 2;
 
-    @include mq($medium) {
+    @include cq($medium) {
       grid-row: span 2;
       grid-column: span 2;
     }

@@ -153,7 +153,7 @@
     margin-top: space(2);
     @include border--light;
 
-    @include mq-max($small) {
+    @include cq-max($small) {
       grid-template-columns: 1fr;
       gap: space(2);
     }

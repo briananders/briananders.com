@@ -115,4 +115,25 @@ describe('grid-debug overlay', () => {
     const overlay = document.getElementById('grid-debug-overlay');
     assert.equal(overlay, null, 'overlay should not trigger when typing in input');
   });
+
+  test('labels follow container tokens when the container resizes without a viewport resize', () => {
+    const gridDebug = setupTestEnvironment('http://localhost/?grid');
+    let onResize;
+    window.ResizeObserver = class {
+      constructor(callback) { onResize = callback; }
+
+      observe(element) { assert.equal(element, document.body); }
+    };
+    gridDebug.init();
+
+    const overlay = document.getElementById('grid-debug-overlay');
+    const label = overlay.querySelector('.grid-debug__label');
+    const viewportWidth = window.innerWidth;
+    for (const [columns, tier] of [[4, 'mobile'], [8, 'tablet'], [12, 'desktop'], [4, 'mobile']]) {
+      overlay.style.setProperty('--grid-cols', String(columns));
+      onResize();
+      assert.equal(label.textContent, `${columns} cols · ${tier}`);
+      assert.equal(window.innerWidth, viewportWidth);
+    }
+  });
 });

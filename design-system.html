@@ -10,6 +10,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap" rel="stylesheet" />
 <style>
+body { container: site-layout / inline-size; }
 /* ========================================================================
    BANDERS DESIGN SYSTEM — v1.0
    Dark-first, mobile-first, 12-column grid.
@@ -155,18 +156,18 @@
   --z-toast:  1000;
 }
 
-/* Tablet breakpoint — update responsive CSS custom properties on :root */
-@media (min-width: 600px) {
-  :root {
+/* Tablet breakpoint — update responsive CSS custom properties on container descendants */
+@container site-layout (min-width: 600px) {
+  body > * {
     --gutter:          var(--gutter-tablet);
     --grid-gutter:     var(--gutter);
     --grid-cols:       var(--grid-cols-tablet);
   }
 }
 
-/* Desktop breakpoint — update responsive CSS custom properties on :root */
-@media (min-width: 960px) {
-  :root {
+/* Desktop breakpoint — update responsive CSS custom properties on container descendants */
+@container site-layout (min-width: 960px) {
+  body > * {
     --gutter:          var(--gutter-desktop);
     --grid-gutter:     var(--gutter);
     --grid-gap:        var(--grid-gap-desktop);
@@ -255,19 +256,19 @@ hr {
   grid-template-columns: repeat(var(--grid-cols-mobile), minmax(0, 1fr));
   gap: var(--grid-gap);
 }
-@media (min-width: 600px) { .grid { grid-template-columns: repeat(var(--grid-cols-tablet), minmax(0, 1fr)); } }
-@media (min-width: 960px) { .grid { grid-template-columns: repeat(var(--grid-cols-desktop), minmax(0, 1fr)); } }
+@container site-layout (min-width: 600px) { .grid { grid-template-columns: repeat(var(--grid-cols-tablet), minmax(0, 1fr)); } }
+@container site-layout (min-width: 960px) { .grid { grid-template-columns: repeat(var(--grid-cols-desktop), minmax(0, 1fr)); } }
 
 /* Column-span utilities — mobile-first */
 .col-1 { grid-column: span 1; } .col-2 { grid-column: span 2; }
 .col-3 { grid-column: span 3; } .col-4 { grid-column: span 4; }
-@media (min-width: 600px) {
+@container site-layout (min-width: 600px) {
   .t-col-1 { grid-column: span 1; } .t-col-2 { grid-column: span 2; }
   .t-col-3 { grid-column: span 3; } .t-col-4 { grid-column: span 4; }
   .t-col-5 { grid-column: span 5; } .t-col-6 { grid-column: span 6; }
   .t-col-7 { grid-column: span 7; } .t-col-8 { grid-column: span 8; }
 }
-@media (min-width: 960px) {
+@container site-layout (min-width: 960px) {
   .d-col-1 { grid-column: span 1; }   .d-col-2 { grid-column: span 2; }
   .d-col-3 { grid-column: span 3; }   .d-col-4 { grid-column: span 4; }
   .d-col-5 { grid-column: span 5; }   .d-col-6 { grid-column: span 6; }
@@ -281,7 +282,7 @@ hr {
 .flow > * + * { margin-top: var(--space-4); }
 .section { padding: var(--space-12) 0; border-top: 1px solid var(--color-divider); }
 .section:first-of-type { border-top: 0; }
-@media (min-width: 960px) { .section { padding: var(--space-20) 0; } }
+@container site-layout (min-width: 960px) { .section { padding: var(--space-20) 0; } }
 
 /* --- 5. Buttons --------------------------------------------------------- */
 .btn {
@@ -604,7 +605,7 @@ kbd {
   background: linear-gradient(135deg, var(--color-primary-500), var(--color-accent-plum));
 }
 .nav__links { display: none; gap: var(--space-1); }
-@media (min-width: 720px) { .nav__links { display: flex; } }
+@container site-layout (min-width: 720px) { .nav__links { display: flex; } }
 .nav__link {
   padding: var(--space-2) var(--space-3);
   color: var(--color-text-muted);
@@ -617,7 +618,7 @@ kbd {
   text-decoration: none;
 }
 .nav__toggle { display: inline-flex; align-items: center; padding: var(--space-2); border-radius: var(--radius-sm); }
-@media (min-width: 720px) { .nav__toggle { display: none; } }
+@container site-layout (min-width: 720px) { .nav__toggle { display: none; } }
 .nav__drawer {
   display: none;
   padding: var(--space-2) 0 var(--space-4);
@@ -693,7 +694,7 @@ kbd {
   place-items: end center;
   padding: 0;
 }
-@media (min-width: 600px) { .modal { place-items: center; padding: var(--space-6); } }
+@container site-layout (min-width: 600px) { .modal { place-items: center; padding: var(--space-6); } }
 .modal__scrim {
   position: absolute; inset: 0;
   background: rgba(0, 0, 0, 0.6);
@@ -711,7 +712,7 @@ kbd {
   padding: var(--space-6);
   animation: slideUp var(--dur-4) var(--ease-emphasized);
 }
-@media (min-width: 600px) { .modal__dialog { border-radius: var(--radius-lg); animation: popIn var(--dur-3) var(--ease-emphasized); } }
+@container site-layout (min-width: 600px) { .modal__dialog { border-radius: var(--radius-lg); animation: popIn var(--dur-3) var(--ease-emphasized); } }
 .modal__title { margin: 0 0 var(--space-2); font-size: var(--fs-xl); }
 .modal__body  { color: var(--color-text-muted); margin: 0 0 var(--space-6); }
 .modal__footer { display: flex; gap: var(--space-3); justify-content: flex-end; }
@@ -808,7 +809,7 @@ kbd {
     radial-gradient(1000px 400px at 80% -100px, rgba(249,115,22,0.18), transparent 60%),
     radial-gradient(600px 300px at 20% -50px,  rgba(192,132,252,0.14), transparent 60%);
 }
-@media (min-width: 960px) { .hero { padding: var(--space-24) 0 var(--space-16); } }
+@container site-layout (min-width: 960px) { .hero { padding: var(--space-24) 0 var(--space-16); } }
 
 .hero__eyebrow { color: var(--color-primary-300); }
 .hero__title { font-size: clamp(2.5rem, 6vw + 1rem, 5rem); font-weight: var(--fw-bold); letter-spacing: -0.035em; line-height: 1.02; margin: 0 0 var(--space-6); }
@@ -870,7 +871,7 @@ kbd {
   overflow-y: auto;
   display: none;
 }
-@media (min-width: 960px) { .toc { display: block; } }
+@container site-layout (min-width: 960px) { .toc { display: block; } }
 .toc h4 { font-size: var(--fs-2xs); text-transform: uppercase; letter-spacing: 0.14em; color: var(--color-text-muted); margin: 0 0 var(--space-3); }
 .toc ul { list-style: none; padding: 0; margin: 0; }
 .toc li { margin-bottom: var(--space-1); }
@@ -878,7 +879,7 @@ kbd {
 .toc a:hover, .toc a[aria-current="true"] { color: var(--color-text); background: var(--color-surface-2); text-decoration: none; }
 
 .layout { display: grid; grid-template-columns: 1fr; gap: var(--space-8); }
-@media (min-width: 960px) { .layout { grid-template-columns: 220px 1fr; gap: var(--space-10); } }
+@container site-layout (min-width: 960px) { .layout { grid-template-columns: 220px 1fr; gap: var(--space-10); } }
 
 /* Reduced-motion support */
 @media (prefers-reduced-motion: reduce) {

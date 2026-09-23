@@ -108,7 +108,7 @@ nav.main {
       pointer-events: auto;
     }
 
-    @include mq($medium) { right: space(4); }
+    @include cq($medium) { right: space(4); }
 
     .block-link {
       display: flex;

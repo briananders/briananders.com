@@ -9,6 +9,9 @@
 // -----------------------------------------------------------------------------
 @use "variables/all" as *;
 
+// The page shell supplies available inline size without containing block height.
+body { container: site-layout / inline-size; }
+
 :root {
   // Base unit — every spacing value derives from this.
   --unit: 4px;
@@ -123,7 +126,7 @@
   --content-max:       #{$grid--max-width};
   --reading-max:       var(--max-8-columns);
 
-  // Responsive layout values (mobile defaults, updated via media queries on :root)
+  // Responsive layout values (mobile defaults, updated on container descendants)
   --gutter:            var(--gutter-mobile);
   --grid-gutter:       var(--gutter);
   --grid-gap:          var(--grid-gap-mobile);
@@ -188,9 +191,9 @@
   --palette--accent-color:        var(--color-accent-lime);
 }
 
-// Tablet breakpoint — update responsive CSS custom properties on :root
-@media (min-width: 600px) {
-  :root {
+// Tablet breakpoint — update responsive CSS custom properties on container descendants
+@container site-layout (min-width: 600px) {
+  body > * {
     --gutter:          var(--gutter-tablet);
     --grid-gutter:     var(--gutter);
     --grid-cols:       var(--grid-cols-tablet);
@@ -198,9 +201,9 @@
   }
 }
 
-// Desktop breakpoint — update responsive CSS custom properties on :root
-@media (min-width: 960px) {
-  :root {
+// Desktop breakpoint — update responsive CSS custom properties on container descendants
+@container site-layout (min-width: 960px) {
+  body > * {
     --gutter:          var(--gutter-desktop);
     --grid-gutter:     var(--gutter);
     --grid-gap:        var(--grid-gap-desktop);

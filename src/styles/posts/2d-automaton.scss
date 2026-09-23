@@ -16,7 +16,7 @@ td {
   @include type--heading-2;
   line-height: .7;
 
-  @include mq-max(500px) {
+  @include cq-max(500px) {
     padding: space(2) space(2) 0;
     @include type--heading-3;
     line-height: .7;

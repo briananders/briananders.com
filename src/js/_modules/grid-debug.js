@@ -18,7 +18,7 @@ const STYLE_ID = 'grid-debug-overlay-styles';
  * Inject the stylesheet the overlay depends on. Idempotent.
  * The container is a single-row grid so the columns run from top to bottom
  * of the viewport; columns beyond the current tier's count are hidden via
- * media queries.
+ * container queries.
  *
  * @returns {void}
  */
@@ -48,13 +48,13 @@ function injectStyles() {
       grid-template-rows: 100%;
       gap: var(--grid-gap-mobile, 12px);
     }
-    @media (min-width: 600px) {
+    @container site-layout (min-width: 600px) {
       #${OVERLAY_ID} .grid-debug__container {
         grid-template-columns: repeat(8, minmax(0, 1fr));
         padding: 0 24px;
       }
     }
-    @media (min-width: 960px) {
+    @container site-layout (min-width: 960px) {
       #${OVERLAY_ID} .grid-debug__container {
         grid-template-columns: repeat(12, minmax(0, 1fr));
         gap: var(--grid-gap-desktop, 16px);
@@ -70,11 +70,11 @@ function injectStyles() {
 
     /* Hide columns beyond the current tier's count. */
     #${OVERLAY_ID} .grid-debug__col:nth-child(n+5)  { display: none; }
-    @media (min-width: 600px) {
+    @container site-layout (min-width: 600px) {
       #${OVERLAY_ID} .grid-debug__col:nth-child(n+5)  { display: block; }
       #${OVERLAY_ID} .grid-debug__col:nth-child(n+9)  { display: none; }
     }
-    @media (min-width: 960px) {
+    @container site-layout (min-width: 960px) {
       #${OVERLAY_ID} .grid-debug__col:nth-child(n+9)  { display: block; }
     }
 
@@ -125,14 +125,15 @@ function buildOverlay() {
 }
 
 /**
- * Return the current grid tier as a string based on the viewport width.
+ * Return the current grid tier as a string based on the active container tokens.
  *
  * @returns {string} The description of the column count and breakpoint tier.
  */
 function currentTier() {
-  const w = window.innerWidth;
-  if (w >= 960) return '12 cols · desktop';
-  if (w >= 600) return '8 cols · tablet';
+  const cols = Number(window.getComputedStyle(document.getElementById(OVERLAY_ID))
+    .getPropertyValue('--grid-cols'));
+  if (cols === 12) return '12 cols · desktop';
+  if (cols === 8) return '8 cols · tablet';
   return '4 cols · mobile';
 }
 
@@ -210,11 +211,15 @@ module.exports.init = () => {
       overlay = built.overlay;
       label = built.label;
       document.body.appendChild(overlay);
-      window.addEventListener('resize', () => {
+      const updateLabel = () => {
         if (active && label) {
           label.textContent = currentTier();
         }
-      });
+      };
+      if (window.ResizeObserver) {
+        new window.ResizeObserver(updateLabel).observe(document.body);
+      }
+      window.addEventListener('resize', updateLabel);
     }
     active = !active;
     overlay.dataset.active = String(active);

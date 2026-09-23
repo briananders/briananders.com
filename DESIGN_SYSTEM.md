@@ -82,7 +82,7 @@ new page, post, component, or JS interaction.
    are load-bearing; changing them breaks every post. Add new tokens
    alongside them; don't rename.
 4. **Mobile is the default.** Type, gutters, columns, and every layout
-   starts at mobile and *steps up* via `@include mq($medium)` / `mq($large)`.
+   starts at mobile and *steps up* via `@include cq($medium)` / `cq($large)`.
 5. **Motion is optional.** Every animation honours `prefers-reduced-motion`.
 
 ---
@@ -119,7 +119,7 @@ src/styles/
 │   │   ├── all.scss
 │   │   ├── _colors.scss            ← palette--base, orange-gradient, …
 │   │   ├── _grid.scss              ← grid(), columns(), readingWidth
-│   │   ├── _media-queries.scss     ← mq(), mq-max(), dark-mode()
+│   │   ├── _container-queries.scss     ← cq(), cq-max(), dark-mode()
 │   │   ├── _type.scss              ← font-size(), type--heading-N, …
 │   │   ├── _elements.scss          ← button-link, card, input, …  (all component mixins)
 │   │   ├── _utilities.scss         ← @mixin box  (unused, see §13)
@@ -373,7 +373,7 @@ Three tiers, all mobile-first:
 | desktop | 960 px    | 12   | `--grid-gap-desktop` (16 px)   | `--gutter-desktop` (32 px)      |
 | wide    | 1280 px   | 12   | (same)                         | content maxes at 1200 px        |
 
-**Responsive tokens on `:root`.** Rather than changing the referenced variable inside every mixin or component selector via nested media queries, the active CSS custom properties (`--gutter`, `--grid-gutter`, `--grid-gap`, `--grid-cols`, `--card-padding`) are declared on `:root` and updated within media queries at `600px` and `960px`. Components simply reference `var(--gutter)` or `var(--grid-gap)` and respond to viewport changes automatically.
+**Responsive container tokens.** The body is the named `site-layout` inline-size container. Mobile defaults live on `:root`; container queries update inherited tokens on `body > *` at `600px` and `960px`. Queries must style descendants, since a container cannot query its own size. Grid tracks and column spans query the same named container, keeping their tiers aligned. Print, color-scheme, and reduced-motion media queries remain because they are not size queries.
 
 Breakpoint SCSS variables (from `variables/_viewports.scss`):
 
@@ -384,7 +384,7 @@ $large:  960px;   // desktop — 12 cols
 $wide:   1280px;
 ```
 
-Used everywhere via `@include mq($medium) { … }`.
+Used everywhere via `@include cq($medium) { … }`.
 
 ### 5.5 Column-width tokens
 
@@ -560,8 +560,8 @@ through `@use "system/utilities" as *`, so from any post SCSS you can:
 
 | Mixin              | Use                                                   |
 | ------------------ | ----------------------------------------------------- |
-| `mq($query)`       | `@media (min-width: $query)`                          |
-| `mq-max($query)`   | `@media (max-width: $query - 1px)`                    |
+| `cq($query)`       | `@container site-layout (min-width: #{$query})`                          |
+| `cq-max($query)`   | `@container site-layout (max-width: #{$query - 1})`                    |
 | `dark-mode()`      | `@media (prefers-color-scheme: dark)` — **unused**    |
 
 ### Element primitives
@@ -962,7 +962,7 @@ Three ways, in order of preference:
    .card {
      @include columns(12);                // 12/12/12
    }
-   @include mq($medium) {
+   @include cq($medium) {
      .card { @include columns(6, 4); }   // desktop 6, tablet 4
    }
    ```
@@ -1079,7 +1079,7 @@ Leave them in — they're part of the intended API surface — but be aware
 you're the first customer if you reach for them.
 
 - **`@mixin dark-mode`** in
-  [`system/mixins/_media-queries.scss`](src/styles/system/mixins/_media-queries.scss).
+  [`system/mixins/_container-queries.scss`](src/styles/system/mixins/_container-queries.scss).
   Wraps `@media (prefers-color-scheme: dark)`. Currently unused because
   the site is dark-only. If a light theme is added, this is where its
   overrides go.
@@ -1230,7 +1230,7 @@ can shrink further.
   color: var(--color-text-muted);
   border-radius: var(--radius-lg);
 
-  @include mq($medium) {
+  @include cq($medium) {
     padding: var(--space-8);
   }
 }

@@ -21,8 +21,6 @@ ready.document(() => {
   const unusedLetterElement = document.getElementById('untried-letters');
   const untriedResultsElement = document.getElementById('untried-results-count');
 
-  const breakpoint = matchMedia('(max-width: 500px)');
-
   /// //////////////////////// CONSTANTS
 
   const STATES = {
@@ -535,7 +533,9 @@ ready.document(() => {
         }, 1500);
       });
     });
-    breakpoint.addEventListener('change', checkLinesFull);
+    // Row height can change when the available container width changes.
+    const rowObserver = new ResizeObserver(checkLinesFull);
+    lines.forEach((line) => rowObserver.observe(line));
   }
 
   initEventListeners();

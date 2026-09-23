@@ -1,5 +1,5 @@
 @use "system/variables/all" as *;
-@use "./media-queries" as *;
+@use "./container-queries" as *;
 @use "system/functions/all" as *;
 
 // 12-column grid — mobile-first.
@@ -14,11 +14,11 @@
     padding-right: var(--gutter);
   }
 
-  @include mq($grid--tablet-break-point) {
+  @include cq($grid--tablet-break-point) {
     grid-template-columns: repeat(8, minmax(0, 1fr));
   }
 
-  @include mq($grid--start-break-point) {
+  @include cq($grid--start-break-point) {
     grid-template-columns: repeat(12, minmax(0, 1fr));
   }
 }
@@ -33,16 +33,16 @@
   }
 
   @if $tablet != null {
-    @include mq($grid--tablet-break-point) {
+    @include cq($grid--tablet-break-point) {
       grid-column: span $tablet;
     }
   } @else {
-    @include mq($grid--tablet-break-point) {
+    @include cq($grid--tablet-break-point) {
       grid-column: span min($desktop, 8);
     }
   }
 
-  @include mq($grid--start-break-point) {
+  @include cq($grid--start-break-point) {
     grid-column: span $desktop;
   }
 }

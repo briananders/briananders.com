@@ -47,7 +47,7 @@ $aspectRatio: math.div($height, $width);
     margin-bottom: space(6);
     @include content-width;
 
-    @include mq($content-max-width) {
+    @include cq($content-max-width) {
       height: calc(var(--aspect-ratio) * #{$content-max-width});
       padding-top: 0 !important;
     }
@@ -87,7 +87,7 @@ $aspectRatio: math.div($height, $width);
     gap: var(--grid-gap);
     @include readingWidth;
 
-    @include mq(700px) {
+    @include cq(700px) {
       grid-template-columns: repeat(2, 1fr);
     }
 

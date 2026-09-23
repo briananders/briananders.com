@@ -22,12 +22,12 @@ section.contributions {
 
     @include columns(12);
 
-    @include mq($medium) {
+    @include cq($medium) {
       @include columns(6, 8);
       max-width: var(--max-8-columns);
     }
 
-    @include mq($large) {
+    @include cq($large) {
       @include columns(6);
     }
 

@@ -85,7 +85,7 @@
   align-items: center;
   padding: space(2) 0;
 
-  @include mq-max(375px) {
+  @include cq-max(375px) {
     grid-template-columns: repeat(5, 58px);
   }
 
