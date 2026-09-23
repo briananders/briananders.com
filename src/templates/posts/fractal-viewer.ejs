@@ -1,0 +1,97 @@
+---
+title: "Fractal Viewer"
+description: "Twelve famous fractals you can zoom into until floating-point math gives out. Every zoom re-renders from the equation, so the detail never runs dry."
+date: 2026-09-23
+priority: 0.8
+pageClasses:
+- 'posts'
+- 'fractal-viewer-page'
+layout: base
+styles:
+- 'main'
+- 'posts/fractal-viewer'
+scripts:
+- 'posts/fractal-viewer/index'
+---
+
+<div class="content">
+  <p>
+    Pick a fractal, then dive in. Nothing here is a stored image: every frame is computed from the equation above
+    the viewer, pixel by pixel, at whatever magnification you land on. Zoom in on an edge and new structure keeps
+    appearing, because the iteration budget grows with every doubling of zoom.
+  </p>
+</div>
+
+<div class="content fractal-controls">
+  <label for="fractal-select">
+    Fractal
+    <select id="fractal-select"></select>
+  </label>
+  <label for="palette-select">
+    Colors
+    <select id="palette-select">
+      <option value="deco" selected>Deco</option>
+      <option value="classic">Classic</option>
+      <option value="fire">Fire</option>
+      <option value="ocean">Ocean</option>
+      <option value="gotham">Gotham</option>
+    </select>
+  </label>
+</div>
+
+<div class="content fractal-equation" aria-live="polite">
+  <p class="equation"></p>
+  <p class="caption"></p>
+  <p class="reference-wrapper"><a class="inline-link reference" href="#" target="_blank" rel="noopener"></a></p>
+</div>
+
+<div class="container fractal-viewer">
+  <div class="stage">
+    <canvas tabindex="0" aria-label="Fractal viewer. Arrow keys pan, plus and minus zoom, 0 resets."></canvas>
+    <p class="status" aria-hidden="true"></p>
+  </div>
+  <div class="toolbar">
+    <p class="hud" aria-live="off"></p>
+    <div class="buttons">
+      <button type="button" data-action="zoom-in" aria-label="Zoom in">+</button>
+      <button type="button" data-action="zoom-out" aria-label="Zoom out">−</button>
+      <button type="button" data-action="left" aria-label="Pan left">←</button>
+      <button type="button" data-action="up" aria-label="Pan up">↑</button>
+      <button type="button" data-action="down" aria-label="Pan down">↓</button>
+      <button type="button" data-action="right" aria-label="Pan right">→</button>
+      <button type="button" data-action="reset">Reset</button>
+    </div>
+  </div>
+</div>
+
+<div class="content">
+  <p>
+    <strong>Controls:</strong> scroll or pinch to zoom toward the cursor, drag to pan, double-click to zoom in
+    (shift + double-click to zoom out). With the viewer focused, arrow keys pan, <kbd>+</kbd>/<kbd>−</kbd> zoom, and
+    <kbd>0</kbd> resets. The URL tracks where you are, so any spot can be bookmarked or shared.
+  </p>
+
+  <h2>How the detail keeps coming</h2>
+  <p>
+    The top eight are escape-time fractals. Each pixel is a starting point; the formula runs on it over and over, and
+    the color records how many steps it took for the value to fly off toward infinity. Points that never escape are
+    painted black. Near the boundary, escape takes longer the closer you look, so the viewer adds 60 iterations per
+    doubling of zoom. Without that, the edges would go flat black and the fractal would appear to “smooth out.”
+  </p>
+  <p>
+    The bottom four are self-similar sets: the whole shape is made of shrunken copies of itself. Instead of drawing
+    them with a fixed number of levels, each pixel runs the copy maps in reverse, level after level, until the
+    pieces get smaller than the pixel. Zoom in 1,000× and it simply walks seven more levels deep.
+  </p>
+  <p>
+    The one hard floor is the number format. JavaScript numbers carry about 16 significant digits, so somewhere
+    around 10<sup>12</sup>–10<sup>13</sup>× (depending on your screen’s resolution and how far from the origin you
+    are) neighboring pixels collapse onto the same coordinate. The viewer stops there
+    and says so rather than showing blocks. Going deeper takes arbitrary-precision math, the approach dedicated
+    deep-zoom renderers use.
+  </p>
+  <p>
+    Rendering is split across Web Workers, one per spare CPU core. Each view renders three times, at 8×, 3×, and
+    full resolution, from the center outward, so you see the shape form while you zoom and it sharpens when you stop.
+  </p>
+</div>

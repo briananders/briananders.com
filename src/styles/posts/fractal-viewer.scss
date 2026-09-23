@@ -1,0 +1,193 @@
+@use "system/utilities" as *;
+
+.fractal-viewer-page {
+
+  // The global reset flattens these; the equations depend on them.
+  sub,
+  sup {
+    position: relative;
+    font-size: 0.65em;
+    line-height: 0;
+  }
+
+  sub {
+    vertical-align: -0.3em;
+  }
+
+  sup {
+    vertical-align: 0.55em;
+  }
+
+  .fractal-controls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: space(3);
+    margin-bottom: space(3);
+
+    label {
+      display: flex;
+      flex-direction: column;
+      gap: space(1);
+      margin-bottom: 0;
+      color: var(--color-text-muted);
+      font-size: var(--fs-sm);
+    }
+
+    #fractal-select {
+      min-width: 16rem;
+    }
+  }
+
+  .fractal-equation {
+    margin-bottom: space(3);
+
+    .equation {
+      border-top: 1px solid var(--color-primary-500);
+      padding-top: space(3);
+      @include type--regular-serif;
+      font-size: var(--fs-2xl);
+      line-height: 1.5;
+      letter-spacing: 0.02em;
+      margin-bottom: space(1);
+      overflow-x: auto;
+      white-space: nowrap;
+
+      @include mq-max($medium) {
+        font-size: var(--fs-lg);
+      }
+
+      // Complex conjugate bar
+      .conj {
+        text-decoration: overline;
+      }
+
+      // Stacked fraction
+      .frac {
+        display: inline-flex;
+        flex-direction: column;
+        vertical-align: middle;
+        text-align: center;
+        font-size: 0.8em;
+        line-height: 1.2;
+
+        > span:first-child {
+          border-bottom: 1px solid currentColor;
+          padding: 0 0.2em;
+        }
+      }
+    }
+
+    .caption {
+      color: var(--color-text-muted);
+      margin-bottom: space(1);
+    }
+
+    .reference-wrapper {
+      margin-bottom: 0;
+      padding-bottom: space(2);
+      border-bottom: 1px solid var(--color-border);
+      font-size: var(--fs-sm);
+    }
+  }
+
+  .fractal-viewer {
+    margin-bottom: space(4);
+
+    .stage {
+      position: relative;
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+      background-color: #000;
+    }
+
+    canvas {
+      display: block;
+      width: 100%;
+      aspect-ratio: 3 / 2;
+      max-height: 78vh;
+      cursor: grab;
+      touch-action: none;
+      user-select: none;
+
+      @include mq-max($medium) {
+        aspect-ratio: 1 / 1;
+      }
+
+      &:focus-visible {
+        outline: 2px solid var(--color-primary-500);
+        outline-offset: -2px;
+      }
+    }
+
+    &.is-dragging canvas {
+      cursor: grabbing;
+    }
+
+    .status {
+      position: absolute;
+      top: space(1);
+      right: space(1);
+      margin: 0;
+      padding: 0 space(1);
+      border-radius: var(--radius-xs);
+      background-color: rgba(0, 0, 0, 0.6);
+      color: #fff;
+      font-family: var(--font-mono);
+      font-size: var(--fs-2xs);
+      pointer-events: none;
+
+      &:empty {
+        display: none;
+      }
+    }
+
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: space(2);
+      padding-top: space(2);
+    }
+
+    .hud {
+      margin: 0;
+      font-family: var(--font-mono);
+      font-size: var(--fs-xs);
+      color: var(--color-text-muted);
+      overflow-wrap: anywhere;
+
+      strong {
+        color: var(--color-warning);
+      }
+
+      .sep {
+        margin: 0 0.5em;
+        color: var(--color-text-subtle);
+      }
+    }
+
+    .buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: space(1);
+
+      button {
+        min-width: 44px;
+        min-height: 44px;
+        padding: 0 space(2);
+        font-size: var(--fs-md);
+      }
+    }
+  }
+
+  kbd {
+    font-family: var(--font-mono);
+    font-size: 0.85em;
+    padding: 0 0.35em;
+    border: 1px solid var(--color-border-strong);
+    border-radius: var(--radius-xs);
+  }
+}
