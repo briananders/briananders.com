@@ -1,0 +1,57 @@
+@use "system/utilities" as *;
+
+.posts.pendulum-wave {
+
+  .canvas-container {
+    position: relative;
+    width: 768px;
+    max-width: 100%;
+
+    button {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      margin: 0;
+    }
+  }
+
+  canvas {
+    width: 768px;
+    height: 768px;
+    @include border--light;
+    max-width: 100%;
+    max-height: 90vw;
+    display: block;
+  }
+
+  form {
+    margin-bottom: space(6);
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    @include left-margins;
+
+    label {
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      padding: unset;
+      gap: space(1);
+    }
+
+    input[type=range] {
+      width: 120px;
+    }
+
+    input[type=checkbox] {
+      margin-right: space(1);
+    }
+
+    > * {
+      display: block;
+      margin: 0 space(2) space(2);
+    }
+  }
+}

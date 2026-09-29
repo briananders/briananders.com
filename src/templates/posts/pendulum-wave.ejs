@@ -1,0 +1,45 @@
+---
+title: "Pendulum Wave"
+description: "An interactive simulation of a pendulum wave — a set of pendulums with carefully chosen lengths that drift in and out of phase, creating mesmerizing wave patterns before eventually re-synchronizing."
+date: 2026-09-23
+priority: 0.8
+pageClasses:
+  - 'posts pendulum-wave'
+layout: base
+styles:
+  - 'main'
+  - 'posts/pendulum-wave'
+scripts:
+  - 'posts/pendulum-wave'
+---
+
+<section>
+  <div class="content">
+    <p>
+      A pendulum wave is a device that demonstrates the relationship between period and length in simple pendulums. Each pendulum has a slightly different length, causing them to oscillate at slightly different frequencies. Over time, the pendulums cycle through synchronized motion, traveling wave patterns, apparent chaos, and back to synchronization.
+    </p>
+
+    <form>
+      <label for="pendulum-count">
+        Pendulums: <output id="pendulum-count-value">15</output>
+        <input id="pendulum-count" type="range" min="5" max="30" value="15" step="1" aria-label="Number of pendulums">
+      </label>
+      <label for="speed">
+        Speed: <output id="speed-value">0.2x</output>
+        <input id="speed" type="range" min="0.05" max="1" value="0.2" step="0.05" aria-label="Simulation speed">
+      </label>
+      <label for="trails">
+        <input id="trails" type="checkbox"> Trails
+      </label>
+      <span>
+        <button id="pause-button" type="button">Pause</button>
+        <button id="reset-button" type="button">Reset</button>
+      </span>
+    </form>
+
+    <div class="canvas-container">
+      <button id="start-button" class="button play" type="button">Start</button>
+      <canvas id="canvas"></canvas>
+    </div>
+  </div>
+</section>

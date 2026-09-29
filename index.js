@@ -100,8 +100,15 @@ buildEvents.on(BUILD_EVENTS.pageMappingDataCompiled, scheduleTemplates.mappingRe
 // Build the sitemap as soon as front-matter data is available.
 buildEvents.on(BUILD_EVENTS.pageMappingDataCompiled, compileSitemap.bind(this, configs));
 
+/**
+ * Logs the preview ready status with an up-to-date timestamp.
+ */
+function logPreviewReady() {
+  log(`${timestamp.stamp()} ${'Preview Ready'.green.bold}`);
+}
+
 // Log a message when the dev server is ready for the first time.
-buildEvents.on(BUILD_EVENTS.previewReady, log.bind(this, `${timestamp.stamp()} ${'Preview Ready'.green.bold}`));
+buildEvents.on(BUILD_EVENTS.previewReady, logPreviewReady);
 
 /* /////////////////////// build mode selection ///////////////////////////// */
 
@@ -123,16 +130,29 @@ if (!production) {
 
 log(`production: ${production}`.toUpperCase().brightBlue.bold);
 
-// Clean the output directory, then kick off all parallel build stages.
-clean(configs).then(async () => {
-  if (debug) log(`${timestamp.stamp()} clean().then()`);
+/**
+ * Cleans the output directory and initiates all parallel build stages.
+ *
+ * @returns {Promise<void>}
+ */
+async function startInitialBuild() {
+  await clean(configs);
+  if (debug) {
+    log(`${timestamp.stamp()} clean().then()`);
+  }
   await fs.mkdirp(dir.package);
   generateBuildTxt(configs);
   compilePageMappingData(configs);
   bundleJS(configs);
   bundleSCSS(configs);
   await moveAssets(configs);
-});
+}
+
+// In production modes, kick off the build immediately.
+// In dev mode, the build is triggered only after the HTTP server successfully binds the port.
+if (production) {
+  startInitialBuild();
+}
 
 /* /////////////////////// dev server + live reload ///////////////////////// */
 
@@ -196,8 +216,33 @@ if (!production) {
   // Serve the built output directory as static files.
   app.use(express.static(dir.package));
 
-  const server = app.listen(3000, () => {
-    log(`${timestamp.stamp()} server is running at http://localhost:%s`, server.address().port);
+  let configuredPort = 3000;
+  if (process.env.PORT) {
+    configuredPort = parseInt(process.env.PORT, 10);
+  }
+
+  // Start the HTTP server without passing a callback directly to app.listen.
+  // Express 5 registers an app.listen callback on both 'listening' and 'error'.
+  // Handling events directly avoids an unhandled TypeError when server.address() is null.
+  const server = app.listen(configuredPort);
+
+  server.on('error', (serverError) => {
+    if (serverError.code === 'EADDRINUSE') {
+      log(`${timestamp.stamp()} ${`Port ${configuredPort} is already in use by another process.`.red.bold}`);
+      log(`${timestamp.stamp()} ${`Stop the process using that port or specify a different port (e.g. PORT=${configuredPort + 1} npm start).`.yellow}`);
+      process.exit(1);
+    }
+
+    log(`${timestamp.stamp()} ${`Server error: ${serverError.message}`.red.bold}`);
+    process.exit(1);
+  });
+
+  // Only start the build once the port has been secured.
+  // This prevents colliding processes from wiping the output directory while a server is running.
+  server.on('listening', () => {
+    const boundAddress = server.address();
+    log(`${timestamp.stamp()} server is running at http://localhost:%s`, boundAddress.port);
+    startInitialBuild();
   });
 
   // Once the initial build finishes, watch for output file changes and
