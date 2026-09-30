@@ -34,6 +34,7 @@ new page, post, component, or JS interaction.
   - [5.7 Elevation & focus](#57-elevation--focus)
   - [5.8 Motion](#58-motion)
   - [5.9 Legacy `--palette--*` aliases](#59-legacy---palette---aliases)
+  - [5.10 Data visualization](#510-data-visualization)
 - [6. Mixin layer](#6-mixin-layer)
 - [7. Class layer](#7-class-layer)
 - [8. Element defaults](#8-element-defaults)
@@ -167,12 +168,17 @@ src/js/
 │   ├── lazy-loader.js
 │   ├── no-animations.js
 │   ├── youtube-modal.js
+│   ├── last-fm/                    ← listening dashboards (see §5.10)
+│   │   ├── dashboard.js            ← controller for /posts/last-fm/ + /posts/last-fm-scrobbles/
+│   │   ├── charts.js               ← HTML/SVG chart renderers on --chart-* tokens
+│   │   ├── detail-dialog.js        ← <dialog> drill-down (artist / album / year)
+│   │   ├── data.js · stats.js · format.js · dom.js
+│   │   └── item-api.js             ← homepage album list
 │   └── …
 ├── _components/                    ← shadow-DOM web components
-│   ├── year-listing.js             ← Last.fm yearly plays bar (uses --palette--* aliases)
 │   ├── year-selector.js
 │   ├── album-listing.js
-│   ├── artist-listing.js
+│   ├── api-image.js
 │   └── last-updated.js
 └── posts/                          ← one .js per interactive post
     └── …
@@ -417,8 +423,7 @@ Use it:
 }
 ```
 
-`#albums, #artists, #yearly-scrobbles` on the last-fm-scrobbles page use
-`var(--max-8-columns)`.
+`--reading-max` (and so `@include readingWidth`) is `var(--max-8-columns)`.
 
 ### 5.6 Radii
 
@@ -495,8 +500,42 @@ their internal styles being touched:
 ```
 
 **Don't add new callers of these** in new code. They exist purely so
-`year-listing`, `year-selector`, `trends-bar-chart` and friends can pick up
-the new palette without a rewrite.
+`year-selector` and other pre-refactor components can pick up the new
+palette without a rewrite.
+
+### 5.10 Data visualization
+
+Charts read a dedicated `--chart-*` token set instead of reaching into the
+brand ramp directly. The values were checked with a palette validator
+against `--color-surface-1` (the card surface charts sit on):
+
+| Token                 | Maps to                     | Use                                       |
+| --------------------- | --------------------------- | ----------------------------------------- |
+| `--chart-mark`        | `--color-primary-500`       | Any single-series mark (bar, line, dot)   |
+| `--chart-mark-muted`  | `--color-border`            | De-emphasised marks (emphasis form)       |
+| `--chart-grid`        | `--color-divider`           | Hairline gridlines — solid, never dashed  |
+| `--chart-axis`        | `--color-text-muted`        | Tick and axis text (7.3 : 1)              |
+| `--chart-ordinal-1…4` | primary 100 → 300 → 500 → 600 | Ordered bands, most → least important   |
+| `--chart-other`       | `--color-border`            | The "everything else" bucket              |
+| `--chart-seq-low/mid/high` | surface-tinted 600 → 500 → 100 | Heatmaps: more is brighter (dark canvas) |
+| `--chart-area-fill`   | 12 % of `--chart-mark`      | Area wash under a line                    |
+| `--chart-band`        | 10 % of `--color-text`      | A highlighted range (e.g. a date window)  |
+
+Rules of thumb:
+
+- **One series, one colour.** Rank or magnitude is already carried by bar
+  length; don't re-encode it as hue.
+- **Emphasis over rainbow.** To make one bar the point, paint it
+  `--chart-mark` and the rest `--chart-mark-muted`.
+- **`primary-700` is not a chart colour.** It drops to 2.46 : 1 on
+  `surface-1` and its hue drifts toward red, which breaks the ordinal ramp.
+- **Axis text is `--chart-axis`, not `--color-text-subtle`** (2.99 : 1).
+- **Every chart has a table twin** (`<details>` under the chart) so a
+  tooltip is never the only way to read a value.
+
+The Last.fm dashboards (`src/js/_modules/last-fm/`) are the reference
+consumer: KPI tiles, cover grid, ranked bars, stacked part-to-whole bars,
+a dumbbell, emphasis columns, a heatmap, and an area chart.
 
 ---
 
@@ -834,9 +873,9 @@ this.shadowRoot.innerHTML = `
 `;
 ```
 
-and get the theme automatically. This is exactly how `year-listing.js`,
-`year-selector.js`, `album-listing.scss`, and `artist-listing.scss` pick
-up the palette without their own token declarations.
+and get the theme automatically. This is exactly how `year-selector.js`,
+`album-listing.scss`, and `last-updated.scss` pick up the palette without
+their own token declarations.
 
 ### EJS templates → CSS
 
@@ -864,9 +903,10 @@ Two ways the JS layer talks to the design system:
 
 1. **Class toggles.** Add/remove `.play`, `.pause`, `.slide-in`, `.visible`
    on an element and let CSS drive the visible state.
-2. **Custom-property writes.** Set `element.style.setProperty('--bar-width',
-   '42%')` and let a CSS rule animate that variable's transitions. See
-   [`year-listing.js`](src/js/_components/year-listing.js).
+2. **Custom-property writes.** Set `element.style.setProperty('--value',
+   '42%')` and let a CSS rule size or animate from that variable. See the
+   ranked bars and columns in
+   [`last-fm/charts.js`](src/js/_modules/last-fm/charts.js).
 
 **Never** poke at inline styles for something the design system already
 covers — use a class hook instead.
@@ -1116,9 +1156,9 @@ you're the first customer if you reach for them.
 
 - **`--max-1-column` through `--max-12-columns` except `--max-6` and
   `--max-8`.** Currently only `--max-6-columns` (used in the
-  design-system post's own docs) and `--max-8-columns` (used by
-  `#albums, #artists, #yearly-scrobbles`) are consumed. The others are
-  ready to go when you need them.
+  design-system post's own docs) and `--max-8-columns` (via
+  `--reading-max`) are consumed. The others are ready to go when you need
+  them.
 
 - **`.stack` utility.** Defined in the class layer but only used by the
   design-system post's own layout. Free to adopt.

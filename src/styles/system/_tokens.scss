@@ -53,6 +53,26 @@
   --color-danger-tint:   rgba(248, 113, 113, 0.14);
   --color-info-tint:     rgba(96, 165, 250, 0.14);
 
+  // Data visualization. Checked with the dataviz palette validator against
+  // --color-surface-1: the ordinal steps pass monotone lightness, ≥ 0.06 ΔL
+  // between steps, one hue, and ≥ 3:1 at the dark end. primary-700 is left
+  // out on purpose (2.46:1 on surface-1, and its hue drifts red).
+  // Dark canvas, so sequential scales run dark → light (more = brighter).
+  --chart-mark:        var(--color-primary-500);  // single-series marks
+  --chart-mark-muted:  var(--color-border);       // de-emphasised marks
+  --chart-grid:        var(--color-divider);      // hairline gridlines
+  --chart-axis:        var(--color-text-muted);   // tick + axis labels
+  --chart-ordinal-1:   var(--color-primary-100);  // ordered bands, first → last
+  --chart-ordinal-2:   var(--color-primary-300);
+  --chart-ordinal-3:   var(--color-primary-500);
+  --chart-ordinal-4:   var(--color-primary-600);
+  --chart-other:       var(--color-border);       // "everything else" bucket
+  --chart-seq-low:     color-mix(in oklab, var(--color-primary-600) 22%, var(--color-surface-1));
+  --chart-seq-mid:     var(--color-primary-500);
+  --chart-seq-high:    var(--color-primary-100);
+  --chart-area-fill:   color-mix(in srgb, var(--chart-mark) 12%, transparent);
+  --chart-band:        color-mix(in srgb, var(--color-text) 10%, transparent);
+
   // Focus
   --focus-ring: 0 0 0 2px var(--color-bg), 0 0 0 4px var(--color-primary-500);
 
@@ -172,8 +192,8 @@
 
   // -------------------------------------------------------------------------
   // Legacy palette aliases.
-  // Several shadow-DOM web components (year-listing, year-selector,
-  // trends-bar-chart) reference these older names. CSS custom properties
+  // Older shadow-DOM web components (year-selector) still reference these
+  // names. CSS custom properties
   // inherit through Shadow DOM, so declaring them here keeps those components
   // working without touching their internal styles.
   // -------------------------------------------------------------------------

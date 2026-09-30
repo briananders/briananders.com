@@ -13,51 +13,10 @@ scripts:
   - 'posts/last-fm-scrobbles'
 ---
 
-<div class="container">
+<div class="content">
   <p>
-    In a <%- inlineLink('separate post', { href: '/posts/last-fm' }) %>, you can look through the data in a slightly different way, with links to the entries for each item. But here, you can break down the history by year, quarter, month, and even week. Click on an item to see the monthly breakdown.
+    Every scrobble since 2013, sliceable by year, quarter, month, week, or rolling window. Select a year or a month in the long view to jump straight to it, or any album or artist for its month-by-month history. For just the last few weeks, the <%- inlineLink('recent listening trends', { href: '/posts/last-fm/' }) %> page is quicker.
   </p>
 </div>
 
-<div class="container">
-  <p>
-    This app is pretty experimental, and I'm not sure how long it will last. But it's a fun project to work on, and I'm glad I did it. There will be errors. Enjoy!
-  </p>
-</div>
-
-<div id="filters-container" class="container filters-container">
-  <div class="selector-container">
-    <label for="type-selector">Time Span</label>
-    <select id="type-selector" name=type>
-      <option selected value="all-time">All Time</option>
-    </select>
-  </div>
-   
-  <div id="selector-container" class="selector-container"></div>
-</div>
-
-<section>
-  <div class="container">
-    <h2>Artists</h2>
-    <div id="artists"></div>
-  </div>
-</section>
-
-<section>
-  <div class="container">
-    <h2>Albums</h2>
-    <div id="albums"></div>
-  </div>
-</section>
-
-<section>
-  <div class="container">
-    <h2>Yearly Plays</h2>
-    <div id="yearly-scrobbles">
-    </div>
-  </div>
-
-  <div class="container">
-    <last-updated source="scrobbles"></last-updated>
-  </div>
-</section>
+<%- partial('last-fm-dashboard', { ...locals, mode: 'history' }) %>
