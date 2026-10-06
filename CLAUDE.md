@@ -390,7 +390,7 @@ CSS files reference images via `url()`. If CSS were hashed before images, the CS
 
 **AVIFs are committed source, not build output.** AVIF encoders produce different bytes on macOS and Linux. So `convert-to-avif.js` encodes each image once, writes the result next to the source in `src/images/`, and every build copies that file.
 
-`src/images/avif-manifest.json` records each generated AVIF's source and a fingerprint (source bytes plus encoder settings). A missing AVIF, a changed source or changed settings triggers a re-encode into `src/`; commit the result. Deleting a source in watch mode deletes its generated AVIF too. `test/avif-sources.test.mjs` fails if any AVIF is missing, stale or orphaned.
+`src/images/avif-manifest.json` records each generated AVIF's source and a fingerprint (source bytes plus encoder settings). A missing AVIF, a changed source or changed settings triggers a re-encode into `src/`; commit the result. Deleting a source in watch mode deletes its generated AVIF too. PR validation (`build-validation.yml`) fails if the build changes anything in `src/images/`; that's the guard against an uncommitted AVIF. `test/avif-sources.test.mjs` covers the cache logic and flags missing, stale or orphaned AVIFs.
 
 **Note:** `{ nodir: true }` is required on the downloads glob — glob v13's `**` pattern matches the base directory itself.
 
@@ -495,7 +495,7 @@ Branch flow: feature branch (from `staging`) → PR into `staging` → `staging`
 
 - **Production**: Push to `main` branch triggers GitHub Actions → builds → deploys to `www.briananders.com` S3 bucket → invalidates CloudFront cache → creates a deploy tag
 - **Staging**: Push to `staging` branch triggers GitHub Actions → builds → deploys to `staging.briananders.com` S3 bucket
-- **PR validation**: All PRs run build + tests
+- **PR validation**: All PRs run build + tests, and fail if the build changed `src/images/` (an uncommitted AVIF)
 - **`@claude` in GitHub**: `claude.yml` installs dependencies and Chromium, lets Claude run build, test, lint and screenshot, and uploads `screenshots/` as a workflow artifact
 - The `s3-upload-allowlist.json` preserves `/band-news/`, `/last-fm-history/`, `/data/`, and `/movies/` paths during deploy
 

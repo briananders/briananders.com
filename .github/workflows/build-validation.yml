@@ -23,6 +23,16 @@ jobs:
       - name: Build
         run: npm run build
 
+      # The build encodes missing or stale AVIFs into src/images/; any change
+      # there means the PR didn't commit them.
+      - name: Check committed AVIFs are current
+        run: |
+          if [ -n "$(git status --porcelain -- src/images)" ]; then
+            echo "The build generated or updated files in src/images/. Run a build and commit them:"
+            git status --porcelain -- src/images
+            exit 1
+          fi
+
       - name: Test
         run: npm test
 

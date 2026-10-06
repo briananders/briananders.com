@@ -34,7 +34,7 @@ If a step can't run, name it and say why. Unverified is not done.
 - Golden: when rendered output changes, regenerate with `npm run build:golden` and commit `golden/` alongside the change. Build-time values are pinned, so the diff shows only real changes. Explain each group of changed files in the PR.
 - Images: every source image's AVIF is committed next to it in `src/images/`, and builds copy it rather than re-encoding.
   - When you add or change a source image, any build writes its `.avif` and updates `src/images/avif-manifest.json`. Commit both.
-  - `test/avif-sources.test.mjs` fails on a missing, stale or orphaned AVIF.
+  - PR validation fails if a build changes anything in `src/images/`. `test/avif-sources.test.mjs` also flags missing, stale or orphaned AVIFs.
 
 ## 3. Design system
 
