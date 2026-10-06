@@ -49,7 +49,7 @@ These paths are **preserved during deploys** via `s3-upload-allowlist.json` and 
 
 Trend slugs are lowercase with everything outside `[a-z0-9 -]` removed and whitespace collapsed to `-` (no accent folding): see `slugify()` in `data.js`. URL state: `?type=&period=` for the period, `?trends=artists/…` for the dialog.
 
-Every panel compares against one report per period (`comparisonFor()` in `data.js`). Top albums and Top artists show each item's count there: the previous period's count for calendar periods; for rolling windows, which have no earlier window of equal length, the longer window's count scaled to this window's days ("usual"). An item outside the comparison's top 50 is "New", since its count there is unknown.
+Every panel compares against one report per period (`comparisonFor()` in `data.js`). Top albums and Top artists show each item's count there: the previous period's count for calendar periods; for rolling windows, which have no earlier window of equal length, the longer window's count scaled to this window's days ("usual"). A report only lists its top 50, so an item missing from the comparison report has no count there: for months, quarters and years the dashboard reads the real count (often 0) from that item's monthly trend file (`resolveMissing()`); weeks and rolling windows don't line up with months, so they show the honest bound "≤ N", where N is the comparison list's #50 count. Report and trend counts matched exactly in spot checks of a year, a quarter and a month.
 
 ## Tech Stack
 

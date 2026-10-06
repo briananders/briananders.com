@@ -369,6 +369,10 @@ function initDashboard(root) {
    * same length, so they show the comparison window's count scaled to this
    * window's days: the "usual" pace the KPI tiles already compare against.
    *
+   * An item outside the comparison's top list starts as unknown (shown as
+   * "≤ cutoff"); for months, quarters and years `resolveMissing` replaces that
+   * with the real count from monthly history.
+   *
    * @param {Object} report - Selected report.
    * @param {Object|null} comparison - Comparison report.
    * @param {Object|null} comp - Comparison descriptor.
@@ -386,28 +390,61 @@ function initDashboard(root) {
     const during = pace ? `in the ${nowLabel.toLowerCase()}` : `in ${nowLabel}`;
     const over = comp.type === 'all-time' ? 'all time' : `the ${comp.label}`;
     const scale = pace ? span.days / compSpan.days : 1;
+    // Calendar months line up with the monthly trend files; weeks don't.
+    const months = ['month', 'quarter', 'year'].includes(state.type) && compSpan
+      ? { from: stats.monthKey(compSpan.start), to: stats.monthKey(compSpan.end) }
+      : null;
     let note = `Plays ${during}, compared with ${comp.label}.`;
     if (pace) note = `Plays ${during}. “Usual” is your pace over ${over}, scaled to ${format.number(span.days)} days.`;
     const forList = (list) => {
-      let topOf = `${comp.label}’s`;
-      if (comp.type === 'all-time') topOf = 'the all-time';
-      else if (pace) topOf = `the ${comp.label}’`;
-      const cut = `${topOf} top ${(comparison[list] || []).length}`;
+      const atMost = Math.round(stats.cutoff(comparison, list) * scale);
+      const outside = `outside its top ${(comparison[list] || []).length}`;
       return {
         values: stats.compareCounts(report, comparison, list, scale),
+        atMost,
+        months,
         word: pace ? 'usual' : 'was',
         nowLabel,
         beforeLabel: pace ? `Usual pace (${comp.label})` : comp.label,
         describe: (name, count, before) => {
           const head = `${name}: ${format.number(count)} scrobbles ${during}`;
-          if (before === null) return `${head}. Not in ${cut}.`;
-          return pace
-            ? `${head}, compared with a usual ${format.number(before)} at your pace over ${over}.`
+          if (pace) {
+            return before === null
+              ? `${head}, compared with a usual of at most ${format.number(atMost)} at your pace over ${over} (${outside}).`
+              : `${head}, compared with a usual ${format.number(before)} at your pace over ${over}.`;
+          }
+          return before === null
+            ? `${head}, compared with at most ${format.number(atMost)} in ${comp.label} (${outside}).`
             : `${head}, compared with ${format.number(before)} in ${comp.label}.`;
         },
       };
     };
     return { note, artists: forList('artists'), albums: forList('albums') };
+  };
+
+  /**
+   * Looks up the real comparison count for on-screen items that fell outside
+   * the comparison's top list. Only months, quarters and years line up with
+   * the monthly trend files; anything else keeps its "≤ cutoff" bound, as does
+   * any item whose trend file can't be loaded.
+   *
+   * @param {'artists'|'albums'} list - Which top list.
+   * @param {number} limit - Items on screen.
+   * @returns {Promise<void>} Settles once every lookup has.
+   */
+  const resolveMissing = (list, limit) => {
+    const compare = state.compare && state.compare[list];
+    if (!compare || !compare.months || !state.report) return Promise.resolve();
+    const { from, to } = compare.months;
+    return Promise.all((state.report[list] || []).slice(0, limit).map((item, i) => {
+      if (compare.values[i] !== null) return null;
+      const path = data.trendPath(list === 'albums'
+        ? { kind: 'album', artist: item.artist, album: item.album }
+        : { kind: 'artist', artist: item.name });
+      return data.getTrend(path)
+        .then((trend) => { compare.values[i] = stats.sumMonths(trend.months, from, to); })
+        .catch(() => {});
+    })).then(() => {});
   };
 
   const renderAlbums = (report) => {
@@ -581,8 +618,6 @@ function initDashboard(root) {
       });
       renderRange(span, comparison ? comp : null);
       renderKpis(report, span, comparison, compSpan, comparison ? comp : null);
-      renderAlbums(report);
-      renderArtists(report);
       els.focusNote.textContent = `Share of ${format.number(report.totalScrobbles)} scrobbles, by chart position.`;
       charts.focusBars(els.focus, [
         { label: 'Artists', bands: stats.focusBands(report, 'artists') },
@@ -592,6 +627,14 @@ function initDashboard(root) {
       renderYears(span);
       renderHeatmap(span);
       renderTimeline(span);
+      // The top lists wait for any history lookups so their numbers don't change after paint.
+      await Promise.all([
+        resolveMissing('albums', state.limits.albums),
+        resolveMissing('artists', state.limits.artists)
+      ]);
+      if (request !== state.token) return;
+      renderAlbums(report);
+      renderArtists(report);
       root.querySelectorAll('.is-skeleton').forEach((el) => el.classList.remove('is-skeleton'));
     } catch (error) {
       if (request !== state.token) return;
@@ -636,15 +679,16 @@ function initDashboard(root) {
 
   // -- Boot ---------------------------------------------------------------------
 
+  // Showing more rows can reveal items whose comparison count needs a lookup.
   els.albumsToggle.addEventListener('click', () => {
     const [few, many] = LIMITS.albums;
     state.limits.albums = state.limits.albums === few ? many : few;
-    if (state.report) renderAlbums(state.report);
+    resolveMissing('albums', state.limits.albums).then(() => { if (state.report) renderAlbums(state.report); });
   });
   els.artistsToggle.addEventListener('click', () => {
     const [few, many] = LIMITS.artists;
     state.limits.artists = state.limits.artists === few ? many : few;
-    if (state.report) renderArtists(state.report);
+    resolveMissing('artists', state.limits.artists).then(() => { if (state.report) renderArtists(state.report); });
   });
 
   const boot = async () => {

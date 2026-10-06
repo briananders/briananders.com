@@ -96,8 +96,8 @@ function newAlbums(current, previous) {
 
 /**
  * Each ranked item's count in the comparison report, aligned with the current
- * list. An item outside the comparison's top list is null: its count there is
- * unknown, only that it fell below the cut.
+ * list. An item outside the comparison's top list is null: the report only
+ * says its count was at most the list's cutoff (see `cutoff`).
  *
  * @param {Object} current - Current report.
  * @param {Object} previous - Comparison report.
@@ -114,6 +114,33 @@ function compareCounts(current, previous, list = 'artists', scale = 1) {
     const key = keyOf(item);
     return before.has(key) ? Math.round(before.get(key) * scale) : null;
   });
+}
+
+/**
+ * Smallest count in a report's top list: anything outside the list had at
+ * most this many plays.
+ *
+ * @param {Object} report - Report JSON.
+ * @param {'artists'|'albums'} [list='artists'] - Which ranking.
+ * @returns {number} The cutoff count (0 for an empty list).
+ */
+function cutoff(report, list = 'artists') {
+  const counts = (report[list] || []).map((item) => Number(item.count) || 0);
+  return counts.length ? Math.min(...counts) : 0;
+}
+
+/**
+ * Plays across an inclusive range of months, from a sparse trend series.
+ *
+ * @param {Array<{month: string, count: number}>} months - Sparse monthly rows.
+ * @param {string} from - First month ("YYYY-MM").
+ * @param {string} to - Last month ("YYYY-MM").
+ * @returns {number} Total plays (0 when the item has none in range).
+ */
+function sumMonths(months, from, to) {
+  return (months || [])
+    .filter((row) => row && row.month >= from && row.month <= to)
+    .reduce((sum, row) => sum + (Number(row.count) || 0), 0);
 }
 
 /**
@@ -246,11 +273,13 @@ module.exports = {
   FOCUS_BANDS,
   byYear,
   compareCounts,
+  cutoff,
   fillMonths,
   focusBands,
   monthKey,
   movers,
   newAlbums,
+  sumMonths,
   summarize,
   trendFacts,
 };

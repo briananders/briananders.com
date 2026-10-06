@@ -99,26 +99,34 @@ function kpiTiles(container, tiles) {
 }
 
 /**
- * "New" chip for an item outside the comparison's top list.
- *
- * @returns {HTMLElement} Badge element.
- */
-function newBadge() {
-  return h('span', { class: 'lfm-badge', text: 'New' });
-}
-
-/**
  * Comparison for the top lists. Optional: all time has nothing to compare.
  *
  * @typedef {Object} ListComparison
  * @property {Array<number|null>} values - Comparison count per item, aligned
- *   with the list (null = outside the comparison's top list).
+ *   with the list (null = unknown: outside the comparison's top list and not
+ *   resolvable from monthly history).
+ * @property {number} atMost - Upper bound for an unknown count (the
+ *   comparison list's cutoff).
  * @property {string} word - Prefix for the visible count ("was", "usual").
  * @property {string} nowLabel - Legend label for this period.
  * @property {string} beforeLabel - Legend label for the comparison.
  * @property {function(string, number, number|null): string} describe - Full
  *   sentence for one item (its accessible name).
  */
+
+/**
+ * Visible comparison figure: "was 73", "was 0", or "was ≤24" when only the
+ * bound is known.
+ *
+ * @param {ListComparison} compare - Comparison.
+ * @param {number|null} before - Comparison count, or null if unknown.
+ * @returns {string} Short label.
+ */
+function thenText(compare, before) {
+  return before === null
+    ? `${compare.word} ≤${format.number(compare.atMost)}`
+    : `${compare.word} ${format.number(before)}`;
+}
 
 // -- Top albums: cover grid ---------------------------------------------------
 
@@ -135,9 +143,8 @@ function newBadge() {
 function albumGrid(container, albums, { limit, onSelect, compare = null }) {
   replace(container, h('ol', { class: 'lfm-albums' }, albums.slice(0, limit).map((album, i) => {
     const before = compare ? compare.values[i] : null;
-    const count = [`${format.number(album.count)} plays`];
-    if (compare && before === null) count.push(' ', newBadge());
-    else if (compare) count.push(` · ${compare.word} ${format.number(before)}`);
+    let count = `${format.number(album.count)} plays`;
+    if (compare) count += ` · ${thenText(compare, before)}`;
     return h('li', {
       class: i === 0 ? 'lfm-album lfm-album--feature' : 'lfm-album',
     }, h('button', {
@@ -153,7 +160,7 @@ function albumGrid(container, albums, { limit, onSelect, compare = null }) {
       h('span', { class: 'lfm-album__meta' }, [
         h('span', { class: 'lfm-album__title', text: album.album }),
         h('span', { class: 'lfm-album__artist', text: album.artist }),
-        h('span', { class: 'lfm-album__count' }, count)
+        h('span', { class: 'lfm-album__count', text: count })
       ])
     ]));
   })));
@@ -182,8 +189,6 @@ function artistBars(container, artists, { limit, onSelect, compare = null }) {
   const pct = (value) => `${(value / max) * 100}%`;
   const list = h('ol', { class: compare ? 'lfm-bars has-compare' : 'lfm-bars' }, shown.map((artist, i) => {
     const then = compare ? before[i] : null;
-    let was = null;
-    if (compare) was = h('span', { class: 'lfm-bars__was' }, then === null ? newBadge() : `${compare.word} ${format.number(then)}`);
     return h('li', {}, h('button', {
       type: 'button',
       class: 'lfm-bars__row',
@@ -200,9 +205,11 @@ function artistBars(container, artists, { limit, onSelect, compare = null }) {
       ]),
       h('span', { class: 'lfm-bars__track' }, [
         h('span', { class: 'lfm-bars__fill', style: { '--value': pct(artist.count) } }),
-        then !== null ? h('span', { class: 'lfm-bars__then', style: { '--value': pct(then) } }) : null
+        // Only a known, non-zero count gets a tick; a bound is not a value, and
+        // zero would sit on the bar's origin.
+        then ? h('span', { class: 'lfm-bars__then', style: { '--value': pct(then) } }) : null
       ]),
-      was
+      compare ? h('span', { class: 'lfm-bars__was', text: thenText(compare, then) }) : null
     ]));
   }));
   const legend = compare ? h('ul', { class: 'lfm-key' }, [

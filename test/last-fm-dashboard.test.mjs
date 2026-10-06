@@ -70,6 +70,7 @@ const FIXTURES = {
   'trends/years/2023.json': { year: 2023, months: [{ month: '2023-01', count: 70 }, { month: '2023-07', count: 50 }] },
   'trends/years/2024.json': { year: 2024, months: [{ month: '2024-05', count: 31 }, { month: '2024-06', count: 40 }] },
   'trends/artists/underoath.json': { artist: 'Underoath', months: [{ month: '2023-02', count: 5 }, { month: '2024-05', count: 10 }], totalScrobbles: 15 },
+  'trends/artists/coheed-and-cambria.json': { artist: 'Coheed and Cambria', months: [{ month: '2023-01', count: 60 }, { month: '2024-05', count: 30 }], totalScrobbles: 90 },
 };
 data.ROLLING_WINDOWS.forEach((w) => {
   FIXTURES[`reports/rolling_${w.key}.json`] = report(w.key, 100, [artist('Underoath', 40), artist('The Beatles', 10)], [album('Underoath', 'Voyeurist', 20)], {
@@ -226,6 +227,14 @@ describe('last-fm stats', () => {
     assert.deepEqual(stats.compareCounts(now, before, 'artists', 30 / 365), [39, null]);
   });
 
+  test('cutoff bounds an unlisted count; sumMonths totals a month range, zero included', () => {
+    assert.equal(stats.cutoff(report('b', 1, [artist('A', 90), artist('B', 24)], [])), 24);
+    assert.equal(stats.cutoff(report('b', 1, [], [])), 0);
+    const months = [{ month: '2025-03', count: 40 }, { month: '2025-11', count: 33 }, { month: '2026-01', count: 9 }];
+    assert.equal(stats.sumMonths(months, '2025-01', '2025-12'), 73);
+    assert.equal(stats.sumMonths(months, '2026-04', '2026-06'), 0, 'not played that quarter');
+  });
+
   test('fillMonths, trendFacts, and byYear build continuous series', () => {
     const series = stats.fillMonths([{ month: '2023-11', count: 4 }, { month: '2024-02', count: 9 }], undefined, '2024-03');
     assert.deepEqual(series.map((r) => r.month), ['2023-11', '2023-12', '2024-01', '2024-02', '2024-03']);
@@ -373,19 +382,27 @@ describe('listening dashboard', () => {
     assert.equal($('[data-lfm="albums-note"]').hidden, false);
     assert.deepEqual($$('[data-lfm="artists"] .lfm-key li').map((li) => li.textContent), ['2024 so far', '2023']);
     const [underoath, coheed] = $$('.lfm-bars__row');
-    assert.equal(underoath.getAttribute('aria-label'), '1. Underoath: 50 scrobbles in 2024 so far. Not in 2023’s top 2.');
-    assert.equal(underoath.querySelector('.lfm-bars__was .lfm-badge').textContent, 'New');
-    assert.equal(underoath.querySelector('.lfm-bars__then'), null, 'no tick without a count to mark');
+    // Underoath isn't in 2023's top list; its monthly history has the real count.
+    assert.ok(requests.includes('/last-fm-history/trends/artists/underoath.json'));
+    assert.equal(underoath.getAttribute('aria-label'), '1. Underoath: 50 scrobbles in 2024 so far, compared with 5 in 2023.');
+    assert.equal(underoath.querySelector('.lfm-bars__was').textContent, 'was 5');
     assert.equal(coheed.getAttribute('aria-label'), '2. Coheed and Cambria: 30 scrobbles in 2024 so far, compared with 60 in 2023.');
     assert.equal(coheed.querySelector('.lfm-bars__was').textContent, 'was 60');
     // The tick shares the bar scale: 60 is the largest value on screen.
     assert.equal(coheed.querySelector('.lfm-bars__then').style.getPropertyValue('--value'), '100%');
     assert.equal(coheed.querySelector('.lfm-bars__fill').style.getPropertyValue('--value'), '50%');
-    assert.equal($('.lfm-album__count').textContent, '25 plays New', 'album outside the 2023 top list');
+    // No history file for this album, so it keeps the honest bound: 2023's cutoff.
+    assert.equal($('.lfm-album__count').textContent, '25 plays · was ≤18');
+    assert.equal($('.lfm-album__button').getAttribute('aria-label'), '1. Define the Great Line by Underoath: 25 scrobbles in 2024 so far, compared with at most 18 in 2023 (outside its top 1).');
+    assert.equal($$('.lfm-badge').filter((b) => b.closest('[data-lfm="artists"], [data-lfm="albums"]')).length, 0, 'no "New" badges');
 
     $('.lfm-cols__col[data-key="2023"]').click();
     await settle();
     assert.equal($('[data-lfm="artists-note"]').textContent, 'Plays in 2023, compared with 2022.', 'a finished year');
+    // Coheed wasn't played in 2022: a real zero, not "New", and no tick at the origin.
+    const first = $('.lfm-bars__row');
+    assert.equal(first.querySelector('.lfm-bars__was').textContent, 'was 0');
+    assert.equal(first.querySelector('.lfm-bars__then'), null);
     assert.equal($('.lfm-album__count').textContent, '18 plays · was 30');
   });
 

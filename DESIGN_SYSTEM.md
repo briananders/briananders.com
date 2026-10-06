@@ -530,8 +530,10 @@ Rules of thumb:
 - **Then vs now on a ranked bar: a tick, not a second bar.** The bar is the
   current value; a 2px `--chart-mark-muted` tick marks the comparison, ringed
   2px in the surface colour so it stays legible over the brand fill (the grey
-  alone is only 1.75 : 1 against orange). Both numbers stay visible in text,
-  and an item with no comparison count gets the `New` badge, never a zero.
+  alone is only 1.75 : 1 against orange). Both numbers stay visible in text.
+  An unknown comparison count is shown as a bound (`≤ 24`), never as a zero or
+  a "new" label, and gets no tick: a bound is not a value. A true zero gets
+  no tick either, because it would sit on the bar's origin.
 - **`primary-700` is not a chart colour.** It drops to 2.46 : 1 on
   `surface-1` and its hue drifts toward red, which breaks the ordinal ramp.
 - **Axis text is `--chart-axis`, not `--color-text-subtle`** (2.99 : 1).
