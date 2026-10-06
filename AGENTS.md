@@ -32,8 +32,9 @@ If a step can't run, name it and say why. Unverified is not done.
 - Bug fix: write the failing test first and show it fail. Then fix.
 - If you change an existing assertion, explain why in the PR.
 - Golden: when rendered output changes, regenerate with `npm run build:golden` and commit `golden/` alongside the change. Build-time values are pinned, so the diff shows only real changes. Explain each group of changed files in the PR.
-  - Exception: macOS and Linux encode AVIF to different bytes, so a regenerated `golden/` marks every `.avif` as changed.
-  - Unless you changed a source image, restore them before committing: `git checkout origin/staging -- ':(glob)golden/**/*.avif'`.
+- Images: every source image's AVIF is committed next to it in `src/images/`, and builds copy it rather than re-encoding.
+  - When you add or change a source image, any build writes its `.avif` and updates `src/images/avif-manifest.json`. Commit both.
+  - `test/avif-sources.test.mjs` fails on a missing, stale or orphaned AVIF.
 
 ## 3. Design system
 

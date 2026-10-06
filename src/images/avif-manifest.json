@@ -1,0 +1,846 @@
+{
+  "about/contributions/alfred-logo.avif": {
+    "source": "about/contributions/alfred-logo.png",
+    "sha256": "ea2f7de19056b1b5"
+  },
+  "about/contributions/batlessons.avif": {
+    "source": "about/contributions/batlessons.jpg",
+    "sha256": "4b88baae8cb6a0dd"
+  },
+  "about/contributions/signed-in-ink-cover-art.avif": {
+    "source": "about/contributions/signed-in-ink-cover-art.webp",
+    "sha256": "cb139538d5aea83c"
+  },
+  "about/contributions/sublime-duplicate-text-logo.avif": {
+    "source": "about/contributions/sublime-duplicate-text-logo.png",
+    "sha256": "dcbd2dbbf3d25dda"
+  },
+  "drums/drum-covers.avif": {
+    "source": "drums/drum-covers.jpg",
+    "sha256": "f12dfbcbf725f02e"
+  },
+  "drums/glow-sticks.avif": {
+    "source": "drums/glow-sticks.jpg",
+    "sha256": "3a6a9f6318e84d97"
+  },
+  "drums/hero-desktop.avif": {
+    "source": "drums/hero-desktop.jpg",
+    "sha256": "5866c6524d8fe976"
+  },
+  "drums/hero-mobile.avif": {
+    "source": "drums/hero-mobile.jpg",
+    "sha256": "fc3c92b9505576e1"
+  },
+  "drums/logo.avif": {
+    "source": "drums/logo.png",
+    "sha256": "7b459041022a345e"
+  },
+  "drums/logo_2316.avif": {
+    "source": "drums/logo_2316.png",
+    "sha256": "99654696ba38c30a"
+  },
+  "drums/logo_2x.avif": {
+    "source": "drums/logo_2x.png",
+    "sha256": "bd5aafa11bd2e9ed"
+  },
+  "favicon_144.avif": {
+    "source": "favicon_144.png",
+    "sha256": "ccb0dc299f5c350d"
+  },
+  "favicon_base.avif": {
+    "source": "favicon_base.png",
+    "sha256": "1db6fb7a6ad378f2"
+  },
+  "last-fm/album/alkaline-trio+agony--irony.avif": {
+    "source": "last-fm/album/alkaline-trio+agony--irony.webp",
+    "sha256": "195a0fd718db4f0d"
+  },
+  "last-fm/album/alkaline-trio+good-mourning.avif": {
+    "source": "last-fm/album/alkaline-trio+good-mourning.webp",
+    "sha256": "ccd19fb991323184"
+  },
+  "last-fm/album/atreyu+baptize.avif": {
+    "source": "last-fm/album/atreyu+baptize.webp",
+    "sha256": "50c3d0315e6f5a4a"
+  },
+  "last-fm/album/atreyu+the-beautiful-dark-of-life.avif": {
+    "source": "last-fm/album/atreyu+the-beautiful-dark-of-life.webp",
+    "sha256": "cce3b2680751c011"
+  },
+  "last-fm/album/awolnation+angel-miners--the-lightning-riders.avif": {
+    "source": "last-fm/album/awolnation+angel-miners--the-lightning-riders.webp",
+    "sha256": "636ce8bb265bc4c3"
+  },
+  "last-fm/album/bad-religion+all-ages.avif": {
+    "source": "last-fm/album/bad-religion+all-ages.webp",
+    "sha256": "71eaff51ae36e085"
+  },
+  "last-fm/album/bayside+there-are-worse-things-than-being-alive.avif": {
+    "source": "last-fm/album/bayside+there-are-worse-things-than-being-alive.webp",
+    "sha256": "f202d7fc556f043f"
+  },
+  "last-fm/album/billy-joel+an-innocent-man.avif": {
+    "source": "last-fm/album/billy-joel+an-innocent-man.webp",
+    "sha256": "74c3345c14e8d570"
+  },
+  "last-fm/album/billy-joel+glass-houses.avif": {
+    "source": "last-fm/album/billy-joel+glass-houses.webp",
+    "sha256": "4817253316b8d62f"
+  },
+  "last-fm/album/billy-joel+greatest-hits.avif": {
+    "source": "last-fm/album/billy-joel+greatest-hits.webp",
+    "sha256": "7669a835b583a6d1"
+  },
+  "last-fm/album/billy-joel+my-lives.avif": {
+    "source": "last-fm/album/billy-joel+my-lives.webp",
+    "sha256": "15f0868b0cb6b475"
+  },
+  "last-fm/album/billy-joel+the-essential-billy-joel.avif": {
+    "source": "last-fm/album/billy-joel+the-essential-billy-joel.webp",
+    "sha256": "4eec40c1ec1127f7"
+  },
+  "last-fm/album/billy-talent+afraid-of-heights.avif": {
+    "source": "last-fm/album/billy-talent+afraid-of-heights.webp",
+    "sha256": "6ba246609e09a64f"
+  },
+  "last-fm/album/brian-wilson+smile.avif": {
+    "source": "last-fm/album/brian-wilson+smile.webp",
+    "sha256": "25e34707c1b67023"
+  },
+  "last-fm/album/bring-me-the-horizon+amo.avif": {
+    "source": "last-fm/album/bring-me-the-horizon+amo.webp",
+    "sha256": "86faf1b7ec2738f5"
+  },
+  "last-fm/album/bring-me-the-horizon+post-human-survival-horror.avif": {
+    "source": "last-fm/album/bring-me-the-horizon+post-human-survival-horror.webp",
+    "sha256": "62470137c31f8309"
+  },
+  "last-fm/album/bring-me-the-horizon+posthuman-nex-gen.avif": {
+    "source": "last-fm/album/bring-me-the-horizon+posthuman-nex-gen.webp",
+    "sha256": "4c21ffbb7ede05a5"
+  },
+  "last-fm/album/coheed-and-cambria+vaxis-ii-a-window-of-the-waking-mind.avif": {
+    "source": "last-fm/album/coheed-and-cambria+vaxis-ii-a-window-of-the-waking-mind.webp",
+    "sha256": "d574e00d36e871f6"
+  },
+  "last-fm/album/david-bowie+legacy.avif": {
+    "source": "last-fm/album/david-bowie+legacy.webp",
+    "sha256": "06274094d743abf9"
+  },
+  "last-fm/album/electric-light-orchestra+all-over-the-world-the-very-best-of-elo.avif": {
+    "source": "last-fm/album/electric-light-orchestra+all-over-the-world-the-very-best-of-elo.webp",
+    "sha256": "cbf0402a30fcad64"
+  },
+  "last-fm/album/electric-light-orchestra+eldorado.avif": {
+    "source": "last-fm/album/electric-light-orchestra+eldorado.webp",
+    "sha256": "5a7291ed1855b489"
+  },
+  "last-fm/album/electric-light-orchestra+out-of-the-blue.avif": {
+    "source": "last-fm/album/electric-light-orchestra+out-of-the-blue.webp",
+    "sha256": "a425e18a3273dfb1"
+  },
+  "last-fm/album/electric-light-orchestra+secret-messages.avif": {
+    "source": "last-fm/album/electric-light-orchestra+secret-messages.webp",
+    "sha256": "a0770416552063c9"
+  },
+  "last-fm/album/electric-light-orchestra+time.avif": {
+    "source": "last-fm/album/electric-light-orchestra+time.webp",
+    "sha256": "a8ec7c4a32ddf936"
+  },
+  "last-fm/album/elton-john+the-greatest-hits-1970-2002.avif": {
+    "source": "last-fm/album/elton-john+the-greatest-hits-1970-2002.webp",
+    "sha256": "b743a74a1a70660c"
+  },
+  "last-fm/album/emery+eve.avif": {
+    "source": "last-fm/album/emery+eve.webp",
+    "sha256": "59d15e3498f2b80b"
+  },
+  "last-fm/album/emery+white-line-fever.avif": {
+    "source": "last-fm/album/emery+white-line-fever.webp",
+    "sha256": "0682ebb39ce80199"
+  },
+  "last-fm/album/fall-out-boy+american-beauty-american-psycho.avif": {
+    "source": "last-fm/album/fall-out-boy+american-beauty-american-psycho.webp",
+    "sha256": "0a966446cfe8a5e8"
+  },
+  "last-fm/album/fall-out-boy+folie-%C3%A0-deux.avif": {
+    "source": "last-fm/album/fall-out-boy+folie-%C3%A0-deux.webp",
+    "sha256": "f95bb84db831de6c"
+  },
+  "last-fm/album/fall-out-boy+m-a-n-i-a.avif": {
+    "source": "last-fm/album/fall-out-boy+m-a-n-i-a.webp",
+    "sha256": "e891db03958e5963"
+  },
+  "last-fm/album/fall-out-boy+save-rock-and-roll.avif": {
+    "source": "last-fm/album/fall-out-boy+save-rock-and-roll.webp",
+    "sha256": "bf49a149587adb71"
+  },
+  "last-fm/album/falling-in-reverse+coming-home.avif": {
+    "source": "last-fm/album/falling-in-reverse+coming-home.webp",
+    "sha256": "5a14cab2ad51796c"
+  },
+  "last-fm/album/falling-in-reverse+just-like-you.avif": {
+    "source": "last-fm/album/falling-in-reverse+just-like-you.webp",
+    "sha256": "28a8b9aaa19ea0c2"
+  },
+  "last-fm/album/fleetwood-mac+greatest-hits.avif": {
+    "source": "last-fm/album/fleetwood-mac+greatest-hits.webp",
+    "sha256": "e5ddcb7be117999f"
+  },
+  "last-fm/album/gatsby's-american-dream+volcano.avif": {
+    "source": "last-fm/album/gatsby's-american-dream+volcano.webp",
+    "sha256": "8a836b27aff5ff6d"
+  },
+  "last-fm/album/george-harrison+all-things-must-pass.avif": {
+    "source": "last-fm/album/george-harrison+all-things-must-pass.webp",
+    "sha256": "5eeb2b877c5d31c2"
+  },
+  "last-fm/album/gerard-way+hesitant-alien.avif": {
+    "source": "last-fm/album/gerard-way+hesitant-alien.webp",
+    "sha256": "3e45279903cec77d"
+  },
+  "last-fm/album/goldfinger+the-knife.avif": {
+    "source": "last-fm/album/goldfinger+the-knife.webp",
+    "sha256": "4790d468bae7db4f"
+  },
+  "last-fm/album/he-is-legend+endless-hallway.avif": {
+    "source": "last-fm/album/he-is-legend+endless-hallway.webp",
+    "sha256": "b11b2d5fd2f3a4ae"
+  },
+  "last-fm/album/he-is-legend+heavy-fruit.avif": {
+    "source": "last-fm/album/he-is-legend+heavy-fruit.webp",
+    "sha256": "3b79de4b84291359"
+  },
+  "last-fm/album/he-is-legend+i-am-hollywood.avif": {
+    "source": "last-fm/album/he-is-legend+i-am-hollywood.webp",
+    "sha256": "cc769195c291c7a8"
+  },
+  "last-fm/album/ls-dunes+past-lives.avif": {
+    "source": "last-fm/album/ls-dunes+past-lives.webp",
+    "sha256": "1a33a3eb833a4972"
+  },
+  "last-fm/album/muse+the-2nd-law.avif": {
+    "source": "last-fm/album/muse+the-2nd-law.webp",
+    "sha256": "1370c83a667fa12b"
+  },
+  "last-fm/album/my-chemical-romance+danger-days-the-true-lives-of-the-fabulous-killjoys.avif": {
+    "source": "last-fm/album/my-chemical-romance+danger-days-the-true-lives-of-the-fabulous-killjoys.webp",
+    "sha256": "f439fe27418dbd4d"
+  },
+  "last-fm/album/my-chemical-romance+the-black-parade.avif": {
+    "source": "last-fm/album/my-chemical-romance+the-black-parade.webp",
+    "sha256": "57bdcbcfb8fd8120"
+  },
+  "last-fm/album/neil-diamond+50th-anniversary-collection.avif": {
+    "source": "last-fm/album/neil-diamond+50th-anniversary-collection.webp",
+    "sha256": "3e934807bf69a059"
+  },
+  "last-fm/album/neil-diamond+all-time-greatest-hits.avif": {
+    "source": "last-fm/album/neil-diamond+all-time-greatest-hits.webp",
+    "sha256": "b8bcee8e35e0f154"
+  },
+  "last-fm/album/ok-go+hungry-ghosts.avif": {
+    "source": "last-fm/album/ok-go+hungry-ghosts.webp",
+    "sha256": "87d38c28aa14e5fb"
+  },
+  "last-fm/album/panic!-at-the-disco+death-of-a-bachelor.avif": {
+    "source": "last-fm/album/panic!-at-the-disco+death-of-a-bachelor.webp",
+    "sha256": "04f28096f22a4507"
+  },
+  "last-fm/album/panic!-at-the-disco+pray-for-the-wicked.avif": {
+    "source": "last-fm/album/panic!-at-the-disco+pray-for-the-wicked.webp",
+    "sha256": "db45c8d1d136294e"
+  },
+  "last-fm/album/panic!-at-the-disco+vices--virtues.avif": {
+    "source": "last-fm/album/panic!-at-the-disco+vices--virtues.webp",
+    "sha256": "5cce465cf7633dfd"
+  },
+  "last-fm/album/paul-mccartney+at-the-speed-of-sound.avif": {
+    "source": "last-fm/album/paul-mccartney+at-the-speed-of-sound.webp",
+    "sha256": "1d35d45709fbd614"
+  },
+  "last-fm/album/paul-mccartney+back-to-the-egg.avif": {
+    "source": "last-fm/album/paul-mccartney+back-to-the-egg.webp",
+    "sha256": "ae894f878802cbed"
+  },
+  "last-fm/album/paul-mccartney+egypt-station.avif": {
+    "source": "last-fm/album/paul-mccartney+egypt-station.webp",
+    "sha256": "d65e09c37138a21c"
+  },
+  "last-fm/album/paul-mccartney+london-town.avif": {
+    "source": "last-fm/album/paul-mccartney+london-town.webp",
+    "sha256": "e561dd1c3a236e34"
+  },
+  "last-fm/album/paul-mccartney+new.avif": {
+    "source": "last-fm/album/paul-mccartney+new.webp",
+    "sha256": "660dc3d9b4da03aa"
+  },
+  "last-fm/album/paul-mccartney+pipes-of-peace.avif": {
+    "source": "last-fm/album/paul-mccartney+pipes-of-peace.webp",
+    "sha256": "7c70cdd60eec669a"
+  },
+  "last-fm/album/paul-mccartney+press-to-play.avif": {
+    "source": "last-fm/album/paul-mccartney+press-to-play.webp",
+    "sha256": "f6651c81bfcd9df8"
+  },
+  "last-fm/album/paul-mccartney+pure-mccartney.avif": {
+    "source": "last-fm/album/paul-mccartney+pure-mccartney.webp",
+    "sha256": "6881638421ff71a2"
+  },
+  "last-fm/album/paul-mccartney+the-7-inch-singles.avif": {
+    "source": "last-fm/album/paul-mccartney+the-7-inch-singles.webp",
+    "sha256": "8c7393ebf15c07ce"
+  },
+  "last-fm/album/paul-mccartney+tug-of-war.avif": {
+    "source": "last-fm/album/paul-mccartney+tug-of-war.webp",
+    "sha256": "098c61cb9f3b2a56"
+  },
+  "last-fm/album/paul-mccartney+venus-and-mars.avif": {
+    "source": "last-fm/album/paul-mccartney+venus-and-mars.webp",
+    "sha256": "039f666f904456a3"
+  },
+  "last-fm/album/paul-simon+the-essential-paul-simon.avif": {
+    "source": "last-fm/album/paul-simon+the-essential-paul-simon.webp",
+    "sha256": "c904651660fab29e"
+  },
+  "last-fm/album/pink-floyd+the-best-of-pink-floyd-a-foot-in-the-door.avif": {
+    "source": "last-fm/album/pink-floyd+the-best-of-pink-floyd-a-foot-in-the-door.webp",
+    "sha256": "ffea13c48b5e2b76"
+  },
+  "last-fm/album/pink-floyd+the-dark-side-of-the-moon.avif": {
+    "source": "last-fm/album/pink-floyd+the-dark-side-of-the-moon.webp",
+    "sha256": "411dbe172c2c45cd"
+  },
+  "last-fm/album/pink-floyd+the-final-cut.avif": {
+    "source": "last-fm/album/pink-floyd+the-final-cut.webp",
+    "sha256": "74c24ea905a474dd"
+  },
+  "last-fm/album/pink-floyd+the-wall.avif": {
+    "source": "last-fm/album/pink-floyd+the-wall.webp",
+    "sha256": "f4ee28ad14f0248c"
+  },
+  "last-fm/album/pixies+indie-cindy.avif": {
+    "source": "last-fm/album/pixies+indie-cindy.webp",
+    "sha256": "766a63af44537d8a"
+  },
+  "last-fm/album/queens-of-the-stone-age+rated-r.avif": {
+    "source": "last-fm/album/queens-of-the-stone-age+rated-r.webp",
+    "sha256": "3749b8918bf9de92"
+  },
+  "last-fm/album/queens-of-the-stone-age+songs-for-the-deaf.avif": {
+    "source": "last-fm/album/queens-of-the-stone-age+songs-for-the-deaf.webp",
+    "sha256": "1d4dec61d4809699"
+  },
+  "last-fm/album/queens-of-the-stone-age+villains.avif": {
+    "source": "last-fm/album/queens-of-the-stone-age+villains.webp",
+    "sha256": "371885cd3c516e0e"
+  },
+  "last-fm/album/red-hot-chili-peppers+blood-sugar-sex-magik.avif": {
+    "source": "last-fm/album/red-hot-chili-peppers+blood-sugar-sex-magik.webp",
+    "sha256": "b00b5fccccda77b5"
+  },
+  "last-fm/album/red-hot-chili-peppers+stadium-arcadium.avif": {
+    "source": "last-fm/album/red-hot-chili-peppers+stadium-arcadium.webp",
+    "sha256": "1b2e20eada89bda9"
+  },
+  "last-fm/album/roger-waters+is-this-the-life-we-really-want.avif": {
+    "source": "last-fm/album/roger-waters+is-this-the-life-we-really-want.webp",
+    "sha256": "4f7f06bed9e50799"
+  },
+  "last-fm/album/simon--garfunkel+the-best-of.avif": {
+    "source": "last-fm/album/simon--garfunkel+the-best-of.webp",
+    "sha256": "15d8d218c4b538e5"
+  },
+  "last-fm/album/supertramp+breakfast-in-america.avif": {
+    "source": "last-fm/album/supertramp+breakfast-in-america.webp",
+    "sha256": "0eb9ac2275d23b58"
+  },
+  "last-fm/album/the-beach-boys+50-big-ones.avif": {
+    "source": "last-fm/album/the-beach-boys+50-big-ones.webp",
+    "sha256": "beb03719b0ed105d"
+  },
+  "last-fm/album/the-beach-boys+pet-sounds.avif": {
+    "source": "last-fm/album/the-beach-boys+pet-sounds.webp",
+    "sha256": "e76c9397ff25eca7"
+  },
+  "last-fm/album/the-beatles+abbey-road.avif": {
+    "source": "last-fm/album/the-beatles+abbey-road.webp",
+    "sha256": "5a67af0310579829"
+  },
+  "last-fm/album/the-beatles+let-it-be.avif": {
+    "source": "last-fm/album/the-beatles+let-it-be.webp",
+    "sha256": "ef48ddb7d2987b6b"
+  },
+  "last-fm/album/the-beatles+live-at-the-bbc.avif": {
+    "source": "last-fm/album/the-beatles+live-at-the-bbc.webp",
+    "sha256": "ea4a83fb89a1e530"
+  },
+  "last-fm/album/the-beatles+the-beatles-1967-1970.avif": {
+    "source": "last-fm/album/the-beatles+the-beatles-1967-1970.webp",
+    "sha256": "589c1fdbbe887989"
+  },
+  "last-fm/album/the-beatles+the-beatles.avif": {
+    "source": "last-fm/album/the-beatles+the-beatles.webp",
+    "sha256": "094536d0ff0aef04"
+  },
+  "last-fm/album/the-last-shadow-puppets+everything-you've-come-to-expect.avif": {
+    "source": "last-fm/album/the-last-shadow-puppets+everything-you've-come-to-expect.webp",
+    "sha256": "61747c6b17bd85e9"
+  },
+  "last-fm/album/the-last-shadow-puppets+the-age-of-the-understatement.avif": {
+    "source": "last-fm/album/the-last-shadow-puppets+the-age-of-the-understatement.webp",
+    "sha256": "743e2e47f3db01dd"
+  },
+  "last-fm/album/the-millennium+begin.avif": {
+    "source": "last-fm/album/the-millennium+begin.webp",
+    "sha256": "619ab078f47d3ce3"
+  },
+  "last-fm/album/the-used+artwork.avif": {
+    "source": "last-fm/album/the-used+artwork.webp",
+    "sha256": "36db0c6d8575b84c"
+  },
+  "last-fm/album/the-used+heartwork.avif": {
+    "source": "last-fm/album/the-used+heartwork.webp",
+    "sha256": "26b0ea8322fd61b7"
+  },
+  "last-fm/album/the-used+toxic-positivity.avif": {
+    "source": "last-fm/album/the-used+toxic-positivity.webp",
+    "sha256": "53b030940069adf8"
+  },
+  "last-fm/album/the-used+vulnerable.avif": {
+    "source": "last-fm/album/the-used+vulnerable.webp",
+    "sha256": "b59fca139aa8760e"
+  },
+  "last-fm/album/underoath+voyeurist.avif": {
+    "source": "last-fm/album/underoath+voyeurist.webp",
+    "sha256": "e2bb21e64419e0f4"
+  },
+  "last-fm/album/various-artists+hamilton.avif": {
+    "source": "last-fm/album/various-artists+hamilton.webp",
+    "sha256": "59c31f1796ed31b0"
+  },
+  "last-fm/artist/alkaline-trio.avif": {
+    "source": "last-fm/artist/alkaline-trio.webp",
+    "sha256": "7bb91e190f96c458"
+  },
+  "last-fm/artist/atreyu.avif": {
+    "source": "last-fm/artist/atreyu.webp",
+    "sha256": "df884c5901f70fe1"
+  },
+  "last-fm/artist/bad-religion.avif": {
+    "source": "last-fm/artist/bad-religion.webp",
+    "sha256": "07d24cb87392d165"
+  },
+  "last-fm/artist/ben-folds.avif": {
+    "source": "last-fm/artist/ben-folds.webp",
+    "sha256": "d4a7e032576211cb"
+  },
+  "last-fm/artist/billy-joel.avif": {
+    "source": "last-fm/artist/billy-joel.webp",
+    "sha256": "54812d3d4293297d"
+  },
+  "last-fm/artist/billy-talent.avif": {
+    "source": "last-fm/artist/billy-talent.webp",
+    "sha256": "183bd20f408e78b2"
+  },
+  "last-fm/artist/blink-182.avif": {
+    "source": "last-fm/artist/blink-182.webp",
+    "sha256": "d36b39534a1d806d"
+  },
+  "last-fm/artist/brian-wilson.avif": {
+    "source": "last-fm/artist/brian-wilson.webp",
+    "sha256": "18ddbc90f3a7e02d"
+  },
+  "last-fm/artist/bring-me-the-horizon.avif": {
+    "source": "last-fm/artist/bring-me-the-horizon.webp",
+    "sha256": "a4b41de9ab166b1e"
+  },
+  "last-fm/artist/bruce-springsteen.avif": {
+    "source": "last-fm/artist/bruce-springsteen.webp",
+    "sha256": "370617df97aae72b"
+  },
+  "last-fm/artist/coheed-and-cambria.avif": {
+    "source": "last-fm/artist/coheed-and-cambria.webp",
+    "sha256": "3dbeebf97db17f54"
+  },
+  "last-fm/artist/david-bowie.avif": {
+    "source": "last-fm/artist/david-bowie.webp",
+    "sha256": "4c46477d462eea0c"
+  },
+  "last-fm/artist/electric-light-orchestra.avif": {
+    "source": "last-fm/artist/electric-light-orchestra.webp",
+    "sha256": "29aeb21125e0ff51"
+  },
+  "last-fm/artist/elton-john.avif": {
+    "source": "last-fm/artist/elton-john.webp",
+    "sha256": "c3e36a5519010dcc"
+  },
+  "last-fm/artist/emery.avif": {
+    "source": "last-fm/artist/emery.webp",
+    "sha256": "4a37c0a1dded0717"
+  },
+  "last-fm/artist/every-time-i-die.avif": {
+    "source": "last-fm/artist/every-time-i-die.webp",
+    "sha256": "c2d193ec3f57b4e9"
+  },
+  "last-fm/artist/fall-out-boy.avif": {
+    "source": "last-fm/artist/fall-out-boy.webp",
+    "sha256": "64cd179c30413577"
+  },
+  "last-fm/artist/falling-in-reverse.avif": {
+    "source": "last-fm/artist/falling-in-reverse.webp",
+    "sha256": "a602c9865073dedd"
+  },
+  "last-fm/artist/george-harrison.avif": {
+    "source": "last-fm/artist/george-harrison.webp",
+    "sha256": "5136ea8342d253e1"
+  },
+  "last-fm/artist/gerard-way.avif": {
+    "source": "last-fm/artist/gerard-way.webp",
+    "sha256": "f78a7ff411322e44"
+  },
+  "last-fm/artist/he-is-legend.avif": {
+    "source": "last-fm/artist/he-is-legend.webp",
+    "sha256": "31c52c8b9aee6137"
+  },
+  "last-fm/artist/john-lennon.avif": {
+    "source": "last-fm/artist/john-lennon.webp",
+    "sha256": "a7b0e65100065336"
+  },
+  "last-fm/artist/john-williams.avif": {
+    "source": "last-fm/artist/john-williams.webp",
+    "sha256": "245bd15f2f2f2e14"
+  },
+  "last-fm/artist/led-zeppelin.avif": {
+    "source": "last-fm/artist/led-zeppelin.webp",
+    "sha256": "dd03f03e3b2e3388"
+  },
+  "last-fm/artist/muse.avif": {
+    "source": "last-fm/artist/muse.webp",
+    "sha256": "bdaae7ee3478c911"
+  },
+  "last-fm/artist/my-chemical-romance.avif": {
+    "source": "last-fm/artist/my-chemical-romance.webp",
+    "sha256": "c4d57cc4d46d0ba7"
+  },
+  "last-fm/artist/neil-diamond.avif": {
+    "source": "last-fm/artist/neil-diamond.webp",
+    "sha256": "3ad3e6874e589510"
+  },
+  "last-fm/artist/ok-go.avif": {
+    "source": "last-fm/artist/ok-go.webp",
+    "sha256": "65dd56fae24e85ff"
+  },
+  "last-fm/artist/panic!-at-the-disco.avif": {
+    "source": "last-fm/artist/panic!-at-the-disco.webp",
+    "sha256": "6942b99055199933"
+  },
+  "last-fm/artist/paul-mccartney--wings.avif": {
+    "source": "last-fm/artist/paul-mccartney--wings.webp",
+    "sha256": "2706c14f49cf5541"
+  },
+  "last-fm/artist/paul-mccartney.avif": {
+    "source": "last-fm/artist/paul-mccartney.webp",
+    "sha256": "6ab915dd0efb5ffc"
+  },
+  "last-fm/artist/paul-simon.avif": {
+    "source": "last-fm/artist/paul-simon.webp",
+    "sha256": "4a73032916794080"
+  },
+  "last-fm/artist/pink-floyd.avif": {
+    "source": "last-fm/artist/pink-floyd.webp",
+    "sha256": "383f10b19c8769d0"
+  },
+  "last-fm/artist/pixies.avif": {
+    "source": "last-fm/artist/pixies.webp",
+    "sha256": "6dab55a4871d40ef"
+  },
+  "last-fm/artist/queens-of-the-stone-age.avif": {
+    "source": "last-fm/artist/queens-of-the-stone-age.webp",
+    "sha256": "730cf038b9ffa30d"
+  },
+  "last-fm/artist/red-hot-chili-peppers.avif": {
+    "source": "last-fm/artist/red-hot-chili-peppers.webp",
+    "sha256": "d5737c345967ac08"
+  },
+  "last-fm/artist/senses-fail.avif": {
+    "source": "last-fm/artist/senses-fail.webp",
+    "sha256": "c4abc64699bdf9e0"
+  },
+  "last-fm/artist/simon-&-garfunkel.avif": {
+    "source": "last-fm/artist/simon-&-garfunkel.webp",
+    "sha256": "ba55e0e7fe53e6a6"
+  },
+  "last-fm/artist/supertramp.avif": {
+    "source": "last-fm/artist/supertramp.webp",
+    "sha256": "b400a7705b4db3e4"
+  },
+  "last-fm/artist/the-beach-boys.avif": {
+    "source": "last-fm/artist/the-beach-boys.webp",
+    "sha256": "38932c6d0c88e16e"
+  },
+  "last-fm/artist/the-beatles.avif": {
+    "source": "last-fm/artist/the-beatles.webp",
+    "sha256": "69287d23cd047dfb"
+  },
+  "last-fm/artist/the-last-shadow-puppets.avif": {
+    "source": "last-fm/artist/the-last-shadow-puppets.webp",
+    "sha256": "fbdd733bb0796922"
+  },
+  "last-fm/artist/the-millennium.avif": {
+    "source": "last-fm/artist/the-millennium.webp",
+    "sha256": "844a7528d8fa4291"
+  },
+  "last-fm/artist/the-strokes.avif": {
+    "source": "last-fm/artist/the-strokes.webp",
+    "sha256": "dbe8cbd27106ae5e"
+  },
+  "last-fm/artist/the-used.avif": {
+    "source": "last-fm/artist/the-used.webp",
+    "sha256": "76a90cdec43ca899"
+  },
+  "last-fm/artist/underoath.avif": {
+    "source": "last-fm/artist/underoath.webp",
+    "sha256": "938f780fe0d44293"
+  },
+  "last-fm/artist/wings.avif": {
+    "source": "last-fm/artist/wings.webp",
+    "sha256": "8950d13f402fd991"
+  },
+  "posts/earth-rotating-sprite-animation/earth-sprite-color.avif": {
+    "source": "posts/earth-rotating-sprite-animation/earth-sprite-color.png",
+    "sha256": "23f4dbf7a998b61d"
+  },
+  "posts/earth-rotating-sprite-animation/earth-sprite-test.avif": {
+    "source": "posts/earth-rotating-sprite-animation/earth-sprite-test.jpg",
+    "sha256": "885cb344d26395f5"
+  },
+  "posts/earth-rotating-sprite-animation/earth-sprite.avif": {
+    "source": "posts/earth-rotating-sprite-animation/earth-sprite.jpg",
+    "sha256": "6490ab9ac0b813c3"
+  },
+  "posts/interview-question/ios7-on-iphone4.avif": {
+    "source": "posts/interview-question/ios7-on-iphone4.jpg",
+    "sha256": "0c088db4c3bdbf1f"
+  },
+  "posts/last-fm/default.avif": {
+    "source": "posts/last-fm/default.jpg",
+    "sha256": "128390436cdf621a"
+  },
+  "posts/minesweeper/sprite.avif": {
+    "source": "posts/minesweeper/sprite.png",
+    "sha256": "d06a70c438fcf4b1"
+  },
+  "posts/quality-podcasts/99-invisible.avif": {
+    "source": "posts/quality-podcasts/99-invisible.png",
+    "sha256": "9df51a02d19338d4"
+  },
+  "posts/quality-podcasts/crimetown.avif": {
+    "source": "posts/quality-podcasts/crimetown.png",
+    "sha256": "b863ce8e94014cf5"
+  },
+  "posts/quality-podcasts/freakonomics.avif": {
+    "source": "posts/quality-podcasts/freakonomics.png",
+    "sha256": "430b2f63fddb99f1"
+  },
+  "posts/quality-podcasts/radio-lab-presents-more-perfect.avif": {
+    "source": "posts/quality-podcasts/radio-lab-presents-more-perfect.png",
+    "sha256": "890de46251cf6515"
+  },
+  "posts/quality-podcasts/radio-lab.avif": {
+    "source": "posts/quality-podcasts/radio-lab.png",
+    "sha256": "3dd77d65ad17ddd7"
+  },
+  "posts/quality-podcasts/reply-all.avif": {
+    "source": "posts/quality-podcasts/reply-all.jpg",
+    "sha256": "2473d35eb3231e95"
+  },
+  "posts/quality-podcasts/revisionist-history.avif": {
+    "source": "posts/quality-podcasts/revisionist-history.jpg",
+    "sha256": "a709e72c9c036c3b"
+  },
+  "posts/quality-podcasts/startup.avif": {
+    "source": "posts/quality-podcasts/startup.png",
+    "sha256": "8569f1fc9402c4be"
+  },
+  "posts/quality-podcasts/stuff-you-should-know.avif": {
+    "source": "posts/quality-podcasts/stuff-you-should-know.jpg",
+    "sha256": "6a8968d60fbd6a31"
+  },
+  "posts/ten-star-movies/avatar.avif": {
+    "source": "posts/ten-star-movies/avatar.jpg",
+    "sha256": "635dd062953f9263"
+  },
+  "posts/ten-star-movies/catch-me-if-you-can.avif": {
+    "source": "posts/ten-star-movies/catch-me-if-you-can.jpg",
+    "sha256": "955ba6c62680866c"
+  },
+  "posts/ten-star-movies/drive.avif": {
+    "source": "posts/ten-star-movies/drive.jpg",
+    "sha256": "2725ce612612d917"
+  },
+  "posts/ten-star-movies/fight-club.avif": {
+    "source": "posts/ten-star-movies/fight-club.jpg",
+    "sha256": "94acd2f565b27f7c"
+  },
+  "posts/ten-star-movies/gone-girl.avif": {
+    "source": "posts/ten-star-movies/gone-girl.jpg",
+    "sha256": "e8d299f0aee7bada"
+  },
+  "posts/ten-star-movies/good-will-hunting.avif": {
+    "source": "posts/ten-star-movies/good-will-hunting.jpg",
+    "sha256": "ea190be63f4b9114"
+  },
+  "posts/ten-star-movies/goodfellas.avif": {
+    "source": "posts/ten-star-movies/goodfellas.jpg",
+    "sha256": "574952e7ef27ebb3"
+  },
+  "posts/ten-star-movies/inception.avif": {
+    "source": "posts/ten-star-movies/inception.jpg",
+    "sha256": "5253e46f188b2b07"
+  },
+  "posts/ten-star-movies/indiana-jones-and-the-last-crusade.avif": {
+    "source": "posts/ten-star-movies/indiana-jones-and-the-last-crusade.jpg",
+    "sha256": "307116679dce2649"
+  },
+  "posts/ten-star-movies/interstellar.avif": {
+    "source": "posts/ten-star-movies/interstellar.jpg",
+    "sha256": "8699722f7735d054"
+  },
+  "posts/ten-star-movies/jurassic-park.avif": {
+    "source": "posts/ten-star-movies/jurassic-park.jpg",
+    "sha256": "fe9755886bd54b20"
+  },
+  "posts/ten-star-movies/life-of-pi.avif": {
+    "source": "posts/ten-star-movies/life-of-pi.jpg",
+    "sha256": "e42132ec6ea72399"
+  },
+  "posts/ten-star-movies/limitless.avif": {
+    "source": "posts/ten-star-movies/limitless.jpg",
+    "sha256": "5b5c513e3e17bb31"
+  },
+  "posts/ten-star-movies/minority-report.avif": {
+    "source": "posts/ten-star-movies/minority-report.jpg",
+    "sha256": "3ebab08a023ea61a"
+  },
+  "posts/ten-star-movies/psycho.avif": {
+    "source": "posts/ten-star-movies/psycho.jpg",
+    "sha256": "9cc827388349caec"
+  },
+  "posts/ten-star-movies/raiders-of-the-lost-ark.avif": {
+    "source": "posts/ten-star-movies/raiders-of-the-lost-ark.jpg",
+    "sha256": "78c8317329a30483"
+  },
+  "posts/ten-star-movies/saving-mr-banks.avif": {
+    "source": "posts/ten-star-movies/saving-mr-banks.jpg",
+    "sha256": "0cdc159adb89f6ec"
+  },
+  "posts/ten-star-movies/saving-private-ryan.avif": {
+    "source": "posts/ten-star-movies/saving-private-ryan.jpg",
+    "sha256": "e3c0fce48c75e47b"
+  },
+  "posts/ten-star-movies/sherlock-holmes.avif": {
+    "source": "posts/ten-star-movies/sherlock-holmes.jpg",
+    "sha256": "38ac3a771f755717"
+  },
+  "posts/ten-star-movies/shutter-island.avif": {
+    "source": "posts/ten-star-movies/shutter-island.jpg",
+    "sha256": "c78e35458bfd0155"
+  },
+  "posts/ten-star-movies/snatch.avif": {
+    "source": "posts/ten-star-movies/snatch.jpg",
+    "sha256": "5d150329d31bbd9d"
+  },
+  "posts/ten-star-movies/spy-game.avif": {
+    "source": "posts/ten-star-movies/spy-game.jpg",
+    "sha256": "649a467ef000644c"
+  },
+  "posts/ten-star-movies/star-trek-into-darkness.avif": {
+    "source": "posts/ten-star-movies/star-trek-into-darkness.jpg",
+    "sha256": "5bd85ea17bf1fce1"
+  },
+  "posts/ten-star-movies/star-wars-episode-i-v-a-new-hope.avif": {
+    "source": "posts/ten-star-movies/star-wars-episode-i-v-a-new-hope.jpg",
+    "sha256": "fd88a644679df5b7"
+  },
+  "posts/ten-star-movies/star-wars-episode-v-i-return-of-the-jedi.avif": {
+    "source": "posts/ten-star-movies/star-wars-episode-v-i-return-of-the-jedi.jpg",
+    "sha256": "0da9bab2be3d7496"
+  },
+  "posts/ten-star-movies/star-wars-episode-v-the-empire-strikes-back.avif": {
+    "source": "posts/ten-star-movies/star-wars-episode-v-the-empire-strikes-back.jpg",
+    "sha256": "87db002575bf8801"
+  },
+  "posts/ten-star-movies/super-8.avif": {
+    "source": "posts/ten-star-movies/super-8.jpg",
+    "sha256": "040dc3e362c766cc"
+  },
+  "posts/ten-star-movies/t-r-o-n-legacy.avif": {
+    "source": "posts/ten-star-movies/t-r-o-n-legacy.jpg",
+    "sha256": "409b537f69e4d217"
+  },
+  "posts/ten-star-movies/the-adventures-of-tintin.avif": {
+    "source": "posts/ten-star-movies/the-adventures-of-tintin.jpg",
+    "sha256": "e7804786b857e088"
+  },
+  "posts/ten-star-movies/the-girl-with-the-dragon-tattoo.avif": {
+    "source": "posts/ten-star-movies/the-girl-with-the-dragon-tattoo.jpg",
+    "sha256": "2982fe5c048c670a"
+  },
+  "posts/ten-star-movies/the-green-mile.avif": {
+    "source": "posts/ten-star-movies/the-green-mile.jpg",
+    "sha256": "1c265be5fcd59c0a"
+  },
+  "posts/ten-star-movies/the-incredibles.avif": {
+    "source": "posts/ten-star-movies/the-incredibles.jpg",
+    "sha256": "2b742b13b511044f"
+  },
+  "posts/ten-star-movies/the-king-s-speech.avif": {
+    "source": "posts/ten-star-movies/the-king-s-speech.jpg",
+    "sha256": "b7a6cec351929eb6"
+  },
+  "posts/ten-star-movies/the-last-samurai.avif": {
+    "source": "posts/ten-star-movies/the-last-samurai.jpg",
+    "sha256": "ccd200d6226b5e01"
+  },
+  "posts/ten-star-movies/the-matrix.avif": {
+    "source": "posts/ten-star-movies/the-matrix.jpg",
+    "sha256": "9ceb151b088cc25e"
+  },
+  "posts/ten-star-movies/the-pianist.avif": {
+    "source": "posts/ten-star-movies/the-pianist.jpg",
+    "sha256": "f8ccdd9207769795"
+  },
+  "posts/ten-star-movies/the-secret-life-of-walter-mitty.avif": {
+    "source": "posts/ten-star-movies/the-secret-life-of-walter-mitty.jpg",
+    "sha256": "cb3c289407c9d6c2"
+  },
+  "posts/ten-star-movies/the-shawshank-redemption.avif": {
+    "source": "posts/ten-star-movies/the-shawshank-redemption.jpg",
+    "sha256": "e23033ac867bba65"
+  },
+  "posts/ten-star-movies/the-terminal.avif": {
+    "source": "posts/ten-star-movies/the-terminal.jpg",
+    "sha256": "ef257cbf38651cc7"
+  },
+  "posts/ten-star-movies/the-theory-of-everything.avif": {
+    "source": "posts/ten-star-movies/the-theory-of-everything.jpg",
+    "sha256": "adf6654f0d0d8b8b"
+  },
+  "posts/ten-star-movies/up.avif": {
+    "source": "posts/ten-star-movies/up.jpg",
+    "sha256": "fddee21bd7f92e40"
+  },
+  "posts/ten-star-movies/v-for-vendetta.avif": {
+    "source": "posts/ten-star-movies/v-for-vendetta.jpg",
+    "sha256": "c3310f5048dc19ac"
+  },
+  "posts/ten-star-movies/vanilla-sky.avif": {
+    "source": "posts/ten-star-movies/vanilla-sky.jpg",
+    "sha256": "9095684185ff8981"
+  },
+  "posts/ten-star-movies/wall-e.avif": {
+    "source": "posts/ten-star-movies/wall-e.jpg",
+    "sha256": "9204e09825944e56"
+  }
+}

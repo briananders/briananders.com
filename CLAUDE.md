@@ -105,7 +105,7 @@ The site also calls the **Last.fm API** directly from the browser for the real-t
 │   │   └── update-css-with-image-hashes.js  # Rewrites CSS url() before CSS is hashed
 │   ├── optimize/
 │   │   ├── convert-to-webp.js  # Sharp WebP conversion
-│   │   ├── convert-to-avif.js  # Sharp AVIF conversion at quality 80
+│   │   ├── convert-to-avif.js  # Sharp AVIF at quality 80, encoded once into src/images/ and copied after
 │   │   ├── gzip-files.js       # zlib gzip on html/xml/css/js/txt/json
 │   │   ├── minify-html.js      # html-minifier-terser (async minify())
 │   │   ├── minify-js.js        # UglifyJS
@@ -138,7 +138,7 @@ The site also calls the **Last.fm API** directly from the browser for the real-t
 │   │   ├── _modules/           # Shared modules (analytics, dark-mode, etc.)
 │   │   ├── _components/        # Reusable components (album-listing, year-listing, etc.)
 │   │   └── posts/              # Per-post entry scripts
-│   ├── images/                 # Source images
+│   ├── images/                 # Source images + their committed .avif twins and avif-manifest.json
 │   ├── videos/                 # Source videos
 │   ├── data/                   # Static JSON data files
 │   ├── downloads/              # Downloadable files
@@ -274,7 +274,7 @@ Golden output is reproducible. `index.js` exports the values in `build/constants
 - `COMMIT_HASH`: the `build-id` meta tag and `build.txt`
 - `BUILD_RANDOM_SEED`: seeds `buildRandom()`
 
-Dates are formatted in UTC, so two golden builds at different times or in different timezones produce identical HTML. Only page changes show up in the `golden/` diff. One exception: AVIF bytes differ between macOS and Linux encoders (see AGENTS.md §2).
+Dates are formatted in UTC, so two golden builds at different times or in different timezones produce identical HTML. AVIFs are copied from `src/images/` (see Image Processing Pipeline), so they're identical on every machine. Only page changes show up in the `golden/` diff.
 
 ### The `configs` Object
 
@@ -383,9 +383,14 @@ CSS files reference images via `url()`. If CSS were hashed before images, the CS
 | Extension | Processing |
 |---|---|
 | `.svg` | Passed through svgo `preset-default` before writing to output |
-| `.jpg`, `.jpeg`, `.png` | Converted to a sibling `.webp` AND copied as-is (both formats kept) |
-| `.webp` and others | Copied as-is |
+| `.jpg`, `.jpeg`, `.png` | Copied as-is, converted to a sibling `.webp`, and given its committed `.avif` (below) |
+| `.webp` | Copied as-is; when it's the only source format, also given its committed `.avif` |
+| Generated `.avif` in `src/images/` | Skipped by the glob; its source copies it |
 | `favicon_base.png` | Also generates `favicon.ico` via png-to-ico |
+
+**AVIFs are committed source, not build output.** AVIF encoders produce different bytes on macOS and Linux. So `convert-to-avif.js` encodes each image once, writes the result next to the source in `src/images/`, and every build copies that file.
+
+`src/images/avif-manifest.json` records each generated AVIF's source and a fingerprint (source bytes plus encoder settings). A missing AVIF, a changed source or changed settings triggers a re-encode into `src/`; commit the result. Deleting a source in watch mode deletes its generated AVIF too. `test/avif-sources.test.mjs` fails if any AVIF is missing, stale or orphaned.
 
 **Note:** `{ nodir: true }` is required on the downloads glob — glob v13's `**` pattern matches the base directory itself.
 
@@ -422,7 +427,7 @@ Source file changes dispatch by path:
 
 #### Adding a new image/video format
 1. Add the extension to `build/constants/file-formats.js` in the `images` or `videos` array.
-2. Raster image sources automatically receive `.webp` and `.avif` siblings during preview and production builds.
+2. Raster image sources automatically receive `.webp` and `.avif` siblings during preview and production builds. New AVIFs land in `src/images/`; commit them.
 
 #### Adding a new static asset type (e.g. fonts)
 1. Add a `moveAllFonts` / `moveOneFont` pair to `move-assets.js` following the same pattern as `moveAllVideos`.

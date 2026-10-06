@@ -37,6 +37,7 @@ My personal website, built as a custom static site generator.
 ### Development
 - `npm start`: Build and launch the dev site at [http://localhost:3000](http://localhost:3000). (Stop the server with `Ctrl+C`.)
 - `npm run scaffold --path=/my-page`: Scaffolds boilerplate CSS, EJS, and JS files for a new page.
+- Adding or changing an image in `src/images/`: any build writes its `.avif` next to it and updates `src/images/avif-manifest.json`. Commit both.
 - `npm run lint`: Run ESLint on `build/`, `src/js/`, and `bin/` without fixing anything.
 - `npm run lint:src` / `npm run lint:build`: Run ESLint with `--fix` on the source or build directories.
 - `npm run screenshot -- /path/ ...`: Screenshot pages of the production build at 375, 768, and 1280px into `screenshots/<page>/sheet-dark.png`. Run `npx playwright install chromium` once first.
