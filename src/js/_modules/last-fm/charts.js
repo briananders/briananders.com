@@ -98,6 +98,28 @@ function kpiTiles(container, tiles) {
   ])));
 }
 
+/**
+ * "New" chip for an item outside the comparison's top list.
+ *
+ * @returns {HTMLElement} Badge element.
+ */
+function newBadge() {
+  return h('span', { class: 'lfm-badge', text: 'New' });
+}
+
+/**
+ * Comparison for the top lists. Optional: all time has nothing to compare.
+ *
+ * @typedef {Object} ListComparison
+ * @property {Array<number|null>} values - Comparison count per item, aligned
+ *   with the list (null = outside the comparison's top list).
+ * @property {string} word - Prefix for the visible count ("was", "usual").
+ * @property {string} nowLabel - Legend label for this period.
+ * @property {string} beforeLabel - Legend label for the comparison.
+ * @property {function(string, number, number|null): string} describe - Full
+ *   sentence for one item (its accessible name).
+ */
+
 // -- Top albums: cover grid ---------------------------------------------------
 
 /**
@@ -105,50 +127,89 @@ function kpiTiles(container, tiles) {
  *
  * @param {HTMLElement} container - Panel body.
  * @param {Array<Object>} albums - Ranked album entries.
- * @param {{ limit: number, onSelect: function(Object): void }} options
+ * @param {Object} options
+ * @param {number} options.limit - Albums to show.
+ * @param {function(Object): void} options.onSelect - Click handler.
+ * @param {ListComparison|null} [options.compare] - Comparison, if any.
  */
-function albumGrid(container, albums, { limit, onSelect }) {
-  replace(container, h('ol', { class: 'lfm-albums' }, albums.slice(0, limit).map((album, i) => h('li', {
-    class: i === 0 ? 'lfm-album lfm-album--feature' : 'lfm-album',
-  }, h('button', { type: 'button', class: 'lfm-album__button', onclick: () => onSelect(album) }, [
-    h('span', { class: 'lfm-album__art' }, [
-      cover(album.albumImage, i === 0 ? 600 : 300),
-      h('span', { class: 'lfm-album__rank', text: String(i + 1) })
-    ]),
-    h('span', { class: 'lfm-album__meta' }, [
-      h('span', { class: 'lfm-album__title', text: album.album }),
-      h('span', { class: 'lfm-album__artist', text: album.artist }),
-      h('span', { class: 'lfm-album__count', text: `${format.number(album.count)} plays` })
-    ])
-  ])))));
+function albumGrid(container, albums, { limit, onSelect, compare = null }) {
+  replace(container, h('ol', { class: 'lfm-albums' }, albums.slice(0, limit).map((album, i) => {
+    const before = compare ? compare.values[i] : null;
+    const count = [`${format.number(album.count)} plays`];
+    if (compare && before === null) count.push(' ', newBadge());
+    else if (compare) count.push(` · ${compare.word} ${format.number(before)}`);
+    return h('li', {
+      class: i === 0 ? 'lfm-album lfm-album--feature' : 'lfm-album',
+    }, h('button', {
+      type: 'button',
+      class: 'lfm-album__button',
+      'aria-label': compare ? `${i + 1}. ${compare.describe(`${album.album} by ${album.artist}`, album.count, before)}` : null,
+      onclick: () => onSelect(album),
+    }, [
+      h('span', { class: 'lfm-album__art' }, [
+        cover(album.albumImage, i === 0 ? 600 : 300),
+        h('span', { class: 'lfm-album__rank', text: String(i + 1) })
+      ]),
+      h('span', { class: 'lfm-album__meta' }, [
+        h('span', { class: 'lfm-album__title', text: album.album }),
+        h('span', { class: 'lfm-album__artist', text: album.artist }),
+        h('span', { class: 'lfm-album__count' }, count)
+      ])
+    ]));
+  })));
 }
 
 // -- Top artists: ranked bars -------------------------------------------------
 
 /**
- * Ranked horizontal bars with avatars. Values are always visible, so no tooltip.
+ * Ranked horizontal bars with avatars. Values are always visible, so no
+ * tooltip. With a comparison, a muted tick on each bar marks the comparison
+ * count (bar = now, tick = then) and both numbers sit in the value column.
  *
  * @param {HTMLElement} container - Panel body.
  * @param {Array<Object>} artists - Ranked artist entries.
- * @param {{ limit: number, onSelect: function(Object): void }} options
+ * @param {Object} options
+ * @param {number} options.limit - Artists to show.
+ * @param {function(Object): void} options.onSelect - Click handler.
+ * @param {ListComparison|null} [options.compare] - Comparison, if any.
  */
-function artistBars(container, artists, { limit, onSelect }) {
-  const max = (artists[0] && artists[0].count) || 1;
-  replace(container, h('ol', { class: 'lfm-bars' }, artists.slice(0, limit).map((artist, i) => h(
-    'li',
-    {},
-    h('button', { type: 'button', class: 'lfm-bars__row', onclick: () => onSelect(artist) }, [
+function artistBars(container, artists, { limit, onSelect, compare = null }) {
+  const shown = artists.slice(0, limit);
+  const before = compare ? compare.values.slice(0, shown.length) : [];
+  // A comparison tick can sit past this period's #1, so ticks share the scale.
+  const counted = before.filter((value) => value !== null);
+  const max = Math.max(1, ...shown.map((artist) => artist.count), ...counted);
+  const pct = (value) => `${(value / max) * 100}%`;
+  const list = h('ol', { class: compare ? 'lfm-bars has-compare' : 'lfm-bars' }, shown.map((artist, i) => {
+    const then = compare ? before[i] : null;
+    let was = null;
+    if (compare) was = h('span', { class: 'lfm-bars__was' }, then === null ? newBadge() : `${compare.word} ${format.number(then)}`);
+    return h('li', {}, h('button', {
+      type: 'button',
+      class: 'lfm-bars__row',
+      'aria-label': compare ? `${i + 1}. ${compare.describe(artist.name, artist.count, then)}` : null,
+      onclick: () => onSelect(artist),
+    }, [
       h('span', { class: 'lfm-bars__rank', text: String(i + 1) }),
       h('span', { class: 'lfm-bars__avatar' }, cover(artist.image, 96)),
-      h('span', { class: 'lfm-bars__name', text: artist.name }),
-      h(
-        'span',
-        { class: 'lfm-bars__track' },
-        h('span', { class: 'lfm-bars__fill', style: { '--value': `${(artist.count / max) * 100}%` } })
-      ),
-      h('span', { class: 'lfm-bars__value', text: format.number(artist.count) })
-    ])
-  ))));
+      // Name and count share a line of their own, so a wide comparison figure
+      // below never squeezes the name.
+      h('span', { class: 'lfm-bars__head' }, [
+        h('span', { class: 'lfm-bars__name', text: artist.name }),
+        h('span', { class: 'lfm-bars__value', text: format.number(artist.count) })
+      ]),
+      h('span', { class: 'lfm-bars__track' }, [
+        h('span', { class: 'lfm-bars__fill', style: { '--value': pct(artist.count) } }),
+        then !== null ? h('span', { class: 'lfm-bars__then', style: { '--value': pct(then) } }) : null
+      ]),
+      was
+    ]));
+  }));
+  const legend = compare ? h('ul', { class: 'lfm-key' }, [
+    h('li', {}, [h('span', { class: 'lfm-key__bar' }), compare.nowLabel]),
+    h('li', {}, [h('span', { class: 'lfm-key__tick' }), compare.beforeLabel])
+  ]) : null;
+  replace(container, [legend, list]);
 }
 
 // -- Listening focus: part-to-whole stacked bars -----------------------------

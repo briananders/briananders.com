@@ -507,10 +507,10 @@ $stepper-min: 17rem;
   @include lfm-button {
     --lfm-button-bg-hover: var(--color-surface-2);
     display: grid;
-    grid-template-columns: 1.5rem 2.5rem minmax(0, 1fr) auto;
+    grid-template-columns: 1.5rem 2.5rem minmax(0, 1fr);
     grid-template-areas:
-      "rank avatar name value"
-      "rank avatar track track";
+      "rank avatar head"
+      "rank avatar track";
     align-items: center;
     column-gap: var(--space-3);
     row-gap: 6px;
@@ -519,7 +519,18 @@ $stepper-min: 17rem;
     border-radius: var(--radius-md);
     font-family: var(--font-sans);
     transition: background-color var(--dur-2) var(--ease-standard);
+
+    // The comparison tick's surface ring follows the row's hover fill.
+    &:hover { --lfm-ring: var(--color-surface-2); }
   }
+}
+
+// With a comparison, the comparison figure sits under the count, beside the bar.
+.lfm .lfm-bars.has-compare .lfm-bars__row {
+  grid-template-columns: 1.5rem 2.5rem minmax(0, 1fr) auto;
+  grid-template-areas:
+    "rank avatar head head"
+    "rank avatar track was";
 }
 
 .lfm-bars__rank {
@@ -547,8 +558,16 @@ $stepper-min: 17rem;
   }
 }
 
+.lfm-bars__head {
+  grid-area: head;
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-3);
+  min-width: 0;
+}
+
 .lfm-bars__name {
-  grid-area: name;
+  flex: 1 1 auto;
   min-width: 0;
   font-size: var(--fs-sm);
   font-weight: var(--fw-semibold);
@@ -558,17 +577,45 @@ $stepper-min: 17rem;
   text-overflow: ellipsis;
 }
 
-.lfm-bars__value {
-  grid-area: value;
+.lfm-bars__value,
+.lfm-bars__was {
   font-size: var(--fs-xs);
   color: var(--color-text-muted);
   font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.lfm-bars__value { flex: 0 0 auto; }
+
+.lfm-bars__was {
+  grid-area: was;
+  justify-self: end;
+}
+
+.has-compare .lfm-bars__value {
+  color: var(--color-text);
+  font-weight: var(--fw-semibold);
 }
 
 .lfm-bars__track {
   grid-area: track;
+  position: relative;
   display: block;
   height: 8px;
+}
+
+// Comparison count: a thin muted tick across the bar (bar = now, tick = then),
+// ringed in the surface colour so it reads over the brand fill too.
+.lfm-bars__then {
+  position: absolute;
+  top: 50%;
+  left: var(--value);
+  width: 2px;
+  height: 16px;
+  border-radius: 1px;
+  background-color: var(--chart-mark-muted);
+  box-shadow: 0 0 0 2px var(--lfm-ring, var(--color-surface-1));
+  transform: translate(-50%, -50%);
 }
 
 .lfm-bars__fill {
@@ -681,6 +728,21 @@ $stepper-min: 17rem;
     align-items: center;
     gap: var(--space-2);
   }
+}
+
+.lfm-key__bar {
+  width: 14px;
+  height: 8px;
+  border-radius: 0 var(--radius-xs) var(--radius-xs) 0;
+  background-color: var(--chart-mark);
+}
+
+.lfm-key__tick {
+  width: 2px;
+  height: 14px;
+  margin: 0 4px;
+  border-radius: 1px;
+  background-color: var(--chart-mark-muted);
 }
 
 .lfm-key__dot,

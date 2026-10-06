@@ -527,6 +527,11 @@ Rules of thumb:
   length; don't re-encode it as hue.
 - **Emphasis over rainbow.** To make one bar the point, paint it
   `--chart-mark` and the rest `--chart-mark-muted`.
+- **Then vs now on a ranked bar: a tick, not a second bar.** The bar is the
+  current value; a 2px `--chart-mark-muted` tick marks the comparison, ringed
+  2px in the surface colour so it stays legible over the brand fill (the grey
+  alone is only 1.75 : 1 against orange). Both numbers stay visible in text,
+  and an item with no comparison count gets the `New` badge, never a zero.
 - **`primary-700` is not a chart colour.** It drops to 2.46 : 1 on
   `surface-1` and its hue drifts toward red, which breaks the ordinal ramp.
 - **Axis text is `--chart-axis`, not `--color-text-subtle`** (2.99 : 1).
@@ -534,8 +539,8 @@ Rules of thumb:
   tooltip is never the only way to read a value.
 
 The Last.fm dashboards (`src/js/_modules/last-fm/`) are the reference
-consumer: KPI tiles, cover grid, ranked bars, stacked part-to-whole bars,
-a dumbbell, emphasis columns, a heatmap, and an area chart.
+consumer: KPI tiles, cover grid, ranked bars with comparison ticks, stacked
+part-to-whole bars, a dumbbell, emphasis columns, a heatmap, and an area chart.
 
 ---
 

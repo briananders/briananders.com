@@ -73,7 +73,8 @@ const FIXTURES = {
 };
 data.ROLLING_WINDOWS.forEach((w) => {
   FIXTURES[`reports/rolling_${w.key}.json`] = report(w.key, 100, [artist('Underoath', 40), artist('The Beatles', 10)], [album('Underoath', 'Voyeurist', 20)], {
-    startDate: '2024-05-16', endDate: '2024-06-15', label: w.label,
+    // A real year for the 30-day window's baseline, so pace scaling is exercised.
+    startDate: w.key === 'last-12-months' ? '2023-06-16' : '2024-05-16', endDate: '2024-06-15', label: w.label,
   });
 });
 
@@ -152,6 +153,10 @@ describe('last-fm data', () => {
     assert.equal(week.start.toISOString().slice(0, 10), '2026-09-21');
     assert.equal(week.end.toISOString().slice(0, 10), '2026-09-27');
     assert.equal(week.days, 7);
+    assert.equal(week.partial, false, 'a finished week');
+    assert.equal(data.periodSpan({ period: '2026-W40' }, 'week', asOf).partial, true, 'the week in progress');
+    assert.equal(data.periodSpan({ period: '2026' }, 'year', asOf).partial, true);
+    assert.equal(data.periodSpan({ startDate: '2026-08-30', endDate: '2026-09-29' }, 'rolling', asOf).partial, false, 'rolling windows are always whole');
     assert.equal(data.isoWeekStart(2021, 1).toISOString().slice(0, 10), '2021-01-04');
     assert.equal(data.isoWeekStart(2020, 53).toISOString().slice(0, 10), '2020-12-28');
     assert.equal(data.periodSpan({ period: '2026-09' }, 'month', asOf).days, 29, 'current month counts elapsed days');
@@ -210,6 +215,15 @@ describe('last-fm stats', () => {
     const now = report('n', 1, [], [album('Paul Simon', 'Graceland', 5), album('Underoath', 'Lost in the Sound of Separation', 4)]);
     const before = report('b', 1, [], [album('paul simon', 'GRACELAND', 9)]);
     assert.equal(stats.newAlbums(now, before), 1);
+  });
+
+  test('compareCounts pairs each item with its comparison count, or null outside the top list', () => {
+    const now = report('n', 1, [artist('Blink-182', 500), artist('Pixies', 40)], [album('Paul Simon', 'Graceland', 5)]);
+    const before = report('b', 1, [artist('blink-182', 480)], [album('PAUL SIMON', 'graceland', 9)]);
+    assert.deepEqual(stats.compareCounts(now, before), [480, null], 'names match case-insensitively');
+    assert.deepEqual(stats.compareCounts(now, before, 'albums'), [9]);
+    // Rolling windows read the longer window as a pace: 480 over 365 days ≈ 39 per 30.
+    assert.deepEqual(stats.compareCounts(now, before, 'artists', 30 / 365), [39, null]);
   });
 
   test('fillMonths, trendFacts, and byYear build continuous series', () => {
@@ -350,6 +364,45 @@ describe('listening dashboard', () => {
     assert.equal(window.location.search, '?period=last-7-days');
     assert.ok(requests.includes('/last-fm-history/reports/rolling_last-90-days.json'));
     assert.match($('[data-lfm="timeline-note"]').textContent, /Shaded: last 7 days/);
+  });
+
+  test('top lists compare each item with the previous period', async () => {
+    await mount('history', '?type=year&period=2024');
+    // 2024 is in progress on the data date (June 15), so it reads "so far".
+    assert.equal($('[data-lfm="artists-note"]').textContent, 'Plays in 2024 so far, compared with 2023.');
+    assert.equal($('[data-lfm="albums-note"]').hidden, false);
+    assert.deepEqual($$('[data-lfm="artists"] .lfm-key li').map((li) => li.textContent), ['2024 so far', '2023']);
+    const [underoath, coheed] = $$('.lfm-bars__row');
+    assert.equal(underoath.getAttribute('aria-label'), '1. Underoath: 50 scrobbles in 2024 so far. Not in 2023’s top 2.');
+    assert.equal(underoath.querySelector('.lfm-bars__was .lfm-badge').textContent, 'New');
+    assert.equal(underoath.querySelector('.lfm-bars__then'), null, 'no tick without a count to mark');
+    assert.equal(coheed.getAttribute('aria-label'), '2. Coheed and Cambria: 30 scrobbles in 2024 so far, compared with 60 in 2023.');
+    assert.equal(coheed.querySelector('.lfm-bars__was').textContent, 'was 60');
+    // The tick shares the bar scale: 60 is the largest value on screen.
+    assert.equal(coheed.querySelector('.lfm-bars__then').style.getPropertyValue('--value'), '100%');
+    assert.equal(coheed.querySelector('.lfm-bars__fill').style.getPropertyValue('--value'), '50%');
+    assert.equal($('.lfm-album__count').textContent, '25 plays New', 'album outside the 2023 top list');
+
+    $('.lfm-cols__col[data-key="2023"]').click();
+    await settle();
+    assert.equal($('[data-lfm="artists-note"]').textContent, 'Plays in 2023, compared with 2022.', 'a finished year');
+    assert.equal($('.lfm-album__count').textContent, '18 plays · was 30');
+  });
+
+  test('rolling windows compare with the usual pace, and all time compares with nothing', async () => {
+    await mount('recent');
+    // 30 days against a 365-day baseline: 40 plays there is a usual 3 per 30 days.
+    assert.equal($('[data-lfm="artists-note"]').textContent, 'Plays in the last 30 days. “Usual” is your pace over the last 12 months, scaled to 30 days.');
+    assert.deepEqual($$('[data-lfm="artists"] .lfm-key li').map((li) => li.textContent), ['Last 30 days', 'Usual pace (last 12 months)']);
+    assert.equal($('.lfm-bars__row').getAttribute('aria-label'), '1. Underoath: 40 scrobbles in the last 30 days, compared with a usual 3 at your pace over the last 12 months.');
+    assert.equal($('.lfm-bars__was').textContent, 'usual 3');
+    assert.equal($('.lfm-album__count').textContent, '20 plays · usual 2');
+
+    await mount('history');
+    assert.equal($('[data-lfm="artists-note"]').hidden, true);
+    assert.equal($('.lfm-bars.has-compare'), null);
+    assert.equal($('.lfm-bars__was'), null);
+    assert.equal($('.lfm-bars__row').hasAttribute('aria-label'), false);
   });
 
   test('an unknown period in the URL falls back instead of breaking', async () => {

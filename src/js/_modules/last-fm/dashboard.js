@@ -101,8 +101,10 @@ function initDashboard(root) {
     range: $('range'),
     kpis: $('kpis'),
     albums: $('albums'),
+    albumsNote: $('albums-note'),
     albumsToggle: $('albums-toggle'),
     artists: $('artists'),
+    artistsNote: $('artists-note'),
     artistsToggle: $('artists-toggle'),
     focus: $('focus'),
     focusNote: $('focus-note'),
@@ -123,6 +125,7 @@ function initDashboard(root) {
     limits: { albums: LIMITS.albums[0], artists: LIMITS.artists[0] },
     report: null,
     span: null,
+    compare: null,
     yearTotals: null,
     heatRows: null,
     timelineSeries: null,
@@ -360,9 +363,57 @@ function initDashboard(root) {
     charts.kpiTiles(els.kpis, tiles);
   };
 
+  /**
+   * Item-level comparison for the top lists. Calendar periods show each item's
+   * count in the previous period. Rolling windows have no earlier window of the
+   * same length, so they show the comparison window's count scaled to this
+   * window's days: the "usual" pace the KPI tiles already compare against.
+   *
+   * @param {Object} report - Selected report.
+   * @param {Object|null} comparison - Comparison report.
+   * @param {Object|null} comp - Comparison descriptor.
+   * @param {Object|null} span - Selected span.
+   * @param {Object|null} compSpan - Comparison span.
+   * @returns {{ note: string, artists: Object, albums: Object }|null} Note plus
+   *   per-list options for charts.artistBars/albumGrid; null for all time.
+   */
+  const compareLists = (report, comparison, comp, span, compSpan) => {
+    if (!comparison || !comp) return null;
+    const pace = state.type === 'rolling';
+    if (pace && !(span && compSpan)) return null;
+    const label = labelFor(state.type, state.slug);
+    const nowLabel = span && span.partial ? `${label} so far` : label;
+    const during = pace ? `in the ${nowLabel.toLowerCase()}` : `in ${nowLabel}`;
+    const over = comp.type === 'all-time' ? 'all time' : `the ${comp.label}`;
+    const scale = pace ? span.days / compSpan.days : 1;
+    let note = `Plays ${during}, compared with ${comp.label}.`;
+    if (pace) note = `Plays ${during}. “Usual” is your pace over ${over}, scaled to ${format.number(span.days)} days.`;
+    const forList = (list) => {
+      let topOf = `${comp.label}’s`;
+      if (comp.type === 'all-time') topOf = 'the all-time';
+      else if (pace) topOf = `the ${comp.label}’`;
+      const cut = `${topOf} top ${(comparison[list] || []).length}`;
+      return {
+        values: stats.compareCounts(report, comparison, list, scale),
+        word: pace ? 'usual' : 'was',
+        nowLabel,
+        beforeLabel: pace ? `Usual pace (${comp.label})` : comp.label,
+        describe: (name, count, before) => {
+          const head = `${name}: ${format.number(count)} scrobbles ${during}`;
+          if (before === null) return `${head}. Not in ${cut}.`;
+          return pace
+            ? `${head}, compared with a usual ${format.number(before)} at your pace over ${over}.`
+            : `${head}, compared with ${format.number(before)} in ${comp.label}.`;
+        },
+      };
+    };
+    return { note, artists: forList('artists'), albums: forList('albums') };
+  };
+
   const renderAlbums = (report) => {
     charts.albumGrid(els.albums, report.albums || [], {
       limit: state.limits.albums,
+      compare: state.compare && state.compare.albums,
       onSelect: (album) => openTrend({
         kind: 'album', artist: album.artist, album: album.album, image: album.albumImage,
       }),
@@ -376,6 +427,7 @@ function initDashboard(root) {
   const renderArtists = (report) => {
     charts.artistBars(els.artists, report.artists || [], {
       limit: state.limits.artists,
+      compare: state.compare && state.compare.artists,
       onSelect: (artist) => openTrend({ kind: 'artist', artist: artist.name, image: artist.image }),
     });
     const [few, many] = LIMITS.artists;
@@ -522,6 +574,11 @@ function initDashboard(root) {
       if (request !== state.token) return;
       state.report = report;
       state.span = span;
+      state.compare = compareLists(report, comparison, comp, span, compSpan);
+      [els.albumsNote, els.artistsNote].forEach((note) => {
+        note.textContent = state.compare ? state.compare.note : '';
+        note.hidden = !state.compare;
+      });
       renderRange(span, comparison ? comp : null);
       renderKpis(report, span, comparison, compSpan, comparison ? comp : null);
       renderAlbums(report);

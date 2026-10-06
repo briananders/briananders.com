@@ -162,7 +162,8 @@ function isoWeekStart(year, week) {
  * @param {Object} report - Report JSON (`period`, optional `startDate`/`endDate`).
  * @param {string} type - Report type (rolling, year, quarter, month, week, all-time).
  * @param {Date} [asOf=new Date()] - Data freshness date.
- * @returns {{ start: Date, end: Date, days: number }|null} Span, or null for all-time.
+ * @returns {{ start: Date, end: Date, days: number, partial: boolean }|null} Span,
+ *   or null for all-time. `partial` marks a calendar period still in progress.
  */
 function periodSpan(report, type, asOf = new Date()) {
   if (!report || type === 'all-time') return null;
@@ -172,7 +173,9 @@ function periodSpan(report, type, asOf = new Date()) {
     start = utcDate(report.startDate);
     end = utcDate(report.endDate);
     const days = Math.max(1, Math.round((end - start) / DAY_MS));
-    return { start, end, days };
+    return {
+      start, end, days, partial: false,
+    };
   }
   const key = String(report.period);
   if (type === 'year') {
@@ -195,9 +198,12 @@ function periodSpan(report, type, asOf = new Date()) {
     return null;
   }
   const today = new Date(Date.UTC(asOf.getUTCFullYear(), asOf.getUTCMonth(), asOf.getUTCDate()));
-  if (end > today) end = today;
+  const partial = end > today;
+  if (partial) end = today;
   const days = Math.max(1, Math.round((end - start) / DAY_MS) + 1);
-  return { start, end, days };
+  return {
+    start, end, days, partial,
+  };
 }
 
 /**

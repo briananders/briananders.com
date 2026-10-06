@@ -49,6 +49,8 @@ These paths are **preserved during deploys** via `s3-upload-allowlist.json` and 
 
 Trend slugs are lowercase with everything outside `[a-z0-9 -]` removed and whitespace collapsed to `-` (no accent folding): see `slugify()` in `data.js`. URL state: `?type=&period=` for the period, `?trends=artists/…` for the dialog.
 
+Every panel compares against one report per period (`comparisonFor()` in `data.js`). Top albums and Top artists show each item's count there: the previous period's count for calendar periods; for rolling windows, which have no earlier window of equal length, the longer window's count scaled to this window's days ("usual"). An item outside the comparison's top 50 is "New", since its count there is unknown.
+
 ## Tech Stack
 
 | Layer | Technology |

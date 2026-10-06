@@ -95,6 +95,28 @@ function newAlbums(current, previous) {
 }
 
 /**
+ * Each ranked item's count in the comparison report, aligned with the current
+ * list. An item outside the comparison's top list is null: its count there is
+ * unknown, only that it fell below the cut.
+ *
+ * @param {Object} current - Current report.
+ * @param {Object} previous - Comparison report.
+ * @param {'artists'|'albums'} [list='artists'] - Which ranking to pair.
+ * @param {number} [scale=1] - Multiplier for comparison counts. Rolling windows
+ *   pass (current days ÷ comparison days) to read the longer window as a pace.
+ * @returns {Array<number|null>} Comparison counts, rounded to whole plays.
+ */
+function compareCounts(current, previous, list = 'artists', scale = 1) {
+  const keyOf = list === 'albums' ? albumKey : (item) => String(item.name).toLowerCase();
+  const before = new Map((previous[list] || [])
+    .map((item) => [keyOf(item), Number(item.count) || 0]));
+  return (current[list] || []).map((item) => {
+    const key = keyOf(item);
+    return before.has(key) ? Math.round(before.get(key) * scale) : null;
+  });
+}
+
+/**
  * Biggest changes in share of plays between two reports. Share (not raw
  * count) keeps periods of different lengths comparable. Artists missing from
  * a report's top 50 count as 0 there and are flagged.
@@ -223,6 +245,7 @@ function byYear(series) {
 module.exports = {
   FOCUS_BANDS,
   byYear,
+  compareCounts,
   fillMonths,
   focusBands,
   monthKey,
