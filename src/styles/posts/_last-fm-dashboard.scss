@@ -108,24 +108,32 @@ $axis-gutter: 2.25rem;
 }
 
 // Toolbar: period segments + stepper --------------------------------------------
+//
+// A wrapping row: the stepper sits beside the segments only when both fit at
+// their basis, and drops to its own line (matching the segments' width)
+// otherwise.
+
+$toolbar-control-max: 36rem;
+// Room for the widest period label ("2026 3rd Quarter", ~186px) plus both
+// 44px step buttons and their gaps.
+$stepper-min: 17rem;
 
 .lfm-toolbar {
   scroll-margin-top: calc(var(--nav-height) + var(--space-4));
-  display: grid;
-  gap: var(--space-3);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3) var(--space-4);
   margin-bottom: var(--space-6);
 
-  @include mq($medium) {
-    grid-template-columns: minmax(0, 36rem) minmax(0, 1fr);
-    align-items: center;
-    column-gap: var(--space-4);
-
-    .lfm-overline { grid-column: 1 / -1; }
-    .lfm-toolbar__range { grid-column: 1 / -1; }
-  }
+  > .lfm-overline,
+  > .lfm-toolbar__range { flex: 1 0 100%; }
 }
 
 .lfm-segments {
+  flex: 1 1 $toolbar-control-max;
+  min-width: 0;
+  max-width: $toolbar-control-max;
   display: grid;
   grid-template-columns: repeat(6, minmax(0, 1fr));
   gap: 2px;
@@ -133,6 +141,12 @@ $axis-gutter: 2.25rem;
   background-color: var(--color-surface-1);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
+
+  // History labels are whole words with no short form; below 375px six of
+  // them run together, so they stack 3 × 2. Window labels (7D, 30D…) fit.
+  &:not(.lfm-segments--windows) {
+    @include mq-max(375px) { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  }
 }
 
 .lfm-segment {
@@ -173,9 +187,11 @@ $axis-gutter: 2.25rem;
 }
 
 .lfm-stepper {
+  flex: 1 1 $stepper-min;
+  min-width: 0;
+  max-width: $toolbar-control-max;
   display: flex;
   gap: var(--space-2);
-  min-width: 0;
 
   &[hidden] { display: none; }
 
