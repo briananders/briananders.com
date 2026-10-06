@@ -13,7 +13,7 @@
   %>
     <%- cardLink(`
       <span itemprop="name" ${locals.headingLevel ? `role="heading" aria-level="${locals.headingLevel}"` : ""}>${title}</span>
-      <date itemprop="datePublished" content="${date}">
+      <date itemprop="datePublished" content="${formattedDate(date)}">
         ${formattedDate(date)}
       </date>
       <meta itemprop="author" content="Brian Anders"/>

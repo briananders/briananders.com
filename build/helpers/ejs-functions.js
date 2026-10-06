@@ -164,16 +164,18 @@ module.exports = (dir, pageMappingData) => {
    * Formats a date string as `YYYY-MM-DD`.
    *
    * Accepts any value that `new Date()` can parse (ISO strings, timestamps, etc.).
-   * Month and day are always zero-padded to two digits.
+   * Month and day are always zero-padded to two digits. Uses UTC: front-matter
+   * dates parse as UTC midnight, so local getters would shift them a day
+   * earlier in any timezone west of UTC.
    *
-   * @param {string|number} dateString - The date to format.
+   * @param {string|number|Date} dateString - The date to format.
    * @returns {string} Formatted date, e.g. `'2024-03-15'`.
    */
   formattedDate(dateString) {
     const date = new Date(dateString);
-    const month = `00${date.getMonth() + 1}`.slice(-2);
-    const day = `00${date.getDate()}`.slice(-2);
-    return `${date.getFullYear()}-${month}-${day}`;
+    const month = `00${date.getUTCMonth() + 1}`.slice(-2);
+    const day = `00${date.getUTCDate()}`.slice(-2);
+    return `${date.getUTCFullYear()}-${month}-${day}`;
   },
 
   /**

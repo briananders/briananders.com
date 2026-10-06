@@ -49,15 +49,15 @@
 <link rel="apple-touch-icon-precomposed"           href="/images/favicon_144.png" />
 
 <meta itemprop="copyrightHolder"                   content="<%- locals.author %>"/>
-<meta itemprop="copyrightYear"                     content="<%- new Date().getFullYear(); %>"/>
+<meta itemprop="copyrightYear"                     content="<%- new Date(locals.buildDateTime).getUTCFullYear(); %>"/>
 <meta itemprop="isFamilyFriendly"                  content="true"/>
 
 <meta name="build-id" content="<%- locals.commitHash %>" />
-<meta name="build-datetime" content="<%- new Date().toISOString() %>" />
+<meta name="build-datetime" content="<%- locals.buildDateTime %>" />
 
 <meta itemprop="author"                            content="<%- locals.author %>"/>
 <% if (locals.date) { %>
-  <meta itemprop="datePublished"                     content="<%- `${locals.date.getFullYear()}-${('00' + (locals.date.getMonth() + 1)).slice(-2)}-${('00' + locals.date.getDate()).slice(-2)}` %>"/>
+  <meta itemprop="datePublished"                     content="<%- formattedDate(locals.date) %>"/>
 <% } %>
 <meta itemprop="publisher"                         content="<%- locals.author %>"/>
 

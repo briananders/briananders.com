@@ -2,6 +2,8 @@
 My personal website, built as a custom static site generator.
 
 ## Documentation
+- **[AGENTS.md](AGENTS.md)** — rules for AI agents working in this repo
+  (definition of done, screenshots, design system, branch flow).
 - **[DESIGN_SYSTEM.md](DESIGN_SYSTEM.md)** — full programmer reference for
   the dark-first, token-driven design system that ships with the site
   (tokens, mixins, class utilities, connective tissue, authoring guide).
@@ -18,7 +20,7 @@ My personal website, built as a custom static site generator.
 ## Project Structure
 - `src/`: Core source files including JS, Sass styles, and EJS templates.
 - `build/`: The custom Node.js build system tools (bundlers, asset movers, page mappings).
-- `test/`: Node.js native test scripts (`build.test.mjs`, `golden.test.mjs`).
+- `test/`: Node.js native test scripts (`node --test`).
 - `package/`: The output directory for the optimized production build.
 - `golden/`: The output directory for the unoptimized golden build (skips gzip/hashing).
 
@@ -35,15 +37,20 @@ My personal website, built as a custom static site generator.
 ### Development
 - `npm start`: Build and launch the dev site at [http://localhost:3000](http://localhost:3000). (Stop the server with `Ctrl+C`.)
 - `npm run scaffold --path=/my-page`: Scaffolds boilerplate CSS, EJS, and JS files for a new page.
-- `npm run lint:src` / `npm run lint:build`: Run ESLint on the source or build directories.
+- `npm run lint`: Run ESLint on `build/`, `src/js/`, and `bin/` without fixing anything.
+- `npm run lint:src` / `npm run lint:build`: Run ESLint with `--fix` on the source or build directories.
+- `npm run screenshot -- /path/ ...`: Screenshot pages of the production build at 375, 768, and 1280px into `screenshots/<page>/sheet-dark.png`. Run `npx playwright install chromium` once first.
 - `npm run visual-diff`: Runs the visual regression diffing script using Playwright/Puppeteer.
 
 ### Building
 - `npm run build`: Build the site for production into the `/package` folder, including file compression and gzip.
-- `npm run build:golden`: Build the site into the `/golden` folder without gzip compression and asset hashing.
+- `npm run build:golden`: Build the site into the `/golden` folder without gzip compression and asset hashing. Build time, commit hash, and build-time randomness are pinned, so regenerating only changes files whose pages changed.
 
 ### Testing
 - `npm test`: Runs the Node.js native test runner suite on the build processes.
+
+## Branches
+Branch from `staging` and open PRs against `staging`. `staging` is promoted to `main`, which deploys production.
 
 ## Deploy the static site
 My website uses AWS as the host, and the deploy uses the modular **AWS SDK for JavaScript v3** (`@aws-sdk/client-s3`, `@aws-sdk/lib-storage`, `@aws-sdk/client-cloudfront`). For this to work you need credentials saved as bash variables:

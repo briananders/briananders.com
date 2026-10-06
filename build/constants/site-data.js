@@ -1,4 +1,6 @@
 const resolveCommitHash = require('../helpers/commit-hash');
+const buildDate = require('../helpers/build-date');
+const buildRandom = require('../helpers/build-random');
 
 /**
  * Site-wide metadata factory.
@@ -37,6 +39,13 @@ module.exports = (dir) => {
   return {
     /** Current git commit SHA, or `'unknown'` if git is unavailable. */
     commitHash,
+    /** ISO 8601 build time; pinned via `BUILD_DATETIME` in golden builds. */
+    buildDateTime: buildDate().toISOString(),
+    /**
+     * Random-number generator factory for build-time template code; use it
+     * instead of `Math.random`. Seeded via `BUILD_RANDOM_SEED` in golden builds.
+     */
+    buildRandom,
     /** `true` during dev/preview builds (`NODE_ENV !== 'production'`). */
     devBuild: !production,
     /** Package version string from `package.json`. */

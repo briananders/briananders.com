@@ -15,10 +15,12 @@ scripts:
 
 <div class="container">
 <%
+  const random = buildRandom();
+
   function randomColor() {
-    const randomRed = Math.floor(Math.random() * 256);
-    const randomGreen = Math.floor(Math.random() * 256);
-    const randomBlue = Math.floor(Math.random() * 256);
+    const randomRed = Math.floor(random() * 256);
+    const randomGreen = Math.floor(random() * 256);
+    const randomBlue = Math.floor(random() * 256);
 
     return `rgb(${randomRed},${randomGreen},${randomBlue})`;
   }

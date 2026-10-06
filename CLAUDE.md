@@ -1,5 +1,9 @@
 # Claude Context — briananders.com
 
+@AGENTS.md
+
+The rules above apply to every agent. This file is the architecture reference.
+
 ## Project Overview
 
 This is the personal website of **Brian Anders** — an Engineering Manager, YouTuber, Podcaster, and Musician. The site is a custom-built Node.js static site generator that produces pages from EJS templates, SCSS stylesheets, and Browserify-bundled JavaScript. Content is primarily **posts and experiments** — interactive demos, code explorations, music data visualizations, and personal projects — rather than traditional blog articles.
@@ -17,7 +21,7 @@ This is the personal website of **Brian Anders** — an Engineering Manager, You
 | Repository | Purpose |
 |---|---|
 | [briananders/briananders.com](https://github.com/briananders/briananders.com) | This repo — the main website |
-| [briananders/briananders.com-visual-diffs](https://github.com/briananders/briananders.com-visual-diffs) | Visual regression testing (git submodule at `visual-diffs/`) |
+| [briananders/briananders.com-visual-diffs](https://github.com/briananders/briananders.com-visual-diffs) | Visual regression testing. `visual-diffs/` is a committed symlink to Brian's local clone, so `npm run visual-diff` only works on his machine. Agents use `npm run screenshot`. |
 | [briananders/sublime-text-dublicate](https://github.com/briananders/sublime-text-dublicate) | VSCode extension: Sublime Duplicate Text |
 | [briananders/pageweight](https://github.com/briananders/pageweight) | NPM CLI tool for measuring webpage weight |
 | [briananders/two-way-merge](https://github.com/briananders/two-way-merge) | NPM CLI tool for two-way directory sync |
@@ -54,6 +58,7 @@ The site also calls the **Last.fm API** directly from the browser for the real-t
 | Linting | ESLint 8 (airbnb-base config — pinned to v8, airbnb does not support ESLint 9/10) |
 | Build optimization | HTML minification (html-minifier-terser), JS minification (uglify-js), SVG optimization (svgo), WebP/AVIF conversion (sharp), gzip compression, content-hash asset naming (xxhash) |
 | Analytics | Google Tag Manager (production only) |
+| Screenshots | Playwright, pinned to 1.56.1: that version's Chromium (build 1194) is preinstalled in Claude Code cloud containers. Elsewhere, run `npx playwright install chromium` once. |
 
 ## Project Structure
 
@@ -67,6 +72,9 @@ The site also calls the **Last.fm API** directly from the browser for the real-t
 ├── .nvmrc                      # Node 22.21.0
 ├── .eslintrc.json              # Airbnb-base ESLint config
 │
+├── AGENTS.md                   # Rules for every AI agent (imported above)
+├── bin/screenshot.js           # Contact-sheet screenshots of the built site (`npm run screenshot`)
+│
 ├── build/                      # Build pipeline (all files have full JSDoc as of March 2026)
 │   ├── bundlers/
 │   │   ├── bundle-ejs.js       # EJS → HTML renderer (two-pass: template then layout)
@@ -78,8 +86,11 @@ The site also calls the **Last.fm API** directly from the browser for the real-t
 │   │   ├── completion-flags.js # Shared mutable booleans tracking stage completion
 │   │   ├── directories.js      # Path factory (package/ vs golden/ depending on mode)
 │   │   ├── file-formats.js     # Image/video extension lists and raster format lists
-│   │   └── site-data.js        # Author metadata, social links, domain, commitHash
+│   │   ├── golden-build.js     # Pinned BUILD_DATETIME / BUILD_RANDOM_SEED / COMMIT_HASH for golden builds
+│   │   └── site-data.js        # Author metadata, social links, domain, commitHash, buildDateTime, buildRandom
 │   ├── helpers/
+│   │   ├── build-date.js       # The build's "now": BUILD_DATETIME env var, else the current time
+│   │   ├── build-random.js     # Math.random, or a seeded generator when BUILD_RANDOM_SEED is set
 │   │   ├── check-done.js       # Gate: exits process when all completion flags are true
 │   │   ├── clean.js            # Empties the output directory (returns Promise)
 │   │   ├── ejs-functions.js    # 15 template helper functions available in all EJS templates
@@ -143,9 +154,9 @@ The site also calls the **Last.fm API** directly from the browser for the real-t
 │   ├── claude-code-review.yml  # AI-powered PR reviews
 │   └── claude.yml              # Claude workflow
 │
-├── test/                       # Tests (build.test.mjs, golden.test.mjs)
+├── test/                       # node:test suites; design-tokens.test.mjs + design-tokens-baseline.json ratchet hard-coded SCSS values
 ├── scaffold/                   # Templates for `npm run scaffold`
-└── visual-diffs/               # Git submodule for visual regression
+└── visual-diffs/               # Symlink to Brian's local briananders.com-visual-diffs clone
 ```
 
 ## Key Conventions
@@ -202,13 +213,20 @@ Available in all templates via `build/helpers/ejs-functions.js`:
 | `blockLink(str, { href })` | Block nav link with `>` arrow (`.block-link`) |
 | `cardLink(str, { href })` | Card-style link (`.card-link`) |
 | `buttonLink(str, { href })` | Button-style link (`.button`) |
-| `formattedDate(dateString)` | Formats as `YYYY-MM-DD` |
+| `formattedDate(dateString)` | Formats as `YYYY-MM-DD` in UTC (front-matter dates parse as UTC midnight) |
 | `getChildPages(parentPath)` | Returns direct children from `pageMappingData` |
 | `defaultLastFMModule(albums)` | Last.fm loading placeholder markup |
 | `inlineScss(src)` | Compiles SCSS file to CSS string for inline `<style>` use |
 | `getFileContents(src)` | Returns file as string; SVGs are run through svgo first |
 | `dasherize(str)` | `fooBar` → `foo-bar` |
 | `camelize(str)` | `foo-bar` → `fooBar` |
+
+**Build-time values** come from `siteData` and are available in every template:
+
+- `buildDateTime`: ISO build time. Use it instead of `new Date()`.
+- `buildRandom()`: returns a generator. Use it instead of `Math.random()`, and call it once per page.
+
+Golden builds pin both (see Build Modes). A test fails if a template calls `Math.random` at build time.
 
 **Important:** `img()`, `lazyImage()`, and `lazyVideo()` read from the **output** directory (`dir.package`) not the source. This is why `bundleEJS` cannot start until both `imagesMoved` and `videosMoved` flags are true.
 
@@ -238,7 +256,7 @@ Available in all templates via `build/helpers/ejs-functions.js`:
 source ~/.nvm/nvm.sh && nvm use v22.21.0
 ```
 
-Chokidar v5 and other packages require Node 22. Running under Node 18 will fail with `ERR_REQUIRE_ESM`.
+Chokidar v5 and other packages require Node 22. Running under Node 18 will fail with `ERR_REQUIRE_ESM`. Claude Code cloud containers ship Node 22 without nvm; skip the `nvm use` step there.
 
 ### Build Modes
 
@@ -249,6 +267,14 @@ Chokidar v5 and other packages require Node 22. Running under Node 18 will fail 
 | Golden | `npm run build:golden` | `golden/` | Yes | No | No | No |
 
 The golden build is used for visual regression tests — it produces realistic HTML without hashes or gzip so the output can be diff'd against a reference snapshot.
+
+Golden output is reproducible. `index.js` exports the values in `build/constants/golden-build.js` as environment variables:
+
+- `BUILD_DATETIME`: build time, copyright year, sitemap fallback dates, `build.txt`
+- `COMMIT_HASH`: the `build-id` meta tag and `build.txt`
+- `BUILD_RANDOM_SEED`: seeds `buildRandom()`
+
+Dates are formatted in UTC, so two golden builds at different times or in different timezones produce identical HTML. Only page changes show up in the `golden/` diff. One exception: AVIF bytes differ between macOS and Linux encoders (see AGENTS.md §2).
 
 ### The `configs` Object
 
@@ -452,15 +478,20 @@ Source file changes dispatch by path:
 | `npm run deploy` | Deploy production build to S3 |
 | `npm run stage` | Deploy staging build to S3 |
 | `npm test` | Run tests (requires Node 22 — use nvm first) |
+| `npm run lint` | ESLint on `build/`, `src/js/`, `bin/` (check only; `lint:src` / `lint:build` auto-fix) |
 | `npm run preview:production` | Serve the production build locally |
 | `npm run scaffold -- --path=/path` | Create new page boilerplate |
-| `npm run visual-diff` | Run visual regression tests |
+| `npm run screenshot -- /path/ ...` | Contact-sheet screenshots of the built site at 375/768/1280px (see AGENTS.md §1) |
+| `npm run visual-diff` | Run visual regression tests (Brian's machine only) |
 
 ### Deployment
+
+Branch flow: feature branch (from `staging`) → PR into `staging` → `staging` promoted to `main`. `sync-staging.yml` merges `main` back into `staging` after every push to `main`.
 
 - **Production**: Push to `main` branch triggers GitHub Actions → builds → deploys to `www.briananders.com` S3 bucket → invalidates CloudFront cache → creates a deploy tag
 - **Staging**: Push to `staging` branch triggers GitHub Actions → builds → deploys to `staging.briananders.com` S3 bucket
 - **PR validation**: All PRs run build + tests
+- **`@claude` in GitHub**: `claude.yml` installs dependencies and Chromium, lets Claude run build, test, lint and screenshot, and uploads `screenshots/` as a workflow artifact
 - The `s3-upload-allowlist.json` preserves `/band-news/`, `/last-fm-history/`, `/data/`, and `/movies/` paths during deploy
 
 ---

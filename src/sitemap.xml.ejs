@@ -7,8 +7,9 @@
   ><%
     for(let i = 0; i < locals.pages.length; i++) {
       const page = locals.pages[i];
-      const date = page.data.date || new Date();
-      const dateOutput = `${date.getFullYear()}-${('00' + (date.getMonth() + 1)).slice(-2)}-${('00' + date.getDate()).slice(-2)}`;
+      const date = page.data.date || new Date(locals.siteData.buildDateTime);
+      // UTC: front-matter dates parse as UTC midnight; local getters shift them a day west of UTC.
+      const dateOutput = `${date.getUTCFullYear()}-${('00' + (date.getUTCMonth() + 1)).slice(-2)}-${('00' + date.getUTCDate()).slice(-2)}`;
       if(page.data.robots !== false) {
   %>
   <url>

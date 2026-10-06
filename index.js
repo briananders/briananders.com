@@ -19,6 +19,11 @@ const debug = process.argv.includes('--verbose');
 /** Pass `--golden` to produce an unhashed/uncompressed golden build for visual diffing. */
 const isGoldenBuild = process.argv.includes('--golden');
 
+// Pin build-time values so golden output only changes when page content does.
+if (isGoldenBuild) {
+  Object.assign(process.env, require('./build/constants/golden-build'));
+}
+
 /**
  * Directory paths for this build. In a golden build, `dir.package` points to
  * `golden/` instead of `package/`.

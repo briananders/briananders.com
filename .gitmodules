@@ -1,4 +1,4 @@
 [submodule "visual-diffs"]
 	path = visual-diffs
-	url = git@github.com:briananders/briananders.net-visual-diffs.git
+	url = git@github.com:briananders/briananders.com-visual-diffs.git
 	shallow = true
