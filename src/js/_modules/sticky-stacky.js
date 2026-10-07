@@ -1,4 +1,3 @@
-/* eslint-disable max-classes-per-file */
 /**
  * Class representing an individual StickyStacky element controller.
  * Manages sticky positioning, stuck states, and CSS custom properties for a sticky container.
@@ -230,6 +229,5 @@ module.exports.init = () => {
     Instantiating a StickyController class with the stickyContainers
     triggers the calculation and update of all sticky stacky elements
   */
-  // eslint-disable-next-line no-new
   new StickyController(stickyContainers);
 };

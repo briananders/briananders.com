@@ -169,8 +169,7 @@ class Variant {
  */
 ready.document(() => {
   const colors = ['red', 'green', 'blue'];
-  // eslint-disable-next-line no-unused-vars
-  const instances = colors.map((color, index) => new Variant({
+  colors.forEach((color, index) => new Variant({
     controllerElement: document.querySelector(`[data-controller=${color}]`),
     variantCanvasElement: document.getElementById(`variant-${color}`),
     speed: index + 1,
