@@ -8,6 +8,7 @@ const T_CYCLE = 60;
 const N_BASE = 20;
 const THETA_MAX = Math.PI / 4;
 const CENTER_X = WIDTH / 2;
+const PULSE_DURATION = 0.22;
 
 // A major scale frequencies across octaves (A2–A6)
 // A, B, C#, D, E, F#, G#
@@ -68,6 +69,7 @@ let trailsCheckbox;
 
 // Track previous bob X positions for crossing detection
 let prevBobX = [];
+let pulseRemaining = [];
 
 /**
  * Returns the tone frequency for pendulum i.
@@ -279,7 +281,8 @@ function drawPendulum(i) {
   const pivotX = CENTER_X;
   const bobX = pivotX + (length * Math.sin(theta));
   const bobY = PIVOT_Y + (length * Math.cos(theta));
-  const bobRadius = 14;
+  const pulse = ((pulseRemaining[i] || 0) / PULSE_DURATION) ** 2;
+  const bobRadius = 14 * (1 + (0.35 * pulse));
 
   const color = pendulumColor(i, numPendulums);
 
@@ -299,6 +302,13 @@ function drawPendulum(i) {
   ctx.strokeStyle = 'rgba(0, 0, 0, 0.3)';
   ctx.lineWidth = 1;
   ctx.stroke();
+
+  // Fast attack and soft decay, synchronized with the tone's onset.
+  if (pulse > 0) {
+    ctx.strokeStyle = `rgba(255, 255, 255, ${pulse})`;
+    ctx.lineWidth = 3;
+    ctx.stroke();
+  }
 }
 
 /**
@@ -315,7 +325,7 @@ function drawPivot() {
 }
 
 /**
- * Checks each pendulum for center-line crossings and plays tones.
+ * Checks each pendulum for center-line crossings and triggers tones and pulses.
  */
 function checkCrossings() {
   for (let i = 0; i < numPendulums; i++) {
@@ -327,6 +337,7 @@ function checkCrossings() {
       if ((prev < CENTER_X && currentX >= CENTER_X)
         || (prev > CENTER_X && currentX <= CENTER_X)) {
         playTone(getTone(i), i);
+        pulseRemaining[i] = PULSE_DURATION;
       }
     }
 
@@ -367,6 +378,9 @@ function animate(timestamp) {
   lastTimestamp = timestamp;
 
   time += dt * speed;
+
+  // Use real elapsed time so pulses stay crisp at every simulation speed.
+  pulseRemaining = pulseRemaining.map((remaining) => Math.max(0, remaining - dt));
 
   checkCrossings();
   render();
@@ -421,6 +435,7 @@ function resetSimulation() {
   time = 0;
   lastTimestamp = null;
   prevBobX = [];
+  pulseRemaining = [];
 
   if (paused) {
     render();
@@ -472,6 +487,7 @@ function addEventListeners() {
     numPendulums = parseInt(countSlider.value, 10);
     countOutput.textContent = numPendulums;
     prevBobX = [];
+    pulseRemaining = [];
   });
 
   speedSlider.addEventListener('input', () => {
