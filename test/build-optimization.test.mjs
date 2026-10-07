@@ -3,6 +3,8 @@ import assert from 'node:assert/strict';
 import { createRequire } from 'node:module';
 import { EventEmitter } from 'node:events';
 import { mkdtemp, readFile, writeFile, mkdir, rm } from 'node:fs/promises';
+import { createServer } from 'node:http';
+import { spawn } from 'node:child_process';
 import os from 'node:os';
 import path from 'node:path';
 const require = createRequire(import.meta.url);
@@ -151,4 +153,49 @@ test('preview readiness fires once even after repeated rebuild completion events
   }
   assert.equal(count, 1);
   assert.equal(completionFlags.PREVIEW_READY, true);
+});
+
+test('dev server gracefully handles port collision and respects PORT override', async () => {
+  // Bind an ephemeral port so we guarantee a port collision without interfering with port 3000.
+  const dummyServer = createServer((request, response) => {
+    response.end();
+  });
+
+  await new Promise((resolve) => {
+    dummyServer.listen(0, resolve);
+  });
+
+  const occupiedPort = dummyServer.address().port;
+
+  try {
+    const devServerProcess = spawn('node', ['index.js'], {
+      cwd: process.cwd(),
+      env: {
+        ...process.env,
+        PORT: String(occupiedPort),
+        NODE_ENV: 'development',
+      },
+    });
+
+    let combinedOutput = '';
+    devServerProcess.stdout.on('data', (chunk) => {
+      combinedOutput += chunk.toString();
+    });
+    devServerProcess.stderr.on('data', (chunk) => {
+      combinedOutput += chunk.toString();
+    });
+
+    const exitCode = await new Promise((resolve) => {
+      devServerProcess.on('exit', resolve);
+    });
+
+    // The process should cleanly exit with code 1 instead of crashing with an uncaught exception.
+    assert.equal(exitCode, 1);
+    assert.match(combinedOutput, new RegExp(`Port ${occupiedPort} is already in use`));
+    assert.doesNotMatch(combinedOutput, /Cannot read properties of null/);
+  } finally {
+    await new Promise((resolve) => {
+      dummyServer.close(resolve);
+    });
+  }
 });

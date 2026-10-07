@@ -32,17 +32,28 @@ These paths are **preserved during deploys** via `s3-upload-allowlist.json` and 
 
 | S3 Path | Description | Consumer |
 |---|---|---|
-| `/last-fm-history/` | Pre-processed Last.fm scrobble data (JSON files + images) for the Music Listening History page | `src/js/posts/last-fm-scrobbles.js` |
+| `/last-fm-history/` | Pre-processed Last.fm scrobble data (JSON reports, monthly trends, images) for both listening dashboards and the homepage album list | `src/js/_modules/last-fm/` |
 | `/band-news/` | Aggregated music news articles matching followed bands (`articles.json`) | `src/js/posts/music-news.js` |
 | `/data/` | Static JSON datasets (word lists for Wordle/Wordscapes solvers) | Various post scripts |
 | `/movies/` | Movie/IMDb ratings data | `src/js/posts/imdb-ratings.js` |
 
-### Last.fm API Integration
+### Last.fm Listening Dashboards
 
-The site also calls the **Last.fm API** directly from the browser for the real-time scrobbles page:
-- API endpoint: `https://ws.audioscrobbler.com/2.0/`
-- User: `imbanders`
-- Configuration: `src/js/_modules/last-fm/config.js`
+`/posts/last-fm/` (recent, rolling windows) and `/posts/last-fm-scrobbles/` (history, every period type) share one dashboard: the `src/partials/last-fm-dashboard.ejs` shell, `src/styles/posts/_last-fm-dashboard.scss`, and the controller in `src/js/_modules/last-fm/dashboard.js`. The browser never calls the Last.fm API; everything is read from `/last-fm-history/` (user `imbanders`):
+
+| Path | Shape | Used for |
+|---|---|---|
+| `reports/index.json` | Every published period, grouped by type (`all-time`, `rolling`, `year`, `quarter`, `month`, `week`) | Period pickers, "previous period" comparisons |
+| `reports/{type}_{period}.json` | `totalScrobbles` + top-50 `artists` / `albums` (rolling reports also carry `startDate`/`endDate`) | KPIs, covers, bars, focus, movers |
+| `reports/year_totals.json` | Scrobbles per year | Year columns |
+| `reports/last_updated.json` | Data freshness | "Last updated", clipping in-progress periods |
+| `trends/years/{YYYY}.json` | Monthly totals | Heatmap, 24-month timeline, year dialog |
+| `trends/artists/{slug}.json`, `trends/albums/{artist}/{album}.json` | Monthly plays | Drill-down dialog |
+| `images/{hash}` (`.avif`/`.webp`/`.jpg`) | Cover and artist art | `<api-image>` |
+
+Trend slugs are lowercase with everything outside `[a-z0-9 -]` removed and whitespace collapsed to `-` (no accent folding): see `slugify()` in `data.js`. URL state: `?type=&period=` for the period, `?trends=artists/…` for the dialog.
+
+Every panel compares against one report per period (`comparisonFor()` in `data.js`). Top albums and Top artists show each item's count there: the previous period's count for calendar periods; for rolling windows, which have no earlier window of equal length, the longer window's count scaled to this window's days ("usual"). A report only lists its top 50, so an item missing from the comparison report has no count there: for months, quarters and years the dashboard reads the real count (often 0) from that item's monthly trend file (`resolveMissing()`); weeks and rolling windows don't line up with months, so they show the honest bound "≤ N", where N is the comparison list's #50 count. Report and trend counts matched exactly in spot checks of a year, a quarter and a month.
 
 ## Tech Stack
 
@@ -136,7 +147,7 @@ The site also calls the **Last.fm API** directly from the browser for the real-t
 │   │   └── posts/              # Per-post styles
 │   ├── js/                     # JavaScript source
 │   │   ├── _modules/           # Shared modules (analytics, dark-mode, etc.)
-│   │   ├── _components/        # Reusable components (album-listing, year-listing, etc.)
+│   │   ├── _components/        # Reusable components (album-listing, api-image, last-updated, etc.)
 │   │   └── posts/              # Per-post entry scripts
 │   ├── images/                 # Source images + their committed .avif twins and avif-manifest.json
 │   ├── videos/                 # Source videos
@@ -505,7 +516,7 @@ Branch flow: feature branch (from `staging`) → PR into `staging` → `staging`
 
 1. **Interactive experiments** — Canvas animations (lissajous curves, cellular automata, moire patterns, polar clock), browser games (minesweeper, yahtzee, coin flip), audio visualizations (polyrhythm, sound frequency slider)
 2. **Developer tools** — Wordle solver, Wordscapes solver, browser diagnostics
-3. **Music features** — Last.fm scrobble visualizations (real-time API + historical data), music listening history breakdowns, music news aggregation from followed bands
+3. **Music features** — Last.fm listening dashboards (recent windows + full history, with artist/album drill-downs), music news aggregation from followed bands
 4. **CSS/HTML demos** — Layout examples, animation techniques, design system documentation
 5. **Personal content** — Drum cover videos (Banders Drums YouTube channel), podcast links (Bat Lessons), about/contributions page
 6. **Developer notes** — Git tips, aliases, configuration guides

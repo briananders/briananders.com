@@ -114,6 +114,12 @@
     <changefreq>yearly</changefreq>
   </url>
   <url>
+    <loc>https://briananders.com/posts/pendulum-wave/</loc>
+    <lastmod>2026-10-07</lastmod>
+    <priority>0.8</priority>
+    <changefreq>yearly</changefreq>
+  </url>
+  <url>
     <loc>https://briananders.com/posts/paint/</loc>
     <lastmod>2018-07-18</lastmod>
     <priority>0.8</priority>
