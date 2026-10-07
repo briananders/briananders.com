@@ -1,0 +1,101 @@
+<%#
+  Last.fm listening dashboard shell. Shared by /posts/last-fm/ (mode: 'recent')
+  and /posts/last-fm-scrobbles/ (mode: 'history'). Panel headings render here
+  so the page reads without JavaScript; src/js/_modules/last-fm/dashboard.js
+  fills every [data-lfm] body.
+%>
+<% const isHistory = locals.mode === 'history'; %>
+<div class="lfm content" data-lfm-dashboard data-mode="<%= isHistory ? 'history' : 'recent' %>">
+
+  <div class="lfm-toolbar">
+    <p class="lfm-overline" id="lfm-periods-label"><%= isHistory ? 'Time span' : 'Window' %></p>
+    <div class="lfm-segments<%= isHistory ? '' : ' lfm-segments--windows' %>" role="group" aria-labelledby="lfm-periods-label" data-lfm="periods"></div>
+    <% if (isHistory) { %>
+      <div class="lfm-stepper" data-lfm="stepper" hidden></div>
+    <% } %>
+    <p class="lfm-toolbar__range" data-lfm="range" aria-live="polite">Loading listening data…</p>
+  </div>
+
+  <div class="lfm-grid" data-lfm="grid" aria-busy="true">
+
+    <section class="lfm-panel lfm-panel--kpis" aria-labelledby="lfm-kpis-title">
+      <h2 class="sr-only" id="lfm-kpis-title">At a glance</h2>
+      <dl class="lfm-kpis is-skeleton" data-lfm="kpis">
+        <% for (let i = 0; i < 4; i++) { %><div class="lfm-kpi"></div><% } %>
+      </dl>
+    </section>
+
+    <% if (!isHistory) { %>
+      <section class="lfm-panel lfm-panel--timeline" aria-labelledby="lfm-timeline-title">
+        <header class="lfm-panel__header">
+          <p class="lfm-overline">Context</p>
+          <h2 class="lfm-panel__title" id="lfm-timeline-title">The last two years</h2>
+          <p class="lfm-panel__note" data-lfm="timeline-note">Scrobbles per month.</p>
+        </header>
+        <div class="lfm-panel__body is-skeleton" data-lfm="timeline"></div>
+      </section>
+    <% } %>
+
+    <section class="lfm-panel lfm-panel--albums" aria-labelledby="lfm-albums-title">
+      <header class="lfm-panel__header">
+        <p class="lfm-overline">On repeat</p>
+        <h2 class="lfm-panel__title" id="lfm-albums-title">Top albums</h2>
+        <p class="lfm-panel__note" data-lfm="albums-note" hidden></p>
+      </header>
+      <div class="lfm-panel__body is-skeleton" data-lfm="albums"></div>
+      <button type="button" class="button ghost lfm-panel__more" data-lfm="albums-toggle" aria-expanded="false" hidden>Show more</button>
+    </section>
+
+    <section class="lfm-panel lfm-panel--artists" aria-labelledby="lfm-artists-title">
+      <header class="lfm-panel__header">
+        <p class="lfm-overline">Most played</p>
+        <h2 class="lfm-panel__title" id="lfm-artists-title">Top artists</h2>
+        <p class="lfm-panel__note" data-lfm="artists-note" hidden></p>
+      </header>
+      <div class="lfm-panel__body is-skeleton" data-lfm="artists"></div>
+      <button type="button" class="button ghost lfm-panel__more" data-lfm="artists-toggle" aria-expanded="false" hidden>Show more</button>
+    </section>
+
+    <section class="lfm-panel lfm-panel--focus" aria-labelledby="lfm-focus-title">
+      <header class="lfm-panel__header">
+        <p class="lfm-overline">Focus</p>
+        <h2 class="lfm-panel__title" id="lfm-focus-title">Where the plays went</h2>
+        <p class="lfm-panel__note" data-lfm="focus-note"></p>
+      </header>
+      <div class="lfm-panel__body is-skeleton" data-lfm="focus"></div>
+    </section>
+
+    <section class="lfm-panel lfm-panel--movers" aria-labelledby="lfm-movers-title">
+      <header class="lfm-panel__header">
+        <p class="lfm-overline">Momentum</p>
+        <h2 class="lfm-panel__title" id="lfm-movers-title">Rising and cooling</h2>
+        <p class="lfm-panel__note" data-lfm="movers-note"></p>
+      </header>
+      <div class="lfm-panel__body is-skeleton" data-lfm="movers"></div>
+    </section>
+
+    <% if (isHistory) { %>
+      <section class="lfm-panel lfm-panel--years" aria-labelledby="lfm-years-title">
+        <header class="lfm-panel__header">
+          <p class="lfm-overline">The long view</p>
+          <h2 class="lfm-panel__title" id="lfm-years-title">Scrobbles per year</h2>
+          <p class="lfm-panel__note">Select a year to load it.</p>
+        </header>
+        <div class="lfm-panel__body is-skeleton" data-lfm="years"></div>
+      </section>
+
+      <section class="lfm-panel lfm-panel--heatmap" aria-labelledby="lfm-heatmap-title">
+        <header class="lfm-panel__header">
+          <p class="lfm-overline">Rhythm</p>
+          <h2 class="lfm-panel__title" id="lfm-heatmap-title">Month by month</h2>
+          <p class="lfm-panel__note">Brighter means more scrobbles. Select a month to load it.</p>
+        </header>
+        <div class="lfm-panel__body is-skeleton" data-lfm="heatmap"></div>
+      </section>
+    <% } %>
+  </div>
+
+  <div class="lfm-footer">
+    <last-updated source="scrobbles"></last-updated>
+  </div>
+</div>

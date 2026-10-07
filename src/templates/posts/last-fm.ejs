@@ -16,42 +16,10 @@ scripts:
 - 'posts/last-fm'
 ---
 
-<div class="container">
+<div class="content">
   <p>
-    I track my listening habits to see what I've been enjoying. Here is the music I have been playing recently, split by top albums and top artists.
+    Pick a window to see what has been on repeat. Select any album or artist for its full listening history, or dig through every year, month, and week in the <%- inlineLink('music listening history', { href: '/posts/last-fm-scrobbles/' }) %>.
   </p>
 </div>
 
-<form class="content time-selector">
-  <p>How far back do you want to see?</p>
-  <select name="period" aria-label="Data period of time">
-    <option value="7day">7 days</option>
-    <option value="30day" selected>30 days</option>
-    <option value="90day">90 days</option>
-    <option value="6month">6 months</option>
-    <option value="12month">12 months</option>
-    <option value="2year">2 years</option>
-  </select>
-</form>
-
-<section class="content">
-  <h2>Top Albums</h2>
-  <div class='last-fm-module p' data-type="albums" src="/images/posts/last-fm/default.jpg">
-    <% for (let i=0; i < 10; i++) { %>
-      <%- defaultLastFMModule(); %>
-        <% } %>
-  </div>
-
-  <last-updated source="scrobbles"></last-updated>
-</section>
-
-<section class="content">
-  <h2>Top Artists</h2>
-  <div class='last-fm-module p' data-type="artists">
-    <% for (let i=0; i < 10; i++) { %>
-      <%- defaultLastFMModule(false); %>
-        <% } %>
-  </div>
-
-  <last-updated source="scrobbles"></last-updated>
-</section>
+<%- partial('last-fm-dashboard', { ...locals, mode: 'recent' }) %>

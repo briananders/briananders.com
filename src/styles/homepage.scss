@@ -1,7 +1,7 @@
 @use 'system/utilities' as *;
 @use "./modules/contributions" as *;
 @use "modules/posts-list" as *;
-@use "posts/last-fm" as *;
+@use "modules/last-fm-module" as *;
 
 main.home {
 
