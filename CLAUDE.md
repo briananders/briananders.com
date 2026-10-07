@@ -486,7 +486,7 @@ Source file changes dispatch by path:
 | `npm run lint` | ESLint on `build/`, `src/js/`, `bin/` (check only; `lint:src` / `lint:build` auto-fix) |
 | `npm run preview:production` | Serve the production build locally |
 | `npm run scaffold -- --path=/path` | Create new page boilerplate |
-| `npm run screenshot -- /path/ ...` | Contact-sheet screenshots of the built site at 360/600/800/1024/1440px, plus a viewport-edge layout check that exits 2 on a flag (see AGENTS.md §1) |
+| `npm run screenshot -- /path/ ...` | Contact-sheet screenshots of the built site at 360/600/768/960/1024/1440px, plus a viewport-edge layout check that exits 2 on a flag (see AGENTS.md §1) |
 | `npm run visual-diff` | Run visual regression tests (Brian's machine only) |
 
 ### Deployment

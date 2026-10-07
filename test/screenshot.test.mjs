@@ -8,12 +8,12 @@ const {
   parseArgs, slugify, planSheet, packWidths, sheetName, findEdgeOverflow,
 } = require('../bin/screenshot.js');
 
-test('parseArgs defaults to the home page at the five Directive 6 widths, dark scheme', () => {
+test('parseArgs defaults to the home page at the six Directive 6 widths, dark scheme', () => {
   assert.deepEqual(parseArgs([]), {
     paths: ['/'],
     dir: 'package',
     out: 'screenshots',
-    widths: [360, 600, 800, 1024, 1440],
+    widths: [360, 600, 768, 960, 1024, 1440],
     schemes: ['dark'],
     sheetHeight: 3000,
   });
@@ -54,6 +54,11 @@ test('planSheet places columns side by side and crops only columns taller than t
 });
 
 test('packWidths keeps sheets narrow enough to read once scaled down', () => {
+  assert.deepEqual(
+    packWidths([360, 600, 768, 960, 1024, 1440]),
+    [[360, 600, 768], [960, 1024], [1440]],
+    'the default widths group by grid tier'
+  );
   assert.deepEqual(packWidths([360, 600, 800, 1024, 1440]), [[360, 600, 800], [1024, 1440]]);
   assert.deepEqual(packWidths([375, 768, 1280]), [[375, 768, 1280]]);
   assert.deepEqual(packWidths([3000, 360]), [[3000], [360]], 'an over-wide capture gets its own sheet');

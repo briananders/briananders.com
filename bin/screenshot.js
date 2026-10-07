@@ -21,7 +21,7 @@
  * Options:
  *   --dir=<path>        Built site to serve (default: package)
  *   --out=<path>        Output directory (default: screenshots)
- *   --widths=360,600    Viewport widths in CSS px (default: 360,600,800,1024,1440)
+ *   --widths=360,600    Viewport widths in CSS px (default: 360,600,768,960,1024,1440)
  *   --schemes=dark      prefers-color-scheme values (default: dark; the site is
  *                       dark-only, so add light only once a light theme exists)
  *   --sheet-height=N    Crop each contact-sheet column to N px (default: 3000)
@@ -66,7 +66,7 @@ function parseArgs(argv) {
     paths: [],
     dir: 'package',
     out: 'screenshots',
-    widths: [360, 600, 800, 1024, 1440],
+    widths: [360, 600, 768, 960, 1024, 1440],
     schemes: ['dark'],
     sheetHeight: 3000,
   };
@@ -141,7 +141,7 @@ function planSheet(shots, sheetHeight) {
  * `SHEET.maxNaturalWidth`.
  *
  * @param {number[]} widths - Viewport widths in display order.
- * @returns {number[][]} e.g. `[[360, 600, 800], [1024, 1440]]`
+ * @returns {number[][]} e.g. `[[360, 600, 768], [960, 1024], [1440]]`
  */
 function packWidths(widths) {
   const groups = [];
@@ -166,7 +166,7 @@ function packWidths(widths) {
  *
  * @param {string} scheme - `dark` or `light`.
  * @param {number[]} group - Widths on the sheet.
- * @returns {string} e.g. `sheet-dark-360-800.png`
+ * @returns {string} e.g. `sheet-dark-360-768.png`
  */
 function sheetName(scheme, group) {
   const range = group.length > 1 ? `${group[0]}-${group[group.length - 1]}` : `${group[0]}`;

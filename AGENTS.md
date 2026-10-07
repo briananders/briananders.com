@@ -17,7 +17,7 @@ Follow all ten on every task, pull request and code change. The numbered section
 
 4. **Static analysis.** Follow every lint rule. Your change adds no new lint warnings or errors (§0).
 5. **Documentation.** Comment the why behind complex logic, not just the what. When a change alters setup, architecture or core usage, update README.md and the affected docs (CLAUDE.md, AGENTS.md, DESIGN_SYSTEM.md) in the same change.
-6. **Responsive layout.** Check every UI change for overflow, broken wrapping and squeezed components at 360, 600, 800, 1024 and 1440 px. A change that breaks out of its container or degrades the experience at any of these widths is rejected (§1).
+6. **Responsive layout.** Check every UI change for overflow, broken wrapping and squeezed components at 360, 600, 768, 960, 1024 and 1440 px. A change that breaks out of its container or degrades the experience at any of these widths is rejected (§1).
 
 ### Testing
 
@@ -47,7 +47,7 @@ If a step can't run, name it and say why. Unverified is not done.
 ## 1. Screenshots and responsive layout
 
 - Capture every page whose rendered output changed. If you changed shared SCSS, a partial or a layout, also capture `/` and `/posts/design-system/`.
-- Run `npm run build`, then `npm run screenshot -- <path> [<path> ...]`. The script captures full pages at the five Directive 6 widths and writes two contact sheets per page: `screenshots/<page>/sheet-dark-360-800.png` and `sheet-dark-1024-1440.png`.
+- Run `npm run build`, then `npm run screenshot -- <path> [<path> ...]`. The script captures full pages at the six Directive 6 widths and writes three contact sheets per page in `screenshots/<page>/`: `sheet-dark-360-768.png` (4- and 8-column grids), `sheet-dark-960-1024.png` (narrowest 12-column) and `sheet-dark-1440.png`.
 - Layout check: at each width the script flags visible content that crosses the viewport edge, and exits 2 if it finds any.
   - The site clips horizontal overflow, so these bugs never show a scrollbar. Content is just cut off.
   - Fix every flag your change caused. A flag on an element your change didn't touch is pre-existing: report it, don't fix it (Directive 3).
