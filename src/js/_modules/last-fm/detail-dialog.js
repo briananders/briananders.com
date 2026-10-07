@@ -60,7 +60,9 @@ function createDetailDialog({ onClose, asOf }) {
    * @param {Array<[string, string]>} facts - Label/value pairs.
    * @returns {HTMLElement} Definition list.
    */
-  const factList = (facts) => h('dl', { class: 'lfm-facts' }, facts.map(([label, value]) => h('div', { class: 'lfm-facts__item' }, [
+  const factList = (facts) => h('dl', { class: 'lfm-facts' }, facts.map(([label, value]) => h('div', {
+    class: 'lfm-facts__item',
+  }, [
     h('dt', { text: label }),
     h('dd', { text: value })
   ])));
@@ -114,7 +116,9 @@ function createDetailDialog({ onClose, asOf }) {
       factList([
         ['Total plays', format.number(total)],
         ['First scrobbled', facts.first ? format.monthLabel(facts.first) : '—'],
-        ['Peak month', facts.peak ? `${format.monthLabel(facts.peak.month)} · ${format.number(facts.peak.value)}` : '—'],
+        ['Peak month', facts.peak
+          ? `${format.monthLabel(facts.peak.month)} · ${format.number(facts.peak.value)}`
+          : '—'],
         ['Active months', format.number(facts.activeMonths)]
       ]),
       h('h3', { class: 'lfm-dialog__section', text: 'Plays per month' }),

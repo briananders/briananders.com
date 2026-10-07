@@ -1,13 +1,19 @@
+/* eslint-disable max-classes-per-file */
 /**
  * Class representing an individual StickyStacky element controller.
  * Manages sticky positioning, stuck states, and CSS custom properties for a sticky container.
  */
 class StickyStacky {
   #previousHeights;
+
   #containerElement;
+
   stickyElement;
+
   top;
+
   height;
+
   isStuck;
 
   /**
@@ -27,8 +33,8 @@ class StickyStacky {
    * @returns {void}
    */
   update() {
-    /* 
-      Determine if the bar should be stuck by comparing the (scroll position 
+    /*
+      Determine if the bar should be stuck by comparing the (scroll position
       of page) + (how much the stack is peeking) to the top of the .sticky-container element.
     */
     this.isStuck = window.pageYOffset + (this.#previousHeights + this.#getCurrentTransform()) > this.top;
@@ -80,8 +86,11 @@ class StickyStacky {
  */
 class StickyController {
   #scrollHeight;
+
   #transformTop;
+
   #maxTransform;
+
   #stickyStacks;
 
   /**
@@ -106,9 +115,9 @@ class StickyController {
     let height = 0;
     const stuckStacks = this.#getStuckStacks()
       .sort((stackA, stackB) => (stackA.top < stackB.top ? -1 : 1));
-    
+
     stuckStacks.forEach((stuckStack, index) => {
-      if (index === stuckStacks.length - 1) { 
+      if (index === stuckStacks.length - 1) {
         // last stuck element gets the shadow
         this.#maxTransform = 0 - height; // set global variable. Must be a negative number.
         // stuckStack.stickyElement.classList.add('shadow');
@@ -149,11 +158,11 @@ class StickyController {
     this.#calculateMaxTransform(); // sets maxTransform value.
 
     // Don't make any changes if the scroll depth hasn't changed.
-    if (this.#scrollHeight !== window.pageYOffset) { 
+    if (this.#scrollHeight !== window.pageYOffset) {
       // determine the scroll depth difference
-      const diff = this.#scrollHeight - window.pageYOffset; 
+      const diff = this.#scrollHeight - window.pageYOffset;
       // set global variable value for next time. Effectively caching the current value for later.
-      this.#scrollHeight = window.pageYOffset; 
+      this.#scrollHeight = window.pageYOffset;
       // calculate the peeking depth. It cannot be greater than zero or less than the maxTransform
       this.#transformTop = Math.max(Math.min(this.#transformTop + diff, 0), this.#maxTransform);
       // set the peeking depth in the CSS variable
@@ -169,7 +178,7 @@ class StickyController {
    * @param {NodeList|Array<HTMLElement>} containerNodeList - List of `.sticky-container` elements.
    */
   constructor(containerNodeList) {
-    /* 
+    /*
       Since the querySelectorAll function returns NodeLists,
       convert this to an Array so we can use .map and .forEach on it.
     */
@@ -186,7 +195,7 @@ class StickyController {
       .sort((stackA, stackB) => (stackA.top < stackB.top ? -1 : 1));
 
     /*
-      Set incrementally higher z-index values to ensure the 
+      Set incrementally higher z-index values to ensure the
       shadows cascade without overlapping
     */
     this.#stickyStacks.forEach((stack, index) => {
@@ -221,5 +230,6 @@ module.exports.init = () => {
     Instantiating a StickyController class with the stickyContainers
     triggers the calculation and update of all sticky stacky elements
   */
+  // eslint-disable-next-line no-new
   new StickyController(stickyContainers);
 };

@@ -135,11 +135,14 @@ module.exports = function Slider(parent) {
 
     for (let scale = 0; scale < tones.numberOfScales; scale++) {
       tones.order.forEach((tone) => {
+        const toneKey = `${tone}${scale}`;
+        const label = `${scale} ${tones.labels[tone]}`;
+        const toneHertz = tones.hertz[toneKey];
         const optionElement = document.createElement('option');
-        optionElement.value = tones.hertz[`${tone}${scale}`];
-        optionElement.innerHTML = `${scale} ${tones.labels[tone]} ${labelDashes(`${scale} ${tones.labels[tone]}`, `${tones.hertz[`${tone}${scale}`]}`)} ${tones.hertz[`${tone}${scale}`]}`;
+        optionElement.value = toneHertz;
+        optionElement.innerHTML = `${label} ${labelDashes(label, `${toneHertz}`)} ${toneHertz}`;
 
-        if (`${tone}${scale}` === DEFAULT_TONE) {
+        if (toneKey === DEFAULT_TONE) {
           optionElement.selected = 'selected';
         }
 

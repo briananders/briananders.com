@@ -21,15 +21,20 @@ class Board {
     Private variables
   */
   #element;
+
   #board;
 
   /*
     Public variables
   */
   width = 0;
+
   height = 0;
+
   antsEaten = 0;
+
   antEatersEaten = 0;
+
   antEatersKilled = 0;
 
   /*
@@ -470,7 +475,8 @@ class Board {
   /**
    * Retrieves current simulation statistics and population counts.
    *
-   * @returns {{antsCount: number, antEatersCount: number, antsEaten: number, antEatersEaten: number, antEatersKilled: number}} Current score snapshot.
+   * @returns {{antsCount: number, antEatersCount: number, antsEaten: number,
+   *   antEatersEaten: number, antEatersKilled: number}} Current score snapshot.
    */
   getScores() {
     return {

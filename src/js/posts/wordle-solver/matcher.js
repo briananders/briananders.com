@@ -45,21 +45,6 @@ module.exports = function Matcher({
   }
 
   /**
-   * Confirms that none of the target letters appear in the candidate word.
-   *
-   * @param {string} word - The candidate word.
-   * @param {string[]} letters - The array of disallowed letters.
-   * @returns {boolean} True if no letter in letters is found within word.
-   */
-  function none(word, letters) {
-    for (let i = 0; i < letters.length; i++) {
-      const currentLetter = letters[i];
-      if (word.includes(currentLetter)) return false;
-    }
-    return true;
-  }
-
-  /**
    * Validates that fixed-position green letters match the characters of the candidate word.
    *
    * @param {string} word - The candidate word.

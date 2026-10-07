@@ -48,7 +48,9 @@ class CSRSquare extends HTMLElement {
    * @param {string|null} oldValue - The previous value of the attribute.
    * @param {string|null} newValue - The new value of the attribute.
    */
+  // eslint-disable-next-line no-unused-vars
   attributeChangedCallback(name, oldValue, newValue) {
+    // eslint-disable-next-line no-console
     console.log('attributeChangedCallback');
   }
 
@@ -56,6 +58,7 @@ class CSRSquare extends HTMLElement {
    * Lifecycle callback invoked when the element is appended into a document-connected tree.
    */
   connectedCallback() {
+    // eslint-disable-next-line no-console
     console.log('connected');
   }
 
@@ -63,6 +66,7 @@ class CSRSquare extends HTMLElement {
    * Lifecycle callback invoked when the element is disconnected from the document's DOM tree.
    */
   disconnectedCallback() {
+    // eslint-disable-next-line no-console
     console.log('disconnected');
   }
 

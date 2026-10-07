@@ -102,6 +102,7 @@ module.exports = {
                 callbacks.forEach((cb) => cb());
               }
             } catch (err) {
+              // eslint-disable-next-line no-console
               console.error(`Failed to parse response from ${url}:`, err);
               delete pendingRequests[url];
             }

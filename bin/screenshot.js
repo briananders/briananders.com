@@ -451,7 +451,10 @@ async function main() {
             if (result.layout.length > 3) layoutReport.push(`${where}: …and ${result.layout.length - 3} more`);
           }
           const sheetFile = path.join(outDir, slug, sheetName(scheme, groups[g]));
-          const range = groups[g].length > 1 ? `${groups[g][0]}–${groups[g][groups[g].length - 1]}px` : `${groups[g][0]}px`;
+          const group = groups[g];
+          const range = group.length > 1
+            ? `${group[0]}–${group[group.length - 1]}px`
+            : `${group[0]}px`;
           await composeSheet(shots, `${urlPath} · ${scheme} · ${range}`, options.sheetHeight, sheetFile);
           sheets.push(path.relative(ROOT, sheetFile));
         }

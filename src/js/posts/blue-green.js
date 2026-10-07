@@ -73,10 +73,12 @@ ready.document(() => {
 
     chartBlue.innerHTML = blueDiff;
     chartBlue.dataset.value = blueDiff;
-    chartBlue.style.background = `linear-gradient(to left, blue 0%, blue ${blueDiff / 2}%, transparent ${blueDiff / 2}%)`;
+    chartBlue.style.background = 'linear-gradient(to left, blue 0%, '
+      + `blue ${blueDiff / 2}%, transparent ${blueDiff / 2}%)`;
     chartGreen.innerHTML = greenDiff;
     chartGreen.dataset.value = greenDiff;
-    chartGreen.style.background = `linear-gradient(to right, green 0%, green ${greenDiff / 2}%, transparent ${greenDiff / 2}%)`;
+    chartGreen.style.background = 'linear-gradient(to right, green 0%, '
+      + `green ${greenDiff / 2}%, transparent ${greenDiff / 2}%)`;
   }
 
   /**

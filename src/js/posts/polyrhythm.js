@@ -1,5 +1,4 @@
 const ready = require('../_modules/document-ready');
-const windowResize = require('../_modules/window-resize');
 
 let canvasContext;
 let canvas;
@@ -81,7 +80,8 @@ function ColorObject(position) {
    * @param {number} white - Flash intensity between 0 (base color) and 1 (fully white).
    * @returns {string} RGBA CSS color string.
    */
-  this.rgb = (white) => `rgba(${whiteRed(position, white)},${whiteGreen(position, white)},${whiteBlue(position, white)},1)`;
+  this.rgb = (white) => `rgba(${whiteRed(position, white)},`
+    + `${whiteGreen(position, white)},${whiteBlue(position, white)},1)`;
 }
 
 /**
@@ -116,7 +116,6 @@ function Circle(position = 0) {
   let y = radius;
 
   // color
-  const fill = new ColorObject(position);
   const border = new ColorObject(position);
 
   /**

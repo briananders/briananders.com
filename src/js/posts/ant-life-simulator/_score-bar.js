@@ -5,7 +5,9 @@
  */
 class ScoreBar {
   #board;
+
   #antsBarElement;
+
   #antEatersBarElement;
 
   /**

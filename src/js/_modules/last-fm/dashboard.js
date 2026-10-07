@@ -250,7 +250,9 @@ function initDashboard(root) {
       const ok = data.ROLLING_WINDOWS.some((w) => w.key === slug);
       return { type: 'rolling', slug: ok ? slug : DEFAULT_WINDOW };
     }
-    if (!data.PERIOD_TYPES.some((t) => t.key === type) || type === 'all-time') return { type: 'all-time', slug: 'all-time' };
+    if (!data.PERIOD_TYPES.some((t) => t.key === type) || type === 'all-time') {
+      return { type: 'all-time', slug: 'all-time' };
+    }
     const options = periodsOf(type);
     if (!options.length) return { type: 'all-time', slug: 'all-time' };
     return { type, slug: options.some((p) => p.slug === slug) ? slug : options[0].slug };
@@ -410,8 +412,10 @@ function initDashboard(root) {
           const head = `${name}: ${format.number(count)} scrobbles ${during}`;
           if (pace) {
             return before === null
-              ? `${head}, compared with a usual of at most ${format.number(atMost)} at your pace over ${over} (${outside}).`
-              : `${head}, compared with a usual ${format.number(before)} at your pace over ${over}.`;
+              ? `${head}, compared with a usual of at most `
+                + `${format.number(atMost)} at your pace over ${over} (${outside}).`
+              : `${head}, compared with a usual `
+                + `${format.number(before)} at your pace over ${over}.`;
           }
           return before === null
             ? `${head}, compared with at most ${format.number(atMost)} in ${comp.label} (${outside}).`
@@ -575,7 +579,10 @@ function initDashboard(root) {
   const renderRange = (span, comp) => {
     const parts = [];
     if (state.type === 'all-time') {
-      if (span) parts.push(`${format.monthLabel(stats.monthKey(span.start))} – ${format.monthLabel(stats.monthKey(span.end))}`);
+      if (span) {
+        parts.push(`${format.monthLabel(stats.monthKey(span.start))} – `
+          + `${format.monthLabel(stats.monthKey(span.end))}`);
+      }
     } else if (span) {
       parts.push(format.dateRange(span));
       parts.push(`${format.number(span.days)} days`);
@@ -656,7 +663,11 @@ function initDashboard(root) {
     const lastMonth = stats.monthKey(state.asOf);
     const trends = await Promise.all(state.yearTotals.map((row) => data.getTrend(`years/${row.year}`)
       .catch(() => ({ months: [] }))));
-    const series = trends.map((trend, i) => stats.fillMonths(trend.months, `${state.yearTotals[i].year}-01`, `${state.yearTotals[i].year}-12`));
+    const series = trends.map((trend, i) => stats.fillMonths(
+      trend.months,
+      `${state.yearTotals[i].year}-01`,
+      `${state.yearTotals[i].year}-12`
+    ));
     // Months before the first scrobble and after the data's freshness date are
     // "not tracked" (null), which is different from a tracked month of zero.
     const first = (series.flat().find((m) => m.value > 0) || {}).month || '0000-00';

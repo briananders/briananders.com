@@ -45,9 +45,7 @@ module.exports = function Sound() {
     // console.info(gain.gain.value);
     context.resume().then(() => {
       gain.connect(context.destination);
-      gain.gain.exponentialRampToValueAtTime(
-        1, context.currentTime + 0.04
-      );
+      gain.gain.exponentialRampToValueAtTime(1, context.currentTime + 0.04);
     });
   }
 
@@ -58,13 +56,13 @@ module.exports = function Sound() {
    */
   function stop() {
     // console.info(gain.gain.value);
-    gain.gain.exponentialRampToValueAtTime(
-      0.00001, context.currentTime + 0.04
-    );
+    gain.gain.exponentialRampToValueAtTime(0.00001, context.currentTime + 0.04);
     setTimeout(() => {
       try {
         gain.disconnect(context.destination);
-      } catch {}
+      } catch {
+        // Disconnecting an already-disconnected gain node is harmless; ignore.
+      }
       isPlaying = false;
     }, 200);
   }

@@ -3,7 +3,10 @@
   "env": {
     "browser": true,
     "commonjs": true,
-    "es2021": true
+    "es2022": true
+  },
+  "parserOptions": {
+    "ecmaVersion": 2022
   },
   "globals": {
     "describe": false,
@@ -32,6 +35,14 @@
     "no-multi-spaces": 1,
     "no-param-reassign": 0,
     "no-use-before-define": "off",
+    "class-methods-use-this": 0,
+    "func-names": 0,
+    "no-mixed-operators": 0,
+    "no-restricted-globals": ["error", {
+      "name": "event",
+      "message": "Use local parameter instead."
+    }],
+    "max-len": ["error", { "code": 120 }],
     "prefer-destructuring": [1, {
       "array": false,
       "object": true
@@ -51,5 +62,21 @@
         "allowParens": true
       }
     ]
-  }
+  },
+  "overrides": [
+    {
+      "files": ["build/**/*.js", "bin/**/*.js"],
+      "rules": {
+        "no-console": 0
+      }
+    },
+    {
+      "files": ["build/**/*.js"],
+      "rules": {
+        "import/no-unresolved": ["error", {
+          "ignore": ["^svgo$"]
+        }]
+      }
+    }
+  ]
 }

@@ -22,7 +22,8 @@ function escapeHTML(str) {
  * @returns {string} The generated HTML anchor string.
  */
 function articleLink(link, content, classes = '') {
-  return `<a href="${escapeHTML(link)}" class="${classes}" target="_blank" rel="noopener" itemprop="url">${content}</a>`;
+  return `<a href="${escapeHTML(link)}" class="${classes}" `
+    + `target="_blank" rel="noopener" itemprop="url">${content}</a>`;
 }
 
 /**
@@ -44,14 +45,29 @@ function renderArticle(article) {
     .map((band) => `<span class="band-tag">${escapeHTML(band)}</span>`)
     .join('');
 
+  const imageHtml = article.image_url
+    ? articleLink(
+      article.link,
+      '<img loading="lazy" decoding="async" '
+        + `src="${escapeHTML(article.image_url)}" `
+        + `alt="${escapeHTML(article.title)}" class="article-image" />`,
+      'article-image-link'
+    )
+    : '';
+  const titleHtml = articleLink(
+    article.link,
+    escapeHTML(article.title.toLowerCase()),
+    'article-title-link'
+  );
+
   return `
     <div
        class="article-card"
        role="listitem"
        itemscope
        itemtype="https://schema.org/Article">
-       ${article.image_url ? articleLink(article.link, `<img loading="lazy" decoding="async" src="${escapeHTML(article.image_url)}" alt="${escapeHTML(article.title)}" class="article-image" />`, 'article-image-link') : ''}
-      <h2 class="article-title" itemprop="headline">${articleLink(article.link, escapeHTML(article.title.toLowerCase()), 'article-title-link')}</h2>
+       ${imageHtml}
+      <h2 class="article-title" itemprop="headline">${titleHtml}</h2>
       <div class="article-metadata">
         <span class="article-source" itemprop="publisher">${escapeHTML(article.source)}</span> -
         <time datetime="${escapeHTML(article.published)}" itemprop="datePublished">
@@ -192,9 +208,11 @@ function initBandsMarquee(marqueeRootEl, bandsList) {
     const rows = splitBandsIntoMarqueeRows(bandsList);
     const staticRows = rows.map((rowBands) => {
       const inner = renderMarqueeSegmentTags(rowBands);
-      return `<div class="music-news-marquee-row music-news-marquee-row--static"><div class="music-news-marquee-static-inner">${inner}</div></div>`;
+      return '<div class="music-news-marquee-row music-news-marquee-row--static">'
+        + `<div class="music-news-marquee-static-inner">${inner}</div></div>`;
     }).join('');
-    marqueeRootEl.innerHTML = `<div class="music-news-marquee-viewport music-news-marquee-viewport--static">${staticRows}</div>`;
+    marqueeRootEl.innerHTML = '<div class="music-news-marquee-viewport '
+      + `music-news-marquee-viewport--static">${staticRows}</div>`;
     return () => { };
   }
 
@@ -492,6 +510,7 @@ ready.document(() => {
       }
     })
     .catch((error) => {
+      // eslint-disable-next-line no-console
       console.error(error);
       emptyEl.style.display = 'block';
     });

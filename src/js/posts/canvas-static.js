@@ -123,31 +123,7 @@ ready.document(() => {
     setTimeout(play, 1000 / 480);
   }
 
-  /**
-   * Renders the initial full-canvas fill and background trail layers.
-   */
-  function firstDraw() {
-    context.fillStyle = FILL_STYLE;
-    context.strokeStyle = FILL_STYLE;
-    context.fillRect(
-      cellWidth * 0,
-      cellWidth * 0,
-      cellWidth * STEPS,
-      cellWidth * STEPS
-    );
-
-    context.fillStyle = BACKGROUND_STYLE;
-    context.strokeStyle = BACKGROUND_STYLE;
-    context.fillRect(
-      cellWidth * 0,
-      cellWidth * 0,
-      cellWidth * STEPS,
-      cellWidth * STEPS
-    );
-  }
-
   setCanvasDimensions();
-  // firstDraw();
   play();
 
   const graph = new Graph();

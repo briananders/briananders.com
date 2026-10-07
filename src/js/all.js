@@ -83,7 +83,9 @@ function setUpSkipNav() {
   const skipNavButton = skipNavContainer.querySelector('button');
   const nonNavContainerSelectors = ['main', 'footer'];
   const interactiveElements = ['a', 'input', 'button', 'textarea', 'select'];
-  const querySelectors = nonNavContainerSelectors.map((container) => interactiveElements.map((input) => `${container} ${input}`));
+  const querySelectors = nonNavContainerSelectors.map(
+    (container) => interactiveElements.map((input) => `${container} ${input}`)
+  );
 
   skipNavButton.addEventListener('focus', () => {
     skipNavContainer.dataset.state = 'active';

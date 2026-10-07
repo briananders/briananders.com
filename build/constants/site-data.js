@@ -14,7 +14,8 @@ const buildRandom = require('../helpers/build-random');
  *   2. Shell out to `git rev-parse HEAD` at build time.
  *   3. Fall back to `'unknown'` if git is unavailable.
  *
- * @param {{ root: string, build: string }} dir - Directory paths object from `constants/directories`.
+ * @param {{ root: string, build: string }} dir - Directory paths from
+ *   `constants/directories`.
  * @returns {object} Site metadata object exposed to all EJS templates.
  */
 module.exports = (dir) => {
@@ -51,7 +52,8 @@ module.exports = (dir) => {
     /** Package version string from `package.json`. */
     version: pkg.version,
     name: 'Brian Anders',
-    description: "Brian Anders is an Engineering Manager in the tech industry. I'm also a YouTuber, Podcaster, and Musician.",
+    description: 'Brian Anders is an Engineering Manager in the tech industry. '
+      + "I'm also a YouTuber, Podcaster, and Musician.",
     author: 'Brian Anders',
     /** Primary contact URL (Twitter/X profile). */
     contact: twitter,

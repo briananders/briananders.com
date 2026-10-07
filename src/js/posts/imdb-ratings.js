@@ -25,7 +25,9 @@ function getImageUrl(basename) {
 
 const TV_CONTENT_TYPES = new Set(['tvSeries', 'tvMiniSeries', 'tvMovie']);
 
-const MPAA_RANK = { G: 0, PG: 1, 'PG-13': 2, R: 3, 'NC-17': 4 };
+const MPAA_RANK = {
+  G: 0, PG: 1, 'PG-13': 2, R: 3, 'NC-17': 4,
+};
 
 /**
  * Parses a runtime string like "2h 15m" or "45m" into total minutes.
@@ -128,7 +130,10 @@ function renderMovie(movie) {
       rel="noopener noreferrer"
       role="listitem"
     >
-      <api-image src="${imageBase}" alt="${movie.title} poster" loading="lazy" width="${movie.image.width}" height="${movie.image.height}" style="--poster-aspect-ratio: ${movie.image.width} / ${movie.image.height}"></api-image>
+      <api-image src="${imageBase}" alt="${movie.title} poster" loading="lazy"
+        width="${movie.image.width}" height="${movie.image.height}"
+        style="--poster-aspect-ratio: ${movie.image.width} / ${movie.image.height}"
+      ></api-image>
       <div class="movie-info">
         <h2 class="h6">${movie.title} ${typeLabel}</h2>
         <p class="year-runtime">${yearRuntime}</p>
@@ -180,7 +185,7 @@ ready.document(() => {
 
   const params = new URLSearchParams(window.location.search);
   const initialSort = params.get('sort');
-  if (initialSort && sortDropdown.querySelector('option[value="' + initialSort + '"]')) {
+  if (initialSort && sortDropdown.querySelector(`option[value="${initialSort}"]`)) {
     sortDropdown.value = initialSort;
   }
 

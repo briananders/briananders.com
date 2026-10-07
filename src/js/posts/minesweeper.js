@@ -1,5 +1,4 @@
 const ready = require('../_modules/document-ready');
-const urlParams = new URLSearchParams(window.location.search);
 
 /**
  * Initializes the Minesweeper iframe cross-document message listener on DOM ready.
@@ -20,7 +19,7 @@ ready.document(() => {
    */
   window.addEventListener('message', ({ data }) => {
     if (data.indexOf('difficulty') === 0) {
-      const [key, value] = data.split('=');
+      const [, value] = data.split('=');
       const newDifficulty = value.toString();
       iframeElement.dataset.difficulty = newDifficulty;
       // urlParams.set('difficulty', newDifficulty);

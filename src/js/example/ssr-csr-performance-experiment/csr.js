@@ -10,5 +10,6 @@ csrSquare.init();
  * Initializes CSR experiment page once the document is ready.
  */
 ready.document(() => {
+  // eslint-disable-next-line no-console
   console.log('here');
 });

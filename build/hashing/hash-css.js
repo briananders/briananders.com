@@ -19,7 +19,8 @@ const { log } = console;
  * When all CSS files have been renamed, `ASSET_HASH.CSS` is set to `true`
  * and the `assetHashCssListed` event is emitted.
  *
- * @param {{ dir: object, completionFlags: object, buildEvents: EventEmitter, hashingFileNameList: object, debug: boolean }} configs
+ * @param {{ dir: object, completionFlags: object, buildEvents: EventEmitter,
+ *   hashingFileNameList: object, debug: boolean }} configs
  */
 module.exports = function hashCSS({
   dir, completionFlags, buildEvents, hashingFileNameList, debug,

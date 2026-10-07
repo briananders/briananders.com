@@ -122,9 +122,8 @@ class YearSelector extends HTMLElement {
    * @param {string|null} oldValue - The prior value.
    * @param {string|null} newValue - The updated value.
    */
-  attributeChangedCallback(name, oldValue, newValue) {
-    // console.log(name, oldValue, newValue);
-
+  // eslint-disable-next-line no-unused-vars
+  attributeChangedCallback(name, _oldValue, _newValue) {
     if (Date.now() - this.debounceDate < 10) return;
 
     if (['min', 'max', 'value'].includes(name)) {

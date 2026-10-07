@@ -5,13 +5,16 @@ const windowResize = require('../_modules/window-resize');
  * Manages an individual color channel moiré pattern canvas, controls, and rotation animation.
  */
 class Variant {
-
   #playing;
+
   #direction;
 
   #elementPlayButton;
+
   #elementRotationValue;
+
   #elementRotationSlider;
+
   #elementCanvas;
 
   /**
@@ -166,11 +169,10 @@ class Variant {
  */
 ready.document(() => {
   const colors = ['red', 'green', 'blue'];
-  const instances = colors.map((color, index) =>
-    new Variant({
-      controllerElement: document.querySelector(`[data-controller=${color}]`),
-      variantCanvasElement: document.getElementById(`variant-${color}`),
-      speed: index + 1,
-    })
-  );
+  // eslint-disable-next-line no-unused-vars
+  const instances = colors.map((color, index) => new Variant({
+    controllerElement: document.querySelector(`[data-controller=${color}]`),
+    variantCanvasElement: document.getElementById(`variant-${color}`),
+    speed: index + 1,
+  }));
 });
