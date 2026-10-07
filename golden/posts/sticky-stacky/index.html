@@ -17,16 +17,22 @@
     }
   }
 }
-</code></pre> </div> </section> <div class="sticky-container h3"> <nav class="sticky-stacky default-styles"> <div class=container>The JavaScript that drives the scrolling behavior.</div> </nav> </div> <section> <div class=content> <p> Breaking the algorithm into two pieces is the most organized. A class that controls all the sticky navigation bars on the page: StickyController. And a class that updates each sticky navigation bar: StickyStacky. </p> <p> Read through the comments in the JavaScript below. The explanation makes the most sense to me in context. </p> <pre class=code-container style=""><code><span class=hljs-comment>/**
+</code></pre> </div> </section> <div class="sticky-container h3"> <nav class="sticky-stacky default-styles"> <div class=container>The JavaScript that drives the scrolling behavior.</div> </nav> </div> <section> <div class=content> <p> Breaking the algorithm into two pieces is the most organized. A class that controls all the sticky navigation bars on the page: StickyController. And a class that updates each sticky navigation bar: StickyStacky. </p> <p> Read through the comments in the JavaScript below. The explanation makes the most sense to me in context. </p> <pre class=code-container style=""><code><span class=hljs-comment>/* eslint-disable max-classes-per-file */</span>
+<span class=hljs-comment>/**
  * Class representing an individual StickyStacky element controller.
  * Manages sticky positioning, stuck states, and CSS custom properties for a sticky container.
  */</span>
 <span class=hljs-keyword>class</span> <span class="hljs-title class_">StickyStacky</span> {
   #previousHeights;
+
   #containerElement;
+
   stickyElement;
+
   top;
+
   height;
+
   isStuck;
 
   <span class=hljs-comment>/**
@@ -46,8 +52,8 @@
    * <span class=hljs-doctag>@returns</span> {<span class=hljs-type>void</span>}
    */</span>
   <span class="hljs-title function_">update</span>(<span class=hljs-params></span>) {
-    <span class=hljs-comment>/* 
-      Determine if the bar should be stuck by comparing the (scroll position 
+    <span class=hljs-comment>/*
+      Determine if the bar should be stuck by comparing the (scroll position
       of page) + (how much the stack is peeking) to the top of the .sticky-container element.
     */</span>
     <span class="hljs-variable language_">this</span>.<span class=hljs-property>isStuck</span> = <span class="hljs-variable language_">window</span>.<span class=hljs-property>pageYOffset</span> + (<span class="hljs-variable language_">this</span>.#previousHeights + <span class="hljs-variable language_">this</span>.#<span class="hljs-title function_">getCurrentTransform</span>()) &gt; <span class="hljs-variable language_">this</span>.<span class=hljs-property>top</span>;
@@ -99,8 +105,11 @@
  */</span>
 <span class=hljs-keyword>class</span> <span class="hljs-title class_">StickyController</span> {
   #scrollHeight;
+
   #transformTop;
+
   #maxTransform;
+
   #stickyStacks;
 
   <span class=hljs-comment>/**
@@ -125,9 +134,9 @@
     <span class=hljs-keyword>let</span> height = <span class=hljs-number>0</span>;
     <span class=hljs-keyword>const</span> stuckStacks = <span class="hljs-variable language_">this</span>.#<span class="hljs-title function_">getStuckStacks</span>()
       .<span class="hljs-title function_">sort</span>(<span class=hljs-function>(<span class=hljs-params>stackA, stackB</span>) =&gt;</span> (stackA.<span class=hljs-property>top</span> &lt; stackB.<span class=hljs-property>top</span> ? -<span class=hljs-number>1</span> : <span class=hljs-number>1</span>));
-    
+
     stuckStacks.<span class="hljs-title function_">forEach</span>(<span class=hljs-function>(<span class=hljs-params>stuckStack, index</span>) =&gt;</span> {
-      <span class=hljs-keyword>if</span> (index === stuckStacks.<span class=hljs-property>length</span> - <span class=hljs-number>1</span>) { 
+      <span class=hljs-keyword>if</span> (index === stuckStacks.<span class=hljs-property>length</span> - <span class=hljs-number>1</span>) {
         <span class=hljs-comment>// last stuck element gets the shadow</span>
         <span class="hljs-variable language_">this</span>.#maxTransform = <span class=hljs-number>0</span> - height; <span class=hljs-comment>// set global variable. Must be a negative number.</span>
         <span class=hljs-comment>// stuckStack.stickyElement.classList.add(&#x27;shadow&#x27;);</span>
@@ -168,11 +177,11 @@
     <span class="hljs-variable language_">this</span>.#<span class="hljs-title function_">calculateMaxTransform</span>(); <span class=hljs-comment>// sets maxTransform value.</span>
 
     <span class=hljs-comment>// Don&#x27;t make any changes if the scroll depth hasn&#x27;t changed.</span>
-    <span class=hljs-keyword>if</span> (<span class="hljs-variable language_">this</span>.#scrollHeight !== <span class="hljs-variable language_">window</span>.<span class=hljs-property>pageYOffset</span>) { 
+    <span class=hljs-keyword>if</span> (<span class="hljs-variable language_">this</span>.#scrollHeight !== <span class="hljs-variable language_">window</span>.<span class=hljs-property>pageYOffset</span>) {
       <span class=hljs-comment>// determine the scroll depth difference</span>
-      <span class=hljs-keyword>const</span> diff = <span class="hljs-variable language_">this</span>.#scrollHeight - <span class="hljs-variable language_">window</span>.<span class=hljs-property>pageYOffset</span>; 
+      <span class=hljs-keyword>const</span> diff = <span class="hljs-variable language_">this</span>.#scrollHeight - <span class="hljs-variable language_">window</span>.<span class=hljs-property>pageYOffset</span>;
       <span class=hljs-comment>// set global variable value for next time. Effectively caching the current value for later.</span>
-      <span class="hljs-variable language_">this</span>.#scrollHeight = <span class="hljs-variable language_">window</span>.<span class=hljs-property>pageYOffset</span>; 
+      <span class="hljs-variable language_">this</span>.#scrollHeight = <span class="hljs-variable language_">window</span>.<span class=hljs-property>pageYOffset</span>;
       <span class=hljs-comment>// calculate the peeking depth. It cannot be greater than zero or less than the maxTransform</span>
       <span class="hljs-variable language_">this</span>.#transformTop = <span class="hljs-title class_">Math</span>.<span class="hljs-title function_">max</span>(<span class="hljs-title class_">Math</span>.<span class="hljs-title function_">min</span>(<span class="hljs-variable language_">this</span>.#transformTop + diff, <span class=hljs-number>0</span>), <span class="hljs-variable language_">this</span>.#maxTransform);
       <span class=hljs-comment>// set the peeking depth in the CSS variable</span>
@@ -188,7 +197,7 @@
    * <span class=hljs-doctag>@param</span> {<span class=hljs-type>NodeList|Array&lt;HTMLElement&gt;</span>} <span class=hljs-variable>containerNodeList</span> - List of `.sticky-container` elements.
    */</span>
   <span class="hljs-title function_">constructor</span>(<span class=hljs-params>containerNodeList</span>) {
-    <span class=hljs-comment>/* 
+    <span class=hljs-comment>/*
       Since the querySelectorAll function returns NodeLists,
       convert this to an Array so we can use .map and .forEach on it.
     */</span>
@@ -205,7 +214,7 @@
       .<span class="hljs-title function_">sort</span>(<span class=hljs-function>(<span class=hljs-params>stackA, stackB</span>) =&gt;</span> (stackA.<span class=hljs-property>top</span> &lt; stackB.<span class=hljs-property>top</span> ? -<span class=hljs-number>1</span> : <span class=hljs-number>1</span>));
 
     <span class=hljs-comment>/*
-      Set incrementally higher z-index values to ensure the 
+      Set incrementally higher z-index values to ensure the
       shadows cascade without overlapping
     */</span>
     <span class="hljs-variable language_">this</span>.#stickyStacks.<span class="hljs-title function_">forEach</span>(<span class=hljs-function>(<span class=hljs-params>stack, index</span>) =&gt;</span> {
@@ -240,6 +249,7 @@
     Instantiating a StickyController class with the stickyContainers
     triggers the calculation and update of all sticky stacky elements
   */</span>
+  <span class=hljs-comment>// eslint-disable-next-line no-new</span>
   <span class=hljs-keyword>new</span> <span class="hljs-title class_">StickyController</span>(stickyContainers);
 };
 </code></pre> </div> </section> <div class="sticky-container h3"> <nav class="sticky-stacky default-styles"> <div class=container>Conclusion</div> </nav> </div> <section> <div class=content> <p>I hope this has been a helpful and informative way to combine JavaScript, HTML, and CSS in a robust and scalable way. The patterns I use in this solution are more valuable than the solution itself.</p> </div> </section> </main> <link rel=preload media=all href=/styles/modules/footer.css lazyload onload="this.onload=null,this.rel=&#34;stylesheet&#34;" as=style /> <noscript> <link rel=stylesheet media=all href=/styles/modules/footer.css /> </noscript> <footer class="sticky-stacky posts" role=contentinfo aria-label="Site footer"> <div class=content> <div class=copyright> <span> <a itemprop=url href=/ class=brand aria-label="Brian Anders home page"><picture><img src=/images/logo.svg alt="Brian Anders logo" height=34 width=100 /></picture></a> </span> <span>&copy; 2026</span> </div> <div class=links> <span class=block-link-wrapper><a itemprop=url rel=noopener target=blank type=block copy="Bat Lessons" href=https://batlessons.com class=block-link>Bat Lessons&nbsp;<b>&gt;</b></a></span><span class=block-link-wrapper><a itemprop=url type=block copy="Banders Drums" href=/drums class=block-link>Banders Drums&nbsp;<b>&gt;</b></a></span><span class=block-link-wrapper><a itemprop=url rel=noopener target=blank type=block copy=Github href=https://github.com/briananders class=block-link>Github&nbsp;<b>&gt;</b></a></span><span class=block-link-wrapper><a itemprop=url rel=noopener target=blank type=block copy=Instagram href=https://instagram.com/imbanders class=block-link>Instagram&nbsp;<b>&gt;</b></a></span><span class=block-link-wrapper><a itemprop=url rel=noopener target=blank type=block copy=Last.fm href=https://www.last.fm/user/imbanders class=block-link>Last.fm&nbsp;<b>&gt;</b></a></span><span class=block-link-wrapper><a itemprop=url rel=noopener target=blank type=block copy=LinkedIn href=https://www.linkedin.com/in/andersbrian/ class=block-link>LinkedIn&nbsp;<b>&gt;</b></a></span><span class=block-link-wrapper><a itemprop=url rel=me target=blank type=block copy=Mastodon href=https://mastodon.social/@banders class=block-link>Mastodon&nbsp;<b>&gt;</b></a></span><span class=block-link-wrapper><a itemprop=url rel=noopener target=blank type=block copy=Bluesky href=https://bsky.app/profile/imbanders.bsky.social class=block-link>Bluesky&nbsp;<b>&gt;</b></a></span><span class=block-link-wrapper><a itemprop=url rel=noopener target=blank type=block copy=Twitter href=https://twitter.com/imbanders class=block-link>Twitter&nbsp;<b>&gt;</b></a></span><span class=block-link-wrapper><a itemprop=url rel=noopener target=blank type=block copy=YouTube href=https://www.youtube.com/@bandersdrums class=block-link>YouTube&nbsp;<b>&gt;</b></a></span> </div> </div> </footer> </body> </html> 
