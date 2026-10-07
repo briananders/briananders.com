@@ -3,7 +3,8 @@ My personal website, built as a custom static site generator.
 
 ## Documentation
 - **[AGENTS.md](AGENTS.md)** — rules for AI agents working in this repo
-  (definition of done, screenshots, design system, branch flow).
+  (engineering directives, definition of done, screenshots and layout checks,
+  design system, branch flow).
 - **[DESIGN_SYSTEM.md](DESIGN_SYSTEM.md)** — full programmer reference for
   the dark-first, token-driven design system that ships with the site
   (tokens, mixins, class utilities, connective tissue, authoring guide).
@@ -40,7 +41,7 @@ My personal website, built as a custom static site generator.
 - Adding or changing an image in `src/images/`: any build writes its `.avif` next to it and updates `src/images/avif-manifest.json`. Commit both.
 - `npm run lint`: Run ESLint on `build/`, `src/js/`, and `bin/` without fixing anything.
 - `npm run lint:src` / `npm run lint:build`: Run ESLint with `--fix` on the source or build directories.
-- `npm run screenshot -- /path/ ...`: Screenshot pages of the production build at 375, 768, and 1280px into `screenshots/<page>/sheet-dark.png`. Run `npx playwright install chromium` once first.
+- `npm run screenshot -- /path/ ...`: Screenshot pages of the production build at 360, 600, 800, 1024, and 1440px into contact sheets under `screenshots/<page>/`, and flag content cut off at the viewport edge (exits 2 if any). Run `npx playwright install chromium` once first.
 - `npm run visual-diff`: Runs the visual regression diffing script using Playwright/Puppeteer.
 
 ### Building

@@ -1,14 +1,18 @@
 'use strict';
 
 /**
- * Screenshots the built site at the design system's breakpoints and composes
- * one labeled contact sheet per page (and per color scheme, when asked).
+ * Screenshots the built site at the widths AGENTS.md Directive 6 requires,
+ * checks each capture for content escaping the viewport, and composes labeled
+ * contact sheets per page (and per color scheme, when asked).
  *
  * Serves a built directory (default `package/`, so run `npm run build` first),
  * captures a full-page PNG for every page × width × scheme, then stitches the
- * widths side by side so one image shows how a page reflows across the 4-, 8-
- * and 12-column grids. Contact sheets are what agents share: inline in a
- * Claude Code chat thread, or as a workflow artifact in GitHub Actions.
+ * widths side by side so a sheet shows how a page reflows. Widths are split
+ * across sheets so the narrowest column stays legible once the sheet is scaled
+ * down for chat. Contact sheets are what agents share: inline in a Claude Code
+ * chat thread, or as a workflow artifact in GitHub Actions.
+ *
+ * Exits 2 when the layout check flags anything, after writing every sheet.
  *
  * Usage:
  *   npm run screenshot -- /posts/coin-flip/ /about/
@@ -17,7 +21,7 @@
  * Options:
  *   --dir=<path>        Built site to serve (default: package)
  *   --out=<path>        Output directory (default: screenshots)
- *   --widths=375,768    Viewport widths in CSS px (default: 375,768,1280)
+ *   --widths=360,600    Viewport widths in CSS px (default: 360,600,800,1024,1440)
  *   --schemes=dark      prefers-color-scheme values (default: dark; the site is
  *                       dark-only, so add light only once a light theme exists)
  *   --sheet-height=N    Crop each contact-sheet column to N px (default: 3000)
@@ -42,6 +46,9 @@ const SHEET = {
   headerHeight: 64,
   labelHeight: 44,
   maxWidth: 1600,
+  // Widest a sheet may be before scaling to maxWidth; past this, columns shrink
+  // too far to read, so the remaining widths start a new sheet.
+  maxNaturalWidth: 2600,
   background: '#1b1b1b',
   text: '#f5f5f5',
 };
@@ -59,7 +66,7 @@ function parseArgs(argv) {
     paths: [],
     dir: 'package',
     out: 'screenshots',
-    widths: [375, 768, 1280],
+    widths: [360, 600, 800, 1024, 1440],
     schemes: ['dark'],
     sheetHeight: 3000,
   };
@@ -126,6 +133,100 @@ function planSheet(shots, sheetHeight) {
     height: top + tallest + SHEET.pad,
     columns,
   };
+}
+
+/**
+ * Splits viewport widths into contact-sheet groups, in order, starting a new
+ * sheet whenever the next column would push a sheet past
+ * `SHEET.maxNaturalWidth`.
+ *
+ * @param {number[]} widths - Viewport widths in display order.
+ * @returns {number[][]} e.g. `[[360, 600, 800], [1024, 1440]]`
+ */
+function packWidths(widths) {
+  const groups = [];
+  let current = [];
+  let currentWidth = SHEET.pad * 2;
+  widths.forEach((width) => {
+    const added = width + (current.length ? SHEET.gap : 0);
+    if (current.length && currentWidth + added > SHEET.maxNaturalWidth) {
+      groups.push(current);
+      current = [];
+      currentWidth = SHEET.pad * 2;
+    }
+    currentWidth += width + (current.length ? SHEET.gap : 0);
+    current.push(width);
+  });
+  if (current.length) groups.push(current);
+  return groups;
+}
+
+/**
+ * Names a contact sheet after its scheme and width range.
+ *
+ * @param {string} scheme - `dark` or `light`.
+ * @param {number[]} group - Widths on the sheet.
+ * @returns {string} e.g. `sheet-dark-360-800.png`
+ */
+function sheetName(scheme, group) {
+  const range = group.length > 1 ? `${group[0]}-${group[group.length - 1]}` : `${group[0]}`;
+  return `sheet-${scheme}-${range}.png`;
+}
+
+/**
+ * Finds visible elements that cross the left or right edge of the viewport.
+ *
+ * The site clips horizontal overflow, so content that breaks out of the layout
+ * never produces a scrollbar; it is silently cut off. Elements clipped or
+ * scrolled by an ancestor inside the page (a scrollable code block) and
+ * elements entirely off-screen (an off-canvas menu) are intentional and
+ * ignored. Only the outermost escaping element is reported.
+ *
+ * Runs inside the page via `page.evaluate`, so it must be self-contained.
+ *
+ * @param {Window} [win] - Defaults to the page's window.
+ * @returns {Array<{ selector: string, overflow: number }>} Worst first.
+ */
+function findEdgeOverflow(win = window) {
+  const doc = win.document;
+  const viewportWidth = win.innerWidth;
+
+  function isClippedByAncestor(el) {
+    const pageRoots = [doc.body, doc.documentElement];
+    for (let a = el.parentElement; a && !pageRoots.includes(a); a = a.parentElement) {
+      const style = win.getComputedStyle(a);
+      const clips = ['hidden', 'auto', 'scroll', 'clip'].includes(style.overflowX);
+      if (clips || (style.contain || '').includes('paint')) return true;
+    }
+    return false;
+  }
+
+  function selectorFor(el) {
+    const classes = typeof el.className === 'string' ? el.className.trim().split(/\s+/).filter(Boolean) : [];
+    return el.tagName.toLowerCase()
+      + (el.id ? `#${el.id}` : '')
+      + classes.slice(0, 2).map((name) => `.${name}`).join('');
+  }
+
+  const escaping = new Map();
+  Array.from(doc.body.querySelectorAll('*')).forEach((el) => {
+    const rect = el.getBoundingClientRect();
+    const style = win.getComputedStyle(el);
+    if (!rect.width || !rect.height || style.display === 'none' || style.visibility === 'hidden') return;
+    const right = rect.left < viewportWidth - 1 && rect.right > viewportWidth + 1;
+    const left = rect.left < -1 && rect.right > 1;
+    if ((right || left) && !isClippedByAncestor(el)) {
+      escaping.set(el, Math.round(right ? rect.right - viewportWidth : -rect.left));
+    }
+  });
+
+  const outermost = [];
+  escaping.forEach((overflow, el) => {
+    let ancestor = el.parentElement;
+    while (ancestor && !escaping.has(ancestor)) ancestor = ancestor.parentElement;
+    if (!ancestor) outermost.push({ selector: selectorFor(el), overflow });
+  });
+  return outermost.sort((a, b) => b.overflow - a.overflow);
 }
 
 function escapeXml(str) {
@@ -239,7 +340,7 @@ async function launchBrowser() {
  *
  * @param {import('playwright').Browser} browser
  * @param {{ baseUrl: string, urlPath: string, width: number, scheme: string, file: string }} shot
- * @returns {Promise<{ width: number, height: number, problems: string[] }>}
+ * @returns {Promise<{ width: number, height: number, problems: string[], layout: object[] }>}
  */
 async function capturePage(browser, {
   baseUrl, urlPath, width, scheme, file,
@@ -252,6 +353,7 @@ async function capturePage(browser, {
   const page = await context.newPage();
   const problems = [];
   const reported = new Set();
+  let layout = [];
   const fetchThroughNode = Boolean(process.env.NODE_EXTRA_CA_CERTS);
 
   await page.route('**/*', async (route) => {
@@ -296,6 +398,7 @@ async function capturePage(browser, {
       window.scrollTo(0, 0);
     });
     await page.waitForTimeout(500);
+    layout = await page.evaluate(findEdgeOverflow);
     await page.screenshot({ path: file, fullPage: true });
   } finally {
     await context.close();
@@ -303,7 +406,9 @@ async function capturePage(browser, {
 
   const sharp = require('sharp');
   const { height } = await sharp(file).metadata();
-  return { width, height, problems: [...new Set(problems)] };
+  return {
+    width, height, problems: [...new Set(problems)], layout,
+  };
 }
 
 async function main() {
@@ -318,6 +423,7 @@ async function main() {
   const browser = await launchBrowser();
   const sheets = [];
   const report = [];
+  const layoutReport = [];
 
   try {
     for (let p = 0; p < options.paths.length; p++) {
@@ -327,19 +433,28 @@ async function main() {
 
       for (let s = 0; s < options.schemes.length; s++) {
         const scheme = options.schemes[s];
-        const shots = [];
-        for (let w = 0; w < options.widths.length; w++) {
-          const width = options.widths[w];
-          const file = path.join(outDir, slug, `${width}-${scheme}.png`);
-          const result = await capturePage(browser, {
-            baseUrl: server.url, urlPath, width, scheme, file,
-          });
-          shots.push({ file, ...result });
-          result.problems.forEach((problem) => report.push(`${urlPath} @ ${width}px ${scheme}: ${problem}`));
+        const groups = packWidths(options.widths);
+        for (let g = 0; g < groups.length; g++) {
+          const shots = [];
+          for (let w = 0; w < groups[g].length; w++) {
+            const width = groups[g][w];
+            const file = path.join(outDir, slug, `${width}-${scheme}.png`);
+            const result = await capturePage(browser, {
+              baseUrl: server.url, urlPath, width, scheme, file,
+            });
+            shots.push({ file, ...result });
+            const where = `${urlPath} @ ${width}px ${scheme}`;
+            result.problems.forEach((problem) => report.push(`${where}: ${problem}`));
+            result.layout.slice(0, 3).forEach(({ selector, overflow }) => {
+              layoutReport.push(`${where}: ${selector} extends ${overflow}px past the viewport edge`);
+            });
+            if (result.layout.length > 3) layoutReport.push(`${where}: …and ${result.layout.length - 3} more`);
+          }
+          const sheetFile = path.join(outDir, slug, sheetName(scheme, groups[g]));
+          const range = groups[g].length > 1 ? `${groups[g][0]}–${groups[g][groups[g].length - 1]}px` : `${groups[g][0]}px`;
+          await composeSheet(shots, `${urlPath} · ${scheme} · ${range}`, options.sheetHeight, sheetFile);
+          sheets.push(path.relative(ROOT, sheetFile));
         }
-        const sheetFile = path.join(outDir, slug, `sheet-${scheme}.png`);
-        await composeSheet(shots, `${urlPath} · ${scheme}`, options.sheetHeight, sheetFile);
-        sheets.push(path.relative(ROOT, sheetFile));
       }
     }
   } finally {
@@ -354,6 +469,14 @@ async function main() {
     log('\nProblems while loading (mention any that affect the screenshots):');
     [...new Set(report)].forEach((line) => log(`  ${line}`));
   }
+  if (layoutReport.length) {
+    log('\nLayout problems (AGENTS.md Directive 6): content is cut off at the viewport edge.');
+    log('Fix the ones your change caused; report the rest as pre-existing.');
+    layoutReport.forEach((line) => log(`  ${line}`));
+    process.exitCode = 2;
+  } else {
+    log(`\nLayout check passed at ${options.widths.join(', ')}px.`);
+  }
 }
 
 if (require.main === module) {
@@ -363,4 +486,6 @@ if (require.main === module) {
   });
 }
 
-module.exports = { parseArgs, slugify, planSheet };
+module.exports = {
+  parseArgs, slugify, planSheet, packWidths, sheetName, findEdgeOverflow,
+};
