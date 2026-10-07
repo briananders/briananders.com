@@ -35,6 +35,10 @@
     "colors": 0,
     "px": 1
   },
+  "src/styles/modules/_last-fm-module.scss": {
+    "colors": 0,
+    "px": 5
+  },
   "src/styles/modules/_nav.scss": {
     "colors": 1,
     "px": 12
@@ -66,6 +70,10 @@
   "src/styles/posts/2d-automaton.scss": {
     "colors": 0,
     "px": 1
+  },
+  "src/styles/posts/_last-fm-dashboard.scss": {
+    "colors": 2,
+    "px": 53
   },
   "src/styles/posts/ant-life-simulator.scss": {
     "colors": 0,
@@ -113,11 +121,11 @@
   },
   "src/styles/posts/last-fm-scrobbles.scss": {
     "colors": 0,
-    "px": 2
+    "px": 0
   },
   "src/styles/posts/last-fm.scss": {
     "colors": 0,
-    "px": 5
+    "px": 0
   },
   "src/styles/posts/lissajous-curve.scss": {
     "colors": 2,
@@ -146,6 +154,10 @@
   "src/styles/posts/paint.scss": {
     "colors": 0,
     "px": 15
+  },
+  "src/styles/posts/pendulum-wave.scss": {
+    "colors": 0,
+    "px": 4
   },
   "src/styles/posts/polar-clock.scss": {
     "colors": 0,
