@@ -1,4 +1,6 @@
 const resolveCommitHash = require('../helpers/commit-hash');
+const buildDate = require('../helpers/build-date');
+const buildRandom = require('../helpers/build-random');
 
 /**
  * Site-wide metadata factory.
@@ -12,7 +14,8 @@ const resolveCommitHash = require('../helpers/commit-hash');
  *   2. Shell out to `git rev-parse HEAD` at build time.
  *   3. Fall back to `'unknown'` if git is unavailable.
  *
- * @param {{ root: string, build: string }} dir - Directory paths object from `constants/directories`.
+ * @param {{ root: string, build: string }} dir - Directory paths from
+ *   `constants/directories`.
  * @returns {object} Site metadata object exposed to all EJS templates.
  */
 module.exports = (dir) => {
@@ -37,11 +40,19 @@ module.exports = (dir) => {
   return {
     /** Current git commit SHA, or `'unknown'` if git is unavailable. */
     commitHash,
+    /** ISO 8601 build time; pinned via `BUILD_DATETIME` in golden builds. */
+    buildDateTime: buildDate().toISOString(),
+    /**
+     * Random-number generator factory for build-time template code; use it
+     * instead of `Math.random`. Seeded via `BUILD_RANDOM_SEED` in golden builds.
+     */
+    buildRandom,
     /** `true` during dev/preview builds (`NODE_ENV !== 'production'`). */
     devBuild: !production,
     /** Package version string from `package.json`. */
     version: pkg.version,
     name: 'Brian Anders',
+    // eslint-disable-next-line max-len
     description: "Brian Anders is an Engineering Manager in the tech industry. I'm also a YouTuber, Podcaster, and Musician.",
     author: 'Brian Anders',
     /** Primary contact URL (Twitter/X profile). */

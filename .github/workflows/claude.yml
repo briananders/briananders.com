@@ -30,6 +30,19 @@ jobs:
         with:
           fetch-depth: 1
 
+      # AGENTS.md requires build, test, lint, and screenshots before claiming done.
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: ".nvmrc"
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Chromium for screenshots
+        run: npx playwright install --with-deps chromium
+
       - name: Run Claude Code
         id: claude
         uses: anthropics/claude-code-action@v1.0.23
@@ -54,8 +67,15 @@ jobs:
               Be constructive and helpful in your feedback.
 
 
-          # Optional: Add claude_args to customize behavior and configuration
           # See https://github.com/anthropics/claude-code-action/blob/main/docs/usage.md
           # or https://docs.claude.com/en/docs/claude-code/cli-reference for available options
-          # claude_args: '--allowed-tools Bash(gh pr:*)'
+          claude_args: '--allowed-tools "Bash(npm run build),Bash(npm run build:golden),Bash(npm test),Bash(npm run lint),Bash(npm run screenshot:*)"'
+
+      - name: Upload screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: screenshots
+          path: screenshots/
+          if-no-files-found: ignore
 

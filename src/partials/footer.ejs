@@ -1,8 +1,8 @@
 <%- partial('head/styles', {...locals, path: 'modules/footer' }); %>
 
 <%
-  const date = new Date();
-  const thisYear = date.getFullYear();
+  const date = new Date(locals.buildDateTime);
+  const thisYear = date.getUTCFullYear();
   const contactLinks = [
     { copy: 'Bat Lessons',   href: locals.batLessons,           },
     { copy: 'Banders Drums', href: locals.bandersDrums.path,    },

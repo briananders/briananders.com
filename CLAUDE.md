@@ -1,5 +1,9 @@
 # Claude Context — briananders.com
 
+@AGENTS.md
+
+The rules above apply to every agent. This file is the architecture reference.
+
 ## Project Overview
 
 This is the personal website of **Brian Anders** — an Engineering Manager, YouTuber, Podcaster, and Musician. The site is a custom-built Node.js static site generator that produces pages from EJS templates, SCSS stylesheets, and Browserify-bundled JavaScript. Content is primarily **posts and experiments** — interactive demos, code explorations, music data visualizations, and personal projects — rather than traditional blog articles.
@@ -17,7 +21,7 @@ This is the personal website of **Brian Anders** — an Engineering Manager, You
 | Repository | Purpose |
 |---|---|
 | [briananders/briananders.com](https://github.com/briananders/briananders.com) | This repo — the main website |
-| [briananders/briananders.com-visual-diffs](https://github.com/briananders/briananders.com-visual-diffs) | Visual regression testing (git submodule at `visual-diffs/`) |
+| [briananders/briananders.com-visual-diffs](https://github.com/briananders/briananders.com-visual-diffs) | Visual regression testing. `visual-diffs/` is a committed symlink to Brian's local clone, so `npm run visual-diff` only works on his machine. Agents use `npm run screenshot`. |
 | [briananders/sublime-text-dublicate](https://github.com/briananders/sublime-text-dublicate) | VSCode extension: Sublime Duplicate Text |
 | [briananders/pageweight](https://github.com/briananders/pageweight) | NPM CLI tool for measuring webpage weight |
 | [briananders/two-way-merge](https://github.com/briananders/two-way-merge) | NPM CLI tool for two-way directory sync |
@@ -65,6 +69,7 @@ Every panel compares against one report per period (`comparisonFor()` in `data.j
 | Linting | ESLint 8 (airbnb-base config — pinned to v8, airbnb does not support ESLint 9/10) |
 | Build optimization | HTML minification (html-minifier-terser), JS minification (uglify-js), SVG optimization (svgo), WebP/AVIF conversion (sharp), gzip compression, content-hash asset naming (xxhash) |
 | Analytics | Google Tag Manager (production only) |
+| Screenshots | Playwright, pinned to 1.56.1: that version's Chromium (build 1194) is preinstalled in Claude Code cloud containers. Elsewhere, run `npx playwright install chromium` once. |
 
 ## Project Structure
 
@@ -78,6 +83,9 @@ Every panel compares against one report per period (`comparisonFor()` in `data.j
 ├── .nvmrc                      # Node 22.21.0
 ├── .eslintrc.json              # Airbnb-base ESLint config
 │
+├── AGENTS.md                   # Rules for every AI agent (imported above)
+├── bin/screenshot.js           # Contact-sheet screenshots + viewport-edge layout check (`npm run screenshot`)
+│
 ├── build/                      # Build pipeline (all files have full JSDoc as of March 2026)
 │   ├── bundlers/
 │   │   ├── bundle-ejs.js       # EJS → HTML renderer (two-pass: template then layout)
@@ -89,8 +97,11 @@ Every panel compares against one report per period (`comparisonFor()` in `data.j
 │   │   ├── completion-flags.js # Shared mutable booleans tracking stage completion
 │   │   ├── directories.js      # Path factory (package/ vs golden/ depending on mode)
 │   │   ├── file-formats.js     # Image/video extension lists and raster format lists
-│   │   └── site-data.js        # Author metadata, social links, domain, commitHash
+│   │   ├── golden-build.js     # Pinned BUILD_DATETIME / BUILD_RANDOM_SEED / COMMIT_HASH for golden builds
+│   │   └── site-data.js        # Author metadata, social links, domain, commitHash, buildDateTime, buildRandom
 │   ├── helpers/
+│   │   ├── build-date.js       # The build's "now": BUILD_DATETIME env var, else the current time
+│   │   ├── build-random.js     # Math.random, or a seeded generator when BUILD_RANDOM_SEED is set
 │   │   ├── check-done.js       # Gate: exits process when all completion flags are true
 │   │   ├── clean.js            # Empties the output directory (returns Promise)
 │   │   ├── ejs-functions.js    # 15 template helper functions available in all EJS templates
@@ -105,7 +116,7 @@ Every panel compares against one report per period (`comparisonFor()` in `data.j
 │   │   └── update-css-with-image-hashes.js  # Rewrites CSS url() before CSS is hashed
 │   ├── optimize/
 │   │   ├── convert-to-webp.js  # Sharp WebP conversion
-│   │   ├── convert-to-avif.js  # Sharp AVIF conversion at quality 80
+│   │   ├── convert-to-avif.js  # Sharp AVIF at quality 80, encoded once into src/images/ and copied after
 │   │   ├── gzip-files.js       # zlib gzip on html/xml/css/js/txt/json
 │   │   ├── minify-html.js      # html-minifier-terser (async minify())
 │   │   ├── minify-js.js        # UglifyJS
@@ -138,7 +149,7 @@ Every panel compares against one report per period (`comparisonFor()` in `data.j
 │   │   ├── _modules/           # Shared modules (analytics, dark-mode, etc.)
 │   │   ├── _components/        # Reusable components (album-listing, api-image, last-updated, etc.)
 │   │   └── posts/              # Per-post entry scripts
-│   ├── images/                 # Source images
+│   ├── images/                 # Source images + their committed .avif twins and avif-manifest.json
 │   ├── videos/                 # Source videos
 │   ├── data/                   # Static JSON data files
 │   ├── downloads/              # Downloadable files
@@ -154,9 +165,9 @@ Every panel compares against one report per period (`comparisonFor()` in `data.j
 │   ├── claude-code-review.yml  # AI-powered PR reviews
 │   └── claude.yml              # Claude workflow
 │
-├── test/                       # Tests (build.test.mjs, golden.test.mjs)
+├── test/                       # node:test suites; design-tokens.test.mjs + design-tokens-baseline.json ratchet hard-coded SCSS values
 ├── scaffold/                   # Templates for `npm run scaffold`
-└── visual-diffs/               # Git submodule for visual regression
+└── visual-diffs/               # Symlink to Brian's local briananders.com-visual-diffs clone
 ```
 
 ## Key Conventions
@@ -213,13 +224,20 @@ Available in all templates via `build/helpers/ejs-functions.js`:
 | `blockLink(str, { href })` | Block nav link with `>` arrow (`.block-link`) |
 | `cardLink(str, { href })` | Card-style link (`.card-link`) |
 | `buttonLink(str, { href })` | Button-style link (`.button`) |
-| `formattedDate(dateString)` | Formats as `YYYY-MM-DD` |
+| `formattedDate(dateString)` | Formats as `YYYY-MM-DD` in UTC (front-matter dates parse as UTC midnight) |
 | `getChildPages(parentPath)` | Returns direct children from `pageMappingData` |
 | `defaultLastFMModule(albums)` | Last.fm loading placeholder markup |
 | `inlineScss(src)` | Compiles SCSS file to CSS string for inline `<style>` use |
 | `getFileContents(src)` | Returns file as string; SVGs are run through svgo first |
 | `dasherize(str)` | `fooBar` → `foo-bar` |
 | `camelize(str)` | `foo-bar` → `fooBar` |
+
+**Build-time values** come from `siteData` and are available in every template:
+
+- `buildDateTime`: ISO build time. Use it instead of `new Date()`.
+- `buildRandom()`: returns a generator. Use it instead of `Math.random()`, and call it once per page.
+
+Golden builds pin both (see Build Modes). A test fails if a template calls `Math.random` at build time.
 
 **Important:** `img()`, `lazyImage()`, and `lazyVideo()` read from the **output** directory (`dir.package`) not the source. This is why `bundleEJS` cannot start until both `imagesMoved` and `videosMoved` flags are true.
 
@@ -249,7 +267,7 @@ Available in all templates via `build/helpers/ejs-functions.js`:
 source ~/.nvm/nvm.sh && nvm use v22.21.0
 ```
 
-Chokidar v5 and other packages require Node 22. Running under Node 18 will fail with `ERR_REQUIRE_ESM`.
+Chokidar v5 and other packages require Node 22. Running under Node 18 will fail with `ERR_REQUIRE_ESM`. Claude Code cloud containers ship Node 22 without nvm; skip the `nvm use` step there.
 
 ### Build Modes
 
@@ -260,6 +278,14 @@ Chokidar v5 and other packages require Node 22. Running under Node 18 will fail 
 | Golden | `npm run build:golden` | `golden/` | Yes | No | No | No |
 
 The golden build is used for visual regression tests — it produces realistic HTML without hashes or gzip so the output can be diff'd against a reference snapshot.
+
+Golden output is reproducible. `index.js` exports the values in `build/constants/golden-build.js` as environment variables:
+
+- `BUILD_DATETIME`: build time, copyright year, sitemap fallback dates, `build.txt`
+- `COMMIT_HASH`: the `build-id` meta tag and `build.txt`
+- `BUILD_RANDOM_SEED`: seeds `buildRandom()`
+
+Dates are formatted in UTC, so two golden builds at different times or in different timezones produce identical HTML. AVIFs are copied from `src/images/` (see Image Processing Pipeline), so they're identical on every machine. Only page changes show up in the `golden/` diff.
 
 ### The `configs` Object
 
@@ -368,9 +394,14 @@ CSS files reference images via `url()`. If CSS were hashed before images, the CS
 | Extension | Processing |
 |---|---|
 | `.svg` | Passed through svgo `preset-default` before writing to output |
-| `.jpg`, `.jpeg`, `.png` | Converted to a sibling `.webp` AND copied as-is (both formats kept) |
-| `.webp` and others | Copied as-is |
+| `.jpg`, `.jpeg`, `.png` | Copied as-is, converted to a sibling `.webp`, and given its committed `.avif` (below) |
+| `.webp` | Copied as-is; when it's the only source format, also given its committed `.avif` |
+| Generated `.avif` in `src/images/` | Skipped by the glob; its source copies it |
 | `favicon_base.png` | Also generates `favicon.ico` via png-to-ico |
+
+**AVIFs are committed source, not build output.** AVIF encoders produce different bytes on macOS and Linux. So `convert-to-avif.js` encodes each image once, writes the result next to the source in `src/images/`, and every build copies that file.
+
+`src/images/avif-manifest.json` records each generated AVIF's source and a fingerprint (source bytes plus encoder settings). A missing AVIF, a changed source or changed settings triggers a re-encode into `src/`; commit the result. Deleting a source in watch mode deletes its generated AVIF too. PR validation (`build-validation.yml`) fails if the build changes anything in `src/images/`; that's the guard against an uncommitted AVIF. `test/avif-sources.test.mjs` covers the cache logic and flags missing, stale or orphaned AVIFs.
 
 **Note:** `{ nodir: true }` is required on the downloads glob — glob v13's `**` pattern matches the base directory itself.
 
@@ -407,7 +438,7 @@ Source file changes dispatch by path:
 
 #### Adding a new image/video format
 1. Add the extension to `build/constants/file-formats.js` in the `images` or `videos` array.
-2. Raster image sources automatically receive `.webp` and `.avif` siblings during preview and production builds.
+2. Raster image sources automatically receive `.webp` and `.avif` siblings during preview and production builds. New AVIFs land in `src/images/`; commit them.
 
 #### Adding a new static asset type (e.g. fonts)
 1. Add a `moveAllFonts` / `moveOneFont` pair to `move-assets.js` following the same pattern as `moveAllVideos`.
@@ -463,15 +494,20 @@ Source file changes dispatch by path:
 | `npm run deploy` | Deploy production build to S3 |
 | `npm run stage` | Deploy staging build to S3 |
 | `npm test` | Run tests (requires Node 22 — use nvm first) |
+| `npm run lint` | ESLint on `build/`, `src/js/`, `bin/` (check only; `lint:src` / `lint:build` auto-fix) |
 | `npm run preview:production` | Serve the production build locally |
 | `npm run scaffold -- --path=/path` | Create new page boilerplate |
-| `npm run visual-diff` | Run visual regression tests |
+| `npm run screenshot -- /path/ ...` | Contact-sheet screenshots of the built site at 360/600/768/960/1024/1440px, plus a viewport-edge layout check that exits 2 on a flag (see AGENTS.md §1) |
+| `npm run visual-diff` | Run visual regression tests (Brian's machine only) |
 
 ### Deployment
 
+Branch flow: feature branch (from `staging`) → PR into `staging` → `staging` promoted to `main`. `sync-staging.yml` merges `main` back into `staging` after every push to `main`.
+
 - **Production**: Push to `main` branch triggers GitHub Actions → builds → deploys to `www.briananders.com` S3 bucket → invalidates CloudFront cache → creates a deploy tag
 - **Staging**: Push to `staging` branch triggers GitHub Actions → builds → deploys to `staging.briananders.com` S3 bucket
-- **PR validation**: All PRs run build + tests
+- **PR validation**: All PRs run build + tests, and fail if the build changed `src/images/` (an uncommitted AVIF)
+- **`@claude` in GitHub**: `claude.yml` installs dependencies and Chromium, lets Claude run build, test, lint and screenshot, and uploads `screenshots/` as a workflow artifact
 - The `s3-upload-allowlist.json` preserves `/band-news/`, `/last-fm-history/`, `/data/`, and `/movies/` paths during deploy
 
 ---

@@ -83,7 +83,10 @@ class AlbumListing extends HTMLElement {
     if (['name', 'artist'].includes(name)) {
       const albumName = this.getAttribute('name') || '';
       const artistName = this.getAttribute('artist') || '';
-      this.shadowRoot.querySelector('a').setAttribute('href', `?trends=albums/${dasherize(artistName.trim().toLowerCase())}/${dasherize(albumName.trim().toLowerCase())}`);
+      const artist = dasherize(artistName.trim().toLowerCase());
+      const album = dasherize(albumName.trim().toLowerCase());
+      this.shadowRoot.querySelector('a')
+        .setAttribute('href', `?trends=albums/${artist}/${album}`);
 
       const imageElement = this.shadowRoot.querySelector('api-image');
       imageElement.setAttribute('alt', `${albumName} album cover`);

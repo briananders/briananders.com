@@ -114,23 +114,23 @@ module.exports = (dir, pageMappingData) => {
   const styles = new Map();
   return ({
 
-  /**
+    /**
    * Renders an EJS partial from `src/partials/`.
    *
    * @param {string} partialPath - Relative path within `src/partials/` without the `.ejs` extension.
    * @param {object} data - Template data passed to the partial.
    * @returns {string} Rendered HTML string.
    */
-  partial(partialPath, data) {
-    const newPath = path.join(dir.src, 'partials/', `${partialPath}.ejs`);
+    partial(partialPath, data) {
+      const newPath = path.join(dir.src, 'partials/', `${partialPath}.ejs`);
 
-    if (!partials.has(newPath)) {
-      partials.set(newPath, ejs.compile(fs.readFileSync(newPath).toString(), { compileDebug: true }));
-    }
-    return partials.get(newPath)(data);
-  },
+      if (!partials.has(newPath)) {
+        partials.set(newPath, ejs.compile(fs.readFileSync(newPath).toString(), { compileDebug: true }));
+      }
+      return partials.get(newPath)(data);
+    },
 
-  /**
+    /**
    * Returns all direct child pages of the given parent path.
    *
    * Used to build navigation lists. The "child" relationship is determined by
@@ -143,40 +143,42 @@ module.exports = (dir, pageMappingData) => {
    * @param {string} parentPath - A single URL segment (e.g. `'posts'`), or `''` for root.
    * @returns {Array<{ url: string, data: object }>} Matching page entries from `pageMappingData`.
    */
-  getChildPages(parentPath) {
-    return pageMappingData.filter((page) => {
-      const splitUrl = page.url.split('/');
-      squeakyClean(splitUrl);
-      const iOf = splitUrl.indexOf(parentPath);
-      const len = splitUrl.length - 1;
-      if (parentPath === '') {
-        return len === 0 && !page.url.includes('.html');
-      } if (iOf === -1) {
+    getChildPages(parentPath) {
+      return pageMappingData.filter((page) => {
+        const splitUrl = page.url.split('/');
+        squeakyClean(splitUrl);
+        const iOf = splitUrl.indexOf(parentPath);
+        const len = splitUrl.length - 1;
+        if (parentPath === '') {
+          return len === 0 && !page.url.includes('.html');
+        } if (iOf === -1) {
+          return false;
+        } if (len - iOf === 1) {
+          return true;
+        }
         return false;
-      } if (len - iOf === 1) {
-        return true;
-      }
-      return false;
-    });
-  },
+      });
+    },
 
-  /**
+    /**
    * Formats a date string as `YYYY-MM-DD`.
    *
    * Accepts any value that `new Date()` can parse (ISO strings, timestamps, etc.).
-   * Month and day are always zero-padded to two digits.
+   * Month and day are always zero-padded to two digits. Uses UTC: front-matter
+   * dates parse as UTC midnight, so local getters would shift them a day
+   * earlier in any timezone west of UTC.
    *
-   * @param {string|number} dateString - The date to format.
+   * @param {string|number|Date} dateString - The date to format.
    * @returns {string} Formatted date, e.g. `'2024-03-15'`.
    */
-  formattedDate(dateString) {
-    const date = new Date(dateString);
-    const month = `00${date.getMonth() + 1}`.slice(-2);
-    const day = `00${date.getDate()}`.slice(-2);
-    return `${date.getFullYear()}-${month}-${day}`;
-  },
+    formattedDate(dateString) {
+      const date = new Date(dateString);
+      const month = `00${date.getUTCMonth() + 1}`.slice(-2);
+      const day = `00${date.getUTCDate()}`.slice(-2);
+      return `${date.getUTCFullYear()}-${month}-${day}`;
+    },
 
-  /**
+    /**
    * Renders a syntax-highlighted code block using highlight.js.
    *
    * If `locals.language` is provided the block is highlighted with that
@@ -191,17 +193,19 @@ module.exports = (dir, pageMappingData) => {
    * @param {string} [locals.style] - Inline styles for the `<pre>` element.
    * @returns {string} HTML string with syntax-highlighted code.
    */
-  code(block, locals = {}) {
+    code(block, locals = {}) {
     // https://github.com/highlightjs/highlight.js/blob/master/SUPPORTED_LANGUAGES.md
-    const highlightedCode = (locals.language !== undefined)
-      ? hljs.highlight(block, { language: locals.language }).value
-      : hljs.highlightAuto(block).value;
-    return `
-      <pre class="code-container ${locals.class || ''}" style="${locals.style || ''}"><code>${highlightedCode}</code></pre>
+      const highlightedCode = (locals.language !== undefined)
+        ? hljs.highlight(block, { language: locals.language }).value
+        : hljs.highlightAuto(block).value;
+      const cls = locals.class || '';
+      const style = locals.style || '';
+      return `
+      <pre class="code-container ${cls}" style="${style}"><code>${highlightedCode}</code></pre>
     `;
-  },
+    },
 
-  /**
+    /**
    * Renders an `<img>` tag with explicit `width` and `height` attributes.
    *
    * Reads the image from the output directory (post-asset-move) to determine
@@ -217,19 +221,23 @@ module.exports = (dir, pageMappingData) => {
    * @returns {string} A `<picture>` HTML string.
    * @throws {Error} If `src` is not provided.
    */
-  img({
-    src, alt = '', classes = [], width, height,
-  } = {}) {
-    if (!src) {
-      throw new Error('img is missing src attribute');
-    }
-    // image-size v2 requires a Buffer (synchronous read); it does not accept a path directly.
-    const { sources, fallback } = getImageSources(src, dir);
-    const dimensions = sizeOf(fs.readFileSync(path.join(dir.package, fallback)));
-    return `<picture>${renderPictureSources(sources)}<img src="${fallback}" alt="${alt}" height="${height || dimensions.height}" width="${width || dimensions.width}" ${classes.length ? `class="${classes.join(' ')}"` : ''} /></picture>`;
-  },
+    img({
+      src, alt = '', classes = [], width, height,
+    } = {}) {
+      if (!src) {
+        throw new Error('img is missing src attribute');
+      }
+      // image-size v2 requires a Buffer (synchronous read); it does not accept a path directly.
+      const { sources, fallback } = getImageSources(src, dir);
+      const dimensions = sizeOf(fs.readFileSync(path.join(dir.package, fallback)));
+      const h = height || dimensions.height;
+      const w = width || dimensions.width;
+      const cls = classes.length ? `class="${classes.join(' ')}"` : '';
+      // eslint-disable-next-line max-len
+      return `<picture>${renderPictureSources(sources)}<img src="${fallback}" alt="${alt}" height="${h}" width="${w}" ${cls} /></picture>`;
+    },
 
-  /**
+    /**
    * Renders a natively lazy-loaded responsive image.
    *
    * The browser receives the real `src`/`srcset` values immediately and uses
@@ -245,20 +253,28 @@ module.exports = (dir, pageMappingData) => {
    * @returns {string} HTML string containing a lazily-loaded `<picture>`.
    * @throws {Error} If `src` is not provided.
    */
-  lazyImage({
-    src, alt = '', classes = [], width, height, lazy = true,
-  } = {}) {
-    if (!src) {
-      throw new Error('lazyImage is missing src attribute');
-    }
-    const { sources, fallback } = getImageSources(src, dir);
-    const dimensions = sizeOf(fs.readFileSync(path.join(dir.package, fallback)));
-    return `
-      <picture>${renderPictureSources(sources)}<img ${lazy ? 'loading="lazy" decoding="async"' : 'fetchpriority="high" loading="eager"'} src="${fallback}" alt="${alt}" height="${height || dimensions.height}" width="${width || dimensions.width}" ${classes.length ? `class="${classes.join(' ')}"` : ''} /></picture>
+    lazyImage({
+      src, alt = '', classes = [], width, height, lazy = true,
+    } = {}) {
+      if (!src) {
+        throw new Error('lazyImage is missing src attribute');
+      }
+      const { sources, fallback } = getImageSources(src, dir);
+      const dimensions = sizeOf(fs.readFileSync(path.join(dir.package, fallback)));
+      const h = height || dimensions.height;
+      const w = width || dimensions.width;
+      const loadAttr = lazy
+        ? 'loading="lazy" decoding="async"'
+        : 'fetchpriority="high" loading="eager"';
+      const cls = classes.length ? `class="${classes.join(' ')}"` : '';
+      // eslint-disable-next-line max-len
+      const imgTag = `<img ${loadAttr} src="${fallback}" alt="${alt}" height="${h}" width="${w}" ${cls} />`;
+      return `
+      <picture>${renderPictureSources(sources)}${imgTag}</picture>
     `;
-  },
+    },
 
-  /**
+    /**
    * Renders a lazily-loaded responsive `<video>` element.
    *
    * Supports separate mobile and desktop source videos and a desktop poster.
@@ -275,37 +291,40 @@ module.exports = (dir, pageMappingData) => {
    * @returns {string} HTML string for the responsive lazy video widget.
    * @throws {Error} If `srcs` is not provided.
    */
-  lazyVideo({ srcs, placeholders, attributes = ['autoplay', 'muted', 'loop', 'playsinline'] } = {}) {
-    if (!srcs) {
-      throw new Error('lazyVideo is missing srcs attribute');
-    }
-    // Read dimensions from the placeholder images (in the output directory).
-    const desktopDimensions = sizeOf(fs.readFileSync(path.join(dir.package, placeholders.desktop)));
-    const mobileDimensions = sizeOf(fs.readFileSync(path.join(dir.package, placeholders.mobile)));
-    const videoType = path.extname(srcs.mobile).replace('.', '');
-    return `
-    <div class="video-container" style="padding-top: ${(desktopDimensions.height / desktopDimensions.width) * 100}%; --aspect-ratio: ${desktopDimensions.height / desktopDimensions.width};">
+    lazyVideo({ srcs, placeholders, attributes = ['autoplay', 'muted', 'loop', 'playsinline'] } = {}) {
+      if (!srcs) {
+        throw new Error('lazyVideo is missing srcs attribute');
+      }
+      // Read dimensions from the placeholder images (in the output directory).
+      const desktopDimensions = sizeOf(fs.readFileSync(path.join(dir.package, placeholders.desktop)));
+      const mobileDimensions = sizeOf(fs.readFileSync(path.join(dir.package, placeholders.mobile)));
+      const mobileType = path.extname(srcs.mobile).replace('.', '');
+      const desktopType = path.extname(srcs.desktop).replace('.', '');
+      const ratio = desktopDimensions.height / desktopDimensions.width;
+      const minW = mobileDimensions.width;
+      return `
+    <div class="video-container" style="padding-top: ${ratio * 100}%; --aspect-ratio: ${ratio};">
       <video loading="lazy" preload="none" ${attributes.join(' ')}
         width="${desktopDimensions.width}"
         height="${desktopDimensions.height}"
         poster="${placeholders.desktop}"
       >
-        <source src="${srcs.desktop}" media="(min-width: ${mobileDimensions.width}px)" type="video/${path.extname(srcs.desktop).replace('.', '')}">
-        <source src="${srcs.mobile}" type="video/${videoType}">
+        <source src="${srcs.desktop}" media="(min-width: ${minW}px)" type="video/${desktopType}">
+        <source src="${srcs.mobile}" type="video/${mobileType}">
       </video>
     </div>`;
-  },
+    },
 
-  /**
+    /**
    * Converts a string to dash-case (e.g. `'fooBar'` → `'foo-bar'`).
    * Delegates to `underscore.string`.
    *
    * @param {string} str
    * @returns {string}
    */
-  dasherize: (str) => dasherize(str),
+    dasherize: (str) => dasherize(str),
 
-  /**
+    /**
    * Converts a string to camelCase with the first letter lowercased
    * (e.g. `'foo-bar'` → `'fooBar'`).
    * Delegates to `underscore.string`.
@@ -313,9 +332,9 @@ module.exports = (dir, pageMappingData) => {
    * @param {string} str
    * @returns {string}
    */
-  camelize: (str) => camelize(str, true),
+    camelize: (str) => camelize(str, true),
 
-  /**
+    /**
    * Renders an `<a>` element with automatic external link handling and
    * type-based CSS class assignment.
    *
@@ -337,45 +356,50 @@ module.exports = (dir, pageMappingData) => {
    * @returns {string} An `<a>` HTML string.
    * @throws {Error} If `locals.href` is not provided.
    */
-  link(str, locals) {
-    if (!locals.href) {
-      throw new Error('externalLink is missing href attribute');
-    }
-    if (locals.class === undefined) locals.class = '';
-    // Automatically treat http(s) links as external.
-    if (locals.external || /^http/.test(locals.href)) {
-      locals = merge({ rel: 'noopener', target: 'blank' }, locals);
-    }
-    switch (locals.type) {
-      case 'inline':
-        locals.class += ' inline-link';
-        break;
-      case 'block':
-        locals.class += ' block-link';
-        break;
-      case 'card':
-        locals.class += ' card-link';
-        break;
-      case 'button':
-        locals.class += ' button';
-        break;
-    }
-    // Build the attribute string by mapping all locals keys, cleaning up values.
-    return `<a itemprop="url" ${Object.keys(locals).map((attr) => `${attr}="${cleanUpString(locals[attr])}"`).join(' ')}>${str}</a>`;
-  },
+    link(str, locals) {
+      if (!locals.href) {
+        throw new Error('externalLink is missing href attribute');
+      }
+      if (locals.class === undefined) locals.class = '';
+      // Automatically treat http(s) links as external.
+      if (locals.external || /^http/.test(locals.href)) {
+        locals = merge({ rel: 'noopener', target: 'blank' }, locals);
+      }
+      switch (locals.type) {
+        case 'inline':
+          locals.class += ' inline-link';
+          break;
+        case 'block':
+          locals.class += ' block-link';
+          break;
+        case 'card':
+          locals.class += ' card-link';
+          break;
+        case 'button':
+          locals.class += ' button';
+          break;
+        default:
+          break;
+      }
+      // Build the attribute string by mapping all locals keys, cleaning up values.
+      const attrs = Object.keys(locals)
+        .map((attr) => `${attr}="${cleanUpString(locals[attr])}"`)
+        .join(' ');
+      return `<a itemprop="url" ${attrs}>${str}</a>`;
+    },
 
-  /**
+    /**
    * Renders an inline anchor link (styled with `.inline-link`).
    *
    * @param {string} str - Link text.
    * @param {object} locals - Link options (must include `href`).
    * @returns {string} An `<a>` HTML string.
    */
-  inlineLink(str, locals) {
-    return this.link(str, merge({ type: 'inline' }, locals));
-  },
+    inlineLink(str, locals) {
+      return this.link(str, merge({ type: 'inline' }, locals));
+    },
 
-  /**
+    /**
    * Renders a block-style navigation link with a `>` arrow suffix.
    *
    * Wrapped in a `.block-link-wrapper` span so the arrow can be styled
@@ -385,33 +409,34 @@ module.exports = (dir, pageMappingData) => {
    * @param {object} locals - Link options (must include `href`).
    * @returns {string} HTML string with the wrapped block link.
    */
-  blockLink(str, locals) {
-    return `<span class="block-link-wrapper">${this.link(`${str}&nbsp;<b>&gt;</b>`, merge({ type: 'block' }, locals))}</span>`;
-  },
+    blockLink(str, locals) {
+      const inner = this.link(`${str}&nbsp;<b>&gt;</b>`, merge({ type: 'block' }, locals));
+      return `<span class="block-link-wrapper">${inner}</span>`;
+    },
 
-  /**
+    /**
    * Renders a card-style link (styled with `.card-link`).
    *
    * @param {string} str - Link text.
    * @param {object} locals - Link options (must include `href`).
    * @returns {string} An `<a>` HTML string.
    */
-  cardLink(str, locals) {
-    return this.link(str, merge({ type: 'card' }, locals));
-  },
+    cardLink(str, locals) {
+      return this.link(str, merge({ type: 'card' }, locals));
+    },
 
-  /**
+    /**
    * Renders a button-style link (styled with `.button`).
    *
    * @param {string} str - Link text.
    * @param {object} locals - Link options (must include `href`).
    * @returns {string} An `<a>` HTML string.
    */
-  buttonLink(str, locals) {
-    return this.link(str, merge({ type: 'button' }, locals));
-  },
+    buttonLink(str, locals) {
+      return this.link(str, merge({ type: 'button' }, locals));
+    },
 
-  /**
+    /**
    * Returns the contents of a source file as a string.
    *
    * SVG files are run through SVGO (`getSVG`) before being returned, so
@@ -422,14 +447,14 @@ module.exports = (dir, pageMappingData) => {
    * @param {string} src - Path to the file relative to `src/`.
    * @returns {string} File contents as a string (optimized for SVGs).
    */
-  getFileContents(src) {
-    const { getSVG } = require(`${dir.build}optimize/optimize-svgs`);
+    getFileContents(src) {
+      const { getSVG } = require(`${dir.build}optimize/optimize-svgs`);
 
-    if (path.extname(src) === '.svg') return getSVG(path.join(dir.src, src));
-    return fs.readFileSync(path.join(dir.src, src)).toString();
-  },
+      if (path.extname(src) === '.svg') return getSVG(path.join(dir.src, src));
+      return fs.readFileSync(path.join(dir.src, src)).toString();
+    },
 
-  /**
+    /**
    * Returns a placeholder HTML snippet for a Last.fm module loading state.
    *
    * Renders either an album or artist placeholder depending on the `albums`
@@ -439,7 +464,7 @@ module.exports = (dir, pageMappingData) => {
    * @param {boolean} [albums=true] - `true` for album placeholders, `false` for artist.
    * @returns {string} HTML markup for a single loading placeholder item.
    */
-  defaultLastFMModule: (albums = true) => `
+    defaultLastFMModule: (albums = true) => `
     <span class="item ${albums ? 'album' : 'artist'}">
       <span class="info">
         ${albums ? `
@@ -458,7 +483,7 @@ module.exports = (dir, pageMappingData) => {
       <span>Loading ${albums ? 'album' : 'artist'} cover</span>
     </span>`,
 
-  /**
+    /**
    * Compiles an SCSS file and returns the resulting CSS as a string.
    *
    * Used for inlining critical CSS directly into `<style>` tags in templates.
@@ -468,14 +493,14 @@ module.exports = (dir, pageMappingData) => {
    * @param {string} src - Path to the SCSS file relative to `src/`.
    * @returns {string} Compiled CSS string.
    */
-  inlineScss(src) {
-    if (styles.has(src)) return styles.get(src);
-    const fileData = fs.readFileSync(path.join(dir.src, src)).toString();
-    const result = sass.compileString(fileData, {
-      loadPaths: [`${dir.src}styles/`, dir.nodeModules],
-    });
-    styles.set(src, result.css);
-    return result.css;
-  },
-});
+    inlineScss(src) {
+      if (styles.has(src)) return styles.get(src);
+      const fileData = fs.readFileSync(path.join(dir.src, src)).toString();
+      const result = sass.compileString(fileData, {
+        loadPaths: [`${dir.src}styles/`, dir.nodeModules],
+      });
+      styles.set(src, result.css);
+      return result.css;
+    },
+  });
 };

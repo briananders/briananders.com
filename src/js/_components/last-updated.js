@@ -70,12 +70,9 @@ class ScrobblesLastUpdated extends HTMLElement {
    * @param {Object} data - API response payload containing a timestamp or date field.
    */
   renderDate(data) {
-    const rawValue = data.last_updated !== undefined ? data.last_updated
-      : data.epoch !== undefined ? data.epoch
-        : data.timestamp !== undefined ? data.timestamp
-          : data.updated_at !== undefined ? data.updated_at
-            : data.datetime !== undefined ? data.datetime
-              : data.date;
+    const fields = ['last_updated', 'epoch', 'timestamp', 'updated_at', 'datetime', 'date'];
+    const field = fields.find((key) => data[key] !== undefined);
+    const rawValue = field !== undefined ? data[field] : undefined;
 
     if (rawValue === undefined || rawValue === null) {
       this.renderError();
@@ -89,7 +86,7 @@ class ScrobblesLastUpdated extends HTMLElement {
       date = new Date(rawValue);
     }
 
-    if (isNaN(date.getTime())) {
+    if (Number.isNaN(date.getTime())) {
       this.renderError();
       return;
     }

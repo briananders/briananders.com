@@ -24,7 +24,7 @@ ready.document(() => {
   /**
    * Listens for window scroll events, calculates scroll distance delta, and schedules frame updates.
    */
-  document.addEventListener('scroll', (event) => {
+  document.addEventListener('scroll', () => {
     const scrollPosition = Math.floor(window.scrollY);
     const movementY = Math.abs(scrollPosition - lastKnownScrollPosition);
     lastKnownScrollPosition = scrollPosition;

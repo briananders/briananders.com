@@ -48,7 +48,7 @@ class CSRSquare extends HTMLElement {
    * @param {string|null} oldValue - The previous value of the attribute.
    * @param {string|null} newValue - The new value of the attribute.
    */
-  attributeChangedCallback(name, oldValue, newValue) {
+  attributeChangedCallback(_name, _oldValue, _newValue) {
     console.log('attributeChangedCallback');
   }
 

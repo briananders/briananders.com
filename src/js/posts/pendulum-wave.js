@@ -13,35 +13,35 @@ const PULSE_DURATION = 0.22;
 // A major scale frequencies across octaves (A2–A6)
 // A, B, C#, D, E, F#, G#
 const A_MAJOR_TONES = [
-  110.00,  // A2
-  123.47,  // B2
-  138.59,  // C#3
-  146.83,  // D3
-  164.81,  // E3
-  185.00,  // F#3
-  207.65,  // G#3
-  220.00,  // A3
-  246.94,  // B3
-  277.18,  // C#4
-  293.66,  // D4
-  329.63,  // E4
-  369.99,  // F#4
-  415.30,  // G#4
-  440.00,  // A4
-  493.88,  // B4
-  554.37,  // C#5
-  587.33,  // D5
-  659.26,  // E5
-  739.99,  // F#5
-  830.61,  // G#5
-  880.00,  // A5
-  987.77,  // B5
+  110.00, // A2
+  123.47, // B2
+  138.59, // C#3
+  146.83, // D3
+  164.81, // E3
+  185.00, // F#3
+  207.65, // G#3
+  220.00, // A3
+  246.94, // B3
+  277.18, // C#4
+  293.66, // D4
+  329.63, // E4
+  369.99, // F#4
+  415.30, // G#4
+  440.00, // A4
+  493.88, // B4
+  554.37, // C#5
+  587.33, // D5
+  659.26, // E5
+  739.99, // F#5
+  830.61, // G#5
+  880.00, // A5
+  987.77, // B5
   1108.73, // C#6
   1174.66, // D6
   1318.51, // E6
   1479.98, // F#6
   1661.22, // G#6
-  1760.00, // A6
+  1760.00 // A6
 ];
 
 let canvas;
@@ -90,22 +90,22 @@ function getTone(i) {
  * and a compressor to prevent clipping when many tones overlap.
  */
 function buildAudioGraph() {
-  var sampleRate = audioCtx.sampleRate;
-  var length = sampleRate * 8;
-  var impulse = audioCtx.createBuffer(2, length, sampleRate);
+  const { sampleRate } = audioCtx;
+  const length = sampleRate * 8;
+  const impulse = audioCtx.createBuffer(2, length, sampleRate);
 
-  for (var ch = 0; ch < 2; ch++) {
-    var data = impulse.getChannelData(ch);
-    for (var s = 0; s < length; s++) {
-      data[s] = ((Math.random() * 2) - 1) * Math.pow(1 - (s / length), 2);
+  for (let ch = 0; ch < 2; ch++) {
+    const data = impulse.getChannelData(ch);
+    for (let s = 0; s < length; s++) {
+      data[s] = ((Math.random() * 2) - 1) * (1 - (s / length)) ** 2;
     }
   }
 
-  var convolver = audioCtx.createConvolver();
+  const convolver = audioCtx.createConvolver();
   convolver.buffer = impulse;
 
   // Wet bus: convolver → wet gain → compressor
-  var wetGain = audioCtx.createGain();
+  const wetGain = audioCtx.createGain();
   wetGain.gain.value = 0.55;
   convolver.connect(wetGain);
 
@@ -144,32 +144,32 @@ function playTone(frequency, pendulumIndex) {
     audioCtx.resume();
   }
 
-  var now = audioCtx.currentTime;
-  var stopTime = now + 6;
+  const now = audioCtx.currentTime;
+  const stopTime = now + 6;
 
   // Fundamental (sine — vibraphone base)
-  var osc = audioCtx.createOscillator();
+  const osc = audioCtx.createOscillator();
   osc.type = 'sine';
   osc.frequency.value = frequency;
 
   // Second partial for shimmer
-  var osc2 = audioCtx.createOscillator();
+  const osc2 = audioCtx.createOscillator();
   osc2.type = 'sine';
   osc2.frequency.value = frequency * 2;
 
   // Gain envelopes — fast attack, long decay
-  var gain = audioCtx.createGain();
+  const gain = audioCtx.createGain();
   gain.gain.setValueAtTime(0, now);
   gain.gain.linearRampToValueAtTime(0.08, now + 0.003);
   gain.gain.exponentialRampToValueAtTime(0.001, now + 5);
 
-  var gain2 = audioCtx.createGain();
+  const gain2 = audioCtx.createGain();
   gain2.gain.setValueAtTime(0, now);
   gain2.gain.linearRampToValueAtTime(0.025, now + 0.003);
   gain2.gain.exponentialRampToValueAtTime(0.001, now + 3);
 
   // Merge oscillators into a single output node
-  var merge = audioCtx.createGain();
+  const merge = audioCtx.createGain();
   merge.gain.value = 1;
   osc.connect(gain);
   osc2.connect(gain2);
@@ -177,10 +177,10 @@ function playTone(frequency, pendulumIndex) {
   gain2.connect(merge);
 
   // Stereo panning — fallback to plain gain if StereoPanner unavailable
-  var output = merge;
+  let output = merge;
   if (audioCtx.createStereoPanner) {
-    var panner = audioCtx.createStereoPanner();
-    var pan = ((pendulumIndex / (numPendulums - 1 || 1)) * 1.4) - 0.7;
+    const panner = audioCtx.createStereoPanner();
+    const pan = ((pendulumIndex / (numPendulums - 1 || 1)) * 1.4) - 0.7;
     panner.pan.value = pan;
     merge.connect(panner);
     output = panner;
@@ -454,7 +454,7 @@ function setCanvasDimensions() {
  * Initializes Web Audio API context and reverb buffer, then starts animation.
  */
 function startWithAudio() {
-  var AudioContextClass = window.AudioContext || window.webkitAudioContext;
+  const AudioContextClass = window.AudioContext || window.webkitAudioContext;
   audioCtx = new AudioContextClass();
 
   // Build graph synchronously — do not gate on resume() promise
@@ -462,8 +462,8 @@ function startWithAudio() {
   buildAudioGraph();
 
   // iOS Safari: play a silent buffer to unlock, then resume
-  var unlock = audioCtx.createBuffer(1, 1, audioCtx.sampleRate);
-  var src = audioCtx.createBufferSource();
+  const unlock = audioCtx.createBuffer(1, 1, audioCtx.sampleRate);
+  const src = audioCtx.createBufferSource();
   src.buffer = unlock;
   src.connect(audioCtx.destination);
   src.start(0);

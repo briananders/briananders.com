@@ -26,8 +26,10 @@ const { log } = console;
  *     which in turn triggers `updateCSSwithImageHashes` so CSS `url()` references
  *     are updated before CSS files are hashed.
  *
- * @param {{ dir: object, completionFlags: object, buildEvents: EventEmitter, hashingFileNameList: object, debug: boolean }} configs
- * @returns {false|undefined} `false` if prerequisites aren't met, otherwise `undefined`.
+ * @param {{ dir: object, completionFlags: object, buildEvents: EventEmitter,
+ *   hashingFileNameList: object, debug: boolean }} configs
+ * @returns {false|undefined} `false` if prerequisites aren't met,
+ *   otherwise `undefined`.
  */
 module.exports = function assetHashing({
   dir, completionFlags, buildEvents, hashingFileNameList, debug,
@@ -80,7 +82,10 @@ module.exports = function assetHashing({
       processedJs++;
       if (processedJs >= array.length) {
         completionFlags.ASSET_HASH.JS = true;
-        if (debug) log(`${timestamp.stamp()} assetHashing().images: completionFlags.ASSET_HASH.JS: ${completionFlags.ASSET_HASH.JS}`);
+        if (debug) {
+          // eslint-disable-next-line max-len
+          log(`${timestamp.stamp()} assetHashing().images: completionFlags.ASSET_HASH.JS: ${completionFlags.ASSET_HASH.JS}`);
+        }
         buildEvents.emit(BUILD_EVENTS.assetHashJsListed);
       }
     });

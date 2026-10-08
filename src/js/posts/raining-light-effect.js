@@ -42,7 +42,6 @@ function RainDrop({
   let index = 0;
   let finishIndex = 0;
   const length = randomLength();
-  const radius = RADIUS;
   const lane = LANE;
   const middleOfTheLane = ((((RADIUS * 2) + PADDING) * (lane + 1)) - RADIUS) + (extraPadding / 2);
   const clearX = middleOfTheLane - RADIUS;
@@ -73,13 +72,11 @@ function RainDrop({
    * Renders the light droplet and its fading tail segments on canvas.
    *
    * @param {Object} options - Draw parameters.
-   * @param {number} options.lane - Lane column index.
    * @param {number} options.drawIndex - Current leading step index.
    * @param {number} [options.fade=0] - Additional alpha fade reduction.
    * @returns {void}
    */
   function draw({
-    lane,
     drawIndex,
     fade = 0,
   }) {
@@ -106,7 +103,6 @@ function RainDrop({
     finishIndex++;
 
     draw({
-      lane,
       drawIndex: index,
       fade: (1 / TAIL_LENGTH) * finishIndex,
     });
@@ -126,7 +122,7 @@ function RainDrop({
    */
   function animate() {
     index++;
-    draw({ lane, drawIndex: index });
+    draw({ drawIndex: index });
 
     if (index >= length) {
       finish();

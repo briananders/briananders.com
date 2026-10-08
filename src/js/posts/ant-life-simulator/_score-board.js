@@ -14,12 +14,16 @@ function formatNumber(number) {
  * @class ScoreBoard
  */
 class ScoreBoard {
-
   #board;
+
   #antsCountElement;
+
   #antEatersCountElement;
+
   #antsEatenElement;
+
   #antEatersEatenElement;
+
   #antEatersKilledElement;
 
   /**

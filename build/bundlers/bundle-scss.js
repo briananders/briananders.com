@@ -81,7 +81,9 @@ module.exports = function bundleSCSS({
 
         fs.writeFile(outFile, cssOutput, (e) => {
           if (e) throw e;
-          if (debug) log(`${timestamp.stamp()} ${'SUCCESS'.bold.green} - Compiled SASS - ${outFile.split(/styles/)[1]}`);
+          if (debug) {
+            log(`${timestamp.stamp()} ${'SUCCESS'.bold.green} - Compiled SASS - ${outFile.split(/styles/)[1]}`);
+          }
           processed++;
 
           // Emit stylesMoved only after the last SCSS file has been compiled.

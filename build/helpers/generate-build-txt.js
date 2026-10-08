@@ -1,5 +1,6 @@
 const fs = require('fs-extra');
 const resolveCommitHash = require('./commit-hash');
+const buildDate = require('./build-date');
 const { log } = console;
 
 const timestamp = require('./timestamp');
@@ -25,8 +26,8 @@ module.exports = function generateBuildTxt(configs) {
   log(`${timestamp.stamp()} generateBuildTxt()`);
 
   try {
-    // Capture the current date/time in ISO 8601 format (UTC).
-    const buildDateTime = new Date().toISOString();
+    // Capture the build date/time in ISO 8601 format (UTC); pinned in golden builds.
+    const buildDateTime = buildDate().toISOString();
 
     // Try to resolve the current git commit SHA for traceability.
     const commitHash = resolveCommitHash(dir.root);

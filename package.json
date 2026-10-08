@@ -14,11 +14,13 @@
     "inspect:start": "node inspect index.js --verbose",
     "test": "node --test",
     "deploy": "NODE_ENV=production node s3-uploader.js",
+    "lint": "eslint build src/js bin",
     "lint:build": "npx eslint build/** --fix",
     "lint:src": "npx eslint src/js/** --fix",
     "preview:production": "node preview-production.js",
     "preview": "node index.js",
     "scaffold": "node scaffold.js",
+    "screenshot": "node bin/screenshot.js",
     "stage": "node s3-uploader.js",
     "start": "node index.js",
     "visual-diff": "node bin/visual-diff.js"
@@ -46,7 +48,8 @@
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^4.6.2",
     "jsdom": "^29.1.1",
-    "jshint": "^2.13.6"
+    "jshint": "^2.13.6",
+    "playwright": "1.56.1"
   },
   "dependencies": {
     "@aws-sdk/client-cloudfront": "^3.1013.0",

@@ -137,8 +137,10 @@ ready.document(() => {
   /**
    * Aggregates tile states (correct, close, wrong, position exclusions, and all entered letters) from the board inputs.
    *
-   * @returns {{ closeLetters: string[], wrongLetters: string[], correctLetters: Array<string|undefined>, cannotBeLetters: string[][], allLetters: string[] }}
-   *   Constraint object used for dictionary filtering and letter exclusion.
+   * @returns {{ closeLetters: string[], wrongLetters: string[],
+   *   correctLetters: Array<string|undefined>, cannotBeLetters: string[][],
+   *   allLetters: string[] }} Constraint object used for dictionary filtering
+   *   and letter exclusion.
    */
   function getLetters() {
     const closeLetters = [];
@@ -161,8 +163,9 @@ ready.document(() => {
       } else if (state === STATES.CORRECT) {
         closeLetters.push(value);
         if (correctLetters[letterIndex] && correctLetters[letterIndex] !== value) {
-          // eslint-disable-next-line no-alert
+          /* eslint-disable */
           alert(`It looks like you have two letters marked for the same position: ${value} and ${correctLetters[letterIndex]}`);
+          /* eslint-enable */
         }
         correctLetters[letterIndex] = value;
       }
@@ -231,7 +234,9 @@ ready.document(() => {
    * @returns {void}
    */
   function updateResultSection({ weightedDictionary }) {
-    const wordElements = weightedDictionary.sort((a, b) => (a[1] > b[1] ? -1 : 1)).map((wordTuple) => `<span>${titleCase(wordTuple[0])} (${wordTuple[1]})</span>`);
+    const wordElements = weightedDictionary
+      .sort((a, b) => (a[1] > b[1] ? -1 : 1))
+      .map((wordTuple) => `<span>${titleCase(wordTuple[0])} (${wordTuple[1]})</span>`);
     answersElement.innerHTML = wordElements.join(SPACE);
 
     resultsElement.innerText = wordElements.length;
@@ -271,10 +276,14 @@ ready.document(() => {
    */
   function getWeightedDictionary({ filteredDictionary, letterValues }) {
     return filteredDictionary.map((word) => {
-      const wordLetterValues = word.toUpperCase().split('').map((letter) => letterValues[letter]);
-      const filteredValues = wordLetterValues.map((value, index) => ((wordLetterValues.indexOf(value) !== index ? -1 : value)));
+      const wordLetterValues = word.toUpperCase().split('')
+        .map((letter) => letterValues[letter]);
+      const filteredValues = wordLetterValues.map(
+        (value, index) => ((wordLetterValues.indexOf(value) !== index ? -1 : value))
+      );
       if (filteredValues.indexOf(-1) === -1) filteredValues.push(100);
-      return [word, filteredValues.reduce((partialSum, letterValue) => partialSum + letterValue, 0)];
+      const score = filteredValues.reduce((partialSum, letterValue) => partialSum + letterValue, 0);
+      return [word, score];
     });
   }
 
@@ -286,7 +295,11 @@ ready.document(() => {
   function updateUnusedLetterWords() {
     const { allLetters } = getLetters();
 
-    const unusedLetters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'].filter((letter) => {
+    const alphabet = [
+      'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
+      'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'
+    ];
+    const unusedLetters = alphabet.filter((letter) => {
       if (allLetters.includes(letter.toUpperCase())) {
         return false;
       }
@@ -305,9 +318,13 @@ ready.document(() => {
 
     const letterFrequency = getLetterFrequency({ filteredDictionary: unusedLetterDictionary });
     const letterValues = getLetterValues(letterFrequency);
-    const weightedDictionary = getWeightedDictionary({ filteredDictionary: unusedLetterDictionary, letterValues });
+    const weightedDictionary = getWeightedDictionary({
+      filteredDictionary: unusedLetterDictionary, letterValues,
+    });
 
-    const wordElements = weightedDictionary.sort((a, b) => (a[1] > b[1] ? -1 : 1)).map((wordTuple) => `<span>${titleCase(wordTuple[0])} (${wordTuple[1]})</span>`);
+    const wordElements = weightedDictionary
+      .sort((a, b) => (a[1] > b[1] ? -1 : 1))
+      .map((wordTuple) => `<span>${titleCase(wordTuple[0])} (${wordTuple[1]})</span>`);
 
     unusedLetterElement.innerHTML = wordElements.join(SPACE);
 
@@ -359,7 +376,9 @@ ready.document(() => {
    * @returns {Array<[string, number]>} The input letter frequency array.
    */
   function updateLetterFrequencySection({ letterFrequency }) {
-    letterFrequencyElement.innerHTML = letterFrequency.map((pairs) => `<span>${pairs[0].toUpperCase()}: ${pairs[1]}</span>`).join(', ');
+    letterFrequencyElement.innerHTML = letterFrequency
+      .map((pairs) => `<span>${pairs[0].toUpperCase()}: ${pairs[1]}</span>`)
+      .join(', ');
 
     return letterFrequency;
   }

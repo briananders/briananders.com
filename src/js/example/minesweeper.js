@@ -75,8 +75,6 @@ function MineSquare([row, column], element) {
   this.row = row;
   this.column = column;
 
-  let abc;
-
   /**
    * Updates CSS class names and dataset values on the square element based on current state.
    */
@@ -527,7 +525,6 @@ ready.document(() => {
   // });
 
   if (urlParams.has('difficulty')) {
-    const difficultyElement = document.querySelector('select[name=difficulty]');
     difficultyElement.value = urlParams.get('difficulty');
   }
 

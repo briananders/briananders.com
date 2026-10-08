@@ -4,7 +4,26 @@ on:
   pull_request:
 
 jobs:
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5.0.0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3.9.1
+        with:
+          node-version-file: ".nvmrc"
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Lint
+        run: npm run lint
+
   build:
+    name: Build
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -23,6 +42,30 @@ jobs:
       - name: Build
         run: npm run build
 
+      # The build encodes missing or stale AVIFs into src/images/; any change
+      # there means the PR didn't commit them.
+      - name: Check committed AVIFs are current
+        run: |
+          if [ -n "$(git status --porcelain -- src/images)" ]; then
+            echo "The build generated or updated files in src/images/. Run a build and commit them:"
+            git status --porcelain -- src/images
+            exit 1
+          fi
+
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5.0.0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3.9.1
+        with:
+          node-version-file: ".nvmrc"
+
+      - name: Install dependencies
+        run: npm install
+
       - name: Test
         run: npm test
-

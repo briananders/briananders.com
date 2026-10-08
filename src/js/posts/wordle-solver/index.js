@@ -146,8 +146,10 @@ ready.document(() => {
   /**
    * Aggregates tile states (correct, close, wrong, position exclusions) from the board inputs.
    *
-   * @returns {{ closeLetters: string[], wrongLetters: string[], correctLetters: Array<string|undefined>, cannotBeLetters: string[][] }}
-   *   Constraint object used for dictionary filtering.
+   * @returns {{ closeLetters: string[], wrongLetters: string[],
+   *   correctLetters: Array<string|undefined>,
+   *   cannotBeLetters: string[][] }} Constraint object used for dictionary
+   *   filtering.
    */
   function getLetters() {
     const closeLetters = [];
@@ -169,8 +171,9 @@ ready.document(() => {
       } else if (state === STATES.CORRECT) {
         closeLetters.push(value);
         if (correctLetters[letterIndex] && correctLetters[letterIndex] !== value) {
-          // eslint-disable-next-line no-alert
+          /* eslint-disable */
           alert(`It looks like you have two letters marked for the same position: ${value} and ${correctLetters[letterIndex]}`);
+          /* eslint-enable */
         }
         correctLetters[letterIndex] = value;
       }
@@ -254,7 +257,9 @@ ready.document(() => {
       cannotBeLetters: cannotBeLetters.toString(),
     });
 
-    const wordElements = potentialMatches.sort((a, b) => (hasDoubleLetter(b) ? -1 : 1)).map((word) => `<span>${word}</span>`);
+    const wordElements = potentialMatches
+      .sort((a, b) => (hasDoubleLetter(b) ? -1 : 1))
+      .map((word) => `<span>${word}</span>`);
     answersElement.innerHTML = wordElements.join(SPACE);
 
     resultsElement.innerText = wordElements.length;

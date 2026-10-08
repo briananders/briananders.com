@@ -207,8 +207,7 @@ module.exports.init = () => {
     if (!overlay) {
       injectStyles();
       const built = buildOverlay();
-      overlay = built.overlay;
-      label = built.label;
+      ({ overlay, label } = built);
       document.body.appendChild(overlay);
       window.addEventListener('resize', () => {
         if (active && label) {

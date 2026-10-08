@@ -1,0 +1,210 @@
+{
+  "src/styles/about/index.scss": {
+    "colors": 0,
+    "px": 1
+  },
+  "src/styles/articles/index.scss": {
+    "colors": 1,
+    "px": 12
+  },
+  "src/styles/base.scss": {
+    "colors": 2,
+    "px": 6
+  },
+  "src/styles/drums.scss": {
+    "colors": 0,
+    "px": 8
+  },
+  "src/styles/example/_phone-shared.scss": {
+    "colors": 1,
+    "px": 0
+  },
+  "src/styles/example/accessible-text.scss": {
+    "colors": 0,
+    "px": 1
+  },
+  "src/styles/example/minesweeper.scss": {
+    "colors": 0,
+    "px": 7
+  },
+  "src/styles/example/ssr-csr-performance-experiment/ssr.scss": {
+    "colors": 0,
+    "px": 4
+  },
+  "src/styles/modules/_contributions.scss": {
+    "colors": 0,
+    "px": 1
+  },
+  "src/styles/modules/_last-fm-module.scss": {
+    "colors": 0,
+    "px": 5
+  },
+  "src/styles/modules/_nav.scss": {
+    "colors": 1,
+    "px": 12
+  },
+  "src/styles/modules/_posts-list.scss": {
+    "colors": 0,
+    "px": 3
+  },
+  "src/styles/modules/_skip-nav.scss": {
+    "colors": 0,
+    "px": 1
+  },
+  "src/styles/modules/_youtube-modal.scss": {
+    "colors": 1,
+    "px": 3
+  },
+  "src/styles/modules/code/_code-container.scss": {
+    "colors": 0,
+    "px": 4
+  },
+  "src/styles/modules/code/_var.scss": {
+    "colors": 0,
+    "px": 1
+  },
+  "src/styles/modules/footer.scss": {
+    "colors": 0,
+    "px": 3
+  },
+  "src/styles/posts/2d-automaton.scss": {
+    "colors": 0,
+    "px": 1
+  },
+  "src/styles/posts/_last-fm-dashboard.scss": {
+    "colors": 2,
+    "px": 53
+  },
+  "src/styles/posts/ant-life-simulator.scss": {
+    "colors": 0,
+    "px": 1
+  },
+  "src/styles/posts/blue-green.scss": {
+    "colors": 0,
+    "px": 4
+  },
+  "src/styles/posts/canvas-static.scss": {
+    "colors": 1,
+    "px": 5
+  },
+  "src/styles/posts/circle-multiplier.scss": {
+    "colors": 0,
+    "px": 1
+  },
+  "src/styles/posts/circle-wave-illusion.scss": {
+    "colors": 2,
+    "px": 3
+  },
+  "src/styles/posts/coin-flip.scss": {
+    "colors": 11,
+    "px": 10
+  },
+  "src/styles/posts/design-system.scss": {
+    "colors": 4,
+    "px": 36
+  },
+  "src/styles/posts/earth-rotating-sprite-animation.scss": {
+    "colors": 0,
+    "px": 2
+  },
+  "src/styles/posts/fractal-viewer.scss": {
+    "colors": 3,
+    "px": 9
+  },
+  "src/styles/posts/how-to-match.scss": {
+    "colors": 0,
+    "px": 2
+  },
+  "src/styles/posts/imdb-ratings.scss": {
+    "colors": 0,
+    "px": 7
+  },
+  "src/styles/posts/last-fm-scrobbles.scss": {
+    "colors": 0,
+    "px": 0
+  },
+  "src/styles/posts/last-fm.scss": {
+    "colors": 0,
+    "px": 0
+  },
+  "src/styles/posts/lissajous-curve.scss": {
+    "colors": 2,
+    "px": 3
+  },
+  "src/styles/posts/making-animations-with-squares.scss": {
+    "colors": 0,
+    "px": 1
+  },
+  "src/styles/posts/minesweeper.scss": {
+    "colors": 0,
+    "px": 4
+  },
+  "src/styles/posts/moire-pattern-colors.scss": {
+    "colors": 0,
+    "px": 4
+  },
+  "src/styles/posts/moire-patterns.scss": {
+    "colors": 0,
+    "px": 4
+  },
+  "src/styles/posts/music-news.scss": {
+    "colors": 3,
+    "px": 10
+  },
+  "src/styles/posts/paint.scss": {
+    "colors": 0,
+    "px": 15
+  },
+  "src/styles/posts/pendulum-wave.scss": {
+    "colors": 0,
+    "px": 4
+  },
+  "src/styles/posts/polar-clock.scss": {
+    "colors": 0,
+    "px": 4
+  },
+  "src/styles/posts/quality-podcasts.scss": {
+    "colors": 0,
+    "px": 1
+  },
+  "src/styles/posts/raining-light-effect.scss": {
+    "colors": 0,
+    "px": 1
+  },
+  "src/styles/posts/raining-paint.scss": {
+    "colors": 0,
+    "px": 1
+  },
+  "src/styles/posts/reverse-hover-state.scss": {
+    "colors": 0,
+    "px": 2
+  },
+  "src/styles/posts/sound-frequency-slider.scss": {
+    "colors": 0,
+    "px": 1
+  },
+  "src/styles/posts/sticky-stacky.scss": {
+    "colors": 0,
+    "px": 1
+  },
+  "src/styles/posts/using-canvas-to-make-patterns-with-circles.scss": {
+    "colors": 0,
+    "px": 1
+  },
+  "src/styles/posts/vertically-center-siblings.scss": {
+    "colors": 0,
+    "px": 2
+  },
+  "src/styles/posts/wordle-solver-2.scss": {
+    "colors": 0,
+    "px": 7
+  },
+  "src/styles/posts/wordle-solver.scss": {
+    "colors": 0,
+    "px": 7
+  },
+  "src/styles/posts/yahtzee.scss": {
+    "colors": 0,
+    "px": 4
+  }
+}

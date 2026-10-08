@@ -150,7 +150,9 @@ function albumGrid(container, albums, { limit, onSelect, compare = null }) {
     }, h('button', {
       type: 'button',
       class: 'lfm-album__button',
-      'aria-label': compare ? `${i + 1}. ${compare.describe(`${album.album} by ${album.artist}`, album.count, before)}` : null,
+      'aria-label': compare
+        ? `${i + 1}. ${compare.describe(`${album.album} by ${album.artist}`, album.count, before)}`
+        : null,
       onclick: () => onSelect(album),
     }, [
       h('span', { class: 'lfm-album__art' }, [
@@ -251,7 +253,8 @@ function focusBars(container, groups) {
       h('div', {
         class: 'lfm-stack',
         role: 'img',
-        'aria-label': `${group.label}: ${group.bands.map((band) => `${band.label} ${format.percent(band.share)}`).join(', ')}`,
+        'aria-label': `${group.label}: ${group.bands
+          .map((band) => `${band.label} ${format.percent(band.share)}`).join(', ')}`,
       }, segments)
     ]);
   });
@@ -313,7 +316,10 @@ function dumbbell(container, rows, { nowLabel, beforeLabel }) {
     return h('li', { class: 'lfm-dumbbell__row' }, [
       h('span', { class: 'lfm-dumbbell__name' }, [h('span', { text: row.name }), badge]),
       track,
-      h('span', { class: `lfm-dumbbell__delta ${row.delta >= 0 ? 'is-up' : 'is-down'}`, text: format.signedPoints(row.delta) })
+      h('span', {
+        class: `lfm-dumbbell__delta ${row.delta >= 0 ? 'is-up' : 'is-down'}`,
+        text: format.signedPoints(row.delta),
+      })
     ]);
   }));
   const axis = h('div', { class: 'lfm-dumbbell__row is-axis', 'aria-hidden': 'true' }, [
@@ -383,7 +389,11 @@ function columns(container, data, {
         class: 'lfm-cols__tick', style: { '--at': `${(tick / scale.max) * 100}%` },
       }, h('span', { text: format.compact(tick) })))),
       h('div', { class: 'lfm-cols__plot', style: { '--count': String(data.length) } }, cols),
-      h('div', { class: 'lfm-cols__axis', 'aria-hidden': 'true', style: { '--count': String(data.length) } }, data.map((d) => h('span', {}, [
+      h('div', {
+        class: 'lfm-cols__axis',
+        'aria-hidden': 'true',
+        style: { '--count': String(data.length) },
+      }, data.map((d) => h('span', {}, [
         h('span', { class: 'lfm-cols__label-long', text: d.label }),
         h('span', { class: 'lfm-cols__label-short', text: d.short })
       ])))
@@ -477,7 +487,12 @@ function heatmap(container, rows, { isSelected, onSelect, onSelectYear }) {
     grid,
     h('div', { class: 'lfm-heat__legend', 'aria-hidden': 'true' }, [
       h('span', { text: '0' }),
-      h('span', { class: 'lfm-heat__ramp', style: { '--ramp': `linear-gradient(to right, ${heatColor(0)}, ${heatColor(0.5)}, ${heatColor(1)})` } }),
+      h('span', {
+        class: 'lfm-heat__ramp',
+        style: {
+          '--ramp': `linear-gradient(to right, ${heatColor(0)}, ${heatColor(0.5)}, ${heatColor(1)})`,
+        },
+      }),
       h('span', { text: format.number(max) })
     ]),
     dataTable('Show data table', ['Year', ...format.MONTHS_SHORT], rows.map((row) => [
@@ -548,8 +563,15 @@ function areaChart(container, series, { band, bandLabel, caption = 'Show data ta
     }));
   }
   const points = series.map((row, i) => `${xAt(i).toFixed(2)},${yAt(row.value).toFixed(2)}`);
-  plotSvg.append(svg('path', { class: 'lfm-area__fill', d: `M${xAt(0)},${H} L${points.join(' L')} L${xAt(n - 1)},${H} Z` }));
-  plotSvg.append(svg('path', { class: 'lfm-area__line', d: `M${points.join(' L')}`, 'vector-effect': 'non-scaling-stroke' }));
+  plotSvg.append(svg('path', {
+    class: 'lfm-area__fill',
+    d: `M${xAt(0)},${H} L${points.join(' L')} L${xAt(n - 1)},${H} Z`,
+  }));
+  plotSvg.append(svg('path', {
+    class: 'lfm-area__line',
+    d: `M${points.join(' L')}`,
+    'vector-effect': 'non-scaling-stroke',
+  }));
 
   const last = series[n - 1];
   const endDot = h('span', { class: 'lfm-area__dot is-end', style: { left: pct(n - 1), top: `${yAt(last.value)}%` } });
@@ -559,7 +581,10 @@ function areaChart(container, series, { band, bandLabel, caption = 'Show data ta
     class: 'lfm-area__plot',
     tabindex: '0',
     role: 'img',
-    'aria-label': `Monthly scrobbles, ${format.monthLabel(series[0].month)} to ${format.monthLabel(last.month)}. Peak ${format.number(Math.max(...series.map((r) => r.value)))}.${bandLabel ? ` Shaded: ${bandLabel}.` : ''} Use arrow keys to read months.`,
+    'aria-label': `Monthly scrobbles, ${format.monthLabel(series[0].month)} to 
+      ${format.monthLabel(last.month)}. 
+      Peak ${format.number(Math.max(...series.map((r) => r.value)))}.
+      ${bandLabel ? ` Shaded: ${bandLabel}.` : ''} Use arrow keys to read months.`,
   }, [plotSvg, crosshair, focusDot, endDot]);
 
   let active = n - 1;
@@ -613,7 +638,9 @@ function areaChart(container, series, { band, bandLabel, caption = 'Show data ta
         text: tick.text,
       })))
     ]),
-    dataTable(caption, ['Month', 'Scrobbles'], series.map((row) => [format.monthLabel(row.month), format.number(row.value)]))
+    dataTable(caption, ['Month', 'Scrobbles'], series.map((row) => [
+      format.monthLabel(row.month), format.number(row.value)
+    ]))
   ]);
 }
 

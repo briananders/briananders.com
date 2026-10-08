@@ -3,7 +3,6 @@
 // Usage: node bin/serve.js <directory> <port>
 
 const express = require('express');
-const serve = require('express-static');
 
 const [,, dir, portArg] = process.argv;
 
@@ -15,10 +14,9 @@ if (!dir || !portArg) {
 const port = parseInt(portArg, 10);
 const app = express();
 
-app.use(serve(dir));
+app.use(express.static(dir));
 
 // Start the HTTP server to serve static files from the specified directory
 app.listen(port, () => {
   console.log(`Serving ${dir} on http://localhost:${port}`);
 });
-

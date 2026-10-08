@@ -16,9 +16,10 @@ function daysInMonth(month, year) {
  * Represents an SVG circular path used as a progress ring in the polar clock.
  */
 class CirclePath {
-
   #element;
+
   #circumference;
+
   id;
 
   /**

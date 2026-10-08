@@ -43,17 +43,21 @@ function deletePackageFile(srcPath, { dir }) {
   fs.removeSync(destPath);
 
   const { rasterImages } = require(`${dir.build}constants/file-formats`);
+  const { isGeneratedAvif, removeGeneratedAvif } = require(`${dir.build}optimize/convert-to-avif`);
   const extension = path.extname(srcPath).substring(1).toLowerCase();
   if (!rasterImages.includes(extension)) return;
 
   const sourceWithoutExtension = srcPath.substring(0, srcPath.lastIndexOf('.'));
-  const hasAlternateSource = rasterImages.some((candidate) => (
-    candidate !== extension && fs.existsSync(`${sourceWithoutExtension}.${candidate}`)
-  ));
+  const hasAlternateSource = rasterImages.some((candidate) => {
+    const alternate = `${sourceWithoutExtension}.${candidate}`;
+    return candidate !== extension && fs.existsSync(alternate)
+      && !(candidate === 'avif' && isGeneratedAvif(alternate, { dir }));
+  });
   if (!hasAlternateSource) {
     const destinationWithoutExtension = destPath.substring(0, destPath.lastIndexOf('.'));
     fs.removeSync(`${destinationWithoutExtension}.webp`);
     fs.removeSync(`${destinationWithoutExtension}.avif`);
+    removeGeneratedAvif(srcPath, { dir });
   }
 }
 
@@ -62,8 +66,9 @@ function deletePackageFile(srcPath, { dir }) {
  *
  * Dispatch logic by file type:
  * - `.svg` → optimized via SVGO (`optimizeSvg`).
- * - Raster sources → copied as-is and converted to missing `.webp` and
- *   `.avif` siblings from one canonical source.
+ * - Raster sources → copied as-is and given `.webp` and `.avif` siblings
+ *   from one canonical source. The `.avif` is copied from its committed
+ *   twin in `src/images/`, encoded there first when missing or stale.
  * - `.svg` → optimized via SVGO.
  *
  * If the source file no longer exists the corresponding output file is
@@ -92,8 +97,14 @@ async function moveOneImage(imagePath, configs, callback = () => { }) {
 
   function hasSourceWithExtension(extensionToCheck) {
     const sourceWithoutExtension = imagePath.substring(0, imagePath.lastIndexOf('.'));
-    return fs.existsSync(`${sourceWithoutExtension}.${extensionToCheck}`);
+    const candidate = `${sourceWithoutExtension}.${extensionToCheck}`;
+    if (!fs.existsSync(candidate)) return false;
+    // Generated AVIFs are build output that lives in src/, not sources.
+    return extensionToCheck !== 'avif' || !convertToAvif.isGeneratedAvif(candidate, { dir });
   }
+
+  // The AVIF manifest sits in src/images/ but is build metadata, not an asset.
+  if (path.basename(imagePath) === convertToAvif.MANIFEST_NAME) return callback();
 
   function isCanonicalRasterSource() {
     if (rasterSourceImages.includes(extension)) {
@@ -134,6 +145,8 @@ async function moveOneImage(imagePath, configs, callback = () => { }) {
     // when a source/WebP pair exists, avoiding nondeterministic overwrites.
     // Original sources own the generated formats, even when supplied siblings exist.
     // Skipping their copies prevents concurrent writes to the same destination.
+    // Generated AVIFs are copied by convertToAvif() when their source is processed.
+    if (extension === 'avif' && convertToAvif.isGeneratedAvif(imagePath, { dir })) return callback();
     if (['webp', 'avif'].includes(extension)
       && rasterSourceImages.some(hasSourceWithExtension)) return callback();
     await fs.copyFile(imagePath, destination);
