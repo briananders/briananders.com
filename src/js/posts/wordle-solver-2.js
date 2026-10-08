@@ -163,9 +163,9 @@ ready.document(() => {
       } else if (state === STATES.CORRECT) {
         closeLetters.push(value);
         if (correctLetters[letterIndex] && correctLetters[letterIndex] !== value) {
-          // eslint-disable-next-line no-alert
-          alert('It looks like you have two letters marked for the same position: '
-            + `${value} and ${correctLetters[letterIndex]}`);
+          /* eslint-disable */
+          alert(`It looks like you have two letters marked for the same position: ${value} and ${correctLetters[letterIndex]}`);
+          /* eslint-enable */
         }
         correctLetters[letterIndex] = value;
       }

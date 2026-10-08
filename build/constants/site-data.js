@@ -52,8 +52,8 @@ module.exports = (dir) => {
     /** Package version string from `package.json`. */
     version: pkg.version,
     name: 'Brian Anders',
-    description: 'Brian Anders is an Engineering Manager in the tech industry. '
-      + "I'm also a YouTuber, Podcaster, and Musician.",
+    // eslint-disable-next-line max-len
+    description: "Brian Anders is an Engineering Manager in the tech industry. I'm also a YouTuber, Podcaster, and Musician.",
     author: 'Brian Anders',
     /** Primary contact URL (Twitter/X profile). */
     contact: twitter,

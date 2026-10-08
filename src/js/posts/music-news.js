@@ -22,8 +22,8 @@ function escapeHTML(str) {
  * @returns {string} The generated HTML anchor string.
  */
 function articleLink(link, content, classes = '') {
-  return `<a href="${escapeHTML(link)}" class="${classes}" `
-    + `target="_blank" rel="noopener" itemprop="url">${content}</a>`;
+  // eslint-disable-next-line max-len
+  return `<a href="${escapeHTML(link)}" class="${classes}" target="_blank" rel="noopener" itemprop="url">${content}</a>`;
 }
 
 /**
@@ -48,9 +48,8 @@ function renderArticle(article) {
   const imageHtml = article.image_url
     ? articleLink(
       article.link,
-      '<img loading="lazy" decoding="async" '
-        + `src="${escapeHTML(article.image_url)}" `
-        + `alt="${escapeHTML(article.title)}" class="article-image" />`,
+      // eslint-disable-next-line max-len
+      `<img loading="lazy" decoding="async" src="${escapeHTML(article.image_url)}" alt="${escapeHTML(article.title)}" class="article-image" />`,
       'article-image-link'
     )
     : '';
@@ -208,11 +207,11 @@ function initBandsMarquee(marqueeRootEl, bandsList) {
     const rows = splitBandsIntoMarqueeRows(bandsList);
     const staticRows = rows.map((rowBands) => {
       const inner = renderMarqueeSegmentTags(rowBands);
-      return '<div class="music-news-marquee-row music-news-marquee-row--static">'
-        + `<div class="music-news-marquee-static-inner">${inner}</div></div>`;
+      // eslint-disable-next-line max-len
+      return '<div class="music-news-marquee-row music-news-marquee-row--static"><div class="music-news-marquee-static-inner">${inner}</div></div>`;
     }).join('');
-    marqueeRootEl.innerHTML = '<div class="music-news-marquee-viewport '
-      + `music-news-marquee-viewport--static">${staticRows}</div>`;
+    // eslint-disable-next-line max-len
+    marqueeRootEl.innerHTML = '<div class="music-news-marquee-viewport music-news-marquee-viewport--static">${staticRows}</div>`;
     return () => { };
   }
 

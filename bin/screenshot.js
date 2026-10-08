@@ -234,9 +234,9 @@ function escapeXml(str) {
 }
 
 function svgText(text, width, height, fontSize, weight = 400) {
-  return Buffer.from(`<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}">`
-    + `<text x="0" y="${Math.round(height * 0.7)}" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" `
-    + `font-size="${fontSize}" font-weight="${weight}" fill="${SHEET.text}">${escapeXml(text)}</text></svg>`);
+  return Buffer.from(`<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}">
+    <text x="0" y="${Math.round(height * 0.7)}" font-family="DejaVu Sans, Helvetica, Arial, sans-serif" 
+    font-size="${fontSize}" font-weight="${weight}" fill="${SHEET.text}">${escapeXml(text)}</text></svg>`);
 }
 
 /**

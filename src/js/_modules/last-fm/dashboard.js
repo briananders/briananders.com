@@ -412,10 +412,9 @@ function initDashboard(root) {
           const head = `${name}: ${format.number(count)} scrobbles ${during}`;
           if (pace) {
             return before === null
-              ? `${head}, compared with a usual of at most `
-                + `${format.number(atMost)} at your pace over ${over} (${outside}).`
-              : `${head}, compared with a usual `
-                + `${format.number(before)} at your pace over ${over}.`;
+              // eslint-disable-next-line max-len
+              ? `${head}, compared with a usual of at most ${format.number(atMost)} at your pace over ${over} (${outside}).`
+              : `${head}, compared with a usual ${format.number(before)} at your pace over ${over}.`;
           }
           return before === null
             ? `${head}, compared with at most ${format.number(atMost)} in ${comp.label} (${outside}).`

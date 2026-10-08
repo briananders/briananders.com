@@ -581,10 +581,10 @@ function areaChart(container, series, { band, bandLabel, caption = 'Show data ta
     class: 'lfm-area__plot',
     tabindex: '0',
     role: 'img',
-    'aria-label': `Monthly scrobbles, ${format.monthLabel(series[0].month)} to `
-      + `${format.monthLabel(last.month)}. `
-      + `Peak ${format.number(Math.max(...series.map((r) => r.value)))}.`
-      + `${bandLabel ? ` Shaded: ${bandLabel}.` : ''} Use arrow keys to read months.`,
+    'aria-label': `Monthly scrobbles, ${format.monthLabel(series[0].month)} to 
+      ${format.monthLabel(last.month)}. 
+      Peak ${format.number(Math.max(...series.map((r) => r.value)))}.
+      ${bandLabel ? ` Shaded: ${bandLabel}.` : ''} Use arrow keys to read months.`,
   }, [plotSvg, crosshair, focusDot, endDot]);
 
   let active = n - 1;

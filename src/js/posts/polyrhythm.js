@@ -80,8 +80,8 @@ function ColorObject(position) {
    * @param {number} white - Flash intensity between 0 (base color) and 1 (fully white).
    * @returns {string} RGBA CSS color string.
    */
-  this.rgb = (white) => `rgba(${whiteRed(position, white)},`
-    + `${whiteGreen(position, white)},${whiteBlue(position, white)},1)`;
+  // eslint-disable-next-line max-len
+  this.rgb = (white) => `rgba(${whiteRed(position, white)},${whiteGreen(position, white)},${whiteBlue(position, white)},1)`;
 }
 
 /**
