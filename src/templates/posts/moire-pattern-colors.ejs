@@ -6,6 +6,14 @@ date: 2022-06-24
 priority: 0.8
 pageClasses:
 - 'posts moire-pattern-colors'
+metaDescription: 'Moiré patterns in color: red, green and blue fields of parallel lines rotate over each other to create shifting interference patterns.'
+ogImage:
+  selector: '#canvas'
+  alt: 'Red, green and blue line fields rotating over each other into a colorful moiré'
+  wait: 3000
+  actions:
+    - click: 'button[aria-label=''Play/pause red rotation'']'
+    - click: 'button[aria-label=''Play/pause blue rotation'']'
 layout: base
 styles:
 - 'main'

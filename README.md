@@ -42,6 +42,7 @@ My personal website, built as a custom static site generator.
 - `npm run lint`: Run ESLint on `build/`, `src/js/`, and `bin/` without fixing anything.
 - `npm run lint:src` / `npm run lint:build`: Run ESLint with `--fix` on the source or build directories.
 - `npm run screenshot -- /path/ ...`: Screenshot pages of the production build at 360, 600, 768, 960, 1024, and 1440px into contact sheets under `screenshots/<page>/`, and flag content cut off at the viewport edge (exits 2 if any). Run `npx playwright install chromium` once first.
+- `npm run og-images -- /path/ ...`: Capture each page's social preview (`og:image`) from the production build. Every page's front matter names its signature element in an `ogImage` recipe; the capture is fitted to 1200×630 and written to `src/images/og/`. With no paths, captures every page. Build afterwards and commit the images, their AVIFs and `src/images/avif-manifest.json`.
 - `npm run visual-diff`: Runs the visual regression diffing script using Playwright/Puppeteer.
 
 ### Building

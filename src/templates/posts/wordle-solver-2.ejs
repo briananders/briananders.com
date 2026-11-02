@@ -5,6 +5,23 @@ date: 2023-12-31
 priority: 0.8
 pageClasses:
   - 'posts wordle-solver-2'
+metaDescription: 'Wordle strategies beyond green and yellow matches: letter frequency, smarter guesses and words made of untried letters, built into a solver.'
+ogImage:
+  selector: '.game-board'
+  alt: 'A Wordle board opening with AROSE, the starter that covers 95% of words'
+  fit: 'contain'
+  padding: 24
+  width: 640
+  wait: 2500
+  actions:
+    - fill: ['#letter-0-0', 'a']
+    - fill: ['#letter-0-1', 'r']
+    - fill: ['#letter-0-2', 'o']
+    - fill: ['#letter-0-3', 's']
+    - fill: ['#letter-0-4', 'e']
+    - click: 'label[for=''close-0-0'']'
+    - click: 'label[for=''correct-0-3'']'
+    - click: '#submit'
 layout: base
 styles:
   - 'main'

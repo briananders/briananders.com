@@ -85,6 +85,7 @@ Every panel compares against one report per period (`comparisonFor()` in `data.j
 │
 ├── AGENTS.md                   # Rules for every AI agent (imported above)
 ├── bin/screenshot.js           # Contact-sheet screenshots + viewport-edge layout check (`npm run screenshot`)
+├── bin/og-images.js            # Social preview captures from front-matter recipes (`npm run og-images`)
 │
 ├── build/                      # Build pipeline (all files have full JSDoc as of March 2026)
 │   ├── bundlers/
@@ -104,10 +105,11 @@ Every panel compares against one report per period (`comparisonFor()` in `data.j
 │   │   ├── build-random.js     # Math.random, or a seeded generator when BUILD_RANDOM_SEED is set
 │   │   ├── check-done.js       # Gate: exits process when all completion flags are true
 │   │   ├── clean.js            # Empties the output directory (returns Promise)
-│   │   ├── ejs-functions.js    # 15 template helper functions available in all EJS templates
+│   │   ├── ejs-functions.js    # 16 template helper functions available in all EJS templates
 │   │   ├── exit-message.js     # ASCII-art success banner printed on build completion
 │   │   ├── generate-build-txt.js # Writes build.txt (date + commit hash) to output dir
 │   │   ├── production.js       # Boolean: NODE_ENV === 'production'
+│   │   ├── seo.js              # Titles, descriptions, canonical/OG/Twitter values, preview image, JSON-LD
 │   │   └── timestamp.js        # Returns grey [HH:MM:SS] stamp for build log lines
 │   ├── hashing/
 │   │   ├── asset-hashing.js    # XXHash JS files + image/video files; emits two events
@@ -182,6 +184,9 @@ title: "Page Title"
 description: "Page description shown at the top and in meta tags."
 date: 2024-12-31
 priority: 0.8
+ogImage:
+  selector: '#canvas'
+  alt: "What the preview image shows"
 pageClasses:
   - 'page-class-name'
 layout: base
@@ -199,6 +204,36 @@ scripts:
 - Output paths are derived from template paths: `posts/my-post.ejs` → `/posts/my-post/index.html`
 - Files named `*.html.ejs` output directly (e.g., `index.html.ejs` → `index.html`)
 - Templates prefixed with `_` are excluded from the build
+- `robots: false` makes a page `noindex` and leaves it out of `sitemap.xml`. Don't also block it in `robots.txt`: crawlers can't read a noindex tag on a page they're not allowed to fetch.
+
+### SEO and Social Previews
+
+`build/helpers/seo.js` decides every search and social tag; `src/partials/head/meta.ejs` only renders it (via the `seo(locals)` EJS helper).
+
+| Output | Source |
+|---|---|
+| `<title>` | `title \| Brian Anders`; the homepage uses front matter `metaTitle`, which any page can set |
+| Meta / OG / Twitter description | `metaDescription`, else `description`. Google cuts snippets at about 160 characters, and a test enforces that limit on indexable pages; set `metaDescription` when the on-page `description` runs longer |
+| Canonical, `og:url`, `og:image` | Always absolute (`siteData.domain`). Production hashing rewrites same-origin absolute URLs too (`replacePaths` in `finish-hashing.js`) |
+| `og:type` + JSON-LD type | Posts are `article` / `BlogPosting` with breadcrumbs, `posts/` is a `CollectionPage`, everything else a `WebPage`. Front matter `schemaType` overrides it (`about.ejs` is a `ProfilePage`) |
+| JSON-LD `Person` | `sameAs` lists every profile in `site-data.js`, which links them to this site in search |
+
+**Preview images.** Every indexable page has a 1200×630 JPEG at `src/images/og/<page path>.jpg` (`/` → `index.jpg`, `/posts/` → `posts.jpg`, `/posts/coin-flip/` → `posts/coin-flip.jpg`). Pages without one (404, `example/`) fall back to the homepage's, with alt text that says so. They're screenshots of each page's signature element, taken by `npm run og-images` from the front matter recipe:
+
+| Key | Default | Purpose |
+|---|---|---|
+| `selector` | required | The element to capture |
+| `alt` | `Screenshot of <title>` | `og:image:alt` / `twitter:image:alt`. Tests require it on indexable pages |
+| `fit` | `cover` | `cover` crops to fill 1200×630; `contain` letterboxes in the page background |
+| `position` | `centre` | Crop anchor for `cover` (`top`, `left`, …) |
+| `padding` | `0` | CSS px of surrounding page to include |
+| `width` / `height` | `1200` / `900` | Viewport. The capture is clipped to it, never full-page: resizing the viewport fires `resize`, which resets the canvas experiments. A narrower width enlarges text-heavy pages |
+| `scale` | `2` | Device pixel ratio; raise it for tiny elements |
+| `hideFixed` | `true` | Hide fixed and sticky elements outside the element, such as the site header |
+| `wait` | `1500` | ms for animations to run before the capture |
+| `actions` | `[]` | Run in order first: `click` (selector, or `[selector, x, y]` as fractions of its box), `fill`, `press`, `select`, `hover`, `drag` (`[selector, [[x, y], …]]`), `scroll` (window y, or a selector to bring to the top), `wait` |
+
+Captures are source images, not build output: animations and randomness make each run differ, so only regenerate the pages you mean to (`npm run og-images -- /posts/coin-flip/`). Review the contact sheets in `screenshots/og-images/`, build to create the AVIFs, and commit `src/images/og/` with `src/images/avif-manifest.json`. `test/seo.test.mjs` fails when an indexable page lacks a recipe, alt text, a correctly sized image or a short enough description.
 
 ### Scaffolding New Pages
 
@@ -228,6 +263,7 @@ Available in all templates via `build/helpers/ejs-functions.js`:
 | `getChildPages(parentPath)` | Returns direct children from `pageMappingData` |
 | `defaultLastFMModule(albums)` | Last.fm loading placeholder markup |
 | `inlineScss(src)` | Compiles SCSS file to CSS string for inline `<style>` use |
+| `seo(locals)` | Resolves a page's title, description, canonical URL, OG/Twitter values, preview image and JSON-LD (`build/helpers/seo.js`) |
 | `getFileContents(src)` | Returns file as string; SVGs are run through svgo first |
 | `dasherize(str)` | `fooBar` → `foo-bar` |
 | `camelize(str)` | `foo-bar` → `fooBar` |
@@ -498,6 +534,7 @@ Source file changes dispatch by path:
 | `npm run preview:production` | Serve the production build locally |
 | `npm run scaffold -- --path=/path` | Create new page boilerplate |
 | `npm run screenshot -- /path/ ...` | Contact-sheet screenshots of the built site at 360/600/768/960/1024/1440px, plus a viewport-edge layout check that exits 2 on a flag (see AGENTS.md §1) |
+| `npm run og-images -- /path/ ...` | Capture social preview images from the production build into `src/images/og/` (see SEO and Social Previews). No paths: every page |
 | `npm run visual-diff` | Run visual regression tests (Brian's machine only) |
 
 ### Deployment

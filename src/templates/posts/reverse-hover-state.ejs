@@ -5,6 +5,14 @@ date: 2022-07-03
 priority: 0.8
 pageClasses:
 - 'posts reverse-hover-state'
+ogImage:
+  selector: '.cards-container'
+  alt: 'A grid of orange squares where every square except the hovered one fades'
+  fit: 'contain'
+  padding: 16
+  wait: 800
+  actions:
+    - hover: '.cards-container card >> nth=6'
 layout: base
 styles:
 - 'main'

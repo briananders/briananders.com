@@ -5,6 +5,15 @@ date: 2023-03-25
 priority: 0.8
 pageClasses:
   - 'posts browser-and-device-diagnostics'
+metaDescription: 'See your browser''s userAgent, devicePixelRatio and viewport, and break any URL into its parts, all from standard JavaScript APIs.'
+ogImage:
+  selector: 'main .code-container >> nth=0'
+  alt: 'window.location broken into its hash, host, pathname and other parts'
+  fit: 'contain'
+  padding: 32
+  actions:
+    - fill: ['#url', 'https://briananders.com/posts/?utm_source=social#experiments']
+    - press: ['#url', 'End']
 layout: base
 styles:
   - 'main'

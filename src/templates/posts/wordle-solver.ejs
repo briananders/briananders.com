@@ -5,6 +5,23 @@ date: 2022-04-23
 priority: 0.8
 pageClasses:
   - 'posts wordle-solver'
+metaDescription: 'A Wordle solver: enter your guesses, mark each letter as a hit or a near miss, and it filters the dictionary down to the possible answers.'
+ogImage:
+  selector: '.game-board'
+  alt: 'A Wordle board with CRANE marked: R a near miss, E a hit'
+  fit: 'contain'
+  padding: 24
+  width: 640
+  wait: 2500
+  actions:
+    - fill: ['#letter-0-0', 'c']
+    - fill: ['#letter-0-1', 'r']
+    - fill: ['#letter-0-2', 'a']
+    - fill: ['#letter-0-3', 'n']
+    - fill: ['#letter-0-4', 'e']
+    - click: 'label[for=''close-0-1'']'
+    - click: 'label[for=''correct-0-4'']'
+    - click: '#submit'
 layout: base
 styles:
   - 'main'

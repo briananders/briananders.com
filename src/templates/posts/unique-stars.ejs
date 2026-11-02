@@ -7,6 +7,15 @@ priority: 0.8
 pageClasses:
 - 'posts'
 - 'unique-stars'
+ogImage:
+  selector: '#star'
+  alt: 'An 11-pointed star drawn by connecting every fourth point around a circle'
+  fit: 'contain'
+  padding: 24
+  actions:
+    - fill: ['#n', '11']
+    - press: ['#n', 'Tab']
+    - select: ['select[data-n]', '4']
 layout: base
 styles:
 - 'main'

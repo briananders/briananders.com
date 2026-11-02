@@ -607,6 +607,214 @@
     "source": "last-fm/artist/wings.webp",
     "sha256": "8950d13f402fd991"
   },
+  "og/about.avif": {
+    "source": "og/about.jpg",
+    "sha256": "bc661e8f4fd2b3af"
+  },
+  "og/drums.avif": {
+    "source": "og/drums.jpg",
+    "sha256": "ec51a090db3b4b23"
+  },
+  "og/index.avif": {
+    "source": "og/index.jpg",
+    "sha256": "ba21c3893e646cc7"
+  },
+  "og/posts.avif": {
+    "source": "og/posts.jpg",
+    "sha256": "27ed4e6b157f92a3"
+  },
+  "og/posts/2d-automaton.avif": {
+    "source": "og/posts/2d-automaton.jpg",
+    "sha256": "9509200251e869a9"
+  },
+  "og/posts/ant-life-simulator.avif": {
+    "source": "og/posts/ant-life-simulator.jpg",
+    "sha256": "3a9908058ea98e36"
+  },
+  "og/posts/blue-green.avif": {
+    "source": "og/posts/blue-green.jpg",
+    "sha256": "35da22697f113558"
+  },
+  "og/posts/browser-and-device-diagnostics.avif": {
+    "source": "og/posts/browser-and-device-diagnostics.jpg",
+    "sha256": "501248fa5a0b6007"
+  },
+  "og/posts/canvas-static.avif": {
+    "source": "og/posts/canvas-static.jpg",
+    "sha256": "9bfbf89bbb65ab07"
+  },
+  "og/posts/cellular-automaton.avif": {
+    "source": "og/posts/cellular-automaton.jpg",
+    "sha256": "eeb4f29fb6396925"
+  },
+  "og/posts/circle-multiplier.avif": {
+    "source": "og/posts/circle-multiplier.jpg",
+    "sha256": "40045487546a8ac2"
+  },
+  "og/posts/circle-wave-illusion.avif": {
+    "source": "og/posts/circle-wave-illusion.jpg",
+    "sha256": "25946a14fa62f275"
+  },
+  "og/posts/coin-flip.avif": {
+    "source": "og/posts/coin-flip.jpg",
+    "sha256": "07a656d80b89ba78"
+  },
+  "og/posts/color-canvas.avif": {
+    "source": "og/posts/color-canvas.jpg",
+    "sha256": "03e62c98d89ebaff"
+  },
+  "og/posts/design-system.avif": {
+    "source": "og/posts/design-system.jpg",
+    "sha256": "68c68def2cde8d8c"
+  },
+  "og/posts/earth-rotating-sprite-animation.avif": {
+    "source": "og/posts/earth-rotating-sprite-animation.jpg",
+    "sha256": "623cbebeb39a2ed9"
+  },
+  "og/posts/fractal-viewer.avif": {
+    "source": "og/posts/fractal-viewer.jpg",
+    "sha256": "ba0450d33b7fd81f"
+  },
+  "og/posts/how-to-get-rid-of-untracked-files-from-your-git-branch.avif": {
+    "source": "og/posts/how-to-get-rid-of-untracked-files-from-your-git-branch.jpg",
+    "sha256": "072761be854cc589"
+  },
+  "og/posts/how-to-git-merge-without-being-prompted-for-a-message.avif": {
+    "source": "og/posts/how-to-git-merge-without-being-prompted-for-a-message.jpg",
+    "sha256": "cc1855d011310284"
+  },
+  "og/posts/how-to-match-the-height-of-sibling-elements.avif": {
+    "source": "og/posts/how-to-match-the-height-of-sibling-elements.jpg",
+    "sha256": "b0ed1864baeb2257"
+  },
+  "og/posts/imdb-ratings.avif": {
+    "source": "og/posts/imdb-ratings.jpg",
+    "sha256": "752ac7983533b18e"
+  },
+  "og/posts/in-view-text-animation.avif": {
+    "source": "og/posts/in-view-text-animation.jpg",
+    "sha256": "49e38dc3f22048d7"
+  },
+  "og/posts/interview-question.avif": {
+    "source": "og/posts/interview-question.jpg",
+    "sha256": "e70f3c97e6053031"
+  },
+  "og/posts/last-fm-scrobbles.avif": {
+    "source": "og/posts/last-fm-scrobbles.jpg",
+    "sha256": "800c6666d813d122"
+  },
+  "og/posts/last-fm.avif": {
+    "source": "og/posts/last-fm.jpg",
+    "sha256": "b35c5d62f16dfd76"
+  },
+  "og/posts/line-circle-rotator.avif": {
+    "source": "og/posts/line-circle-rotator.jpg",
+    "sha256": "4d456805b525cdb0"
+  },
+  "og/posts/lissajous-curve.avif": {
+    "source": "og/posts/lissajous-curve.jpg",
+    "sha256": "61138d21a3183b20"
+  },
+  "og/posts/making-animations-with-squares.avif": {
+    "source": "og/posts/making-animations-with-squares.jpg",
+    "sha256": "82043b6abc5a49fe"
+  },
+  "og/posts/minesweeper.avif": {
+    "source": "og/posts/minesweeper.jpg",
+    "sha256": "6f4f482bddfbccc1"
+  },
+  "og/posts/moire-pattern-colors.avif": {
+    "source": "og/posts/moire-pattern-colors.jpg",
+    "sha256": "d755cd7276461f42"
+  },
+  "og/posts/moire-patterns.avif": {
+    "source": "og/posts/moire-patterns.jpg",
+    "sha256": "9994dbe3a62e0c93"
+  },
+  "og/posts/music-news.avif": {
+    "source": "og/posts/music-news.jpg",
+    "sha256": "48fb97e061314c47"
+  },
+  "og/posts/my-favorite-aliases.avif": {
+    "source": "og/posts/my-favorite-aliases.jpg",
+    "sha256": "516651c45afd2e0b"
+  },
+  "og/posts/my-favorite-git-aliases.avif": {
+    "source": "og/posts/my-favorite-git-aliases.jpg",
+    "sha256": "b7346303437c00dd"
+  },
+  "og/posts/my-git-config.avif": {
+    "source": "og/posts/my-git-config.jpg",
+    "sha256": "8a26560277c9a176"
+  },
+  "og/posts/paint.avif": {
+    "source": "og/posts/paint.jpg",
+    "sha256": "3848586f0b922076"
+  },
+  "og/posts/pendulum-wave.avif": {
+    "source": "og/posts/pendulum-wave.jpg",
+    "sha256": "c15c399bf9bfa693"
+  },
+  "og/posts/polar-clock.avif": {
+    "source": "og/posts/polar-clock.jpg",
+    "sha256": "6267adc1f5006df3"
+  },
+  "og/posts/polyrhythm.avif": {
+    "source": "og/posts/polyrhythm.jpg",
+    "sha256": "727df8bf1490ff60"
+  },
+  "og/posts/quality-podcasts.avif": {
+    "source": "og/posts/quality-podcasts.jpg",
+    "sha256": "00d6e94fd51188fd"
+  },
+  "og/posts/raining-light-effect.avif": {
+    "source": "og/posts/raining-light-effect.jpg",
+    "sha256": "79c8f282d5b4093a"
+  },
+  "og/posts/raining-paint.avif": {
+    "source": "og/posts/raining-paint.jpg",
+    "sha256": "2d60c5b3cced7f33"
+  },
+  "og/posts/reverse-hover-state.avif": {
+    "source": "og/posts/reverse-hover-state.jpg",
+    "sha256": "ca6796557bb090d2"
+  },
+  "og/posts/sound-frequency-slider.avif": {
+    "source": "og/posts/sound-frequency-slider.jpg",
+    "sha256": "dba3285ebf164394"
+  },
+  "og/posts/sticky-stacky.avif": {
+    "source": "og/posts/sticky-stacky.jpg",
+    "sha256": "1ca70a73ff368758"
+  },
+  "og/posts/unique-stars.avif": {
+    "source": "og/posts/unique-stars.jpg",
+    "sha256": "f383377906cb01f6"
+  },
+  "og/posts/using-canvas-to-make-patterns-with-circles.avif": {
+    "source": "og/posts/using-canvas-to-make-patterns-with-circles.jpg",
+    "sha256": "fb735c87284b40c7"
+  },
+  "og/posts/vertically-center-siblings.avif": {
+    "source": "og/posts/vertically-center-siblings.jpg",
+    "sha256": "195ebf0cdf2ffcd6"
+  },
+  "og/posts/wordle-solver-2.avif": {
+    "source": "og/posts/wordle-solver-2.jpg",
+    "sha256": "d193dfac106fc8f6"
+  },
+  "og/posts/wordle-solver.avif": {
+    "source": "og/posts/wordle-solver.jpg",
+    "sha256": "66ac913a2d25071a"
+  },
+  "og/posts/wordscapes-solver.avif": {
+    "source": "og/posts/wordscapes-solver.jpg",
+    "sha256": "d178b879eec8dc3b"
+  },
+  "og/posts/yahtzee.avif": {
+    "source": "og/posts/yahtzee.jpg",
+    "sha256": "dfb0a4bbfd9cf43d"
+  },
   "posts/earth-rotating-sprite-animation/earth-sprite-color.avif": {
     "source": "posts/earth-rotating-sprite-animation/earth-sprite-color.png",
     "sha256": "23f4dbf7a998b61d"
@@ -666,181 +874,5 @@
   "posts/quality-podcasts/stuff-you-should-know.avif": {
     "source": "posts/quality-podcasts/stuff-you-should-know.jpg",
     "sha256": "6a8968d60fbd6a31"
-  },
-  "posts/ten-star-movies/avatar.avif": {
-    "source": "posts/ten-star-movies/avatar.jpg",
-    "sha256": "635dd062953f9263"
-  },
-  "posts/ten-star-movies/catch-me-if-you-can.avif": {
-    "source": "posts/ten-star-movies/catch-me-if-you-can.jpg",
-    "sha256": "955ba6c62680866c"
-  },
-  "posts/ten-star-movies/drive.avif": {
-    "source": "posts/ten-star-movies/drive.jpg",
-    "sha256": "2725ce612612d917"
-  },
-  "posts/ten-star-movies/fight-club.avif": {
-    "source": "posts/ten-star-movies/fight-club.jpg",
-    "sha256": "94acd2f565b27f7c"
-  },
-  "posts/ten-star-movies/gone-girl.avif": {
-    "source": "posts/ten-star-movies/gone-girl.jpg",
-    "sha256": "e8d299f0aee7bada"
-  },
-  "posts/ten-star-movies/good-will-hunting.avif": {
-    "source": "posts/ten-star-movies/good-will-hunting.jpg",
-    "sha256": "ea190be63f4b9114"
-  },
-  "posts/ten-star-movies/goodfellas.avif": {
-    "source": "posts/ten-star-movies/goodfellas.jpg",
-    "sha256": "574952e7ef27ebb3"
-  },
-  "posts/ten-star-movies/inception.avif": {
-    "source": "posts/ten-star-movies/inception.jpg",
-    "sha256": "5253e46f188b2b07"
-  },
-  "posts/ten-star-movies/indiana-jones-and-the-last-crusade.avif": {
-    "source": "posts/ten-star-movies/indiana-jones-and-the-last-crusade.jpg",
-    "sha256": "307116679dce2649"
-  },
-  "posts/ten-star-movies/interstellar.avif": {
-    "source": "posts/ten-star-movies/interstellar.jpg",
-    "sha256": "8699722f7735d054"
-  },
-  "posts/ten-star-movies/jurassic-park.avif": {
-    "source": "posts/ten-star-movies/jurassic-park.jpg",
-    "sha256": "fe9755886bd54b20"
-  },
-  "posts/ten-star-movies/life-of-pi.avif": {
-    "source": "posts/ten-star-movies/life-of-pi.jpg",
-    "sha256": "e42132ec6ea72399"
-  },
-  "posts/ten-star-movies/limitless.avif": {
-    "source": "posts/ten-star-movies/limitless.jpg",
-    "sha256": "5b5c513e3e17bb31"
-  },
-  "posts/ten-star-movies/minority-report.avif": {
-    "source": "posts/ten-star-movies/minority-report.jpg",
-    "sha256": "3ebab08a023ea61a"
-  },
-  "posts/ten-star-movies/psycho.avif": {
-    "source": "posts/ten-star-movies/psycho.jpg",
-    "sha256": "9cc827388349caec"
-  },
-  "posts/ten-star-movies/raiders-of-the-lost-ark.avif": {
-    "source": "posts/ten-star-movies/raiders-of-the-lost-ark.jpg",
-    "sha256": "78c8317329a30483"
-  },
-  "posts/ten-star-movies/saving-mr-banks.avif": {
-    "source": "posts/ten-star-movies/saving-mr-banks.jpg",
-    "sha256": "0cdc159adb89f6ec"
-  },
-  "posts/ten-star-movies/saving-private-ryan.avif": {
-    "source": "posts/ten-star-movies/saving-private-ryan.jpg",
-    "sha256": "e3c0fce48c75e47b"
-  },
-  "posts/ten-star-movies/sherlock-holmes.avif": {
-    "source": "posts/ten-star-movies/sherlock-holmes.jpg",
-    "sha256": "38ac3a771f755717"
-  },
-  "posts/ten-star-movies/shutter-island.avif": {
-    "source": "posts/ten-star-movies/shutter-island.jpg",
-    "sha256": "c78e35458bfd0155"
-  },
-  "posts/ten-star-movies/snatch.avif": {
-    "source": "posts/ten-star-movies/snatch.jpg",
-    "sha256": "5d150329d31bbd9d"
-  },
-  "posts/ten-star-movies/spy-game.avif": {
-    "source": "posts/ten-star-movies/spy-game.jpg",
-    "sha256": "649a467ef000644c"
-  },
-  "posts/ten-star-movies/star-trek-into-darkness.avif": {
-    "source": "posts/ten-star-movies/star-trek-into-darkness.jpg",
-    "sha256": "5bd85ea17bf1fce1"
-  },
-  "posts/ten-star-movies/star-wars-episode-i-v-a-new-hope.avif": {
-    "source": "posts/ten-star-movies/star-wars-episode-i-v-a-new-hope.jpg",
-    "sha256": "fd88a644679df5b7"
-  },
-  "posts/ten-star-movies/star-wars-episode-v-i-return-of-the-jedi.avif": {
-    "source": "posts/ten-star-movies/star-wars-episode-v-i-return-of-the-jedi.jpg",
-    "sha256": "0da9bab2be3d7496"
-  },
-  "posts/ten-star-movies/star-wars-episode-v-the-empire-strikes-back.avif": {
-    "source": "posts/ten-star-movies/star-wars-episode-v-the-empire-strikes-back.jpg",
-    "sha256": "87db002575bf8801"
-  },
-  "posts/ten-star-movies/super-8.avif": {
-    "source": "posts/ten-star-movies/super-8.jpg",
-    "sha256": "040dc3e362c766cc"
-  },
-  "posts/ten-star-movies/t-r-o-n-legacy.avif": {
-    "source": "posts/ten-star-movies/t-r-o-n-legacy.jpg",
-    "sha256": "409b537f69e4d217"
-  },
-  "posts/ten-star-movies/the-adventures-of-tintin.avif": {
-    "source": "posts/ten-star-movies/the-adventures-of-tintin.jpg",
-    "sha256": "e7804786b857e088"
-  },
-  "posts/ten-star-movies/the-girl-with-the-dragon-tattoo.avif": {
-    "source": "posts/ten-star-movies/the-girl-with-the-dragon-tattoo.jpg",
-    "sha256": "2982fe5c048c670a"
-  },
-  "posts/ten-star-movies/the-green-mile.avif": {
-    "source": "posts/ten-star-movies/the-green-mile.jpg",
-    "sha256": "1c265be5fcd59c0a"
-  },
-  "posts/ten-star-movies/the-incredibles.avif": {
-    "source": "posts/ten-star-movies/the-incredibles.jpg",
-    "sha256": "2b742b13b511044f"
-  },
-  "posts/ten-star-movies/the-king-s-speech.avif": {
-    "source": "posts/ten-star-movies/the-king-s-speech.jpg",
-    "sha256": "b7a6cec351929eb6"
-  },
-  "posts/ten-star-movies/the-last-samurai.avif": {
-    "source": "posts/ten-star-movies/the-last-samurai.jpg",
-    "sha256": "ccd200d6226b5e01"
-  },
-  "posts/ten-star-movies/the-matrix.avif": {
-    "source": "posts/ten-star-movies/the-matrix.jpg",
-    "sha256": "9ceb151b088cc25e"
-  },
-  "posts/ten-star-movies/the-pianist.avif": {
-    "source": "posts/ten-star-movies/the-pianist.jpg",
-    "sha256": "f8ccdd9207769795"
-  },
-  "posts/ten-star-movies/the-secret-life-of-walter-mitty.avif": {
-    "source": "posts/ten-star-movies/the-secret-life-of-walter-mitty.jpg",
-    "sha256": "cb3c289407c9d6c2"
-  },
-  "posts/ten-star-movies/the-shawshank-redemption.avif": {
-    "source": "posts/ten-star-movies/the-shawshank-redemption.jpg",
-    "sha256": "e23033ac867bba65"
-  },
-  "posts/ten-star-movies/the-terminal.avif": {
-    "source": "posts/ten-star-movies/the-terminal.jpg",
-    "sha256": "ef257cbf38651cc7"
-  },
-  "posts/ten-star-movies/the-theory-of-everything.avif": {
-    "source": "posts/ten-star-movies/the-theory-of-everything.jpg",
-    "sha256": "adf6654f0d0d8b8b"
-  },
-  "posts/ten-star-movies/up.avif": {
-    "source": "posts/ten-star-movies/up.jpg",
-    "sha256": "fddee21bd7f92e40"
-  },
-  "posts/ten-star-movies/v-for-vendetta.avif": {
-    "source": "posts/ten-star-movies/v-for-vendetta.jpg",
-    "sha256": "c3310f5048dc19ac"
-  },
-  "posts/ten-star-movies/vanilla-sky.avif": {
-    "source": "posts/ten-star-movies/vanilla-sky.jpg",
-    "sha256": "9095684185ff8981"
-  },
-  "posts/ten-star-movies/wall-e.avif": {
-    "source": "posts/ten-star-movies/wall-e.jpg",
-    "sha256": "9204e09825944e56"
   }
 }
