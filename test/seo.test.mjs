@@ -13,7 +13,6 @@ const require = createRequire(import.meta.url);
 const sharp = require('sharp');
 const ejs = require('ejs');
 const { globSync } = require('glob');
-const matter = require('gray-matter');
 const { imageSize } = require('image-size');
 
 const {
@@ -21,7 +20,7 @@ const {
 } = require('../build/helpers/seo');
 const { replacePaths } = require('../build/hashing/finish-hashing');
 const {
-  parseArgs, normalizeRecipe, clipFor, cornerColor, pointIn, pagesWithRecipes,
+  parseArgs, normalizeRecipe, clipFor, cornerColor, pointIn, allPages, pagesWithRecipes,
 } = require('../bin/og-images');
 
 const projectRoot = path.resolve(process.cwd());
@@ -32,6 +31,7 @@ const siteLocals = {
   name: 'Brian Anders',
   author: 'Brian Anders',
   jobTitle: 'Engineering Manager',
+  locale: 'en-US',
   domain,
   github: 'https://github.com/briananders',
   linkedin: 'https://www.linkedin.com/in/andersbrian/',
@@ -95,6 +95,8 @@ describe('seo()', () => {
     assert.equal(page.documentTitle, 'Coin Flip | Brian Anders');
     assert.equal(page.title, 'Coin Flip');
     assert.equal(page.url, 'https://briananders.com/posts/coin-flip/');
+    assert.equal(page.openGraphLocale, 'en_US');
+    assert.equal(JSON.parse(page.jsonLd)['@graph'].find((node) => node['@type'] === 'WebSite').inLanguage, 'en-US');
     assert.deepEqual(page.image, {
       url: 'https://briananders.com/images/og/posts/coin-flip.jpg',
       width: 1200,
@@ -110,10 +112,22 @@ describe('seo()', () => {
   });
 
   test('uses the bare site name for the homepage and for pages without a title', () => {
-    assert.equal(seo({ ...siteLocals, path: '', title: 'Home', homepage: true }).documentTitle, 'Brian Anders');
+    // The homepage's front matter says "Home", a nav label; shared links should say who it is.
+    const home = seo({ ...siteLocals, path: '', title: 'Home', homepage: true });
+    assert.equal(home.documentTitle, 'Brian Anders');
+    assert.equal(home.title, 'Brian Anders');
+    assert.equal(JSON.parse(home.jsonLd)['@graph'].find((node) => node['@type'] === 'WebPage').name, 'Brian Anders');
     const untitled = seo({ ...siteLocals, path: 'example/minesweeper/', title: '' });
     assert.equal(untitled.documentTitle, 'Brian Anders');
     assert.equal(untitled.title, 'Brian Anders');
+  });
+
+  test('titles a page after its visible heading when altTitle overrides it', () => {
+    const page = seo({
+      ...siteLocals, path: 'posts/', title: 'Posts', altTitle: 'Posts and Experiments',
+    });
+    assert.equal(page.title, 'Posts and Experiments');
+    assert.equal(page.documentTitle, 'Posts and Experiments | Brian Anders');
   });
 
   test('marks noindex pages and opts the rest into large image previews', () => {
@@ -186,45 +200,46 @@ describe('seo()', () => {
 });
 
 describe('every indexable page', () => {
-  const pages = globSync(`${projectRoot}/src/templates/**/[^_]*.ejs`)
-    .map((file) => ({ file: path.relative(projectRoot, file), data: matter.read(file).data }))
-    .filter(({ data }) => data.robots !== false);
-  const urlFor = (file) => file
-    .replace('src/templates/', '')
-    .replace(/\.ejs$/, file.includes('.html.ejs') ? '' : '/index.html')
-    .replace('index.html', '');
+  // The build's own page index, so these URLs are the ones the site serves.
+  const pages = allPages().filter(({ data }) => data.robots !== false);
+
+  test('the page index covers every template', () => {
+    assert.ok(pages.length >= 50, `only ${pages.length} indexable pages found`);
+    assert.ok(pages.some(({ url }) => url === '/'));
+    assert.ok(pages.some(({ url }) => url === '/posts/coin-flip/'));
+  });
 
   test('has a valid capture recipe with alt text', () => {
-    pages.forEach(({ file, data }) => {
-      assert.ok(data.ogImage, `${file} has no ogImage recipe`);
-      assert.doesNotThrow(() => normalizeRecipe(data.ogImage, file));
-      assert.ok(data.ogImage.alt, `${file} ogImage has no alt text`);
+    pages.forEach(({ url, data }) => {
+      assert.ok(data.ogImage, `${url} has no ogImage recipe`);
+      assert.doesNotThrow(() => normalizeRecipe(data.ogImage, url));
+      assert.ok(data.ogImage.alt, `${url} ogImage has no alt text`);
     });
   });
 
   test(`has a ${OG_IMAGE_SIZE.width}×${OG_IMAGE_SIZE.height} preview image`, () => {
-    pages.forEach(({ file }) => {
-      const image = path.join(projectRoot, 'src', ogImagePath(urlFor(file)));
-      assert.ok(existsSync(image), `${file}: missing ${path.relative(projectRoot, image)}; run npm run og-images`);
+    pages.forEach(({ url }) => {
+      const image = path.join(projectRoot, 'src', ogImagePath(url.slice(1)));
+      assert.ok(existsSync(image), `${url}: missing ${path.relative(projectRoot, image)}; run npm run og-images`);
       const { width, height } = imageSize(readFileSync(image));
-      assert.deepEqual({ width, height }, OG_IMAGE_SIZE, `${file}: wrong preview size`);
+      assert.deepEqual({ width, height }, OG_IMAGE_SIZE, `${url}: wrong preview size`);
     });
   });
 
   test(`has a meta description of at most ${META_DESCRIPTION_MAX_LENGTH} characters`, () => {
-    pages.forEach(({ file, data }) => {
+    pages.forEach(({ url, data }) => {
       const description = data.metaDescription || data.description;
-      assert.ok(description, `${file} has no description`);
+      assert.ok(description, `${url} has no description`);
       assert.ok(
         description.length <= META_DESCRIPTION_MAX_LENGTH,
-        `${file}: ${description.length} characters; add a shorter metaDescription`,
+        `${url}: ${description.length} characters; add a shorter metaDescription`,
       );
     });
   });
 
   test('is captured by npm run og-images', () => {
     const captured = pagesWithRecipes().map((page) => page.url);
-    pages.forEach(({ file }) => assert.ok(captured.includes(`/${urlFor(file)}`), `${file} is not captured`));
+    pages.forEach(({ url }) => assert.ok(captured.includes(url), `${url} is not captured`));
   });
 });
 
@@ -246,10 +261,34 @@ describe('og-images tool', () => {
     assert.throws(() => normalizeRecipe({}, '/x/'), /selector is required/);
     assert.throws(() => normalizeRecipe({ selector: 'a', fit: 'stretch' }, '/x/'), /fit must be/);
     assert.throws(() => normalizeRecipe({ selector: 'a', wait: -1 }, '/x/'), /wait must be/);
+    assert.throws(() => normalizeRecipe({ selector: 'a', scale: 0 }, '/x/'), /scale must be a positive number/);
+    assert.throws(() => normalizeRecipe({ selector: 'a', width: 0 }, '/x/'), /width must be a positive number/);
     assert.throws(() => normalizeRecipe({ selector: 'a', hideFixed: 'no' }, '/x/'), /hideFixed must be/);
     assert.doesNotThrow(() => normalizeRecipe({ selector: 'a', actions: [{ scroll: 1800 }, { drag: ['a', [[0, 0], [1, 1]]] }] }, '/x/'));
     assert.throws(() => normalizeRecipe({ selector: 'a', actions: [{ tap: 'a' }] }, '/x/'), /exactly one of/);
     assert.throws(() => normalizeRecipe({ selector: 'a', actions: [{ click: 'a', wait: 1 }] }, '/x/'), /exactly one of/);
+  });
+
+  test('normalizeRecipe checks each action\'s argument', () => {
+    const valid = [
+      { click: '#play' }, { click: ['#canvas', 0.25, 1] }, { fill: ['#n', 11] }, { fill: ['#url', 'https://x.test/'] },
+      { press: ['#n', 'Tab'] }, { select: ['#count', '3'] }, { hover: '.card' },
+      { drag: ['#canvas', [[0, 0.5], [1, 0.5]]] }, { scroll: '#nav' }, { scroll: 0 }, { wait: 500 },
+    ];
+    assert.doesNotThrow(() => normalizeRecipe({ selector: 'a', actions: valid }, '/x/'));
+    const invalid = [
+      { click: ['#canvas', 0.5] }, { click: ['#canvas', 1.5, 0.5] }, { click: '' },
+      { fill: '#n' }, { press: ['#n'] }, { select: ['#count'] }, { hover: 3 },
+      { drag: ['#canvas', [[0, 0]]] }, { drag: ['#canvas', [[0, 0], [2, 0]]] },
+      { scroll: -10 }, { wait: '500' },
+    ];
+    invalid.forEach((action) => {
+      assert.throws(
+        () => normalizeRecipe({ selector: 'a', actions: [action] }, '/x/'),
+        /invalid argument/,
+        JSON.stringify(action),
+      );
+    });
   });
 
   test('clipFor pads the element and stays inside the viewport', () => {
@@ -337,9 +376,25 @@ describe('rendered golden pages', () => {
     assert.ok(existsSync(`${projectRoot}/golden/images/og/posts/coin-flip.jpg`));
   });
 
-  test('every page carries JSON-LD that parses', () => {
-    ['index.html', 'about/index.html', 'posts/index.html', 'posts/coin-flip/index.html'].forEach((page) => {
-      const match = read(page).match(/<script type=application\/ld\+json>(.*?)<\/script>/);
+  test('the homepage and posts listing use their real names, not their nav labels', () => {
+    assert.equal(tag(read('index.html'), 'property', 'og:title'), 'Brian Anders');
+    assert.equal(tag(read('posts/index.html'), 'property', 'og:title'), 'Posts and Experiments');
+  });
+
+  test('every page has a title, absolute canonical, a preview image that exists, and JSON-LD', () => {
+    const pages = globSync(`${projectRoot}/golden/**/*.html`);
+    assert.ok(pages.length >= 60, `only ${pages.length} golden pages found`);
+    pages.forEach((file) => {
+      const page = path.relative(`${projectRoot}/golden`, file);
+      const html = read(page);
+      assert.match(html, /<title>[^<]+<\/title>/, `${page} has no title`);
+      assert.match(html, /<link rel=canonical href=https:\/\/briananders\.com\//, `${page} canonical is not absolute`);
+
+      const image = tag(html, 'property', 'og:image');
+      assert.ok(image && image.startsWith(domain), `${page}: og:image ${image} is not absolute`);
+      assert.ok(existsSync(`${projectRoot}/golden/${image.slice(domain.length)}`), `${page}: ${image} is not in the build`);
+
+      const match = html.match(/<script type=application\/ld\+json>(.*?)<\/script>/);
       assert.ok(match, `${page} has no JSON-LD`);
       assert.ok(JSON.parse(match[1])['@graph'].length >= 3, `${page} JSON-LD graph is incomplete`);
     });

@@ -25,7 +25,8 @@
  *   ogImage:
  *     selector: '#canvas'   # required: element to capture
  *     alt: 'Text'           # og:image:alt; defaults to "Screenshot of <title>"
- *     fit: cover            # cover (crop to fill, default) or contain (letterbox)
+ *     fit: cover            # cover (crop to fill, default) or contain (letterbox in the
+ *                           # color most of the capture's corners share)
  *     position: centre      # cover crop anchor: centre, top, bottom, left, right…
  *     padding: 0            # CSS px of surrounding page to include
  *     width: 1200           # viewport width in CSS px
@@ -68,7 +69,24 @@ const RECIPE_DEFAULTS = {
   wait: 1500,
   actions: [],
 };
-const ACTIONS = ['click', 'fill', 'press', 'select', 'hover', 'drag', 'scroll', 'wait'];
+const isSelector = (value) => typeof value === 'string' && value.length > 0;
+const isFraction = (value) => Number.isFinite(value) && value >= 0 && value <= 1;
+const isPoint = (value) => Array.isArray(value) && value.length === 2 && value.every(isFraction);
+const isText = (value) => typeof value === 'string' || Number.isFinite(value);
+/** What each action accepts; see the recipe reference at the top of this file. */
+const ACTION_ARGUMENTS = {
+  click: (value) => isSelector(value)
+    || (Array.isArray(value) && value.length === 3 && isSelector(value[0]) && isPoint(value.slice(1))),
+  fill: (value) => Array.isArray(value) && value.length === 2 && isSelector(value[0]) && isText(value[1]),
+  press: (value) => Array.isArray(value) && value.length === 2 && isSelector(value[0]) && isSelector(value[1]),
+  select: (value) => Array.isArray(value) && value.length === 2 && isSelector(value[0]) && isText(value[1]),
+  hover: isSelector,
+  drag: (value) => Array.isArray(value) && value.length === 2 && isSelector(value[0])
+    && Array.isArray(value[1]) && value[1].length >= 2 && value[1].every(isPoint),
+  scroll: (value) => isSelector(value) || (Number.isFinite(value) && value >= 0),
+  wait: (value) => Number.isFinite(value) && value >= 0,
+};
+const ACTIONS = Object.keys(ACTION_ARGUMENTS);
 const FITS = ['cover', 'contain'];
 const JPEG_OPTIONS = { quality: 84, mozjpeg: true };
 const SHEET = {
@@ -110,9 +128,14 @@ function normalizeRecipe(recipe, where) {
   }
   const full = { ...RECIPE_DEFAULTS, ...recipe };
   if (!FITS.includes(full.fit)) throw new Error(`${where}: ogImage.fit must be ${FITS.join(' or ')}`);
-  ['padding', 'width', 'height', 'scale', 'wait'].forEach((key) => {
+  ['padding', 'wait'].forEach((key) => {
     if (!Number.isFinite(full[key]) || full[key] < 0) {
       throw new Error(`${where}: ogImage.${key} must be a non-negative number`);
+    }
+  });
+  ['width', 'height', 'scale'].forEach((key) => {
+    if (!Number.isFinite(full[key]) || full[key] <= 0) {
+      throw new Error(`${where}: ogImage.${key} must be a positive number`);
     }
   });
   if (typeof full.hideFixed !== 'boolean') throw new Error(`${where}: ogImage.hideFixed must be true or false`);
@@ -122,31 +145,39 @@ function normalizeRecipe(recipe, where) {
     if (keys.length !== 1 || !ACTIONS.includes(keys[0])) {
       throw new Error(`${where}: each ogImage action needs exactly one of ${ACTIONS.join(', ')}`);
     }
+    // Recipes are hand-written YAML: catch a malformed argument here, not as a
+    // Playwright timeout halfway through a capture run.
+    if (!ACTION_ARGUMENTS[keys[0]](action[keys[0]])) {
+      const argument = JSON.stringify(action[keys[0]]);
+      throw new Error(`${where}: ogImage action ${keys[0]} has an invalid argument (${argument})`);
+    }
   });
   return full;
 }
 
 /**
- * Lists every page with a recipe, in URL order, using the build's own
- * front-matter index so URLs match the built site exactly.
+ * Lists every page, in URL order, from the build's own front-matter index so
+ * URLs match the built site exactly.
+ *
+ * @returns {Array<{ url: string, data: object }>} URLs with a leading slash.
+ */
+function allPages() {
+  require('colors');
+  const dir = require('../build/constants/directories')(ROOT);
+  const pageMappingData = [];
+  require('../build/page-mapping-data')({ dir, buildEvents: new EventEmitter(), pageMappingData });
+  return pageMappingData
+    .map((page) => ({ ...page, url: `/${page.url}` }))
+    .sort((a, b) => a.url.localeCompare(b.url));
+}
+
+/**
+ * Lists every page that has a capture recipe.
  *
  * @returns {Array<{ url: string, data: object }>}
  */
 function pagesWithRecipes() {
-  require('colors');
-  const dir = require('../build/constants/directories')(ROOT);
-  const pageMappingData = [];
-  const quiet = console.log;
-  console.log = () => {};
-  try {
-    require('../build/page-mapping-data')({ dir, buildEvents: new EventEmitter(), pageMappingData });
-  } finally {
-    console.log = quiet;
-  }
-  return pageMappingData
-    .filter((page) => page.data.ogImage)
-    .map((page) => ({ ...page, url: `/${page.url}` }))
-    .sort((a, b) => a.url.localeCompare(b.url));
+  return allPages().filter((page) => page.data.ogImage);
 }
 
 /**
@@ -339,6 +370,10 @@ async function composeSheets(results, outDir) {
   const cell = { width: SHEET.thumbWidth, height: thumbHeight + SHEET.labelHeight };
   const perSheet = SHEET.columns * 3;
   fs.mkdirSync(outDir, { recursive: true });
+  // A smaller run would otherwise leave an earlier run's later sheets behind.
+  fs.readdirSync(outDir)
+    .filter((name) => /^sheet-\d+\.png$/.test(name))
+    .forEach((name) => fs.unlinkSync(path.join(outDir, name)));
   const batches = [];
   for (let start = 0; start < results.length; start += perSheet) {
     batches.push(results.slice(start, start + perSheet));
@@ -423,5 +458,12 @@ if (require.main === module) {
 }
 
 module.exports = {
-  parseArgs, normalizeRecipe, clipFor, cornerColor, pointIn, pagesWithRecipes, RECIPE_DEFAULTS,
+  parseArgs,
+  normalizeRecipe,
+  clipFor,
+  cornerColor,
+  pointIn,
+  allPages,
+  pagesWithRecipes,
+  RECIPE_DEFAULTS,
 };

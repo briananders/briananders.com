@@ -113,7 +113,7 @@ function structuredData(locals, page) {
     '@id': websiteId,
     url: domain,
     name: locals.name,
-    inLanguage: 'en-US',
+    inLanguage: locals.locale,
     publisher: { '@id': personId },
   };
 
@@ -122,7 +122,7 @@ function structuredData(locals, page) {
     '@id': page.schemaType === 'BlogPosting' ? `${page.url}#article` : page.url,
     url: page.url,
     name: page.title,
-    inLanguage: 'en-US',
+    inLanguage: locals.locale,
     isPartOf: { '@id': websiteId },
   };
   if (page.description) webPage.description = page.description;
@@ -196,11 +196,13 @@ function createSeo(dir) {
   }
 
   return function seo(locals) {
-    const rawTitle = (locals.title || '').replace(/_/g, ' ').trim();
-    const title = rawTitle || locals.name;
+    // Match the visible <h1>, which base.ejs takes from altTitle when a page sets it.
+    const heading = (locals.altTitle || locals.title || '').replace(/_/g, ' ').trim();
+    // The homepage's front-matter title ("Home") names a nav item, not the page.
+    const title = (!locals.homepage && heading) || locals.name;
     let documentTitle = locals.name;
     if (locals.metaTitle) documentTitle = locals.metaTitle;
-    else if (rawTitle && !locals.homepage) documentTitle = `${rawTitle} | ${locals.name}`;
+    else if (title !== locals.name) documentTitle = `${title} | ${locals.name}`;
 
     const schemaType = schemaTypeFor(locals);
     const url = `${locals.domain}${locals.path}`;
@@ -211,6 +213,8 @@ function createSeo(dir) {
       url,
       schemaType,
       openGraphType: openGraphTypeFor(schemaType),
+      // Open Graph spells locales with an underscore: en_US.
+      openGraphLocale: locals.locale.replace('-', '_'),
       published: locals.date ? new Date(locals.date).toISOString() : null,
       // max-image-preview:large opts indexable pages into large image previews (Discover, results).
       robots: locals.robots === false ? 'noindex, nofollow' : 'max-image-preview:large',

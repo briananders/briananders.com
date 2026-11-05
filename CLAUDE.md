@@ -212,11 +212,11 @@ scripts:
 
 | Output | Source |
 |---|---|
-| `<title>` | `title \| Brian Anders`; the homepage uses front matter `metaTitle`, which any page can set |
+| `<title>`, `og:title` | The page's heading (`altTitle` when set, as the visible `<h1>` uses it, else `title`). `<title>` appends ` \| Brian Anders`; front matter `metaTitle` replaces it. The homepage's `title` is a nav label ("Home"), so its social title is the site name and its `<title>` comes from `metaTitle` |
 | Meta / OG / Twitter description | `metaDescription`, else `description`. Google cuts snippets at about 160 characters, and a test enforces that limit on indexable pages; set `metaDescription` when the on-page `description` runs longer |
 | Canonical, `og:url`, `og:image` | Always absolute (`siteData.domain`). Production hashing rewrites same-origin absolute URLs too (`replacePaths` in `finish-hashing.js`) |
 | `og:type` + JSON-LD type | Posts are `article` / `BlogPosting` with breadcrumbs, `posts/` is a `CollectionPage`, everything else a `WebPage`. Front matter `schemaType` overrides it (`about.ejs` is a `ProfilePage`) |
-| JSON-LD `Person` | `sameAs` lists every profile in `site-data.js`, which links them to this site in search |
+| JSON-LD `Person` | `sameAs` lists every profile in `site-data.js`, which links them to this site in search. `jobTitle` and `locale` (`inLanguage`, `og:locale`) also come from `site-data.js` |
 
 **Preview images.** Every indexable page has a 1200×630 JPEG at `src/images/og/<page path>.jpg` (`/` → `index.jpg`, `/posts/` → `posts.jpg`, `/posts/coin-flip/` → `posts/coin-flip.jpg`). Pages without one (404, `example/`) fall back to the homepage's, with alt text that says so. They're screenshots of each page's signature element, taken by `npm run og-images` from the front matter recipe:
 
@@ -224,7 +224,7 @@ scripts:
 |---|---|---|
 | `selector` | required | The element to capture |
 | `alt` | `Screenshot of <title>` | `og:image:alt` / `twitter:image:alt`. Tests require it on indexable pages |
-| `fit` | `cover` | `cover` crops to fill 1200×630; `contain` letterboxes in the page background |
+| `fit` | `cover` | `cover` crops to fill 1200×630; `contain` letterboxes in the color most of the capture's corners share, so the bars continue the surrounding card or page |
 | `position` | `centre` | Crop anchor for `cover` (`top`, `left`, …) |
 | `padding` | `0` | CSS px of surrounding page to include |
 | `width` / `height` | `1200` / `900` | Viewport. The capture is clipped to it, never full-page: resizing the viewport fires `resize`, which resets the canvas experiments. A narrower width enlarges text-heavy pages |

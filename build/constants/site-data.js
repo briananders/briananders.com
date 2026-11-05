@@ -57,6 +57,8 @@ module.exports = (dir) => {
     author: 'Brian Anders',
     /** Used in the Person structured data on every page. */
     jobTitle: 'Engineering Manager',
+    /** BCP 47 language of every page, for structured data and Open Graph. */
+    locale: 'en-US',
     /** Primary contact URL (Twitter/X profile). */
     contact: twitter,
     /** Canonical production domain, including trailing slash. */
