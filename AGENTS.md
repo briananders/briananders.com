@@ -111,6 +111,8 @@ If you're stuck, stop and report the failure word for word. An honest red beats 
   - Playwright stays pinned to match the Chromium build in cloud containers (see CLAUDE.md).
 - Keep the diff minimal (Directive 3). Problems you notice outside the task go in your report, not your diff.
 - Create pages with `npm run scaffold -- --path=/posts/<slug>` and fill in all front matter.
+  - That includes the `ogImage` recipe: point `selector` at the page's signature element, write its `alt`, then `npm run build && npm run og-images -- /posts/<slug>/` and commit the image (CLAUDE.md, SEO and Social Previews).
+  - Keep the effective meta description (`metaDescription`, else `description`) at 160 characters or fewer. `test/seo.test.mjs` enforces both.
 
 ## 6. Report
 

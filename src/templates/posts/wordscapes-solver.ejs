@@ -5,6 +5,15 @@ date: 2022-12-24
 priority: 0.8
 pageClasses:
   - 'posts wordscapes-solver'
+metaDescription: 'A Wordscapes solver: enter your letters and get every word they can make, checked against a Webster''s English dictionary.'
+ogImage:
+  selector: '#results'
+  alt: 'Every word the Wordscapes solver found in a set of letters'
+  position: 'top'
+  wait: 2000
+  actions:
+    - fill: ['#input', 'plasters']
+    - click: '#button'
 layout: base
 styles:
   - 'main'

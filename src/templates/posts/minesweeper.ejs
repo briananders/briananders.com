@@ -5,6 +5,15 @@ date: 2016-09-10
 priority: 0.8
 pageClasses:
   - 'example minesweeper'
+metaDescription: 'Play Minesweeper in your browser: clear the board without hitting a mine, using the number of neighboring mines as clues. Three difficulty levels.'
+ogImage:
+  selector: '#minesweeper-iframe'
+  alt: 'A Minesweeper board with the mine counter, smiley face and timer'
+  fit: 'contain'
+  padding: 24
+  wait: 800
+  actions:
+    - click: ['#minesweeper-iframe', 0.5, 0.62]
 layout: base
 styles:
   - 'main'

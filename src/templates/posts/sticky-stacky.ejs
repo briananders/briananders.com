@@ -5,6 +5,17 @@ date: 2022-07-09
 priority: 0.8
 pageClasses:
   - 'posts sticky-stacky'
+metaDescription: 'Sticky navigation bars that stack as you scroll, showing only the lowest bar and letting the ones above peek back when you scroll up.'
+ogImage:
+  selector: 'main'
+  alt: 'Navigation bars stacking and peeking at the top of the page as it scrolls'
+  height: 630
+  hideFixed: false
+  wait: 800
+  actions:
+    - scroll: 3000
+    - wait: 500
+    - scroll: 2700
 layout: base
 styles:
   - 'main'

@@ -330,13 +330,37 @@ async function launchBrowser() {
 }
 
 /**
- * Captures one full-page screenshot and collects problems seen while loading.
+ * Blocks analytics and routes third-party requests for a page.
  *
  * Chromium on Linux trusts only its own NSS store, so behind a TLS-inspecting
  * proxy (Claude Code cloud containers, corporate networks) third-party assets
  * like Google Fonts fail and pages render in fallback fonts. When Node has
  * extra CAs configured (`NODE_EXTRA_CA_CERTS`), third-party requests are
  * fetched through Node instead, which verifies TLS against those CAs.
+ *
+ * @param {import('playwright').Page} page
+ * @param {string} baseUrl - Origin of the local server; its requests pass through.
+ * @param {(url: string, message: string) => void} [onFailure] - Called when a
+ *   request fetched through Node fails.
+ * @returns {Promise<void>}
+ */
+function routeRequests(page, baseUrl, onFailure = () => {}) {
+  const fetchThroughNode = Boolean(process.env.NODE_EXTRA_CA_CERTS);
+  return page.route('**/*', async (route) => {
+    const requestUrl = route.request().url();
+    if (BLOCKED_HOSTS.test(requestUrl)) return route.abort();
+    if (!fetchThroughNode || requestUrl.startsWith(baseUrl)) return route.continue();
+    try {
+      return await route.fulfill({ response: await route.fetch() });
+    } catch (error) {
+      onFailure(requestUrl, error.message.split('\n')[0]);
+      return route.abort();
+    }
+  });
+}
+
+/**
+ * Captures one full-page screenshot and collects problems seen while loading.
  *
  * @param {import('playwright').Browser} browser
  * @param {{ baseUrl: string, urlPath: string, width: number, scheme: string, file: string }} shot
@@ -354,19 +378,10 @@ async function capturePage(browser, {
   const problems = [];
   const reported = new Set();
   let layout = [];
-  const fetchThroughNode = Boolean(process.env.NODE_EXTRA_CA_CERTS);
 
-  await page.route('**/*', async (route) => {
-    const requestUrl = route.request().url();
-    if (BLOCKED_HOSTS.test(requestUrl)) return route.abort();
-    if (!fetchThroughNode || requestUrl.startsWith(baseUrl)) return route.continue();
-    try {
-      return await route.fulfill({ response: await route.fetch() });
-    } catch (error) {
-      reported.add(requestUrl);
-      problems.push(`request failed (${error.message.split('\n')[0]}): ${requestUrl}`);
-      return route.abort();
-    }
+  await routeRequests(page, baseUrl, (requestUrl, message) => {
+    reported.add(requestUrl);
+    problems.push(`request failed (${message}): ${requestUrl}`);
   });
   page.on('pageerror', (error) => problems.push(`page error: ${error.message}`));
   page.on('console', (message) => {
@@ -490,5 +505,14 @@ if (require.main === module) {
 }
 
 module.exports = {
-  parseArgs, slugify, planSheet, packWidths, sheetName, findEdgeOverflow,
+  parseArgs,
+  slugify,
+  planSheet,
+  packWidths,
+  sheetName,
+  findEdgeOverflow,
+  startServer,
+  launchBrowser,
+  routeRequests,
+  svgText,
 };

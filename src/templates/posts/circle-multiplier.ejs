@@ -6,6 +6,18 @@ date: 2022-03-28
 priority: 0.8
 pageClasses:
 - 'posts circle-multiplier'
+ogImage:
+  selector: '#canvas'
+  alt: 'Overlapping circles multiplying as they hit the walls of the canvas'
+  wait: 8000
+  actions:
+    - select: ['#fill-style', 'fill-color']
+    - click: ['#canvas', 0.2, 0.3]
+    - click: ['#canvas', 0.8, 0.25]
+    - click: ['#canvas', 0.5, 0.5]
+    - click: ['#canvas', 0.3, 0.75]
+    - click: ['#canvas', 0.7, 0.7]
+    - click: ['#canvas', 0.5, 0.15]
 layout: base
 styles:
 - 'main'

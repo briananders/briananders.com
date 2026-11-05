@@ -55,6 +55,10 @@ module.exports = (dir) => {
     // eslint-disable-next-line max-len
     description: "Brian Anders is an Engineering Manager in the tech industry. I'm also a YouTuber, Podcaster, and Musician.",
     author: 'Brian Anders',
+    /** Used in the Person structured data on every page. */
+    jobTitle: 'Engineering Manager',
+    /** BCP 47 language of every page, for structured data and Open Graph. */
+    locale: 'en-US',
     /** Primary contact URL (Twitter/X profile). */
     contact: twitter,
     /** Canonical production domain, including trailing slash. */

@@ -6,6 +6,17 @@ priority: 0.8
 pageClasses:
   - 'posts'
   - 'using-canvas-to-make-patterns-with-circles'
+metaDescription: 'A mesmerizing canvas experiment I first built in school. Click anywhere to add circles and watch the patterns they paint.'
+ogImage:
+  selector: '#canvas'
+  alt: 'Overlapping circles sweeping across the canvas in a mesmerizing pattern'
+  wait: 2500
+  actions:
+    - select: ['#fill-style', 'fill-color']
+    - click: ['#canvas', 0.2, 0.3]
+    - click: ['#canvas', 0.75, 0.25]
+    - click: ['#canvas', 0.35, 0.75]
+    - click: ['#canvas', 0.7, 0.7]
 layout: base
 styles:
   - 'main'

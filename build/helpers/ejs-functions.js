@@ -6,6 +6,7 @@ const sass = require('sass');
 const { imageSize: sizeOf } = require('image-size');
 const path = require('path');
 const { camelize, dasherize } = require('underscore.string');
+const { createSeo } = require('./seo');
 
 /**
  * Removes `null`, `undefined`, and empty-string elements from an array in place.
@@ -112,7 +113,18 @@ function renderPictureSources(sources) {
 module.exports = (dir, pageMappingData) => {
   const partials = new Map();
   const styles = new Map();
+  const seo = createSeo(dir);
   return ({
+
+    /**
+   * Resolves a page's search and social metadata: document title, meta
+   * description, canonical URL, Open Graph type, preview image and JSON-LD.
+   * See `build/helpers/seo.js`.
+   *
+   * @param {object} locals - The page's template data.
+   * @returns {object} Values rendered by `src/partials/head/meta.ejs`.
+   */
+    seo,
 
     /**
    * Renders an EJS partial from `src/partials/`.

@@ -1,7 +1,10 @@
-<title><%- locals.name %> | <%- locals.title.replace(/_/g, ' '); %></title>
-<meta name="description"                           content="<%- locals.description %>" />
-
+<% const page = seo(locals); %>
 <meta charset="UTF-8" />
+<title><%= page.documentTitle %></title>
+<% if (page.description) { %>
+  <meta name="description"                         content="<%= page.description %>" />
+<% } %>
+
 <meta http-equiv="content-type"                    content="text/html; charset=UTF-8" />
 
 <meta http-equiv="X-UA-Compatible"                 content="IE=edge" />
@@ -12,35 +15,54 @@
 <meta name="viewport"                              content="width=device-width,initial-scale=1.0" />
 <meta http-equiv="X-UA-Compatible"                 content="IE=edge,chrome=1" />
 
-<% if(locals.robots === false) { %>
-  <meta name="robots"                                content="noindex, nofollow" />
-<% } %>
+<meta name="robots"                                content="<%= page.robots %>" />
 
 <meta name="keywords"                              content="Brian, Anders, Brian Anders" />
 <meta name="author"                                content="<%- locals.author %>" />
 
 <!-- Schema.org markup -->
-<meta itemprop="name"                              content="<%- locals.author %>" />
-<meta itemprop="description"                       content="<%- locals.description %>" />
-<meta itemprop="image"                             content="/images/favicon_base.png" />
-<link rel="canonical"                              href="<%- locals.domain %><%- locals.path %>" />
+<meta itemprop="name"                              content="<%= page.title %>" />
+<% if (page.description) { %>
+  <meta itemprop="description"                     content="<%= page.description %>" />
+<% } %>
+<% if (page.image) { %>
+  <meta itemprop="image"                           content="<%= page.image.url %>" />
+<% } %>
+<link rel="canonical"                              href="<%= page.url %>" />
+<script type="application/ld+json"><%- page.jsonLd %></script>
 
 <!-- Twitter Card data -->
-<meta name="twitter:card"                          content="summary" />
-<meta name="twitter:url"                           content="<%- locals.domain %><%- locals.path %>" />
+<meta name="twitter:card"                          content="<%= page.image ? 'summary_large_image' : 'summary' %>" />
+<meta name="twitter:url"                           content="<%= page.url %>" />
 <meta name="twitter:site"                          content="@<%- locals.twitterHandle %>" />
 <meta name="twitter:creator"                       content="@<%- locals.twitterHandle %>" />
-<meta name="twitter:title"                         content="<%- locals.author %>" />
-<meta name="twitter:description"                   content="<%- locals.description %>" />
-<meta name="twitter:image"                         content="/images/favicon_base.png" />
+<meta name="twitter:title"                         content="<%= page.title %>" />
+<% if (page.description) { %>
+  <meta name="twitter:description"                 content="<%= page.description %>" />
+<% } %>
+<% if (page.image) { %>
+  <meta name="twitter:image"                       content="<%= page.image.url %>" />
+  <meta name="twitter:image:alt"                   content="<%= page.image.alt %>" />
+<% } %>
 
 <!-- Open Graph data -->
-<meta property="og:type"                           content="profile" />
-<meta property="og:url"                            content="/<%- locals.path %>" />
-<meta property="og:title"                          content="<%- locals.author %>" />
-<meta property="og:image"                          content="/images/favicon_base.png" />
-<meta property="og:description"                    content="<%- locals.description %>" />
+<meta property="og:type"                           content="<%= page.openGraphType %>" />
+<meta property="og:url"                            content="<%= page.url %>" />
+<meta property="og:title"                          content="<%= page.title %>" />
+<% if (page.description) { %>
+  <meta property="og:description"                  content="<%= page.description %>" />
+<% } %>
 <meta property="og:site_name"                      content="<%- locals.name %>" />
+<meta property="og:locale"                         content="<%= page.openGraphLocale %>" />
+<% if (page.image) { %>
+  <meta property="og:image"                        content="<%= page.image.url %>" />
+  <meta property="og:image:width"                  content="<%= page.image.width %>" />
+  <meta property="og:image:height"                 content="<%= page.image.height %>" />
+  <meta property="og:image:alt"                    content="<%= page.image.alt %>" />
+<% } %>
+<% if (page.openGraphType === 'article' && page.published) { %>
+  <meta property="article:published_time"          content="<%= page.published %>" />
+<% } %>
 
 <!-- Favicon -->
 <link rel="shortcut icon"                          href="/images/favicon_144.png" />
