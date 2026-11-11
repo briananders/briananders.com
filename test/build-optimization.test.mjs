@@ -199,3 +199,46 @@ test('dev server gracefully handles port collision and respects PORT override', 
     });
   }
 });
+
+test('dev server live reload ignores build.txt changes to prevent premature reloads', async () => {
+  const root = await mkdtemp(path.join(os.tmpdir(), 'brian-livereload-'));
+  const chokidar = require('chokidar');
+  try {
+    await mkdir(root, { recursive: true });
+    await writeFile(path.join(root, 'build.txt'), 'initial');
+    await writeFile(path.join(root, 'script.js'), 'console.log(1);');
+    await new Promise((resolve) => { setTimeout(resolve, 200); });
+
+    const reloads = [];
+    const watcher = chokidar.watch(root, {
+      ignoreInitial: true,
+      ignored: (outputPath) => outputPath.endsWith('build.txt'),
+    });
+
+    watcher.on('change', (file) => reloads.push(file));
+    watcher.on('add', (file) => reloads.push(file));
+
+    await new Promise((resolve) => {
+      watcher.on('ready', resolve);
+    });
+
+    // Modifying build.txt must not trigger a reload
+    await writeFile(path.join(root, 'build.txt'), 'updated');
+    await new Promise((resolve) => { setTimeout(resolve, 200); });
+    assert.equal(reloads.length, 0);
+
+    // Modifying an asset like script.js must trigger a reload
+    await writeFile(path.join(root, 'script.js'), 'console.log(2);');
+    const deadline = Date.now() + 2000;
+    while (reloads.length === 0 && Date.now() < deadline) {
+      await new Promise((resolve) => { setTimeout(resolve, 50); });
+    }
+    assert.equal(reloads.length, 1);
+    assert.ok(reloads[0].endsWith('script.js'));
+
+    await watcher.close();
+  } finally {
+    await rm(root, { recursive: true, force: true });
+  }
+});
+

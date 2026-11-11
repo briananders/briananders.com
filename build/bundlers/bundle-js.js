@@ -5,6 +5,9 @@ const browserify = require('browserify');
 const babelify = require('babelify');
 const watchify = require('watchify');
 const mapLimit = require('../helpers/map-limit');
+const timestamp = require('../helpers/timestamp');
+
+const { log } = console;
 
 const sessions = new WeakMap();
 function canonical(file) {
@@ -21,6 +24,7 @@ function canonical(file) {
 /** Reuse development bundlers and invalidate only modules affected by a source edit. */
 module.exports = async function bundleJS(configs, changedFile) {
   const { dir, buildEvents, BUILD_EVENTS } = configs;
+  log(`${timestamp.stamp()} bundleJS()`);
   const production = require('../helpers/production');
   let entries = sessions.get(configs);
   if (!entries) {
@@ -97,6 +101,9 @@ module.exports = async function bundleJS(configs, changedFile) {
             });
             await fs.outputFile(entry.output, result);
             entry.failed = false;
+            if (configs.debug) {
+              log(`${timestamp.stamp()} ${'SUCCESS'.bold.green} - Compiled JS  - ${entry.output.split(/scripts/)[1]}`);
+            }
           } catch (error) {
             entry.failed = true;
             if (production) throw error;
@@ -111,6 +118,7 @@ module.exports = async function bundleJS(configs, changedFile) {
   });
   // Initial readiness also covers the empty-entry case.
   buildEvents.emit(BUILD_EVENTS.jsMoved);
+  log(`${timestamp.stamp()} bundleJS(): ${'DONE'.bold.green}`);
 };
 
 /** Release development watchers when a preview session is stopped. */

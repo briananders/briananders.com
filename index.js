@@ -253,7 +253,10 @@ if (!production) {
   // Once the initial build finishes, watch for output file changes and
   // push a reload event to all connected browser tabs.
   buildEvents.once(BUILD_EVENTS.previewReady, () => {
-    chokidar.watch(dir.package, { ignoreInitial: true })
+    chokidar.watch(dir.package, {
+      ignoreInitial: true,
+      ignored: (outputPath) => outputPath.endsWith('build.txt'),
+    })
       .on('change', () => liveReloadClients.forEach((client) => client.write('data: reload\n\n')))
       .on('add', () => liveReloadClients.forEach((client) => client.write('data: reload\n\n')));
   });

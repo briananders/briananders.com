@@ -27,5 +27,8 @@
   "gitlens.codeLens.enabled": false,
   "gitlens.hovers.currentLine.over": "line",
   "gitlens.currentLine.enabled": false,
-  "editor.formatOnSaveMode": "modifications"
+  "editor.formatOnSaveMode": "modifications",
+  "ollama.thinkingLevels": {
+    "default": "high"
+  }
 }

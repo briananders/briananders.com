@@ -105,7 +105,7 @@ module.exports = (configs) => {
    *
    * @param {string} filePath - Absolute path to the changed file.
    */
-  function update(filePath) {
+  async function update(filePath) {
     if (filePath.includes('.DS_Store')) return;
     log(`${timestamp.stamp()} ${`File modified: ${filePath.split('briananders.com')[1]}`.yellow}`);
 
@@ -127,15 +127,15 @@ module.exports = (configs) => {
       // SCSS co-located with JS components is bundled into the JS output by
       // scss-stringify-transform, so a stylesheet change must rebuild JS.
       case isJsScss:
-        bundleJS(configs, filePath);
+        await bundleJS(configs, filePath);
         break;
       case isJsSource:
-        bundleJS(configs, filePath);
+        await bundleJS(configs, filePath);
         break;
       case filePath.includes(`${dir.src}styles/`):
         // Re-compile styles AND re-render templates (inlined SCSS may have changed).
         bundleSCSS(configs);
-        bundleJS(configs, filePath);
+        await bundleJS(configs, filePath);
         compilePageMappingData(configs);
         break;
       case filePath.includes(`${dir.src}templates/`):
