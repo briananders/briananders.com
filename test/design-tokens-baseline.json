@@ -148,8 +148,8 @@
     "px": 4
   },
   "src/styles/posts/music-news.scss": {
-    "colors": 3,
-    "px": 10
+    "colors": 0,
+    "px": 0
   },
   "src/styles/posts/paint.scss": {
     "colors": 0,

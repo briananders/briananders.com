@@ -19,21 +19,46 @@ scripts:
 ---
 
 <section>
-  <div class="container">
+  <div id="music-news" class="container">
     <last-updated source="band-news"></last-updated>
     <p id="music-news-meta" class="meta"></p>
+    <div id="music-news-history-wrap" class="music-news-bands-block" hidden>
+      <h2 class="music-news-bands-heading">Feed history</h2>
+      <p class="music-news-bands-intro">Pick an earlier date to see the news list as it was published then.</p>
+      <div class="music-news-history-controls">
+        <label for="music-news-history-select" class="sr-only">Feed date</label>
+        <select id="music-news-history-select" class="music-news-history-select"></select>
+        <div class="music-news-history-nav" role="group" aria-label="Step through feed dates">
+          <button type="button" id="music-news-history-prev" class="button ghost music-news-history-step">&larr; Older</button>
+          <button type="button" id="music-news-history-next" class="button ghost music-news-history-step" disabled>Newer &rarr;</button>
+          <button type="button" id="music-news-history-latest" class="button ghost music-news-history-step" hidden>Back to latest</button>
+        </div>
+      </div>
+      <label id="music-news-new-wrap" class="music-news-new-toggle" hidden>
+        <input type="checkbox" class="toggle" id="music-news-new-only">
+        Only show updates that are new since the previous feed
+      </label>
+    </div>
     <div id="music-news-bands-queried-wrap" class="music-news-bands-block" hidden>
       <h2 class="music-news-bands-heading">Artists searched</h2>
       <p class="music-news-bands-intro">These names are included when aggregating feeds.</p>
       <div id="music-news-bands-marquee" class="music-news-bands-marquee"
         aria-label="Scrolling list of artist names queried for news"></div>
     </div>
-    <div id="music-news-bands-hits-wrap" class="music-news-bands-block" hidden>
-      <h2 class="music-news-bands-heading">Artists with matching articles</h2>
-      <p class="music-news-bands-intro">Select an artist to filter the list. Select again to show all articles.</p>
-      <div id="music-news-bands-hits" class="music-news-bands-filters" role="group"
-        aria-label="Filter articles by artist"></div>
+    <div id="music-news-tags-wrap" class="music-news-bands-block" hidden>
+      <h2 class="music-news-bands-heading">Filter by tag</h2>
+      <p class="music-news-bands-intro">Select a tag to filter the list. Select again to show every tag.</p>
+      <div id="music-news-tags" class="music-news-bands-filters" role="group"
+        aria-label="Filter articles by tag"></div>
     </div>
+    <div id="music-news-bands-hits-wrap" class="music-news-bands-block" hidden>
+      <h2 id="music-news-bands-heading" class="music-news-bands-heading">Filter by artist</h2>
+      <p class="music-news-bands-intro">Select one or more artists to filter the list.</p>
+      <multiselect-dropdown id="music-news-bands-select"
+        placeholder="All matching artists"
+        aria-labelledby="music-news-bands-heading"></multiselect-dropdown>
+    </div>
+    <div id="music-news-filter-status" class="music-news-filter-status" aria-live="polite" hidden></div>
     <div id="music-news-list" role="list"></div>
     <div id="music-news-empty" class="empty" style="display: none;">
       <p>No matches found at this time.</p>

@@ -1,5 +1,14 @@
 @use "system/utilities" as *;
 
+.music-news {
+  .meta {
+    @include type--body-small;
+    color: var(--color-text-muted);
+    margin-bottom: space(3);
+    text-align: left;
+  }
+}
+
 .music-news-bands-block {
   margin-bottom: space(4);
 }
@@ -15,6 +24,36 @@
   color: $palette--primary-color-light;
   margin-bottom: space(2);
   text-align: left;
+}
+
+.music-news-history-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.music-news-history-select {
+  flex: 1 1 16rem;
+  max-width: var(--max-5-columns);
+  min-width: 0;
+}
+
+.music-news-history-nav {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.music-news-history-step {
+  @include border--light;
+  white-space: nowrap;
+
+  &:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
 }
 
 .music-news-bands-marquee {
@@ -48,12 +87,12 @@
 
   &::before {
     left: 0;
-    background: linear-gradient(to left, rgba($palette--primary-grey, 0), rgba($palette--primary-grey, 1));
+    background: linear-gradient(to left, transparent, var(--color-bg));
   }
 
   &::after {
     right: 0;
-    background: linear-gradient(to right, rgba($palette--primary-grey, 0), rgba($palette--primary-grey, 1));
+    background: linear-gradient(to right, transparent, var(--color-bg));
   }
 }
 
@@ -90,6 +129,11 @@
   gap: space(1);
   padding-right: space(3);
   flex-shrink: 0;
+
+  &[aria-hidden="true"] {
+    display: inline-flex;
+    visibility: visible;
+  }
 }
 
 .music-news-marquee-static-inner {
@@ -100,6 +144,19 @@
   text-align: left;
 }
 
+.music-news-new-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-top: space(2);
+  margin-bottom: 0;
+  cursor: pointer;
+
+  &[hidden] {
+    display: none;
+  }
+}
+
 .music-news-bands-filters {
   display: flex;
   flex-wrap: wrap;
@@ -107,13 +164,85 @@
   text-align: left;
 }
 
+multiselect-dropdown {
+  display: block;
+  max-width: var(--max-6-columns);
+  margin-top: space(1);
+}
+
 .band-tag {
   color: $palette--accent-color;
-  background-color: rgba($palette--accent-color, 0.1);
+  background-color: var(--color-success-tint);
   padding: space(1) space(2);
-  border-radius: 100px;
+  border-radius: var(--radius-pill);
   @include type--body-tiny;
   @include type--bold-sans-serif;
+}
+
+// Shared chip shape for the clickable tag and artist labels on each card.
+%music-news-chip-button {
+  @include type--body-tiny;
+  @include type--bold-sans-serif;
+  display: inline-flex;
+  align-items: center;
+  min-height: unset;
+  padding: space(1) space(2);
+  border-radius: var(--radius-pill);
+  @include border--light;
+  cursor: pointer;
+  transition:
+    background-color var(--dur-2) var(--ease-standard),
+    border-color var(--dur-2) var(--ease-standard),
+    color var(--dur-2) var(--ease-standard);
+
+  @include link-focus;
+}
+
+.band-tag--interactive {
+  @extend %music-news-chip-button;
+  color: $palette--accent-color;
+  background-color: var(--color-success-tint);
+  border-color: transparent;
+
+  &:hover {
+    border-color: $palette--accent-color;
+    background-color: var(--color-surface-3);
+  }
+}
+
+// Tags come from the feed, so every value gets the same treatment: a tag the
+// API adds later renders without a stylesheet change.
+.article-tag {
+  @extend %music-news-chip-button;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-primary-300);
+  background-color: var(--color-primary-tint);
+  border-color: var(--color-primary-300);
+
+  &:hover {
+    background-color: var(--color-surface-3);
+  }
+}
+
+.band-tag--interactive.band-tag--selected,
+.article-tag.article-tag--selected {
+  color: var(--color-text-inverse);
+  background-color: var(--color-primary-500);
+  border-color: var(--color-primary-500);
+}
+
+.article-new {
+  @include type--body-tiny;
+  @include type--bold-sans-serif;
+  display: inline-flex;
+  align-items: center;
+  padding: space(1) space(2);
+  border-radius: var(--radius-pill);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-text-inverse);
+  background-color: var(--color-accent-teal);
 }
 
 .band-filter {
@@ -122,14 +251,15 @@
   display: inline-flex;
   align-items: center;
   gap: space(1);
+  min-height: unset;
   padding: space(1) space(2);
-  border-radius: 100px;
+  border-radius: var(--radius-pill);
   cursor: pointer;
   font-family: inherit;
 
   color: var(--color-text);
   background-color: var(--color-surface-2);
-  border: 1px solid var(--color-border);
+  @include border--light;
   transition:
     background-color var(--dur-2) var(--ease-standard),
     border-color var(--dur-2) var(--ease-standard),
@@ -146,86 +276,230 @@
     box-shadow: var(--focus-ring);
   }
 
-  &:active { transform: translateY(1px); }
+  &.band-filter--selected {
+    color: var(--color-text-inverse);
+    background-color: var(--color-primary-500);
+    border-color: var(--color-primary-500);
+    box-shadow: var(--elev-glow-primary);
+
+    &:hover {
+      background-color: var(--color-primary-600);
+      border-color: var(--color-primary-600);
+    }
+
+    // Small check to reinforce the "on" affordance.
+    &::before {
+      content: '';
+      width: var(--space-2);
+      height: var(--space-2);
+      border-radius: 50%;
+      background-color: currentColor;
+      flex: 0 0 auto;
+    }
+  }
 }
 
-.band-filter--selected {
-  color: var(--color-text-inverse);
-  background-color: var(--color-primary-500);
-  border-color: var(--color-primary-500);
-  box-shadow: var(--elev-glow-primary);
-
-  &:hover {
-    background-color: var(--color-primary-600);
-    border-color: var(--color-primary-600);
-  }
-
-  // Small check to reinforce the "on" affordance.
-  &::before {
-    content: '';
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background-color: currentColor;
-    box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.15) inset;
-    flex: 0 0 auto;
-  }
+.tag-filter .band-filter__name {
+  text-transform: capitalize;
 }
 
 .band-filter__count {
   min-width: 1.5em;
   padding: 0 space(1);
-  border-radius: 100px;
-  background-color: rgba(255, 255, 255, 0.06);
+  border-radius: var(--radius-pill);
+  background-color: var(--color-divider);
   color: var(--color-text-muted);
   text-align: center;
 
   .band-filter--selected & {
     color: var(--color-text-inverse);
-    background-color: rgba(0, 0, 0, 0.15);
+    background-color: color-mix(in srgb, var(--color-bg) 20%, transparent);
   }
+}
+
+.music-news-filter-status {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  max-width: var(--reading-max);
+  margin-bottom: space(3);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-md);
+  background-color: var(--color-surface-1);
+  @include border--light;
+  @include type--body-small;
+  color: var(--color-text-muted);
+
+  &[hidden] {
+    display: none;
+  }
+}
+
+.music-news-filter-status__text {
+  margin: 0;
+}
+
+.music-news-clear-filters {
+  @include border--light;
+}
+
+#music-news-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
 }
 
 .article-card {
   text-align: left;
   @include card;
+  margin-bottom: 0;
+}
+
+.article-taxonomy {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: space(1);
+  margin-bottom: space(2);
+}
+
+.article-image-link {
+  display: block;
+  margin-bottom: space(2);
 }
 
 .article-image {
-  border-radius: 200px;
-  box-shadow: 0 0 20px $palette--primary-color-dark;
-  margin-bottom: space(2);
+  display: block;
+  width: 100%;
+  max-height: 16rem;
+  object-fit: cover;
+  border-radius: var(--radius-md);
+  box-shadow: var(--elev-2);
 }
 
 .article-title {
   @include type--heading-5;
   text-align: left;
-  text-transform: capitalize;
+  margin-bottom: space(1);
 }
 
 .article-title-link {
-  color: unset;
-  text-decoration: unset;
+  color: var(--color-text);
+  text-decoration: none;
+  transition: color var(--dur-2) var(--ease-standard);
+
+  &:hover {
+    color: var(--color-primary-300);
+  }
+
+  @include link-focus;
 }
 
 .article-summary {
   @include type--body;
+  color: var(--color-text-muted);
+  margin-bottom: space(2);
 }
 
 .article-bands {
-  display: flex;
+  display: inline-flex;
   flex-wrap: wrap;
   gap: space(1);
-  margin-bottom: space(2);
 }
 
 .article-metadata {
   display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
   gap: space(1);
   @include type--body-tiny;
+  color: var(--color-text-muted);
   margin-bottom: space(2);
 }
 
 .article-source {
   @include type--body-tiny;
+  @include type--bold-sans-serif;
+  color: var(--color-text);
+}
+
+.article-source-count {
+  @include type--body-tiny;
+  @include type--bold-sans-serif;
+  color: var(--color-primary-300);
+}
+
+.article-sources {
+  margin-top: space(2);
+  padding-top: space(2);
+  border-top: 0;
+  box-shadow: 0 calc(-1 * var(--unit) / 4) 0 0 var(--color-divider);
+}
+
+.article-sources-heading {
+  @include type--body-tiny;
+  @include type--bold-sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-text-muted);
+  margin-bottom: space(1);
+}
+
+.article-sources-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: space(1);
+}
+
+.article-source-item {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: calc(var(--unit) / 2);
+  @include type--body-small;
+}
+
+.article-source-link {
+  @include type--body-small;
+  line-height: var(--lh-snug);
+  word-break: break-word;
+}
+
+.article-source-byline {
+  @include type--body-tiny;
+  color: var(--color-text-muted);
+}
+
+.article-source-publisher {
+  @include type--bold-sans-serif;
+  color: var(--color-text);
+}
+
+.article-sources-more {
+  margin-top: space(1);
+}
+
+.article-sources-summary {
+  @include type--body-tiny;
+  @include type--bold-sans-serif;
+  color: var(--color-primary-300);
+  cursor: pointer;
+  padding: calc(var(--unit) / 2) 0;
+  user-select: none;
+
+  &:hover {
+    color: var(--color-primary-500);
+  }
+
+  @include link-focus;
+}
+
+.article-sources-list--more {
+  margin-top: space(1);
 }

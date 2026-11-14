@@ -33,7 +33,7 @@ These paths are **preserved during deploys** via `s3-upload-allowlist.json` and 
 | S3 Path | Description | Consumer |
 |---|---|---|
 | `/last-fm-history/` | Pre-processed Last.fm scrobble data (JSON reports, monthly trends, images) for both listening dashboards and the homepage album list | `src/js/_modules/last-fm/` |
-| `/band-news/` | Aggregated music news articles matching followed bands (`articles.json`) | `src/js/posts/music-news.js` |
+| `/band-news/` | Aggregated music news articles matching followed bands (`articles.json`, `catalog.json`, `history/*.json`) | `src/js/_modules/band-news/`, `src/js/posts/music-news.js` |
 | `/data/` | Static JSON datasets (word lists for Wordle/Wordscapes solvers) | Various post scripts |
 | `/movies/` | Movie/IMDb ratings data | `src/js/posts/imdb-ratings.js` |
 
@@ -54,6 +54,19 @@ These paths are **preserved during deploys** via `s3-upload-allowlist.json` and 
 Trend slugs are lowercase with everything outside `[a-z0-9 -]` removed and whitespace collapsed to `-` (no accent folding): see `slugify()` in `data.js`. URL state: `?type=&period=` for the period, `?trends=artists/…` for the dialog.
 
 Every panel compares against one report per period (`comparisonFor()` in `data.js`). Top albums and Top artists show each item's count there: the previous period's count for calendar periods; for rolling windows, which have no earlier window of equal length, the longer window's count scaled to this window's days ("usual"). A report only lists its top 50, so an item missing from the comparison report has no count there: for months, quarters and years the dashboard reads the real count (often 0) from that item's monthly trend file (`resolveMissing()`); weeks and rolling windows don't line up with months, so they show the honest bound "≤ N", where N is the comparison list's #50 count. Report and trend counts matched exactly in spot checks of a year, a quarter and a month.
+
+### Band News Feed & History
+
+`/posts/music-news/` consumes data aggregated by `~/Code/band-news` and published to `/band-news/`:
+- `articles.json` — Latest feed conforming to `schema/articles.schema.json`.
+- `catalog.json` — History catalog conforming to `schema/catalog.schema.json`.
+- `history/YYYY-MM-DD-articles.json` — Archived feed snapshots.
+
+Architecture lives in `src/js/_modules/band-news/` and `src/js/_components/`:
+- `multiselect-dropdown.js` — Custom web component (`<multiselect-dropdown>`) providing an accessible multi-select dropdown with checkboxes, option match counts, keyboard navigation (W3C APG Combobox/Listbox pattern), and mobile-friendly popover styling.
+- `data.js` — Normalization for articles and feeds, snapshot catalog parsing, dynamic faceted counts (excluding 0-match options), query-string view state serialization (`?snapshot=&tag=&bands=&new=1`), and novelty comparison against the previous snapshot.
+- `render.js` — HTML builders for article cards (with tags, multi-source links, and novelty indicators), filter chips, history controls, and filter status.
+- `controller.js` — Coordinates async snapshot loading, URL state synchronization, and faceted filter interactions across tags, multiselect dropdown, and history archives.
 
 ## Tech Stack
 

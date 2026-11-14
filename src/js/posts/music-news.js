@@ -1,112 +1,8 @@
 const ready = require('../_modules/document-ready');
 require('../_components/last-updated').init();
-
-/**
- * Escapes HTML characters in a string using a temporary DOM element.
- *
- * @param {string} str - The raw string to escape.
- * @returns {string} The escaped string safe for HTML rendering.
- */
-function escapeHTML(str) {
-  const tempElement = document.createElement('temp');
-  tempElement.innerHTML = str;
-  return tempElement.innerText;
-}
-
-/**
- * Generates an HTML link markup string with proper attributes and escaping.
- *
- * @param {string} link - The target URL.
- * @param {string} content - The inner HTML or text content of the link.
- * @param {string} [classes=''] - Optional CSS class names to apply to the anchor.
- * @returns {string} The generated HTML anchor string.
- */
-function articleLink(link, content, classes = '') {
-  // eslint-disable-next-line max-len
-  return `<a href="${escapeHTML(link)}" class="${classes}" target="_blank" rel="noopener" itemprop="url">${content}</a>`;
-}
-
-/**
- * Renders the HTML markup for an article card.
- *
- * @param {Object} article - The article data object.
- * @param {string} [article.image_url] - URL to the article thumbnail image.
- * @param {string} article.link - URL to the original article.
- * @param {string} article.title - Title of the article.
- * @param {string} article.source - Publisher or feed source name.
- * @param {string} article.published - ISO publication date string.
- * @param {string} article.published_formatted - Human-readable formatted date.
- * @param {string[]} [article.matched_bands] - Array of band names matched in this article.
- * @param {string} article.summary - Text summary of the article.
- * @returns {string} HTML markup string for the article card.
- */
-function renderArticle(article) {
-  const bands = (article.matched_bands || [])
-    .map((band) => `<span class="band-tag">${escapeHTML(band)}</span>`)
-    .join('');
-
-  const imageHtml = article.image_url
-    ? articleLink(
-      article.link,
-      // eslint-disable-next-line max-len
-      `<img loading="lazy" decoding="async" src="${escapeHTML(article.image_url)}" alt="${escapeHTML(article.title)}" class="article-image" />`,
-      'article-image-link'
-    )
-    : '';
-  const titleHtml = articleLink(
-    article.link,
-    escapeHTML(article.title.toLowerCase()),
-    'article-title-link'
-  );
-
-  return `
-    <div
-       class="article-card"
-       role="listitem"
-       itemscope
-       itemtype="https://schema.org/Article">
-       ${imageHtml}
-      <h2 class="article-title" itemprop="headline">${titleHtml}</h2>
-      <div class="article-metadata">
-        <span class="article-source" itemprop="publisher">${escapeHTML(article.source)}</span> -
-        <time datetime="${escapeHTML(article.published)}" itemprop="datePublished">
-          ${escapeHTML(article.published_formatted)}
-        </time>
-      </div>
-      <div class="article-bands">${bands}</div>
-      <p class="article-summary" itemprop="description">${escapeHTML(article.summary)}</p>
-      ${articleLink(article.link, 'Read more&nbsp;<b>&gt;</b>', 'article-link block-link')}
-    </div>
-  `;
-}
-
-/**
- * Renders the metadata summary showing number of bands tracked and feeds checked.
- *
- * @param {Object} data - Metadata container object.
- * @param {number} data.bands_tracked - Count of tracked bands.
- * @param {number} data.feeds_checked - Count of RSS/Atom feeds checked.
- * @returns {string} Summary text string.
- */
-function renderMeta(data) {
-  return `Tracking ${data.bands_tracked} bands across ${data.feeds_checked} feeds`;
-}
-
-/**
- * Builds a frequency count map of band occurrences across all articles.
- *
- * @param {Array<Object>} articles - List of article objects.
- * @returns {Map<string, number>} Map of band name to occurrence count.
- */
-function buildBandHitCounts(articles) {
-  const counts = new Map();
-  articles.forEach((article) => {
-    (article.matched_bands || []).forEach((band) => {
-      counts.set(band, (counts.get(band) || 0) + 1);
-    });
-  });
-  return counts;
-}
+require('../_components/multiselect-dropdown').init();
+const { createMusicNews } = require('../_modules/band-news/controller');
+const { escapeHTML } = require('../_modules/band-news/render');
 
 const MARQUEE_ROW_COUNT = 3;
 // Positive = content moves left. Equal step between rows: v, v+d, v+2d (row 0 slowest).
@@ -412,104 +308,41 @@ function initBandsMarquee(marqueeRootEl, bandsList) {
   };
 }
 
-/**
- * Generates HTML button markup for band filter buttons with count badges.
- *
- * @param {string[]} bandsOrdered - Sorted array of band names.
- * @param {Map<string, number>} countsMap - Map of band names to article match counts.
- * @param {string|null} selectedBand - Currently selected band name, or null if unfiltered.
- * @returns {string} HTML markup string of button elements.
- */
-function renderHitBandFilters(bandsOrdered, countsMap, selectedBand) {
-  return bandsOrdered
-    .map((band, index) => {
-      const count = countsMap.get(band);
-      const selected = selectedBand === band;
-      return `
-    <button
-      type="button"
-      class="band-filter${selected ? ' band-filter--selected' : ''}"
-      data-band-index="${index}"
-      aria-pressed="${selected}">
-      <span class="band-filter__name">${escapeHTML(band)}</span>
-      <span class="band-filter__count">${count}</span>
-    </button>`;
-    })
-    .join('');
-}
-
 ready.document(() => {
-  const listEl = document.getElementById('music-news-list');
-  const metaEl = document.getElementById('music-news-meta');
-  const emptyEl = document.getElementById('music-news-empty');
-  const queriedWrapEl = document.getElementById('music-news-bands-queried-wrap');
-  const marqueeEl = document.getElementById('music-news-bands-marquee');
-  const hitsWrapEl = document.getElementById('music-news-bands-hits-wrap');
-  const hitsEl = document.getElementById('music-news-bands-hits');
+  const byId = (id) => document.getElementById(id);
+  const marqueeWrapEl = byId('music-news-bands-queried-wrap');
+  const marqueeEl = byId('music-news-bands-marquee');
+  let stopMarquee = () => { };
+  let marqueeBands = '';
 
-  let articles = [];
-  let bandHitCounts = new Map();
-  let bandsHitOrder = [];
-  let selectedBand = null;
-
-  /**
-   * Filters articles by selectedBand (if any) and updates article list and filter button active states.
-   */
-  function applyFilter() {
-    const filtered = selectedBand
-      ? articles.filter((a) => (a.matched_bands || []).includes(selectedBand))
-      : articles;
-
-    listEl.innerHTML = filtered.map(renderArticle).join('');
-
-    if (hitsEl && bandHitCounts.size > 0) {
-      hitsEl.innerHTML = renderHitBandFilters(bandsHitOrder, bandHitCounts, selectedBand);
-    }
-  }
-
-  fetch('/band-news/articles.json')
-    .then((response) => response.json())
-    .then((data) => {
-      const rawArticles = data.articles || [];
-      const bandsList = data.bands_list || [];
-
-      if (bandsList.length > 0) {
-        queriedWrapEl.hidden = false;
-        initBandsMarquee(marqueeEl, bandsList);
-      }
-
-      if (rawArticles.length > 0) {
-        metaEl.innerHTML = renderMeta(data);
-        articles = rawArticles;
-        bandHitCounts = buildBandHitCounts(articles);
-        bandsHitOrder = [...bandHitCounts.keys()].sort((a, b) => a.localeCompare(b));
-
-        if (bandsHitOrder.length > 0) {
-          hitsWrapEl.hidden = false;
-        }
-
-        applyFilter();
-
-        hitsEl.addEventListener('click', (event) => {
-          const btn = event.target.closest('[data-band-index]');
-          if (!btn) return;
-          const index = parseInt(btn.dataset.bandIndex, 10);
-          const band = bandsHitOrder[index];
-          if (band === undefined) return;
-
-          if (selectedBand === band) {
-            selectedBand = null;
-          } else {
-            selectedBand = band;
-          }
-          applyFilter();
-        });
-      } else {
-        emptyEl.style.display = 'block';
-      }
-    })
-    .catch((error) => {
-      console.error(error);
-      emptyEl.style.display = 'block';
-    });
+  createMusicNews({
+    elements: {
+      root: byId('music-news'),
+      meta: byId('music-news-meta'),
+      list: byId('music-news-list'),
+      empty: byId('music-news-empty'),
+      historyWrap: byId('music-news-history-wrap'),
+      historySelect: byId('music-news-history-select'),
+      historyPrev: byId('music-news-history-prev'),
+      historyNext: byId('music-news-history-next'),
+      historyLatest: byId('music-news-history-latest'),
+      newWrap: byId('music-news-new-wrap'),
+      newOnly: byId('music-news-new-only'),
+      tagsWrap: byId('music-news-tags-wrap'),
+      tags: byId('music-news-tags'),
+      bandsWrap: byId('music-news-bands-hits-wrap'),
+      bandsSelect: byId('music-news-bands-select'),
+      filterStatus: byId('music-news-filter-status'),
+    },
+    // Each snapshot carries the artist list it searched; restart the marquee
+    // only when that list actually changes between snapshots.
+    onFeedChange(feed) {
+      const key = feed.bandsList.join('\n');
+      if (key === marqueeBands) return;
+      marqueeBands = key;
+      stopMarquee();
+      marqueeWrapEl.hidden = feed.bandsList.length === 0;
+      stopMarquee = feed.bandsList.length ? initBandsMarquee(marqueeEl, feed.bandsList) : () => { };
+    },
+  });
 });
