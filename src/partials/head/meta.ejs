@@ -16,6 +16,9 @@
 <meta http-equiv="X-UA-Compatible"                 content="IE=edge,chrome=1" />
 
 <meta name="robots"                                content="<%= page.robots %>" />
+<% if (locals.redirectTo) { %>
+  <meta http-equiv="refresh"                       content="0; url=<%= locals.redirectTo %>" />
+<% } %>
 
 <meta name="keywords"                              content="Brian, Anders, Brian Anders" />
 <meta name="author"                                content="<%- locals.author %>" />

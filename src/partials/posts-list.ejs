@@ -1,6 +1,7 @@
 <div id="posts-list">
   <%
-    const basePages = getChildPages('posts');
+    // Exclude moved-page redirect stubs so only real posts appear in `/posts/` and homepage lists.
+    const basePages = getChildPages('posts').filter((page) => !page.data.redirectTo);
     let newestPages = basePages.sort((pageA, pageB) => {
       const dateA = new Date(pageA.data.date);
       const dateB = new Date(pageB.data.date);

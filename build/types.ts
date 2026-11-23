@@ -74,6 +74,8 @@ export interface PageFrontMatter {
   date?: string | Date;
   priority?: number;
   robots?: boolean | string;
+  redirectTo?: string;
+  musicPinOrder?: number;
   schemaType?: string;
   layout?: string;
   styles?: string[];

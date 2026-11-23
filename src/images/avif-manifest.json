@@ -619,6 +619,186 @@
     "source": "og/index.jpg",
     "sha256": "ba21c3893e646cc7"
   },
+  "og/music.avif": {
+    "source": "og/music.jpg",
+    "sha256": "ced61274c197eea4"
+  },
+  "og/music/last-fm-scrobbles.avif": {
+    "source": "og/music/last-fm-scrobbles.jpg",
+    "sha256": "800c6666d813d122"
+  },
+  "og/music/last-fm.avif": {
+    "source": "og/music/last-fm.jpg",
+    "sha256": "b35c5d62f16dfd76"
+  },
+  "og/music/music-news.avif": {
+    "source": "og/music/music-news.jpg",
+    "sha256": "48fb97e061314c47"
+  },
+  "og/music/show/2006-06-21-bonner-springs.avif": {
+    "source": "og/music/show/2006-06-21-bonner-springs.jpg",
+    "sha256": "38c324d184635da7"
+  },
+  "og/music/show/2007-03-06-west-des-moines.avif": {
+    "source": "og/music/show/2007-03-06-west-des-moines.jpg",
+    "sha256": "cdb7ad8c246d31c8"
+  },
+  "og/music/show/2007-07-28-lamoni.avif": {
+    "source": "og/music/show/2007-07-28-lamoni.jpg",
+    "sha256": "cf9865aa8063902c"
+  },
+  "og/music/show/2007-10-15-kansas-city.avif": {
+    "source": "og/music/show/2007-10-15-kansas-city.jpg",
+    "sha256": "05dd854ac279ee1f"
+  },
+  "og/music/show/2008-02-19-kansas-city.avif": {
+    "source": "og/music/show/2008-02-19-kansas-city.jpg",
+    "sha256": "203b6da9e598613c"
+  },
+  "og/music/show/2008-11-06-kansas-city.avif": {
+    "source": "og/music/show/2008-11-06-kansas-city.jpg",
+    "sha256": "71ecd4bc71ddea00"
+  },
+  "og/music/show/2009-08-04-bonner-springs.avif": {
+    "source": "og/music/show/2009-08-04-bonner-springs.jpg",
+    "sha256": "3c4163be83c2eee9"
+  },
+  "og/music/show/2009-09-04-bonner-springs.avif": {
+    "source": "og/music/show/2009-09-04-bonner-springs.jpg",
+    "sha256": "2cfc7e35075cb3c4"
+  },
+  "og/music/show/2009-10-22-ben-folds.avif": {
+    "source": "og/music/show/2009-10-22-ben-folds.jpg",
+    "sha256": "bf5250772763d1f3"
+  },
+  "og/music/show/2010-02-03-west-des-moines.avif": {
+    "source": "og/music/show/2010-02-03-west-des-moines.jpg",
+    "sha256": "4b2b613692eff47f"
+  },
+  "og/music/show/2010-11-20-kansas-city.avif": {
+    "source": "og/music/show/2010-11-20-kansas-city.jpg",
+    "sha256": "ec382c40770010bb"
+  },
+  "og/music/show/2011-03-28-kansas-city.avif": {
+    "source": "og/music/show/2011-03-28-kansas-city.jpg",
+    "sha256": "8d4eb6e6119fe6cd"
+  },
+  "og/music/show/2011-04-04-west-des-moines.avif": {
+    "source": "og/music/show/2011-04-04-west-des-moines.jpg",
+    "sha256": "86fa4a513575d2db"
+  },
+  "og/music/show/2011-04-10-west-des-moines.avif": {
+    "source": "og/music/show/2011-04-10-west-des-moines.jpg",
+    "sha256": "268b490d4767221c"
+  },
+  "og/music/show/2011-09-08-des-moines.avif": {
+    "source": "og/music/show/2011-09-08-des-moines.jpg",
+    "sha256": "054da6debcd57639"
+  },
+  "og/music/show/2013-08-28-san-francisco.avif": {
+    "source": "og/music/show/2013-08-28-san-francisco.jpg",
+    "sha256": "db1fa780ca042bef"
+  },
+  "og/music/show/2013-10-12-los-angeles.avif": {
+    "source": "og/music/show/2013-10-12-los-angeles.jpg",
+    "sha256": "47720dc481d28ea6"
+  },
+  "og/music/show/2016-03-28-san-francisco.avif": {
+    "source": "og/music/show/2016-03-28-san-francisco.jpg",
+    "sha256": "59ff23aa2435b6e8"
+  },
+  "og/music/show/2016-10-12-san-francisco.avif": {
+    "source": "og/music/show/2016-10-12-san-francisco.jpg",
+    "sha256": "a12c246ca108ddbd"
+  },
+  "og/music/show/2019-05-23-new-orleans.avif": {
+    "source": "og/music/show/2019-05-23-new-orleans.jpg",
+    "sha256": "c90e69966bb5f265"
+  },
+  "og/music/show/2019-07-10-san-jose.avif": {
+    "source": "og/music/show/2019-07-10-san-jose.jpg",
+    "sha256": "622ed505f5fcf06d"
+  },
+  "og/music/show/2019-09-13-san-francisco.avif": {
+    "source": "og/music/show/2019-09-13-san-francisco.jpg",
+    "sha256": "b9f1320d0e70d9a2"
+  },
+  "og/music/show/2019-09-27-new-york.avif": {
+    "source": "og/music/show/2019-09-27-new-york.jpg",
+    "sha256": "a27234d2c4f0c625"
+  },
+  "og/music/show/2021-10-18-oakland.avif": {
+    "source": "og/music/show/2021-10-18-oakland.jpg",
+    "sha256": "e291f9126fe6a2bd"
+  },
+  "og/music/show/2022-02-24-los-angeles.avif": {
+    "source": "og/music/show/2022-02-24-los-angeles.jpg",
+    "sha256": "3a36e5f25f2f586f"
+  },
+  "og/music/show/2022-05-06-oakland.avif": {
+    "source": "og/music/show/2022-05-06-oakland.jpg",
+    "sha256": "3d734613f079425a"
+  },
+  "og/music/show/2022-07-29-santa-clara.avif": {
+    "source": "og/music/show/2022-07-29-santa-clara.jpg",
+    "sha256": "817b7689c296c448"
+  },
+  "og/music/show/2022-09-03-morrison.avif": {
+    "source": "og/music/show/2022-09-03-morrison.jpg",
+    "sha256": "a073f5748f2beb56"
+  },
+  "og/music/show/2022-10-05-oakland.avif": {
+    "source": "og/music/show/2022-10-05-oakland.jpg",
+    "sha256": "3e5f682e7a974241"
+  },
+  "og/music/show/2022-10-09-sacramento.avif": {
+    "source": "og/music/show/2022-10-09-sacramento.jpg",
+    "sha256": "5aeb939a652a72b1"
+  },
+  "og/music/show/2023-10-11-paso-robles.avif": {
+    "source": "og/music/show/2023-10-11-paso-robles.jpg",
+    "sha256": "2b81f56f0a9bdb89"
+  },
+  "og/music/show/2024-03-22-san-francisco.avif": {
+    "source": "og/music/show/2024-03-22-san-francisco.jpg",
+    "sha256": "a09233c028282199"
+  },
+  "og/music/show/2024-06-24-kansas-city.avif": {
+    "source": "og/music/show/2024-06-24-kansas-city.jpg",
+    "sha256": "bda51d99caacae32"
+  },
+  "og/music/show/2024-07-06-inglewood.avif": {
+    "source": "og/music/show/2024-07-06-inglewood.jpg",
+    "sha256": "72d105754f5d76eb"
+  },
+  "og/music/show/2024-10-20-las-vegas.avif": {
+    "source": "og/music/show/2024-10-20-las-vegas.jpg",
+    "sha256": "9919a57e86d36351"
+  },
+  "og/music/show/2024-10-29-los-angeles.avif": {
+    "source": "og/music/show/2024-10-29-los-angeles.jpg",
+    "sha256": "c52c27eba50e8e34"
+  },
+  "og/music/show/2025-07-07-long-beach.avif": {
+    "source": "og/music/show/2025-07-07-long-beach.jpg",
+    "sha256": "73af003e952fcebb"
+  },
+  "og/music/show/2026-03-01-los-angeles.avif": {
+    "source": "og/music/show/2026-03-01-los-angeles.jpg",
+    "sha256": "90ac19ae28284d04"
+  },
+  "og/music/show/2026-03-09-san-diego.avif": {
+    "source": "og/music/show/2026-03-09-san-diego.jpg",
+    "sha256": "fcf9336cdf840de8"
+  },
+  "og/music/show/2026-06-06-paso-robles.avif": {
+    "source": "og/music/show/2026-06-06-paso-robles.jpg",
+    "sha256": "f771bad792418450"
+  },
+  "og/music/show/2026-11-14-san-francisco.avif": {
+    "source": "og/music/show/2026-11-14-san-francisco.jpg",
+    "sha256": "e9fade0122b6d085"
+  },
   "og/posts.avif": {
     "source": "og/posts.jpg",
     "sha256": "27ed4e6b157f92a3"
@@ -699,14 +879,6 @@
     "source": "og/posts/interview-question.jpg",
     "sha256": "e70f3c97e6053031"
   },
-  "og/posts/last-fm-scrobbles.avif": {
-    "source": "og/posts/last-fm-scrobbles.jpg",
-    "sha256": "800c6666d813d122"
-  },
-  "og/posts/last-fm.avif": {
-    "source": "og/posts/last-fm.jpg",
-    "sha256": "b35c5d62f16dfd76"
-  },
   "og/posts/line-circle-rotator.avif": {
     "source": "og/posts/line-circle-rotator.jpg",
     "sha256": "4d456805b525cdb0"
@@ -730,10 +902,6 @@
   "og/posts/moire-patterns.avif": {
     "source": "og/posts/moire-patterns.jpg",
     "sha256": "9994dbe3a62e0c93"
-  },
-  "og/posts/music-news.avif": {
-    "source": "og/posts/music-news.jpg",
-    "sha256": "48fb97e061314c47"
   },
   "og/posts/my-favorite-aliases.avif": {
     "source": "og/posts/my-favorite-aliases.jpg",

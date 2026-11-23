@@ -1,0 +1,108 @@
+---
+title: "Music"
+altTitle: "Music"
+description: "Listening dashboards, followed-band news, and a chronological archive of every rock show I have attended since 2006."
+metaDescription: "Brian Anders's music section: Last.fm listening trends, full scrobble history, followed-band news, and a chronological concert archive since 2006."
+date: 2026-11-19
+priority: 0.9
+pageClasses:
+  - 'music'
+  - 'index'
+ogImage:
+  selector: 'main'
+  alt: 'Music hub with pinned listening dashboards, music news, and chronological concert list'
+  position: 'top'
+  width: 960
+  wait: 400
+layout: base
+styles:
+  - 'main'
+  - 'music/index'
+---
+
+<%
+  const pinnedPages = getPinnedMusicPages();
+  const shows = getMusicShows();
+  let dateRangeLabel = '';
+  if (shows.length > 0) {
+    const firstYear = new Date(shows[0].data.date).getUTCFullYear();
+    const lastYear = new Date(shows[shows.length - 1].data.date).getUTCFullYear();
+    dateRangeLabel = `${firstYear}\u2013${lastYear}`;
+  }
+%>
+
+<section id="music-featured" class="music-featured">
+  <div class="content">
+    <header class="music-section-header">
+      <h2>Listening &amp; News</h2>
+    </header>
+    <div class="ds-grid music-featured__grid">
+      <% pinnedPages.forEach(({ url, data }, index) => {
+        const isOddLastCard = (pinnedPages.length % 2 === 1) && (index === pinnedPages.length - 1);
+        let tabletSpanClass = 't-col-4';
+        if (isOddLastCard) {
+          tabletSpanClass = 't-col-8';
+        }
+        const summary = data.musicSummary || data.metaDescription || data.description;
+      %>
+        <a href="/<%= url %>" class="music-pinned-card card-link col-4 <%= tabletSpanClass %> d-col-4">
+          <article class="music-pinned-card__body">
+            <h3 class="music-pinned-card__title"><%= data.title %></h3>
+            <p class="music-pinned-card__summary"><%= summary %></p>
+          </article>
+        </a>
+      <% }); %>
+    </div>
+  </div>
+</section>
+
+<section id="shows-list" class="music-shows">
+  <div class="content">
+    <header class="music-section-header">
+      <h2>Shows Attended</h2>
+      <% if (shows.length > 0) { %>
+        <p class="music-section-meta text-muted">
+          <%= shows.length %> shows · <%= dateRangeLabel %> · Oldest to newest
+        </p>
+      <% } %>
+    </header>
+    <ol class="shows-list">
+      <% shows.forEach(({ url, data }) => {
+        const tourName = data.tour || data.title;
+        const venueName = data.venue && data.venue.name ? data.venue.name : '';
+        let locationLine = data.location || '';
+        if (venueName && locationLine) {
+          locationLine = `${venueName} · ${locationLine}`;
+        } else if (venueName) {
+          locationLine = venueName;
+        }
+        let bandsSummary = data.bandsSummary || '';
+        if (!bandsSummary && Array.isArray(data.bands)) {
+          bandsSummary = data.bands.map((band) => band.name).join(', ');
+        }
+      %>
+        <li class="shows-list__item">
+          <a href="/<%= url %>" class="show-card card-link">
+            <article class="show-card__body">
+              <div class="show-card__top">
+                <h3 class="show-card__tour"><%= tourName %></h3>
+                <time class="show-card__date" datetime="<%= formattedDate(data.date) %>">
+                  <%= formatShowDate(data.date) %>
+                </time>
+              </div>
+              <p class="show-card__location">
+                <span><%= locationLine %></span>
+                <% if (data.flagged) { %>
+                  <span class="show-badge show-badge--flagged">Needs review</span>
+                <% } %>
+              </p>
+              <% if (bandsSummary) { %>
+                <p class="show-card__bands"><%= bandsSummary %></p>
+              <% } %>
+            </article>
+          </a>
+        </li>
+      <% }); %>
+    </ol>
+  </div>
+</section>

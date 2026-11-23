@@ -39,7 +39,7 @@ These paths are **preserved during deploys** via `s3-upload-allowlist.json` and 
 
 ### Last.fm Listening Dashboards
 
-`/posts/last-fm/` (recent, rolling windows) and `/posts/last-fm-scrobbles/` (history, every period type) share one dashboard: the `src/partials/last-fm-dashboard.ejs` shell, `src/styles/posts/_last-fm-dashboard.scss`, and the controller in `src/js/_modules/last-fm/dashboard.js`. The browser never calls the Last.fm API; everything is read from `/last-fm-history/` (user `imbanders`):
+`/music/last-fm/` (recent, rolling windows) and `/music/last-fm-scrobbles/` (history, every period type) share one dashboard: the `src/partials/last-fm-dashboard.ejs` shell, `src/styles/posts/_last-fm-dashboard.scss`, and the controller in `src/ts/_modules/last-fm/dashboard.ts` (with `robots: false` meta-refresh redirect stubs retained at the legacy `/posts/last-fm/` and `/posts/last-fm-scrobbles/` paths). The browser never calls the Last.fm API; everything is read from `/last-fm-history/` (user `imbanders`):
 
 | Path | Shape | Used for |
 |---|---|---|
@@ -57,7 +57,7 @@ Every panel compares against one report per period (`comparisonFor()` in `data.j
 
 ### Band News Feed & History
 
-`/posts/music-news/` consumes data aggregated by `~/Code/band-news` and published to `/band-news/`:
+`/music/music-news/` (with a `robots: false` redirect stub at `/posts/music-news/`) consumes data aggregated by `~/Code/band-news` and published to `/band-news/`:
 - `articles.json` — Latest feed conforming to `schema/articles.schema.json`.
 - `catalog.json` — History catalog conforming to `schema/catalog.schema.json`.
 - `history/YYYY-MM-DD-articles.json` — Archived feed snapshots.
@@ -67,6 +67,10 @@ Architecture lives in `src/js/_modules/band-news/` and `src/js/_components/`:
 - `data.js` — Normalization for articles and feeds, snapshot catalog parsing, dynamic faceted counts (excluding 0-match options), query-string view state serialization (`?snapshot=&tag=&bands=&new=1`), and novelty comparison against the previous snapshot.
 - `render.js` — HTML builders for article cards (with tags, multi-source links, and novelty indicators), filter chips, history controls, and filter status.
 - `controller.js` — Coordinates async snapshot loading, URL state synchronization, and faceted filter interactions across tags, multiselect dropdown, and history archives.
+
+### Music Section & Concert Archive
+
+`/music/` (`src/templates/music/index.html.ejs`) pins the three music tools (`musicPinOrder`: `last-fm`, `last-fm-scrobbles`, `music-news`) above a chronological (oldest-to-newest) list of attended concerts stored under `src/templates/music/show/{YYYY-MM-DD}-{location}.ejs`. Every show page delegates its layout to `src/partials/music-show.ejs` and `src/styles/music/show.scss`, using shared UTC date formatting, sorting, adjacent-show lookup, and external URL builders in `build/helpers/music.ts`.
 
 ## Tech Stack
 
@@ -116,7 +120,7 @@ Architecture lives in `src/js/_modules/band-news/` and `src/js/_components/`:
 │   │   └── sitemap.ts          # Renders sitemap.json.ejs + sitemap.xml.ejs
 │   ├── constants/              # Event names, completion flags, directory paths, formats, golden-build, site-data (.ts)
 │   ├── hashing/                # XXHash JS/images/CSS + URL rewriting (.ts)
-│   ├── helpers/                # Build helpers, EJS functions, SEO, commit-hash, check-done (.ts)
+│   ├── helpers/                # Build helpers, EJS functions, music, SEO, commit-hash, check-done (.ts)
 │   ├── optimize/               # WebP/AVIF, gzip, HTML/JS minification, SVGO (.ts)
 │   ├── move-assets.ts          # Copies images (SVG→SVGO, raster→WebP+AVIF+copy), videos, txt, downloads
 │   ├── page-mapping-data.ts    # Front-matter index compiled from all EJS templates
@@ -125,7 +129,7 @@ Architecture lives in `src/js/_modules/band-news/` and `src/js/_components/`:
 │   └── golden-builder.ts       # Golden build: minify only, hashing/gzip flags pre-set
 │
 ├── src/
-│   ├── templates/              # EJS page templates (one per output page)
+│   ├── templates/              # EJS page templates (one per output page; includes `music/`, `posts/`, `example/`)
 │   ├── partials/               # Reusable EJS partials (header, footer, nav, etc.)
 │   ├── layout/                 # Layout templates (base.ejs, blank.ejs, empty.ejs)
 │   ├── styles/                 # SCSS source (`system/`, `modules/`, `posts/`)
@@ -188,7 +192,7 @@ scripts:
 | `<title>`, `og:title` | The page's heading (`altTitle` when set, as the visible `<h1>` uses it, else `title`). `<title>` appends ` \| Brian Anders`; front matter `metaTitle` replaces it. The homepage's `title` is a nav label ("Home"), so its social title is the site name and its `<title>` comes from `metaTitle` |
 | Meta / OG / Twitter description | `metaDescription`, else `description`. Google cuts snippets at about 160 characters, and a test enforces that limit on indexable pages; set `metaDescription` when the on-page `description` runs longer |
 | Canonical, `og:url`, `og:image` | Always absolute (`siteData.domain`). Production hashing rewrites same-origin absolute URLs too (`replacePaths` in `finish-hashing.js`) |
-| `og:type` + JSON-LD type | Posts are `article` / `BlogPosting` with breadcrumbs, `posts/` is a `CollectionPage`, everything else a `WebPage`. Front matter `schemaType` overrides it (`about.ejs` is a `ProfilePage`) |
+| `og:type` + JSON-LD type | Posts and `/music/*` entries are `article` / `BlogPosting` with section breadcrumbs, `posts/` and `music/` are `CollectionPage`, everything else a `WebPage`. Front matter `schemaType` overrides it (`about.ejs` is a `ProfilePage`); `redirectTo` points canonical URLs to the destination |
 | JSON-LD `Person` | `sameAs` lists every profile in `site-data.js`, which links them to this site in search. `jobTitle` and `locale` (`inLanguage`, `og:locale`) also come from `site-data.js` |
 
 **Preview images.** Every indexable page has a 1200×630 JPEG at `src/images/og/<page path>.jpg` (`/` → `index.jpg`, `/posts/` → `posts.jpg`, `/posts/coin-flip/` → `posts/coin-flip.jpg`). Pages without one (404, `example/`) fall back to the homepage's, with alt text that says so. They're screenshots of each page's signature element, taken by `npm run og-images` from the front matter recipe:
@@ -233,7 +237,14 @@ Available in all templates via `build/helpers/ejs-functions.js`:
 | `cardLink(str, { href })` | Card-style link (`.card-link`) |
 | `buttonLink(str, { href })` | Button-style link (`.button`) |
 | `formattedDate(dateString)` | Formats as `YYYY-MM-DD` in UTC (front-matter dates parse as UTC midnight) |
+| `formatShowDate(dateString)` | Formats as `Month Day, Year` in UTC (e.g. `June 21, 2006`) |
 | `getChildPages(parentPath)` | Returns direct children from `pageMappingData` |
+| `getPinnedMusicPages()` | Returns pinned `/music/` child pages ordered by `musicPinOrder` |
+| `getMusicShows()` | Returns `/music/show/` pages ordered chronologically oldest to newest |
+| `getAdjacentShows(path)` | Returns `{ previous, next }` chronological shows around `path` |
+| `buildGoogleMapsUrl(query)` | Builds an encoded Google Maps search link for a venue |
+| `buildSetlistSearchUrl(artist, location, year)` | Builds an encoded Setlist.fm search fallback link |
+| `buildConcertArchivesSearchUrl(query)` | Builds an encoded Concert Archives search fallback link |
 | `defaultLastFMModule(albums)` | Last.fm loading placeholder markup |
 | `inlineScss(src)` | Compiles SCSS file to CSS string for inline `<style>` use |
 | `seo(locals)` | Resolves a page's title, description, canonical URL, OG/Twitter values, preview image and JSON-LD (`build/helpers/seo.js`) |

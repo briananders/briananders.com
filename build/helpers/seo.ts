@@ -30,6 +30,7 @@ interface SeoLocals {
   metaDescription?: string;
   date?: string | number | Date;
   robots?: boolean | string;
+  redirectTo?: string;
   schemaType?: string;
   homepage?: boolean;
   ogImage?: OgImageRecipe;
@@ -105,16 +106,26 @@ function isPost(pagePath: string): boolean {
 }
 
 /**
+ * Whether a page lives inside the `/music/` section (excluding the `/music/` hub itself).
+ *
+ * @param pagePath - Page path without leading slash.
+ * @returns True if the path is an entry under `music/`.
+ */
+function isMusicEntry(pagePath: string): boolean {
+  return /^music\/.+/.test(pagePath);
+}
+
+/**
  * The schema.org type that describes a page. Front matter `schemaType` wins;
- * otherwise posts are articles and the posts listing is a collection.
+ * otherwise posts and music entries are articles and section indexes are collections.
  *
  * @param locals - Template data (front matter + site data + `path`).
  * @returns The resolved schema.org type name.
  */
 function schemaTypeFor(locals: Pick<SeoLocals, 'schemaType' | 'path'>): string {
   if (locals.schemaType) return locals.schemaType;
-  if (isPost(locals.path)) return 'BlogPosting';
-  if (locals.path === 'posts/') return 'CollectionPage';
+  if (isPost(locals.path) || isMusicEntry(locals.path)) return 'BlogPosting';
+  if (locals.path === 'posts/' || locals.path === 'music/') return 'CollectionPage';
   return 'WebPage';
 }
 
@@ -210,10 +221,19 @@ function structuredData(locals: SeoLocals, page: SeoPageBase): Record<string, un
 
   const graph: Array<Record<string, unknown>> = [person, website, webPage];
 
-  // Breadcrumbs let search results show "briananders.com › Posts" instead of a raw URL.
+  // Breadcrumbs let search results show "briananders.com › Posts" or "Music" instead of a raw URL.
   if (isPost(locals.path) || locals.path === 'posts/') {
     const crumbs = [{ name: locals.name, item: domain }, { name: 'Posts', item: `${domain}posts/` }];
     if (isPost(locals.path)) crumbs.push({ name: page.title, item: page.url });
+    graph.push({
+      '@type': 'BreadcrumbList',
+      itemListElement: crumbs.map((crumb, index) => ({
+        '@type': 'ListItem', position: index + 1, ...crumb,
+      })),
+    });
+  } else if (isMusicEntry(locals.path) || locals.path === 'music/') {
+    const crumbs = [{ name: locals.name, item: domain }, { name: 'Music', item: `${domain}music/` }];
+    if (isMusicEntry(locals.path)) crumbs.push({ name: page.title, item: page.url });
     graph.push({
       '@type': 'BreadcrumbList',
       itemListElement: crumbs.map((crumb, index) => ({
@@ -283,7 +303,11 @@ function createSeo(dir: Pick<BuildDirectories, 'src'>): (locals: SeoLocals) => S
     else if (title !== locals.name) documentTitle = `${title} | ${locals.name}`;
 
     const schemaType = schemaTypeFor(locals);
-    const url = `${locals.domain}${locals.path}`;
+    let canonicalPath = locals.path;
+    if (locals.redirectTo) {
+      canonicalPath = locals.redirectTo.replace(/^\/+/, '');
+    }
+    const url = `${locals.domain}${canonicalPath}`;
     let published: string | null = null;
     if (locals.date) {
       published = new Date(locals.date).toISOString();
@@ -317,6 +341,7 @@ module.exports = {
   createSeo,
   ogImagePath,
   isPost,
+  isMusicEntry,
   schemaTypeFor,
   serializeJsonLd,
   structuredData,

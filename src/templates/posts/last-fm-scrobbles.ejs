@@ -1,28 +1,22 @@
 ---
 title: "Music Listening History"
-description: "I use an app to track my music listening history. I thought it would be fun to make my own interface for it, to let you do your own deep dives into my music taste. Why? Because I can."
+description: "This page has moved to the Music section."
 date: 2025-12-24
-priority: 0.8
-pageClasses:
-  - 'posts last-fm-scrobbles'
-metaDescription: 'Explore my Last.fm listening history since 2013: top albums and artists for any year, quarter, month or week, and how they trend over time.'
-ogImage:
-  selector: '.lfm-grid'
-  alt: 'Listening history dashboard: total scrobbles, top albums and top artists'
-  position: 'top'
-  wait: 4000
+priority: 0.1
+robots: false
+redirectTo: '/music/last-fm-scrobbles/'
 layout: base
+pageClasses:
+  - 'posts'
 styles:
   - 'main'
-  - 'posts/last-fm-scrobbles'
-scripts:
-  - 'posts/last-fm-scrobbles'
 ---
 
-<div class="content">
-  <p>
-    Every scrobble since 2013, sliceable by year, quarter, month, week, or rolling window. Select a year or a month in the long view to jump straight to it, or any album or artist for its month-by-month history. For just the last few weeks, the <%- inlineLink('recent listening trends', { href: '/posts/last-fm/' }) %> page is quicker.
-  </p>
-</div>
-
-<%- partial('last-fm-dashboard', { ...locals, mode: 'history' }) %>
+<section>
+  <div class="content">
+    <p>
+      Music Listening History has moved to the Music section.
+      <%- inlineLink('Continue to /music/last-fm-scrobbles/', { href: '/music/last-fm-scrobbles/' }) %>.
+    </p>
+  </div>
+</section>

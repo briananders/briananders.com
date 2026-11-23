@@ -1,4 +1,5 @@
 import type { BuildDirectories, PageMappingEntry } from '../types.ts';
+import type { AdjacentShows } from './music.ts';
 
 const ejs: typeof import('ejs') = require('ejs');
 const fs: typeof import('fs') = require('fs');
@@ -11,6 +12,23 @@ const { camelize, dasherize }: typeof import('underscore.string') = require('und
 const { createSeo }: {
   createSeo: (dir: Pick<BuildDirectories, 'src'>) => (locals: Record<string, unknown>) => Record<string, unknown>;
 } = require('./seo.ts');
+const {
+  formatShowDate,
+  getPinnedMusicPages,
+  getMusicShows,
+  getAdjacentShows,
+  buildGoogleMapsUrl,
+  buildSetlistSearchUrl,
+  buildConcertArchivesSearchUrl,
+}: {
+  formatShowDate: (dateValue?: string | number | Date) => string;
+  getPinnedMusicPages: (pages: PageMappingEntry[]) => PageMappingEntry[];
+  getMusicShows: (pages: PageMappingEntry[]) => PageMappingEntry[];
+  getAdjacentShows: (orderedShows: PageMappingEntry[], currentPath: string) => AdjacentShows;
+  buildGoogleMapsUrl: (venueQuery?: string | null) => string;
+  buildSetlistSearchUrl: (artistName: string, location?: string, year?: string | number) => string;
+  buildConcertArchivesSearchUrl: (query?: string | null) => string;
+} = require('./music.ts');
 
 interface ImageSourceVariant {
   src: string;
@@ -234,6 +252,68 @@ module.exports = (
         return false;
       });
     },
+
+    /**
+     * Formats a date in UTC as a human-readable concert date (e.g. `'June 21, 2006'`).
+     *
+     * @param dateString - The date to format.
+     * @returns Human-readable UTC date string.
+     */
+    formatShowDate,
+
+    /**
+     * Returns pinned pages under `/music/`, ordered by `musicPinOrder`.
+     *
+     * @returns Pinned music pages.
+     */
+    getPinnedMusicPages(): PageMappingEntry[] {
+      return getPinnedMusicPages(pageMappingData);
+    },
+
+    /**
+     * Returns all show pages under `/music/show/`, ordered oldest to newest.
+     *
+     * @returns Ordered show pages.
+     */
+    getMusicShows(): PageMappingEntry[] {
+      return getMusicShows(pageMappingData);
+    },
+
+    /**
+     * Returns the adjacent older and newer show entries around `currentPath`.
+     *
+     * @param currentPath - Current show page path.
+     * @returns Adjacent shows.
+     */
+    getAdjacentShows(currentPath: string): AdjacentShows {
+      return getAdjacentShows(getMusicShows(pageMappingData), currentPath);
+    },
+
+    /**
+     * Builds an encoded Google Maps search URL for a venue query.
+     *
+     * @param venueQuery - Venue name and/or street address.
+     * @returns Google Maps search URL.
+     */
+    buildGoogleMapsUrl,
+
+    /**
+     * Builds an encoded Setlist.fm search URL for a band, location, and year.
+     *
+     * @param artistName - Band name.
+     * @param location - Venue or city name.
+     * @param year - Concert year.
+     * @returns Setlist.fm search URL.
+     */
+    buildSetlistSearchUrl,
+
+    /**
+     * Builds an encoded Concert Archives search URL for a show query.
+     *
+     * @param query - Concert search query.
+     * @returns Concert Archives search URL.
+     */
+    buildConcertArchivesSearchUrl,
 
     /**
      * Formats a date string as `YYYY-MM-DD`.

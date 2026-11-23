@@ -1,0 +1,217 @@
+<%
+  const showDateFormatted = formatShowDate(locals.date);
+  const showDateIso = formattedDate(locals.date);
+  const showYear = new Date(locals.date).getUTCFullYear();
+  const venue = locals.venue || {};
+  const bands = Array.isArray(locals.bands) ? locals.bands : [];
+  const tourHistory = Array.isArray(locals.tourHistory) ? locals.tourHistory : [];
+  const bandNotes = Array.isArray(locals.bandNotes) ? locals.bandNotes : [];
+  const references = Array.isArray(locals.references) ? locals.references : [];
+  const concertArchive = locals.concertArchive || {};
+
+  let venueMapsUrl = '';
+  if (venue.mapsUrl) {
+    venueMapsUrl = venue.mapsUrl;
+  } else if (venue.mapsQuery) {
+    venueMapsUrl = buildGoogleMapsUrl(venue.mapsQuery);
+  }
+
+  let concertArchiveUrl = '';
+  let concertArchiveLabel = 'View on Concert Archives';
+  if (concertArchive.url) {
+    concertArchiveUrl = concertArchive.url;
+    if (concertArchive.label) {
+      concertArchiveLabel = concertArchive.label;
+    }
+  } else {
+    const queryParts = [locals.tour || locals.title, locals.location, showYear].filter(Boolean);
+    concertArchiveUrl = buildConcertArchivesSearchUrl(queryParts.join(' '));
+    concertArchiveLabel = 'Search Concert Archives';
+  }
+
+  const adjacent = getAdjacentShows(locals.path);
+  const customMedia = typeof locals.mediaContent === 'string' ? locals.mediaContent.trim() : '';
+%>
+
+<section class="show-nav-section">
+  <div class="content">
+    <nav aria-label="Music section navigation">
+      <%- link('&larr; Back to Music &amp; Shows', { href: '/music/', class: 'block-link' }) %>
+    </nav>
+  </div>
+</section>
+
+<section class="show-overview-section">
+  <div class="content">
+    <div class="show-hero card">
+      <p class="overline text-primary">
+        <time datetime="<%= showDateIso %>"><%= showDateFormatted %></time>
+        <% if (locals.location) { %>
+          · <%= locals.location %>
+        <% } %>
+      </p>
+
+      <dl class="show-meta">
+        <div class="show-meta__row">
+          <dt>Date</dt>
+          <dd>
+            <time datetime="<%= showDateIso %>"><%= showDateFormatted %></time>
+            <% if (locals.dateNote) { %>
+              <span class="show-meta__note text-muted">(<%= locals.dateNote %>)</span>
+            <% } %>
+          </dd>
+        </div>
+
+        <div class="show-meta__row">
+          <dt>Venue</dt>
+          <dd>
+            <% if (venueMapsUrl) { %>
+              <%- inlineLink(venue.name, { href: venueMapsUrl, external: true }) %>
+              <span class="show-meta__note text-muted">(Google Maps)</span>
+            <% } else { %>
+              <span><%= venue.name || 'Unverified venue' %></span>
+            <% } %>
+            <% if (venue.note) { %>
+              <p class="show-meta__subnote text-muted"><%= venue.note %></p>
+            <% } %>
+          </dd>
+        </div>
+
+        <% if (locals.location) { %>
+          <div class="show-meta__row">
+            <dt>Location</dt>
+            <dd><%= locals.location %></dd>
+          </div>
+        <% } %>
+
+        <div class="show-meta__row">
+          <dt>Concert Archive</dt>
+          <dd>
+            <%- inlineLink(concertArchiveLabel, { href: concertArchiveUrl, external: true }) %>
+          </dd>
+        </div>
+
+        <% if (references.length > 0) { %>
+          <div class="show-meta__row">
+            <dt>More Archive Links</dt>
+            <dd class="show-meta__refs">
+              <% references.forEach((ref) => { %>
+                <%- inlineLink(ref.label, { href: ref.url, external: true }) %>
+              <% }); %>
+            </dd>
+          </div>
+        <% } %>
+      </dl>
+
+      <% if (locals.flagged && locals.flagNote) { %>
+        <aside class="show-flag" role="note">
+          <p class="show-flag__title">Needs verification</p>
+          <p class="show-flag__body"><%= locals.flagNote %></p>
+        </aside>
+      <% } %>
+    </div>
+  </div>
+</section>
+
+<section class="show-section">
+  <div class="content">
+    <h2>Tour &amp; Band History</h2>
+    <div class="show-history">
+      <% tourHistory.forEach((paragraph) => { %>
+        <p><%= paragraph %></p>
+      <% }); %>
+    </div>
+
+    <% if (bandNotes.length > 0) { %>
+      <h3 class="show-subheading">Where Each Band Was at This Point</h3>
+      <div class="band-history-list">
+        <% bandNotes.forEach((entry) => { %>
+          <article class="band-history-item card">
+            <h4 class="band-history-item__name"><%= entry.band %></h4>
+            <p class="band-history-item__note"><%= entry.note %></p>
+          </article>
+        <% }); %>
+      </div>
+    <% } %>
+  </div>
+</section>
+
+<section class="show-section">
+  <div class="content">
+    <h2>Lineup &amp; Setlists</h2>
+    <% if (locals.festivalBillNote) { %>
+      <p class="text-muted"><%= locals.festivalBillNote %></p>
+    <% } %>
+    <ul class="band-setlists">
+      <% bands.forEach((band) => {
+        let setlistHref = band.setlistUrl || '';
+        let setlistText = band.setlistLabel || 'View setlist';
+        if (!setlistHref) {
+          setlistHref = buildSetlistSearchUrl(band.name, locals.location, showYear);
+          setlistText = 'Search setlist on Setlist.fm';
+        }
+      %>
+        <li class="band-setlist-item card">
+          <div class="band-setlist-item__info">
+            <span class="band-setlist-item__name"><%= band.name %></span>
+            <% if (band.note) { %>
+              <span class="band-setlist-item__note text-muted"><%= band.note %></span>
+            <% } %>
+          </div>
+          <div class="band-setlist-item__link">
+            <%- inlineLink(setlistText, { href: setlistHref, external: true }) %>
+          </div>
+        </li>
+      <% }); %>
+    </ul>
+  </div>
+</section>
+
+<section class="show-section show-media" id="photos-and-videos">
+  <div class="content">
+    <h2>Photos &amp; Videos</h2>
+    <% if (customMedia) { %>
+      <div class="show-media__gallery">
+        <%- customMedia %>
+      </div>
+    <% } else { %>
+      <div class="show-media__placeholder card">
+        <p>Photos and videos from this show will live here.</p>
+        <p class="text-muted">
+          Drop selected photos or clips into this template using <code>lazyImage()</code> or <code>lazyVideo()</code>
+          when ready to publish.
+        </p>
+      </div>
+    <% } %>
+  </div>
+</section>
+
+<% if (adjacent.previous || adjacent.next) { %>
+  <section class="show-section show-pager-section">
+    <div class="content">
+      <nav class="show-pager" aria-label="Previous and next shows">
+        <% if (adjacent.previous) { %>
+          <a href="/<%= adjacent.previous.url %>" class="show-pager__link card-link">
+            <span class="show-pager__label overline text-muted">&larr; Earlier show</span>
+            <span class="show-pager__title"><%= adjacent.previous.data.tour || adjacent.previous.data.title %></span>
+            <span class="show-pager__meta text-muted">
+              <%= formatShowDate(adjacent.previous.data.date) %> · <%= adjacent.previous.data.location %>
+            </span>
+          </a>
+        <% } else { %>
+          <div class="show-pager__spacer" aria-hidden="true"></div>
+        <% } %>
+
+        <% if (adjacent.next) { %>
+          <a href="/<%= adjacent.next.url %>" class="show-pager__link show-pager__link--next card-link">
+            <span class="show-pager__label overline text-muted">Next show &rarr;</span>
+            <span class="show-pager__title"><%= adjacent.next.data.tour || adjacent.next.data.title %></span>
+            <span class="show-pager__meta text-muted">
+              <%= formatShowDate(adjacent.next.data.date) %> · <%= adjacent.next.data.location %>
+            </span>
+          </a>
+        <% } %>
+      </nav>
+    </div>
+  </section>
+<% } %>

@@ -1,0 +1,145 @@
+@use "system/utilities" as *;
+
+.music.index {
+  .music-section-header {
+    margin-bottom: var(--space-4);
+
+    h2 {
+      margin-bottom: var(--space-1);
+    }
+  }
+
+  .music-section-meta {
+    @include type--body-small;
+    margin-bottom: 0;
+  }
+
+  .music-featured {
+    margin-bottom: var(--space-12);
+  }
+
+  .music-pinned-card {
+    height: 100%;
+    padding: var(--space-5);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  .music-pinned-card__body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    text-align: left;
+  }
+
+  .music-pinned-card__title {
+    @include type--heading-5;
+    margin-bottom: 0;
+    color: var(--color-text);
+  }
+
+  .music-pinned-card__summary {
+    @include type--body-small;
+    color: var(--color-text-muted);
+    margin-bottom: 0;
+  }
+
+  .shows-list {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-3);
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    @include readingWidth;
+  }
+
+  // Defer rendering of offscreen show cards while keeping them searchable and printable.
+  .shows-list__item {
+    margin-bottom: 0;
+    content-visibility: auto;
+    contain-intrinsic-block-size: auto 7rem;
+  }
+
+  @media print {
+    .shows-list__item {
+      content-visibility: visible;
+      contain-intrinsic-block-size: none;
+    }
+  }
+
+  .show-card {
+    padding: var(--space-4);
+    border-radius: var(--radius-md);
+    display: block;
+    text-align: left;
+  }
+
+  .show-card__body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+  }
+
+  .show-card__top {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+
+    @include mq($medium) {
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: var(--space-4);
+    }
+  }
+
+  .show-card__tour {
+    @include type--heading-5;
+    margin-bottom: 0;
+    color: var(--color-text);
+    overflow-wrap: anywhere;
+  }
+
+  .show-card__date {
+    @include type--regular-sans-serif;
+    font-size: var(--fs-sm);
+    color: var(--color-primary-300);
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .show-card__location {
+    @include type--regular-sans-serif;
+    font-size: var(--fs-sm);
+    color: var(--color-text-muted);
+    margin-bottom: 0;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2);
+  }
+
+  .show-card__bands {
+    @include type--body-small;
+    color: var(--color-text-muted);
+    margin-bottom: 0;
+    margin-top: var(--space-1);
+    max-width: none;
+  }
+
+  .show-badge {
+    @include type--bold-sans-serif;
+    font-size: var(--fs-2xs);
+    padding: calc(var(--unit) / 2) var(--space-2);
+    border-radius: var(--radius-pill);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  .show-badge--flagged {
+    color: var(--color-warning);
+    background-color: var(--color-warning-tint);
+  }
+}

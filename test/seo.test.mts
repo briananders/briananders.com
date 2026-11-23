@@ -253,6 +253,41 @@ describe('seo()', () => {
     assert.equal(drums.schemaType, 'WebPage');
     const drumsGraph: JsonLdNode[] = JSON.parse(drums.jsonLd)['@graph'];
     assert.equal(drumsGraph.some((node) => node['@type'] === 'BreadcrumbList'), false);
+
+    const musicHub = seo({ ...siteLocals, path: 'music/', title: 'Music' });
+    assert.equal(musicHub.schemaType, 'CollectionPage');
+    assert.equal(musicHub.openGraphType, 'website');
+    const musicCrumbs = findGraphNode(musicHub.jsonLd, 'BreadcrumbList').itemListElement;
+    assert.ok(musicCrumbs);
+    assert.deepEqual(musicCrumbs.map((crumb) => crumb.item), [
+      'https://briananders.com/', 'https://briananders.com/music/'
+    ]);
+
+    const show = seo({
+      ...siteLocals,
+      path: 'music/show/2007-10-15-kansas-city/',
+      title: 'Underoath Fall 2007 North America Tour',
+      date: new Date('2007-10-15T00:00:00.000Z'),
+    });
+    assert.equal(show.schemaType, 'BlogPosting');
+    assert.equal(show.openGraphType, 'article');
+    const showCrumbs = findGraphNode(show.jsonLd, 'BreadcrumbList').itemListElement;
+    assert.ok(showCrumbs);
+    assert.deepEqual(showCrumbs.map((crumb) => crumb.item), [
+      'https://briananders.com/',
+      'https://briananders.com/music/',
+      'https://briananders.com/music/show/2007-10-15-kansas-city/'
+    ]);
+
+    const redirectStub = seo({
+      ...siteLocals,
+      path: 'posts/last-fm/',
+      title: 'Recent Listening Trends',
+      robots: false,
+      redirectTo: '/music/last-fm/',
+    });
+    assert.equal(redirectStub.url, 'https://briananders.com/music/last-fm/');
+    assert.equal(redirectStub.robots, 'noindex, nofollow');
   });
 
   test('JSON-LD cannot close its own script tag', () => {
