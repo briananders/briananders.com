@@ -42,7 +42,7 @@ ready.document(() => {
       try {
         url = new URL(urlParam);
         errorElement.classList.remove('visible');
-      } catch (e) {
+      } catch {
         errorElement.classList.add('visible');
         return;
       }

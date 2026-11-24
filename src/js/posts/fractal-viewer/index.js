@@ -35,7 +35,7 @@ self.onmessage = function (e) {
       worker.onmessage = (e) => onResult(handle, e.data);
       pool.push(handle);
     }
-  } catch (err) {
+  } catch {
     const core = createFractalCore();
     const handle = { busy: false };
     handle.postMessage = (job) => setTimeout(() => onResult(handle, core.renderStrip(job)), 0);

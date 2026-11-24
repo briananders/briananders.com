@@ -83,7 +83,7 @@ module.exports = function assetHashing({
       if (processedJs >= array.length) {
         completionFlags.ASSET_HASH.JS = true;
         if (debug) {
-          // eslint-disable-next-line max-len
+          // eslint-disable-next-line @stylistic/max-len
           log(`${timestamp.stamp()} assetHashing().images: completionFlags.ASSET_HASH.JS: ${completionFlags.ASSET_HASH.JS}`);
         }
         buildEvents.emit(BUILD_EVENTS.assetHashJsListed);

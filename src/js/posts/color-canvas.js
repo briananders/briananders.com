@@ -49,11 +49,10 @@ ready.document(() => {
    * @param {number} b - Current blue channel value.
    */
   function drawLoop(b) {
-    let r = 0;
     let g = 0;
 
     while (g <= squareMax) {
-      r = 0;
+      let r = 0;
       while (r <= squareMax) {
         draw(r, g, b);
         r += Math.floor(squareMax / steps);

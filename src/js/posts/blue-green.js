@@ -53,8 +53,8 @@ ready.document(() => {
     canvas.style.backgroundColor = `rgb(${colors.red}, ${colors.green}, ${colors.blue})`;
     log(canvas.style.backgroundColor);
 
-    let blueDiff = 0;
-    let greenDiff = 0;
+    let blueDiff;
+    let greenDiff;
 
     if (colors.green < colors.blue) {
       blueDiff = colors.blue - colors.green;
@@ -73,11 +73,11 @@ ready.document(() => {
 
     chartBlue.innerHTML = blueDiff;
     chartBlue.dataset.value = blueDiff;
-    // eslint-disable-next-line max-len
+    // eslint-disable-next-line @stylistic/max-len
     chartBlue.style.background = `linear-gradient(to left, blue 0%, blue ${blueDiff / 2}%, transparent ${blueDiff / 2}%)`;
     chartGreen.innerHTML = greenDiff;
     chartGreen.dataset.value = greenDiff;
-    // eslint-disable-next-line max-len
+    // eslint-disable-next-line @stylistic/max-len
     chartGreen.style.background = `linear-gradient(to right, green 0%, green ${greenDiff / 2}%, transparent ${greenDiff / 2}%)`;
   }
 

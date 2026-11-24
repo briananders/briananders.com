@@ -245,7 +245,7 @@ module.exports = (dir, pageMappingData) => {
       const h = height || dimensions.height;
       const w = width || dimensions.width;
       const cls = classes.length ? `class="${classes.join(' ')}"` : '';
-      // eslint-disable-next-line max-len
+      // eslint-disable-next-line @stylistic/max-len
       return `<picture>${renderPictureSources(sources)}<img src="${fallback}" alt="${alt}" height="${h}" width="${w}" ${cls} /></picture>`;
     },
 
@@ -279,7 +279,6 @@ module.exports = (dir, pageMappingData) => {
         ? 'loading="lazy" decoding="async"'
         : 'fetchpriority="high" loading="eager"';
       const cls = classes.length ? `class="${classes.join(' ')}"` : '';
-      // eslint-disable-next-line max-len
       const imgTag = `<img ${loadAttr} src="${fallback}" alt="${alt}" height="${h}" width="${w}" ${cls} />`;
       return `
       <picture>${renderPictureSources(sources)}${imgTag}</picture>

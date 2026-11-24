@@ -1,7 +1,7 @@
 const ready = require('../../_modules/document-ready');
 
 ready.document(() => {
-  const copy = require('copy-to-clipboard');
+  const { default: copy } = require('copy-to-clipboard');
 
   const { table } = require('../../_modules/log');
 

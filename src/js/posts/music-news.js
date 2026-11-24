@@ -103,10 +103,10 @@ function initBandsMarquee(marqueeRootEl, bandsList) {
     const rows = splitBandsIntoMarqueeRows(bandsList);
     const staticRows = rows.map((rowBands) => {
       const inner = renderMarqueeSegmentTags(rowBands);
-      // eslint-disable-next-line max-len
+      // eslint-disable-next-line @stylistic/max-len
       return `<div class="music-news-marquee-row music-news-marquee-row--static"><div class="music-news-marquee-static-inner">${inner}</div></div>`;
     }).join('');
-    // eslint-disable-next-line max-len
+    // eslint-disable-next-line @stylistic/max-len
     marqueeRootEl.innerHTML = `<div class="music-news-marquee-viewport music-news-marquee-viewport--static">${staticRows}</div>`;
     return () => { };
   }

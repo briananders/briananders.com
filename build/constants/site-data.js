@@ -52,7 +52,7 @@ module.exports = (dir) => {
     /** Package version string from `package.json`. */
     version: pkg.version,
     name: 'Brian Anders',
-    // eslint-disable-next-line max-len
+    // eslint-disable-next-line @stylistic/max-len
     description: "Brian Anders is an Engineering Manager in the tech industry. I'm also a YouTuber, Podcaster, and Musician.",
     author: 'Brian Anders',
     /** Used in the Person structured data on every page. */

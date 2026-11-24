@@ -2,17 +2,17 @@ const fs = require('fs-extra');
 const { globSync } = require('glob');
 const path = require('path');
 const browserify = require('browserify');
-const babelify = require('babelify');
 const watchify = require('watchify');
+const babelTransform = require('./babel-transform');
 const mapLimit = require('../helpers/map-limit');
 
 const sessions = new WeakMap();
 function canonical(file) {
   if (!file) return file;
-  try { return fs.realpathSync(file); } catch (error) {
+  try { return fs.realpathSync(file); } catch {
     try {
       return path.join(fs.realpathSync(path.dirname(file)), path.basename(file));
-    } catch (parentError) {
+    } catch {
       return path.resolve(file);
     }
   }
@@ -63,7 +63,14 @@ module.exports = async function bundleJS(configs, changedFile) {
       ...(production ? {} : { plugin: [[watchify, { ignoreWatch: () => true }]] }),
     });
     bundler.transform(require('./scss-stringify-transform'))
-      .transform(babelify, { presets: ['@babel/preset-env', '@babel/preset-react'] });
+      // Browserify's acorn 7 parser cannot parse ES2022+ syntax (e.g. private class fields),
+      // so pin @babel/preset-env v8 to ES5-compatible output (matching Babel 7's default).
+      .transform(babelTransform, {
+        presets: [
+          ['@babel/preset-env', { targets: { ie: '11' } }],
+          '@babel/preset-react'
+        ],
+      });
     entry = {
       bundler,
       output: path.join(dir.package, 'scripts', path.relative(`${dir.src}js`, file)),

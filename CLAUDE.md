@@ -72,17 +72,17 @@ Architecture lives in `src/js/_modules/band-news/` and `src/js/_components/`:
 
 | Layer | Technology |
 |---|---|
-| Runtime | Node.js 22.21.0 (see `.nvmrc`) — **must use nvm** |
+| Runtime | Node.js 26.13.1 (see `.nvmrc`) — **must use nvm** |
 | Templates | EJS with gray-matter YAML front matter |
 | Styles | SCSS (Dart Sass via `sass` package), minified with CleanCSS |
-| JavaScript | CommonJS modules bundled with Browserify + Babel (preset-env, preset-react) |
+| JavaScript | CommonJS modules bundled with Browserify + custom Babel 8 transform (`build/bundlers/babel-transform.js` with preset-env, preset-react) |
 | Hosting | AWS S3 + CloudFront |
 | Deployment | Custom `s3-uploader.js` using AWS SDK v3 (`@aws-sdk/client-s3`, `@aws-sdk/lib-storage`, `@aws-sdk/client-cloudfront`) |
 | Dev server | Express with express-static and http-proxy-middleware |
-| Linting | ESLint 8 (airbnb-base config — pinned to v8, airbnb does not support ESLint 9/10) |
+| Linting | ESLint 10 flat config (`eslint.config.mjs` with `@eslint/js`, `@stylistic/eslint-plugin`, `eslint-plugin-import-x`) |
 | Build optimization | HTML minification (html-minifier-terser), JS minification (uglify-js), SVG optimization (svgo), WebP/AVIF conversion (sharp), gzip compression, content-hash asset naming (xxhash) |
 | Analytics | Google Tag Manager (production only) |
-| Screenshots | Playwright, pinned to 1.56.1: that version's Chromium (build 1194) is preinstalled in Claude Code cloud containers. Elsewhere, run `npx playwright install chromium` once. |
+| Screenshots | Playwright (`^1.65.1`). Run `npx playwright install chromium` once per machine. |
 
 ## Project Structure
 
@@ -93,8 +93,8 @@ Architecture lives in `src/js/_modules/band-news/` and `src/js/_components/`:
 ├── scaffold.js                 # New page scaffolding tool
 ├── preview-production.js       # Serve production build locally
 ├── package.json
-├── .nvmrc                      # Node 22.21.0
-├── .eslintrc.json              # Airbnb-base ESLint config
+├── .nvmrc                      # Node 26.13.1
+├── eslint.config.mjs           # ESLint 10 flat config
 │
 ├── AGENTS.md                   # Rules for every AI agent (imported above)
 ├── bin/screenshot.js           # Contact-sheet screenshots + viewport-edge layout check (`npm run screenshot`)
@@ -102,8 +102,9 @@ Architecture lives in `src/js/_modules/band-news/` and `src/js/_components/`:
 │
 ├── build/                      # Build pipeline (all files have full JSDoc as of March 2026)
 │   ├── bundlers/
+│   │   ├── babel-transform.js  # Custom Browserify transform using @babel/core v8
 │   │   ├── bundle-ejs.js       # EJS → HTML renderer (two-pass: template then layout)
-│   │   ├── bundle-js.js        # Browserify + Babelify bundler; watchify in dev
+│   │   ├── bundle-js.js        # Browserify + Babel 8 bundler; watchify in dev
 │   │   ├── bundle-scss.js      # Dart Sass compiler + CleanCSS minifier
 │   │   └── sitemap.js          # Renders sitemap.json.ejs + sitemap.xml.ejs
 │   ├── constants/
@@ -311,12 +312,12 @@ Golden builds pin both (see Build Modes). A test fails if a template calls `Math
 
 ### Running the Build (Node Version Required)
 
-**Always activate Node 22 before running any build command:**
+**Always activate Node 26 before running any build command:**
 ```bash
-source ~/.nvm/nvm.sh && nvm use v22.21.0
+source ~/.nvm/nvm.sh && nvm use v26.13.1
 ```
 
-Chokidar v5 and other packages require Node 22. Running under Node 18 will fail with `ERR_REQUIRE_ESM`. Claude Code cloud containers ship Node 22 without nvm; skip the `nvm use` step there.
+Chokidar v6, jsdom v31, node-notifier v12, and other packages require a modern Node runtime (pinned to Node 26.13.1 in `.nvmrc`). Running under older Node versions fails with engine or ESM errors.
 
 ### Build Modes
 
@@ -511,13 +512,13 @@ Source file changes dispatch by path:
 | Package | Role | Version note |
 |---|---|---|
 | `browserify` | JS bundler — resolves `require()` for browsers | — |
-| `babelify` | Babel transform for Browserify | Presets: preset-env + preset-react |
+| `babel-transform.js` | Custom Browserify transform using `@babel/core` v8 | Presets: preset-env (`targets: { ie: '11' }` for Acorn 7 compat) + preset-react |
 | `watchify` | Incremental rebuild plugin for Browserify | Dev mode only |
 | `sass` | Dart Sass compiler | Uses `compileAsync()` with `loadPaths` |
 | `clean-css` | CSS minifier | Production only |
-| `ejs` | Template engine | v5 — CJS compat |
+| `ejs` | Template engine | v7 — dual CJS/ESM |
 | `gray-matter` | YAML front matter parser | — |
-| `glob` | File globbing | v13 — use `const { globSync } = require('glob')` |
+| `glob` | File globbing | v14 — use `const { globSync } = require('glob')` |
 | `xxhash` | Fast content hashing for asset filenames | Native addon, compiles via node-gyp |
 | `html-minifier-terser` | HTML minification | v7 — `minify()` is async (returns Promise) |
 | `uglify-js` | JS minification | — |
@@ -525,9 +526,9 @@ Source file changes dispatch by path:
 | `sharp` | PNG/JPG/WebP → WebP/AVIF conversion | AVIF output uses quality 80 |
 | `image-size` | Read image dimensions at template render time | v2 — `sizeOf(fs.readFileSync(path))` |
 | `png-to-ico` | favicon.ico generation | v3 ESM — call `pngToIco.default(path)` |
-| `chokidar` | File system watcher | v5 ESM-compat — `require('chokidar').watch()` works |
+| `chokidar` | File system watcher | v6 ESM-compat — `require('chokidar').watch()` works |
 | `express` | Dev server | v5 |
-| `http-proxy-middleware` | Proxy to staging S3 in dev | — |
+| `http-proxy-middleware` | Proxy to staging S3 in dev | v4 |
 | `merge` | Deep merge for EJS template data | — |
 | `colors` | ANSI colors in build log output | — |
 
@@ -542,7 +543,7 @@ Source file changes dispatch by path:
 | `npm run build:golden` | Golden build (no gzip/hash) to `/golden` for visual diff |
 | `npm run deploy` | Deploy production build to S3 |
 | `npm run stage` | Deploy staging build to S3 |
-| `npm test` | Run tests (requires Node 22 — use nvm first) |
+| `npm test` | Run tests (requires Node 26 — use nvm first) |
 | `npm run lint` | ESLint on `build/`, `src/js/`, `bin/` (check only; `lint:src` / `lint:build` auto-fix) |
 | `npm run preview:production` | Serve the production build locally |
 | `npm run scaffold -- --path=/path` | Create new page boilerplate |

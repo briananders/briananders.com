@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 const sass = require('sass');
 const fs = require('fs-extra');
 const { globSync } = require('glob');

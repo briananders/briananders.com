@@ -107,8 +107,8 @@ If you're stuck, stop and report the failure word for word. An honest red beats 
 - Never run `npm run deploy` or `npm run stage`.
 - Never hand-edit `package/` or `golden/`. They're build output.
 - No new dependencies or major-version upgrades without asking.
-  - ESLint stays on v8, because airbnb requires it.
-  - Playwright stays pinned to match the Chromium build in cloud containers (see CLAUDE.md).
+  - ESLint 10 uses flat config (`eslint.config.mjs`) with `@eslint/js`, `@stylistic/eslint-plugin`, and `eslint-plugin-import-x`.
+  - Playwright (`^1.65.1`) requires running `npx playwright install chromium` once per machine (see CLAUDE.md).
 - Keep the diff minimal (Directive 3). Problems you notice outside the task go in your report, not your diff.
 - Create pages with `npm run scaffold -- --path=/posts/<slug>` and fill in all front matter.
   - That includes the `ogImage` recipe: point `selector` at the page's signature element, write its `alt`, then `npm run build && npm run og-images -- /posts/<slug>/` and commit the image (CLAUDE.md, SEO and Social Previews).

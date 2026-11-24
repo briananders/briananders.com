@@ -412,7 +412,7 @@ function initDashboard(root) {
           const head = `${name}: ${format.number(count)} scrobbles ${during}`;
           if (pace) {
             return before === null
-              // eslint-disable-next-line max-len
+              // eslint-disable-next-line @stylistic/max-len
               ? `${head}, compared with a usual of at most ${format.number(atMost)} at your pace over ${over} (${outside}).`
               : `${head}, compared with a usual ${format.number(before)} at your pace over ${over}.`;
           }
@@ -642,7 +642,7 @@ function initDashboard(root) {
       renderAlbums(report);
       renderArtists(report);
       root.querySelectorAll('.is-skeleton').forEach((el) => el.classList.remove('is-skeleton'));
-    } catch (error) {
+    } catch {
       if (request !== state.token) return;
       els.range.textContent = 'That period couldn’t be loaded. Try another one.';
     } finally {

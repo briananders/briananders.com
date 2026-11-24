@@ -1,5 +1,3 @@
-/* eslint-disable no-console */
-/* eslint-disable no-loop-func */
 const fs = require('fs-extra');
 const { globSync } = require('glob');
 const merge = require('merge');

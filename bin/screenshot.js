@@ -323,7 +323,10 @@ async function launchBrowser() {
   } catch (error) {
     const fallback = process.env.CHROMIUM_PATH || FALLBACK_CHROMIUM;
     if (!/Executable doesn't exist/.test(error.message) || !fs.existsSync(fallback)) {
-      throw new Error(`Could not launch Chromium. Run \`npx playwright install chromium\`.\n${error.message}`);
+      throw new Error(
+        `Could not launch Chromium. Run \`npx playwright install chromium\`.\n${error.message}`,
+        { cause: error }
+      );
     }
     return chromium.launch({ executablePath: fallback });
   }
@@ -377,7 +380,7 @@ async function capturePage(browser, {
   const page = await context.newPage();
   const problems = [];
   const reported = new Set();
-  let layout = [];
+  let layout;
 
   await routeRequests(page, baseUrl, (requestUrl, message) => {
     reported.add(requestUrl);

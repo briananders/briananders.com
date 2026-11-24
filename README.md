@@ -14,8 +14,9 @@ My personal website, built as a custom static site generator.
 
 ## Tech Stack
 - **Templating**: EJS (Embedded JavaScript) for HTML generation
-- **Styling**: Node-Sass for CSS pre-processing
-- **Scripting**: Browserify + Babel for JS bundling and transpilation
+- **Styling**: Dart Sass (`sass`) for CSS pre-processing
+- **Scripting**: Browserify + Babel 8 for JS bundling and transpilation
+- **Linting**: ESLint 10 flat config (`eslint.config.mjs`)
 - **Local Dev**: Express + http-proxy-middleware for local serving
 
 ## Project Structure
