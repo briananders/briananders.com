@@ -65,6 +65,35 @@ export interface OgImageRecipe {
   actions?: Array<Record<string, unknown>>;
 }
 
+export interface MusicVenue {
+  name?: string;
+  mapsQuery?: string;
+  mapsUrl?: string;
+  note?: string;
+}
+
+export interface MusicConcertArchive {
+  url?: string;
+  label?: string;
+}
+
+export interface MusicBandNote {
+  band: string;
+  note: string;
+}
+
+export interface MusicBand {
+  name: string;
+  note?: string;
+  setlistUrl?: string;
+  setlistLabel?: string;
+}
+
+export interface MusicReference {
+  label: string;
+  url: string;
+}
+
 export interface PageFrontMatter {
   title?: string;
   altTitle?: string;
@@ -72,10 +101,24 @@ export interface PageFrontMatter {
   description?: string;
   metaDescription?: string;
   date?: string | Date;
+  dateNote?: string;
   priority?: number;
   robots?: boolean | string;
   redirectTo?: string;
   musicPinOrder?: number;
+  musicSummary?: string;
+  tour?: string;
+  location?: string;
+  venue?: MusicVenue;
+  concertArchive?: MusicConcertArchive;
+  bandsSummary?: string;
+  festivalBillNote?: string;
+  tourHistory?: string[];
+  bandNotes?: MusicBandNote[];
+  bands?: MusicBand[];
+  references?: MusicReference[];
+  flagged?: boolean;
+  flagNote?: string;
   schemaType?: string;
   layout?: string;
   styles?: string[];

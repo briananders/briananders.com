@@ -5,6 +5,17 @@ export interface AdjacentShows {
   next: PageMappingEntry | null;
 }
 
+export interface MusicHelpers {
+  normalizePageUrl: (pageUrl?: string | null) => string;
+  formatShowDate: (dateValue?: string | number | Date) => string;
+  getPinnedMusicPages: (pageMappingData: PageMappingEntry[]) => PageMappingEntry[];
+  getMusicShows: (pageMappingData: PageMappingEntry[]) => PageMappingEntry[];
+  getAdjacentShows: (orderedShows: PageMappingEntry[], currentPath: string) => AdjacentShows;
+  buildGoogleMapsUrl: (venueQuery?: string | null) => string;
+  buildSetlistSearchUrl: (artistName: string, location?: string, year?: string | number) => string;
+  buildConcertArchivesSearchUrl: (query?: string | null) => string;
+}
+
 const MONTHS = [
   'January',
   'February',
@@ -214,7 +225,8 @@ function buildConcertArchivesSearchUrl(query?: string | null): string {
   return `https://www.concertarchives.org/concerts?search=${encodeURIComponent(query)}`;
 }
 
-module.exports = {
+// Bind exports to MusicHelpers so TypeScript verifies CJS consumers stay in sync.
+const musicHelpers: MusicHelpers = {
   normalizePageUrl,
   formatShowDate,
   getPinnedMusicPages,
@@ -224,3 +236,5 @@ module.exports = {
   buildSetlistSearchUrl,
   buildConcertArchivesSearchUrl,
 };
+
+module.exports = musicHelpers;

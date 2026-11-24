@@ -3,32 +3,8 @@ import assert from 'node:assert/strict';
 import { createRequire } from 'node:module';
 import { readFileSync, existsSync } from 'node:fs';
 import path from 'node:path';
-import type { PageMappingEntry } from '../build/types.ts';
-import type { AdjacentShows } from '../build/helpers/music.ts';
-
-interface MusicHelpersModule {
-  normalizePageUrl: (pageUrl?: string | null) => string;
-  formatShowDate: (dateValue?: string | number | Date) => string;
-  getPinnedMusicPages: (pageMappingData: PageMappingEntry[]) => PageMappingEntry[];
-  getMusicShows: (pageMappingData: PageMappingEntry[]) => PageMappingEntry[];
-  getAdjacentShows: (orderedShows: PageMappingEntry[], currentPath: string) => AdjacentShows;
-  buildGoogleMapsUrl: (venueQuery?: string | null) => string;
-  buildSetlistSearchUrl: (artistName: string, location?: string, year?: string | number) => string;
-  buildConcertArchivesSearchUrl: (query?: string | null) => string;
-}
-
-interface ShowFrontMatter {
-  tour?: string;
-  date?: unknown;
-  location?: string;
-  venue?: {
-    name?: string;
-    mapsQuery?: string;
-    mapsUrl?: string;
-  };
-  tourHistory?: unknown[];
-  bands?: unknown[];
-}
+import type { PageFrontMatter, PageMappingEntry } from '../build/types.ts';
+import type { MusicHelpers } from '../build/helpers/music.ts';
 
 const require = createRequire(import.meta.url);
 const { globSync }: typeof import('glob') = require('glob');
@@ -43,7 +19,7 @@ const {
   buildGoogleMapsUrl,
   buildSetlistSearchUrl,
   buildConcertArchivesSearchUrl,
-}: MusicHelpersModule = require('../build/helpers/music.ts');
+}: MusicHelpers = require('../build/helpers/music.ts');
 
 const projectRoot = path.resolve(process.cwd());
 const showsDir = path.join(projectRoot, 'src/templates/music/show');
@@ -57,12 +33,15 @@ describe('music helpers', () => {
     );
     assert.equal(normalizePageUrl('music/'), 'music');
     assert.equal(normalizePageUrl(''), '');
+    assert.equal(normalizePageUrl(null), '');
+    assert.equal(normalizePageUrl(undefined), '');
   });
 
   test('formatShowDate formats UTC dates consistently without timezone drift', () => {
     assert.equal(formatShowDate(new Date('2006-06-21T00:00:00.000Z')), 'June 21, 2006');
     assert.equal(formatShowDate('2026-11-14T00:00:00.000Z'), 'November 14, 2026');
     assert.equal(formatShowDate('not-a-date'), '');
+    assert.equal(formatShowDate(undefined), '');
   });
 
   test('getPinnedMusicPages selects direct music children with musicPinOrder sorted ascending', () => {
@@ -71,6 +50,8 @@ describe('music helpers', () => {
       { url: 'music/music-news/', data: { title: 'Music News', musicPinOrder: 3 } },
       { url: 'music/last-fm/', data: { title: 'Recent Listening Trends', musicPinOrder: 1 } },
       { url: 'music/last-fm-scrobbles/', data: { title: 'Music Listening History', musicPinOrder: 2 } },
+      { url: 'music/alpha-tie/', data: { title: 'Alpha Tie', musicPinOrder: 2 } },
+      { url: 'music/redirected/', data: { title: 'Redirected', musicPinOrder: 1, redirectTo: '/music/' } },
       { url: 'music/show/2006-06-21-bonner-springs/', data: { title: 'Warped Tour', musicPinOrder: 0 } },
       { url: 'music/hidden/', data: { title: 'Hidden', musicPinOrder: 4, robots: false } },
       { url: 'posts/last-fm/', data: { title: 'Old', musicPinOrder: 1 } }
@@ -78,7 +59,7 @@ describe('music helpers', () => {
     const pinned = getPinnedMusicPages(pages);
     assert.deepEqual(
       pinned.map((entry) => entry.url),
-      ['music/last-fm/', 'music/last-fm-scrobbles/', 'music/music-news/'],
+      ['music/last-fm/', 'music/alpha-tie/', 'music/last-fm-scrobbles/', 'music/music-news/'],
     );
   });
 
@@ -87,6 +68,7 @@ describe('music helpers', () => {
       { url: 'music/show/2024-07-06-inglewood/', data: { date: new Date('2024-07-06T00:00:00.000Z') } },
       { url: 'music/show/2006-06-21-bonner-springs/', data: { date: new Date('2006-06-21T00:00:00.000Z') } },
       { url: 'music/show/2024-07-06-alpha/', data: { date: new Date('2024-07-06T00:00:00.000Z') } },
+      { url: 'music/show/redirected/', data: { date: new Date('2005-01-01T00:00:00.000Z'), redirectTo: '/music/' } },
       { url: 'music/last-fm/', data: { date: new Date('2017-09-07T00:00:00.000Z') } },
       { url: 'music/show/hidden/', data: { date: new Date('2010-01-01T00:00:00.000Z'), robots: false } }
     ];
@@ -120,15 +102,21 @@ describe('music helpers', () => {
         + 'The%20Beaumont%20Club%2C%204050%20Pennsylvania%20Ave%2C%20Kansas%20City%2C%20MO',
     );
     assert.equal(buildGoogleMapsUrl(''), '');
+    assert.equal(buildGoogleMapsUrl(null), '');
     assert.equal(
       buildSetlistSearchUrl('Nine Inch Nails', 'San Diego, CA', 2026),
       'https://www.setlist.fm/search?query=Nine%20Inch%20Nails%20San%20Diego%2C%20CA%202026',
+    );
+    assert.equal(
+      buildSetlistSearchUrl('Nine Inch Nails'),
+      'https://www.setlist.fm/search?query=Nine%20Inch%20Nails',
     );
     assert.equal(
       buildConcertArchivesSearchUrl('Underoath Kansas City 2008'),
       'https://www.concertarchives.org/concerts?search=Underoath%20Kansas%20City%202008',
     );
     assert.equal(buildConcertArchivesSearchUrl(''), 'https://www.concertarchives.org/');
+    assert.equal(buildConcertArchivesSearchUrl(null), 'https://www.concertarchives.org/');
   });
 });
 
@@ -141,7 +129,7 @@ describe('music show templates', () => {
     showFiles.forEach((filePath) => {
       const raw = readFileSync(filePath, 'utf8');
       const relative = path.relative(projectRoot, filePath);
-      const { data } = matter(raw) as { data: ShowFrontMatter };
+      const { data }: { data: PageFrontMatter } = matter(raw);
 
       assert.ok(data.tour, `${relative}: missing tour`);
       assert.ok(data.date instanceof Date, `${relative}: date must parse as a YAML Date`);

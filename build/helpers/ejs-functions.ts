@@ -1,5 +1,5 @@
 import type { BuildDirectories, PageMappingEntry } from '../types.ts';
-import type { AdjacentShows } from './music.ts';
+import type { AdjacentShows, MusicHelpers } from './music.ts';
 
 const ejs: typeof import('ejs') = require('ejs');
 const fs: typeof import('fs') = require('fs');
@@ -20,15 +20,7 @@ const {
   buildGoogleMapsUrl,
   buildSetlistSearchUrl,
   buildConcertArchivesSearchUrl,
-}: {
-  formatShowDate: (dateValue?: string | number | Date) => string;
-  getPinnedMusicPages: (pages: PageMappingEntry[]) => PageMappingEntry[];
-  getMusicShows: (pages: PageMappingEntry[]) => PageMappingEntry[];
-  getAdjacentShows: (orderedShows: PageMappingEntry[], currentPath: string) => AdjacentShows;
-  buildGoogleMapsUrl: (venueQuery?: string | null) => string;
-  buildSetlistSearchUrl: (artistName: string, location?: string, year?: string | number) => string;
-  buildConcertArchivesSearchUrl: (query?: string | null) => string;
-} = require('./music.ts');
+}: MusicHelpers = require('./music.ts');
 
 interface ImageSourceVariant {
   src: string;
