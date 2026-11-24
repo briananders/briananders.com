@@ -13,7 +13,7 @@ fi
 
 PAGE_NAME=$1
 STYLES_LOCATION="src/styles/$PAGE_NAME.scss"
-SCRIPTS_LOCATION="src/js/$PAGE_NAME.js"
+SCRIPTS_LOCATION="src/ts/$PAGE_NAME.ts"
 EJS_LOCATION="src/templates/$PAGE_NAME.ejs"
 NOW=$(date +'%Y-%m-%d')
 SCSS_CLASS=$(echo "$PAGE_NAME" | sed "s+/+.+g")
@@ -33,11 +33,13 @@ echo "created $STYLES_LOCATION"
 }
 
 
-make_js_file()
+make_ts_file()
 {
-echo "(function init() {
+echo "const ready = require('../_modules/document-ready.ts');
 
-}());" >> $SCRIPTS_LOCATION
+ready.document(() => {
+
+});" >> $SCRIPTS_LOCATION
 echo "created $SCRIPTS_LOCATION"
 }
 
@@ -64,7 +66,7 @@ echo "created $EJS_LOCATION"
 
 ##### Main
 
-make_js_file &
+make_ts_file &
 make_scss_file &
 make_ejs_file &
 wait

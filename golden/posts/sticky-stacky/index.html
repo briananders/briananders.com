@@ -17,22 +17,22 @@
     }
   }
 }
-</code></pre> </div> </section> <div class="sticky-container h3"> <nav class="sticky-stacky default-styles"> <div class=container>The JavaScript that drives the scrolling behavior.</div> </nav> </div> <section> <div class=content> <p> Breaking the algorithm into two pieces is the most organized. A class that controls all the sticky navigation bars on the page: StickyController. And a class that updates each sticky navigation bar: StickyStacky. </p> <p> Read through the comments in the JavaScript below. The explanation makes the most sense to me in context. </p> <pre class=code-container style=""><code><span class=hljs-comment>/**
+</code></pre> </div> </section> <div class="sticky-container h3"> <nav class="sticky-stacky default-styles"> <div class=container>The JavaScript that drives the scrolling behavior.</div> </nav> </div> <section> <div class=content> <p> Breaking the algorithm into two pieces is the most organized. A class that controls all the sticky navigation bars on the page: StickyController. And a class that updates each sticky navigation bar: StickyStacky. </p> <p> Read through the comments in the TypeScript below. The explanation makes the most sense to me in context. </p> <pre class=code-container style=""><code><span class=hljs-comment>/**
  * Class representing an individual StickyStacky element controller.
  * Manages sticky positioning, stuck states, and CSS custom properties for a sticky container.
  */</span>
 <span class=hljs-keyword>class</span> <span class="hljs-title class_">StickyStacky</span> {
-  #previousHeights;
+  #<span class=hljs-attr>previousHeights</span>: <span class=hljs-built_in>number</span>;
 
-  #containerElement;
+  #<span class=hljs-attr>containerElement</span>: <span class="hljs-title class_">HTMLElement</span>;
 
-  stickyElement;
+  <span class=hljs-attr>stickyElement</span>: <span class="hljs-title class_">HTMLElement</span>;
 
-  top;
+  <span class=hljs-attr>top</span>: <span class=hljs-built_in>number</span>;
 
-  height;
+  <span class=hljs-attr>height</span>: <span class=hljs-built_in>number</span>;
 
-  isStuck;
+  <span class=hljs-attr>isStuck</span>: <span class=hljs-built_in>boolean</span>;
 
   <span class=hljs-comment>/**
    * Retrieves the current peeking translation value from the document CSS variable.
@@ -40,7 +40,7 @@
    * <span class=hljs-doctag>@private</span>
    * <span class=hljs-doctag>@returns</span> {<span class=hljs-type>number</span>} The transform value in pixels (without &#x27;px&#x27;).
    */</span>
-  #<span class="hljs-title function_">getCurrentTransform</span>(<span class=hljs-params></span>) {
+  #<span class="hljs-title function_">getCurrentTransform</span>(): <span class=hljs-built_in>number</span> {
     <span class=hljs-keyword>const</span> valueString = <span class="hljs-variable language_">document</span>.<span class=hljs-property>documentElement</span>.<span class=hljs-property>style</span>.<span class="hljs-title function_">getPropertyValue</span>(<span class=hljs-string>&#x27;--sticky-stacky-transform&#x27;</span>);
     <span class=hljs-keyword>return</span> <span class="hljs-title class_">Number</span>(valueString.<span class="hljs-title function_">slice</span>(<span class=hljs-number>0</span>, -<span class=hljs-number>2</span>)); <span class=hljs-comment>// slice removes the &#x27;px&#x27; from the value.</span>
   }
@@ -50,7 +50,7 @@
    *
    * <span class=hljs-doctag>@returns</span> {<span class=hljs-type>void</span>}
    */</span>
-  <span class="hljs-title function_">update</span>(<span class=hljs-params></span>) {
+  <span class="hljs-title function_">update</span>(): <span class=hljs-built_in>void</span> {
     <span class=hljs-comment>/*
       Determine if the bar should be stuck by comparing the (scroll position
       of page) + (how much the stack is peeking) to the top of the .sticky-container element.
@@ -78,7 +78,7 @@
    * <span class=hljs-doctag>@param</span> {<span class=hljs-type>number</span>} <span class=hljs-variable>heights</span> - The accumulated height of prior sticky elements in pixels.
    * <span class=hljs-doctag>@returns</span> {<span class=hljs-type>void</span>}
    */</span>
-  <span class="hljs-title function_">setPreviousHeights</span>(<span class=hljs-params>heights</span>) {
+  <span class="hljs-title function_">setPreviousHeights</span>(<span class=hljs-attr>heights</span>: <span class=hljs-built_in>number</span>): <span class=hljs-built_in>void</span> {
     <span class="hljs-variable language_">this</span>.#previousHeights = heights;
     <span class="hljs-variable language_">this</span>.#containerElement.<span class=hljs-property>style</span>.<span class="hljs-title function_">setProperty</span>(<span class=hljs-string>&#x27;--previous-heights&#x27;</span>, <span class=hljs-string>`<span class=hljs-subst>${heights}</span>px`</span>);
   }
@@ -88,10 +88,14 @@
    *
    * <span class=hljs-doctag>@param</span> {<span class=hljs-type>HTMLElement</span>} <span class=hljs-variable>containerElement</span> - The container DOM element with class `.sticky-container`.
    */</span>
-  <span class="hljs-title function_">constructor</span>(<span class=hljs-params>containerElement</span>) {
+  <span class="hljs-title function_">constructor</span>(<span class=hljs-params><span class=hljs-attr>containerElement</span>: <span class="hljs-title class_">HTMLElement</span></span>) {
     <span class="hljs-variable language_">this</span>.#containerElement = containerElement;
     <span class="hljs-variable language_">this</span>.#previousHeights = <span class=hljs-number>0</span>;
-    <span class="hljs-variable language_">this</span>.<span class=hljs-property>stickyElement</span> = <span class="hljs-variable language_">this</span>.#containerElement.<span class="hljs-title function_">querySelector</span>(<span class=hljs-string>&#x27;.sticky-stacky&#x27;</span>);
+    <span class=hljs-keyword>const</span> stickyElement = <span class="hljs-variable language_">this</span>.#containerElement.<span class=hljs-property>querySelector</span>&lt;<span class="hljs-title class_">HTMLElement</span>&gt;(<span class=hljs-string>&#x27;.sticky-stacky&#x27;</span>);
+    <span class=hljs-keyword>if</span> (!stickyElement) {
+      <span class=hljs-keyword>throw</span> <span class=hljs-keyword>new</span> <span class="hljs-title class_">Error</span>(<span class=hljs-string>&#x27;StickyStacky container is missing a .sticky-stacky child element.&#x27;</span>);
+    }
+    <span class="hljs-variable language_">this</span>.<span class=hljs-property>stickyElement</span> = stickyElement;
     <span class="hljs-variable language_">this</span>.<span class=hljs-property>top</span> = <span class="hljs-variable language_">window</span>.<span class=hljs-property>pageYOffset</span> + <span class="hljs-variable language_">this</span>.#containerElement.<span class="hljs-title function_">getBoundingClientRect</span>().<span class=hljs-property>top</span>;
     <span class="hljs-variable language_">this</span>.<span class=hljs-property>height</span> = <span class="hljs-variable language_">this</span>.<span class=hljs-property>stickyElement</span>.<span class=hljs-property>offsetHeight</span>;
     <span class="hljs-variable language_">this</span>.<span class=hljs-property>isStuck</span> = <span class=hljs-literal>false</span>;
@@ -103,13 +107,13 @@
  * Manages scroll tracking, z-indices, stacking order, and accumulated offsets.
  */</span>
 <span class=hljs-keyword>class</span> <span class="hljs-title class_">StickyController</span> {
-  #scrollHeight;
+  #<span class=hljs-attr>scrollHeight</span>: <span class=hljs-built_in>number</span>;
 
-  #transformTop;
+  #<span class=hljs-attr>transformTop</span>: <span class=hljs-built_in>number</span>;
 
-  #maxTransform;
+  #<span class=hljs-attr>maxTransform</span>: <span class=hljs-built_in>number</span>;
 
-  #stickyStacks;
+  #<span class=hljs-attr>stickyStacks</span>: <span class="hljs-title class_">StickyStacky</span>[];
 
   <span class=hljs-comment>/**
    * Filters all managed StickyStacky instances to return only those currently stuck.
@@ -117,7 +121,7 @@
    * <span class=hljs-doctag>@private</span>
    * <span class=hljs-doctag>@returns</span> {<span class=hljs-type>Array&lt;StickyStacky&gt;</span>} Array of stuck StickyStacky instances.
    */</span>
-  #<span class="hljs-title function_">getStuckStacks</span>(<span class=hljs-params></span>) {
+  #<span class="hljs-title function_">getStuckStacks</span>(): <span class="hljs-title class_">StickyStacky</span>[] {
     <span class=hljs-keyword>return</span> <span class="hljs-variable language_">this</span>.#stickyStacks.<span class="hljs-title function_">filter</span>(<span class=hljs-function>(<span class=hljs-params>stickyStack</span>) =&gt;</span> stickyStack.<span class=hljs-property>isStuck</span>);
   }
 
@@ -129,7 +133,7 @@
    * <span class=hljs-doctag>@private</span>
    * <span class=hljs-doctag>@returns</span> {<span class=hljs-type>void</span>}
    */</span>
-  #<span class="hljs-title function_">calculateMaxTransform</span>(<span class=hljs-params></span>) {
+  #<span class="hljs-title function_">calculateMaxTransform</span>(): <span class=hljs-built_in>void</span> {
     <span class=hljs-keyword>let</span> height = <span class=hljs-number>0</span>;
     <span class=hljs-keyword>const</span> stuckStacks = <span class="hljs-variable language_">this</span>.#<span class="hljs-title function_">getStuckStacks</span>()
       .<span class="hljs-title function_">sort</span>(<span class=hljs-function>(<span class=hljs-params>stackA, stackB</span>) =&gt;</span> (stackA.<span class=hljs-property>top</span> &lt; stackB.<span class=hljs-property>top</span> ? -<span class=hljs-number>1</span> : <span class=hljs-number>1</span>));
@@ -156,7 +160,7 @@
    * <span class=hljs-doctag>@private</span>
    * <span class=hljs-doctag>@returns</span> {<span class=hljs-type>void</span>}
    */</span>
-  #<span class="hljs-title function_">recalculateHeights</span>(<span class=hljs-params></span>) {
+  #<span class="hljs-title function_">recalculateHeights</span>(): <span class=hljs-built_in>void</span> {
     <span class=hljs-keyword>let</span> height = <span class=hljs-number>0</span>;
     <span class="hljs-variable language_">this</span>.#stickyStacks.<span class="hljs-title function_">forEach</span>(<span class=hljs-function>(<span class=hljs-params>stickyStack</span>) =&gt;</span> {
       stickyStack.<span class="hljs-title function_">update</span>();
@@ -172,7 +176,7 @@
    * <span class=hljs-doctag>@private</span>
    * <span class=hljs-doctag>@returns</span> {<span class=hljs-type>void</span>}
    */</span>
-  #<span class="hljs-title function_">update</span>(<span class=hljs-params></span>) {
+  #<span class="hljs-title function_">update</span>(): <span class=hljs-built_in>void</span> {
     <span class="hljs-variable language_">this</span>.#<span class="hljs-title function_">calculateMaxTransform</span>(); <span class=hljs-comment>// sets maxTransform value.</span>
 
     <span class=hljs-comment>// Don&#x27;t make any changes if the scroll depth hasn&#x27;t changed.</span>
@@ -193,9 +197,9 @@
   <span class=hljs-comment>/**
    * Creates an instance of StickyController.
    *
-   * <span class=hljs-doctag>@param</span> {<span class=hljs-type>NodeList|Array&lt;HTMLElement&gt;</span>} <span class=hljs-variable>containerNodeList</span> - List of `.sticky-container` elements.
+   * <span class=hljs-doctag>@param</span> {<span class=hljs-type>NodeListOf&lt;HTMLElement&gt;|Array&lt;HTMLElement&gt;</span>} <span class=hljs-variable>containerNodeList</span> - List of `.sticky-container` elements.
    */</span>
-  <span class="hljs-title function_">constructor</span>(<span class=hljs-params>containerNodeList</span>) {
+  <span class="hljs-title function_">constructor</span>(<span class=hljs-params><span class=hljs-attr>containerNodeList</span>: <span class="hljs-title class_">NodeListOf</span>&lt;<span class="hljs-title class_">HTMLElement</span>&gt; | <span class="hljs-title class_">HTMLElement</span>[]</span>) {
     <span class=hljs-comment>/*
       Since the querySelectorAll function returns NodeLists,
       convert this to an Array so we can use .map and .forEach on it.
@@ -217,7 +221,7 @@
       shadows cascade without overlapping
     */</span>
     <span class="hljs-variable language_">this</span>.#stickyStacks.<span class="hljs-title function_">forEach</span>(<span class=hljs-function>(<span class=hljs-params>stack, index</span>) =&gt;</span> {
-      stack.<span class=hljs-property>stickyElement</span>.<span class=hljs-property>style</span>.<span class=hljs-property>zIndex</span> = <span class=hljs-number>10000</span> + index;
+      stack.<span class=hljs-property>stickyElement</span>.<span class=hljs-property>style</span>.<span class=hljs-property>zIndex</span> = <span class="hljs-title class_">String</span>(<span class=hljs-number>10000</span> + index);
     });
 
     <span class=hljs-comment>/*
@@ -240,9 +244,9 @@
  *
  * <span class=hljs-doctag>@returns</span> {<span class=hljs-type>void</span>}
  */</span>
-<span class="hljs-variable language_">module</span>.<span class=hljs-property>exports</span>.<span class=hljs-property>init</span> = <span class=hljs-function>() =&gt;</span> {
+<span class="hljs-variable language_">module</span>.<span class=hljs-property>exports</span>.<span class=hljs-property>init</span> = (): <span class=hljs-function><span class=hljs-params>void</span> =&gt;</span> {
   <span class=hljs-comment>/* get all of the .sticky-container elements on the page */</span>
-  <span class=hljs-keyword>const</span> stickyContainers = <span class="hljs-variable language_">document</span>.<span class="hljs-title function_">querySelectorAll</span>(<span class=hljs-string>&#x27;.sticky-container&#x27;</span>);
+  <span class=hljs-keyword>const</span> stickyContainers = <span class="hljs-variable language_">document</span>.<span class=hljs-property>querySelectorAll</span>&lt;<span class="hljs-title class_">HTMLElement</span>&gt;(<span class=hljs-string>&#x27;.sticky-container&#x27;</span>);
 
   <span class=hljs-comment>/*
     Instantiating a StickyController class with the stickyContainers

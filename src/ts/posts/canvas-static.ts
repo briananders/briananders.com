@@ -1,0 +1,133 @@
+const ready = require('../_modules/document-ready.ts');
+
+const FILL_STYLE = 'rgba(255,255,255,1)';
+const BACKGROUND_STYLE = 'rgba(33,33,33,0.005)';
+
+const STEPS = 24; // squares per color spectrum
+
+/**
+ * Graph class that renders and simulates a real-time distribution histogram
+ * of random column selections.
+ */
+class Graph {
+  start: () => void;
+
+  constructor() {
+    const graphElement = document.getElementById('graph') as HTMLElement;
+    let count = 0;
+
+    /**
+     * Generates DOM column elements corresponding to each histogram bucket.
+     */
+    function fill(): void {
+      for (let i = 0; i < STEPS; i++) {
+        const columnElement = document.createElement('column');
+        columnElement.dataset.value = '0';
+        columnElement.style.width = `${1 / (STEPS) * 100}%`;
+        graphElement.appendChild(columnElement);
+      }
+    }
+
+    /**
+     * Recalculates distribution percentages and updates column heights and percentage labels.
+     */
+    function updateColumns(): void {
+      const columnElements = Array.from(graphElement.children) as HTMLElement[];
+      columnElements.forEach((columnElement) => {
+        const value = Number(columnElement.dataset.value);
+        const percent = Math.round(((value / count) + Number.EPSILON) * 10000) / 100;
+        columnElement.style.paddingBottom = `${percent}%`;
+        columnElement.innerHTML = `<span>${percent}%</span>`;
+      });
+    }
+
+    /**
+     * Randomly increments a column value, recalculates distribution, and schedules next update.
+     */
+    function play(): void {
+      const column = Math.floor(Math.random() * STEPS);
+      count++;
+
+      const columnElement = graphElement.children[column] as HTMLElement;
+      const value = Number(columnElement.dataset.value) + 1;
+      columnElement.dataset.value = String(value);
+
+      updateColumns();
+
+      setTimeout(play, 2);
+    }
+
+    /**
+     * Initializes graph columns and starts the continuous distribution loop.
+     */
+    this.start = (): void => {
+      fill();
+      play();
+    };
+  }
+}
+
+/**
+ * Initializes the static canvas noise animation and accompanying distribution graph.
+ */
+ready.document(() => {
+  const canvas = document.getElementById('canvas') as HTMLCanvasElement;
+  const context = canvas.getContext('2d')!;
+  let cellWidth = 0;
+
+  /**
+   * Measures canvas bounding box and adjusts internal canvas dimensions and cell unit width.
+   */
+  function setCanvasDimensions(): void {
+    const rect = canvas.getClientRects()[0];
+    cellWidth = rect.width / STEPS;
+    canvas.width = rect.width;
+    canvas.height = rect.width;
+  }
+
+  /**
+   * Draws an active noise pixel at grid coordinates (x, y) and overlays a faint translucent
+   * dark wash across the entire canvas to simulate phosphor decay / noise trail effect.
+   *
+   * @param {number} x - Grid X position.
+   * @param {number} y - Grid Y position.
+   */
+  function draw(x: number, y: number): void { // 0-256 for each
+    context.fillStyle = FILL_STYLE;
+    context.strokeStyle = FILL_STYLE;
+    context.fillRect(
+      cellWidth * x,
+      cellWidth * y,
+      cellWidth,
+      cellWidth
+    );
+
+    // Overlay faint background layer to create persistence / decay trail
+    context.fillStyle = BACKGROUND_STYLE;
+    context.strokeStyle = BACKGROUND_STYLE;
+    context.fillRect(
+      cellWidth * 0,
+      cellWidth * 0,
+      cellWidth * STEPS,
+      cellWidth * STEPS
+    );
+  }
+
+  /**
+   * Selects random coordinates on the grid, renders the noise particle, and schedules next tick.
+   */
+  function play(): void {
+    const x = Math.floor(Math.random() * STEPS);
+    const y = Math.floor(Math.random() * STEPS);
+    draw(x, y);
+
+    // window.requestAnimationFrame(play);
+    setTimeout(play, 1000 / 480);
+  }
+
+  setCanvasDimensions();
+  play();
+
+  const graph = new Graph();
+  graph.start();
+});

@@ -36,11 +36,12 @@ Follow all ten on every task, pull request and code change. The numbered section
 
 Don't say "done", "fixed", "complete" or "should work" until every item below is true. Paste the evidence.
 
-1. `npm run build` exits 0.
-2. `npm test` exits 0. Run the full suite with no filters and paste the `# tests` / `# pass` / `# fail` lines.
-3. `npm run lint` reports no more problems than it does on `staging`. A lint cleanup is pending; once it lands, the bar is zero.
-4. The layout check passes and screenshots are shared (§1), or you state "No rendered output changed."
-5. README.md and the affected docs reflect any change to setup, architecture or usage (Directive 5).
+1. `npm run typecheck` exits 0 (strict TypeScript across both `tsconfig.json` and `tsconfig.browser.json`).
+2. `npm run build` exits 0.
+3. `npm test` exits 0. Run the full suite with no filters and paste the `# tests` / `# pass` / `# fail` lines.
+4. `npm run lint` exits 0 with zero errors or warnings.
+5. The layout check passes and screenshots are shared (§1), or you state "No rendered output changed."
+6. README.md and the affected docs reflect any change to setup, architecture or usage (Directive 5).
 
 If a step can't run, name it and say why. Unverified is not done.
 
@@ -62,13 +63,24 @@ If a step can't run, name it and say why. Unverified is not done.
 
 ## 2. Tests
 
-- Every feature, modification and bug fix adds or updates tests in `test/*.test.mjs` (`node:test`, plus jsdom for DOM, as in `test/youtube-modal.test.mjs`). Cover the edge cases, not just the happy path.
+- Every feature, modification and bug fix adds or updates tests in `test/*.test.mts` (`node:test`, plus jsdom for DOM, as in `test/youtube-modal.test.mts`). Cover the edge cases, not just the happy path.
 - Bug fix: write the failing test first and show it fail. Then fix.
 - Change an existing assertion only when the intended behavior changed, and explain why in the PR.
 - Golden: when rendered output changes, regenerate with `npm run build:golden` and commit `golden/` alongside the change. Build-time values are pinned, so the diff shows only real changes. Explain each group of changed files in the PR.
 - Images: every source image's AVIF is committed next to it in `src/images/`, and builds copy it rather than re-encoding.
   - When you add or change a source image, any build writes its `.avif` and updates `src/images/avif-manifest.json`. Commit both.
-  - PR validation fails if a build changes anything in `src/images/`. `test/avif-sources.test.mjs` also flags missing, stale or orphaned AVIFs.
+  - PR validation fails if a build changes anything in `src/images/`. `test/avif-sources.test.mts` also flags missing, stale or orphaned AVIFs.
+
+## 2.5 TypeScript and merging legacy JavaScript branches
+
+- All source, build, script, scaffold, and test code in this repo is **TypeScript** (`.ts` for CommonJS/Browserify modules, `.mts` for ESM tests in `test/`). The only `.mjs` file at root is `eslint.config.mjs`.
+- Node 26 runs `.ts` files directly via native type stripping (`erasableSyntaxOnly: true`). Never use non-erasable TypeScript syntax (`enum`, `namespace`, or constructor parameter properties).
+- Always include explicit `.ts` extensions on relative `require()` calls (e.g., `require('./helper.ts')`) and use `import type` for type-only imports.
+- Client code lives in `src/ts/` and compiles to `package/scripts/*.js` (and `golden/scripts/*.js`).
+- **Merging older JavaScript branches:** `.githooks/post-merge` (activated via `npm install` / `prepare`) automatically runs `node bin/convert-js-to-ts.ts` after a merge to relocate `src/js/` files into `src/ts/`, rename `.js`/`.mjs` files to `.ts`/`.mts`, and rewrite relative specifiers. Whenever you merge or cherry-pick from a legacy JavaScript branch:
+  1. Confirm `npm run convert-js` has converted every incoming `.js` file (and resolve any conflicts where both `.js` and `.ts` exist).
+  2. Add proper strict TypeScript types to the newly converted files (never leave untyped implicit `any` or `@ts-ignore` hacks).
+  3. Verify `npm run typecheck`, `npm run lint`, `npm run build`, and `npm test` (which includes `test/typescript-only.test.mts`) all exit 0.
 
 ## 3. Design system (Directive 2)
 
@@ -107,7 +119,8 @@ If you're stuck, stop and report the failure word for word. An honest red beats 
 - Never run `npm run deploy` or `npm run stage`.
 - Never hand-edit `package/` or `golden/`. They're build output.
 - No new dependencies or major-version upgrades without asking.
-  - ESLint 10 uses flat config (`eslint.config.mjs`) with `@eslint/js`, `@stylistic/eslint-plugin`, and `eslint-plugin-import-x`.
+  - ESLint 10 uses flat config (`eslint.config.mjs`) with `@eslint/js`, `typescript-eslint`, `@stylistic/eslint-plugin`, and `eslint-plugin-import-x`.
+  - TypeScript is pinned to `6.0.x` until `typescript-eslint` supports TypeScript 7.
   - Playwright (`^1.65.1`) requires running `npx playwright install chromium` once per machine (see CLAUDE.md).
 - Keep the diff minimal (Directive 3). Problems you notice outside the task go in your report, not your diff.
 - Create pages with `npm run scaffold -- --path=/posts/<slug>` and fill in all front matter.

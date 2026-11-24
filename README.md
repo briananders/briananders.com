@@ -13,18 +13,20 @@ My personal website, built as a custom static site generator.
   [`/posts/design-system/`](https://briananders.com/posts/design-system/).
 
 ## Tech Stack
+- **Runtime**: Node.js 26.13.1 (native TypeScript execution via built-in type stripping)
 - **Templating**: EJS (Embedded JavaScript) for HTML generation
 - **Styling**: Dart Sass (`sass`) for CSS pre-processing
-- **Scripting**: Browserify + Babel 8 for JS bundling and transpilation
-- **Linting**: ESLint 10 flat config (`eslint.config.mjs`)
+- **Scripting**: TypeScript (`src/ts/`), bundled with Browserify + Babel 8 (`@babel/preset-typescript`, `@babel/preset-env`, `@babel/preset-react`)
+- **Linting & Types**: TypeScript 6 (`npm run typecheck`) + ESLint 10 flat config (`eslint.config.mjs`)
 - **Local Dev**: Express + http-proxy-middleware for local serving
 
 ## Project Structure
-- `src/`: Core source files including JS, Sass styles, and EJS templates.
-- `build/`: The custom Node.js build system tools (bundlers, asset movers, page mappings).
-- `test/`: Node.js native test scripts (`node --test`).
+- `src/`: Core source files including TypeScript (`src/ts/`), Sass styles (`src/styles/`), and EJS templates (`src/templates/`).
+- `build/`: The custom Node.js TypeScript build system tools (bundlers, asset movers, page mappings).
+- `test/`: Node.js native test runner suites (`test/*.test.mts`).
 - `package/`: The output directory for the optimized production build.
 - `golden/`: The output directory for the unoptimized golden build (skips gzip/hashing).
+- `.githooks/`: Committed git hooks (activated automatically by `npm install`), including `post-merge` to auto-convert incoming legacy JavaScript from older branches into TypeScript.
 
 ## Installation steps
 1. Install XCode command line tools: `xcode-select --install`
@@ -40,8 +42,10 @@ My personal website, built as a custom static site generator.
 - `npm start`: Build and launch the dev site at [http://localhost:3000](http://localhost:3000). (Stop the server with `Ctrl+C`.)
 - `npm run scaffold --path=/my-page`: Scaffolds boilerplate CSS, EJS, and JS files for a new page.
 - Adding or changing an image in `src/images/`: any build writes its `.avif` next to it and updates `src/images/avif-manifest.json`. Commit both.
-- `npm run lint`: Run ESLint on `build/`, `src/js/`, and `bin/` without fixing anything.
-- `npm run lint:src` / `npm run lint:build`: Run ESLint with `--fix` on the source or build directories.
+- `npm run typecheck`: Run strict TypeScript checking across Node (`tsconfig.json`) and browser (`tsconfig.browser.json`) code.
+- `npm run convert-js`: Convert any legacy `.js`/`.mjs` files (for example after merging an older branch) into TypeScript under `src/ts/` and `.ts`/`.mts`. Also runs automatically via `.githooks/post-merge`.
+- `npm run lint`: Run ESLint on TypeScript sources across root, `build/`, `src/ts/`, `bin/`, and `scaffold/` without fixing anything.
+- `npm run lint:src` / `npm run lint:build`: Run ESLint with `--fix` on `src/ts/` or `build/`.
 - `npm run screenshot -- /path/ ...`: Screenshot pages of the production build at 360, 600, 768, 960, 1024, and 1440px into contact sheets under `screenshots/<page>/`, and flag content cut off at the viewport edge (exits 2 if any). Run `npx playwright install chromium` once first.
 - `npm run og-images -- /path/ ...`: Capture each page's social preview (`og:image`) from the production build. Every page's front matter names its signature element in an `ogImage` recipe; the capture is fitted to 1200×630 and written to `src/images/og/`. With no paths, captures every page. Build afterwards and commit the images, their AVIFs and `src/images/avif-manifest.json`.
 - `npm run visual-diff`: Runs the visual regression diffing script using Playwright/Puppeteer.

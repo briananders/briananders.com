@@ -1,0 +1,41 @@
+/**
+ * @fileoverview Configuration constants for the Ant Life Simulator.
+ * Defines entity types, initial population counts, reproduction rates,
+ * starvation thresholds, and animation timing.
+ */
+
+const ANT = 'ant' as const;
+const ANT_EATER = 'anteater' as const;
+
+export type CreatureType = typeof ANT | typeof ANT_EATER;
+
+const STARTING_ANT_COUNT = 50;
+const STARTING_ANT_EATER_COUNT = 20;
+
+const ANT_REPRODUCTION_RATE = 1 / 2;
+const ANT_EATER_REPRODUCTION_RATE = 1 / 8;
+const ANT_EATER_DIE_OF_HUNGER = 12;
+
+const BOARD_SIZE = 100;
+
+const STEPS = 5;
+const DURATION = 100;
+const DELAY = DURATION / STEPS;
+
+module.exports = {
+  ANT,
+  ANT_EATER,
+
+  STARTING_ANT_COUNT,
+  STARTING_ANT_EATER_COUNT,
+
+  ANT_REPRODUCTION_RATE,
+  ANT_EATER_REPRODUCTION_RATE,
+  ANT_EATER_DIE_OF_HUNGER,
+
+  BOARD_SIZE,
+
+  STEPS,
+  DURATION,
+  DELAY,
+};

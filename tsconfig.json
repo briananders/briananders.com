@@ -1,0 +1,34 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
+    "moduleDetection": "force",
+    "lib": ["ES2022"],
+    "types": ["node"],
+    "strict": true,
+    "noEmit": true,
+    "erasableSyntaxOnly": true,
+    "allowImportingTsExtensions": true,
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true
+  },
+  "include": [
+    "index.ts",
+    "preview-production.ts",
+    "s3-uploader.ts",
+    "scaffold.ts",
+    "build/**/*.ts",
+    "bin/**/*.ts",
+    "scaffold/**/*.ts",
+    "test/**/*.mts",
+    "types/modules.d.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "package",
+    "golden",
+    "screenshots"
+  ]
+}

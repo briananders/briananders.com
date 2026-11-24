@@ -1,0 +1,14 @@
+const ready = require('../../_modules/document-ready.ts');
+
+const csrContainer = require('./csr-container.ts');
+const csrSquare = require('./csr-square.ts');
+
+csrContainer.init();
+csrSquare.init();
+
+/**
+ * Initializes CSR experiment page once the document is ready.
+ */
+ready.document(() => {
+  console.log('here');
+});

@@ -72,14 +72,15 @@ Architecture lives in `src/js/_modules/band-news/` and `src/js/_components/`:
 
 | Layer | Technology |
 |---|---|
-| Runtime | Node.js 26.13.1 (see `.nvmrc`) — **must use nvm** |
+| Runtime | Node.js 26.13.1 (see `.nvmrc`) — **must use nvm**; runs `.ts` natively via built-in type stripping |
+| Language | TypeScript 6 (`strict: true`, `erasableSyntaxOnly: true`; `tsconfig.json` for Node + `tsconfig.browser.json` for `src/ts/`) |
 | Templates | EJS with gray-matter YAML front matter |
 | Styles | SCSS (Dart Sass via `sass` package), minified with CleanCSS |
-| JavaScript | CommonJS modules bundled with Browserify + custom Babel 8 transform (`build/bundlers/babel-transform.js` with preset-env, preset-react) |
+| Client Scripts | CommonJS TypeScript modules (`src/ts/`) bundled to `.js` with Browserify + custom Babel 8 transform (`build/bundlers/babel-transform.ts` with `@babel/preset-typescript`, `@babel/preset-env`, `@babel/preset-react`) |
 | Hosting | AWS S3 + CloudFront |
-| Deployment | Custom `s3-uploader.js` using AWS SDK v3 (`@aws-sdk/client-s3`, `@aws-sdk/lib-storage`, `@aws-sdk/client-cloudfront`) |
+| Deployment | Custom `s3-uploader.ts` using AWS SDK v3 (`@aws-sdk/client-s3`, `@aws-sdk/lib-storage`, `@aws-sdk/client-cloudfront`) |
 | Dev server | Express with express-static and http-proxy-middleware |
-| Linting | ESLint 10 flat config (`eslint.config.mjs` with `@eslint/js`, `@stylistic/eslint-plugin`, `eslint-plugin-import-x`) |
+| Linting | ESLint 10 flat config (`eslint.config.mjs` with `@eslint/js`, `typescript-eslint`, `@stylistic/eslint-plugin`, `eslint-plugin-import-x`) |
 | Build optimization | HTML minification (html-minifier-terser), JS minification (uglify-js), SVG optimization (svgo), WebP/AVIF conversion (sharp), gzip compression, content-hash asset naming (xxhash) |
 | Analytics | Google Tag Manager (production only) |
 | Screenshots | Playwright (`^1.65.1`). Run `npx playwright install chromium` once per machine. |
@@ -87,84 +88,48 @@ Architecture lives in `src/js/_modules/band-news/` and `src/js/_components/`:
 ## Project Structure
 
 ```
-├── index.js                    # Main entry: build pipeline + dev server
-├── s3-uploader.js              # AWS S3 deploy script
+├── index.ts                    # Main entry: build pipeline + dev server
+├── s3-uploader.ts              # AWS S3 deploy script
 ├── s3-upload-allowlist.json    # S3 paths preserved during deploy
-├── scaffold.js                 # New page scaffolding tool
-├── preview-production.js       # Serve production build locally
+├── scaffold.ts                 # New page scaffolding tool
+├── preview-production.ts       # Serve production build locally
 ├── package.json
 ├── .nvmrc                      # Node 26.13.1
-├── eslint.config.mjs           # ESLint 10 flat config
+├── tsconfig.json               # Node + test TypeScript config (strict, erasableSyntaxOnly)
+├── tsconfig.browser.json       # Browser TypeScript config for src/ts/
+├── eslint.config.mjs           # ESLint 10 + typescript-eslint flat config
+├── .githooks/post-merge        # Auto-converts legacy .js files merged from older branches
 │
 ├── AGENTS.md                   # Rules for every AI agent (imported above)
-├── bin/screenshot.js           # Contact-sheet screenshots + viewport-edge layout check (`npm run screenshot`)
-├── bin/og-images.js            # Social preview captures from front-matter recipes (`npm run og-images`)
+├── bin/convert-js-to-ts.ts     # Automatic legacy JS → TS converter (`npm run convert-js`)
+├── bin/screenshot.ts           # Contact-sheet screenshots + viewport-edge layout check (`npm run screenshot`)
+├── bin/og-images.ts            # Social preview captures from front-matter recipes (`npm run og-images`)
+├── types/                      # Ambient TypeScript declarations (`modules.d.ts`, `browser.d.ts`)
 │
-├── build/                      # Build pipeline (all files have full JSDoc as of March 2026)
+├── build/                      # Build pipeline (TypeScript, runs natively on Node 26)
+│   ├── types.ts                # Shared build interfaces (`BuildConfigs`, `CompletionFlags`, etc.)
 │   ├── bundlers/
-│   │   ├── babel-transform.js  # Custom Browserify transform using @babel/core v8
-│   │   ├── bundle-ejs.js       # EJS → HTML renderer (two-pass: template then layout)
-│   │   ├── bundle-js.js        # Browserify + Babel 8 bundler; watchify in dev
-│   │   ├── bundle-scss.js      # Dart Sass compiler + CleanCSS minifier
-│   │   └── sitemap.js          # Renders sitemap.json.ejs + sitemap.xml.ejs
-│   ├── constants/
-│   │   ├── build-events.js     # String constants for all EventEmitter event names
-│   │   ├── completion-flags.js # Shared mutable booleans tracking stage completion
-│   │   ├── directories.js      # Path factory (package/ vs golden/ depending on mode)
-│   │   ├── file-formats.js     # Image/video extension lists and raster format lists
-│   │   ├── golden-build.js     # Pinned BUILD_DATETIME / BUILD_RANDOM_SEED / COMMIT_HASH for golden builds
-│   │   └── site-data.js        # Author metadata, social links, domain, commitHash, buildDateTime, buildRandom
-│   ├── helpers/
-│   │   ├── build-date.js       # The build's "now": BUILD_DATETIME env var, else the current time
-│   │   ├── build-random.js     # Math.random, or a seeded generator when BUILD_RANDOM_SEED is set
-│   │   ├── check-done.js       # Gate: exits process when all completion flags are true
-│   │   ├── clean.js            # Empties the output directory (returns Promise)
-│   │   ├── ejs-functions.js    # 16 template helper functions available in all EJS templates
-│   │   ├── exit-message.js     # ASCII-art success banner printed on build completion
-│   │   ├── generate-build-txt.js # Writes build.txt (date + commit hash) to output dir
-│   │   ├── production.js       # Boolean: NODE_ENV === 'production'
-│   │   ├── seo.js              # Titles, descriptions, canonical/OG/Twitter values, preview image, JSON-LD
-│   │   └── timestamp.js        # Returns grey [HH:MM:SS] stamp for build log lines
-│   ├── hashing/
-│   │   ├── asset-hashing.js    # XXHash JS files + image/video files; emits two events
-│   │   ├── finish-hashing.js   # Rewrites HTML+JSON to reference hashed filenames
-│   │   ├── hash-css.js         # XXHash CSS files (runs after CSS is updated with image hashes)
-│   │   └── update-css-with-image-hashes.js  # Rewrites CSS url() before CSS is hashed
-│   ├── optimize/
-│   │   ├── convert-to-webp.js  # Sharp WebP conversion
-│   │   ├── convert-to-avif.js  # Sharp AVIF at quality 80, encoded once into src/images/ and copied after
-│   │   ├── gzip-files.js       # zlib gzip on html/xml/css/js/txt/json
-│   │   ├── minify-html.js      # html-minifier-terser (async minify())
-│   │   ├── minify-js.js        # UglifyJS
-│   │   └── optimize-svgs.js    # svgo preset-default; getSVG() for inline use
-│   ├── move-assets.js          # Copies images (SVG→SVGO, raster→WebP+AVIF+copy), videos, txt, downloads
-│   ├── page-mapping-data.js    # Front-matter index compiled from all EJS templates
-│   ├── prod-builder.js         # Production event listener wiring
-│   ├── preview-builder.js      # Dev mode: chokidar watchers + previewReady gate
-│   └── golden-builder.js       # Golden build: minify only, hashing/gzip flags pre-set
+│   │   ├── babel-transform.ts  # Custom Browserify transform using @babel/core v8 + preset-typescript
+│   │   ├── bundle-ejs.ts       # EJS → HTML renderer (two-pass: template then layout)
+│   │   ├── bundle-js.ts        # Browserify + Babel 8 bundler (`src/ts/` → `scripts/*.js`); watchify in dev
+│   │   ├── bundle-scss.ts      # Dart Sass compiler + CleanCSS minifier
+│   │   └── sitemap.ts          # Renders sitemap.json.ejs + sitemap.xml.ejs
+│   ├── constants/              # Event names, completion flags, directory paths, formats, golden-build, site-data (.ts)
+│   ├── hashing/                # XXHash JS/images/CSS + URL rewriting (.ts)
+│   ├── helpers/                # Build helpers, EJS functions, SEO, commit-hash, check-done (.ts)
+│   ├── optimize/               # WebP/AVIF, gzip, HTML/JS minification, SVGO (.ts)
+│   ├── move-assets.ts          # Copies images (SVG→SVGO, raster→WebP+AVIF+copy), videos, txt, downloads
+│   ├── page-mapping-data.ts    # Front-matter index compiled from all EJS templates
+│   ├── prod-builder.ts         # Production event listener wiring
+│   ├── preview-builder.ts      # Dev mode: chokidar watchers + previewReady gate
+│   └── golden-builder.ts       # Golden build: minify only, hashing/gzip flags pre-set
 │
 ├── src/
 │   ├── templates/              # EJS page templates (one per output page)
-│   │   ├── index.html.ejs      # Homepage
-│   │   ├── about.ejs           # About page
-│   │   ├── drums.ejs           # Banders Drums page
-│   │   ├── 404.html.ejs        # 404 page
-│   │   ├── posts/              # Blog-style posts and experiments
-│   │   └── example/            # Example/demo pages
 │   ├── partials/               # Reusable EJS partials (header, footer, nav, etc.)
 │   ├── layout/                 # Layout templates (base.ejs, blank.ejs, empty.ejs)
-│   ├── styles/                 # SCSS source
-│   │   ├── system/             # Design system (variables, mixins, functions)
-│   │   │   ├── _utilities.scss # @forward aggregator — import this in all consumer files
-│   │   │   ├── variables/      # Colors, fonts, viewports, spacing, grid (all.scss aggregates)
-│   │   │   ├── mixins/         # Media queries, typography, elements, grid, colors (all.scss aggregates)
-│   │   │   └── functions/      # Sass utility functions (all.scss aggregates)
-│   │   ├── modules/            # Shared module styles
-│   │   └── posts/              # Per-post styles
-│   ├── js/                     # JavaScript source
-│   │   ├── _modules/           # Shared modules (analytics, dark-mode, etc.)
-│   │   ├── _components/        # Reusable components (album-listing, api-image, last-updated, etc.)
-│   │   └── posts/              # Per-post entry scripts
+│   ├── styles/                 # SCSS source (`system/`, `modules/`, `posts/`)
+│   ├── ts/                     # TypeScript browser source (`_modules/`, `_components/`, `posts/`, `example/`)
 │   ├── images/                 # Source images + their committed .avif twins and avif-manifest.json
 │   ├── videos/                 # Source videos
 │   ├── data/                   # Static JSON data files
@@ -175,14 +140,8 @@ Architecture lives in `src/js/_modules/band-news/` and `src/js/_components/`:
 │   └── humans.txt
 │
 ├── .github/workflows/          # CI/CD
-│   ├── deploy-production.yml   # Push to main → build → deploy → tag
-│   ├── deploy-staging.yml      # Push to staging → build → deploy
-│   ├── build-validation.yml    # PRs → build + test
-│   ├── claude-code-review.yml  # AI-powered PR reviews
-│   └── claude.yml              # Claude workflow
-│
-├── test/                       # node:test suites; design-tokens.test.mjs + design-tokens-baseline.json ratchet hard-coded SCSS values
-├── scaffold/                   # Templates for `npm run scaffold`
+├── test/                       # node:test TypeScript suites (`test/*.test.mts`)
+├── scaffold/                   # TypeScript templates for `npm run scaffold` (`css.ts`, `html.ts`, `ts.ts`)
 └── visual-diffs/               # Symlink to Brian's local briananders.com-visual-diffs clone
 ```
 
@@ -291,12 +250,14 @@ Golden builds pin both (see Build Modes). A test fails if a template calls `Math
 
 **Important:** `img()`, `lazyImage()`, and `lazyVideo()` read from the **output** directory (`dir.package`) not the source. This is why `bundleEJS` cannot start until both `imagesMoved` and `videosMoved` flags are true.
 
-### JavaScript Conventions
+### TypeScript Conventions
 
-- CommonJS modules (`require`/`module.exports`), bundled by Browserify
+- All Node scripts, build modules, browser scripts (`src/ts/`), scaffolds, and tests (`test/*.test.mts`) are strict TypeScript (`erasableSyntaxOnly: true` for Node 26 native type stripping — no `enum`, `namespace`, or constructor parameter properties)
+- CommonJS modules (`require`/`module.exports`) with `import type` for type-only imports and explicit `.ts` extensions on relative requires (e.g., `require('../_modules/document-ready.ts')`)
 - Underscore-prefixed directories (`_modules/`, `_components/`) are shared/private — not entry points
-- Entry scripts (no underscore) in `src/js/` or `src/js/posts/` map to page `scripts` front matter
-- `document-ready` module wraps DOM-ready callbacks: `require('../_modules/document-ready').document(() => { ... })`
+- Entry scripts (no underscore) in `src/ts/` or `src/ts/posts/` map to page `scripts` front matter and compile to `package/scripts/**/*.js`
+- `document-ready` module wraps DOM-ready callbacks: `require('../_modules/document-ready.ts').document(() => { ... })`
+- Legacy JS branch merges: `.githooks/post-merge` automatically runs `node bin/convert-js-to-ts.ts` (`npm run convert-js`) to relocate `src/js/` -> `src/ts/`, rename `.js`/`.mjs` -> `.ts`/`.mts`, and rewrite relative specifiers; tighten strict types afterward and run `npm run typecheck`
 
 ### SCSS Conventions
 
@@ -472,11 +433,11 @@ The live-reload script in HTML pages opens a persistent `EventSource('/livereloa
 | Watcher | Target | On change |
 |---|---|---|
 | `buildDirWatcher` | `build/` directory | `process.exit()` — forces manual restart |
-| `indexWatcher` | `index.js` | `process.exit()` — forces manual restart |
+| `indexWatcher` | `index.ts` | `process.exit()` — forces manual restart |
 | `sourceWatcher` | `src/` directory | Incremental rebuild of changed asset type only |
 
 Source file changes dispatch by path:
-- `src/js/**` → `bundleJS(configs)`
+- `src/ts/**` → `bundleJS(configs, filePath)` (handles `.ts`, `.tsx`, and co-located `.scss`)
 - `src/styles/**` → `bundleSCSS` + `compilePageMappingData` (both, because inlined SCSS may change)
 - `src/templates/**`, `src/partials/**`, `src/layout/**` → `compilePageMappingData`
 - `src/images/**` → `moveOneImage`
@@ -544,7 +505,9 @@ Source file changes dispatch by path:
 | `npm run deploy` | Deploy production build to S3 |
 | `npm run stage` | Deploy staging build to S3 |
 | `npm test` | Run tests (requires Node 26 — use nvm first) |
-| `npm run lint` | ESLint on `build/`, `src/js/`, `bin/` (check only; `lint:src` / `lint:build` auto-fix) |
+| `npm run typecheck` | Run strict `tsc --noEmit` on `tsconfig.json` and `tsconfig.browser.json` |
+| `npm run convert-js` | Convert any legacy `.js`/`.mjs` files (e.g. from older branches) to `.ts`/`.mts` under `src/ts/` |
+| `npm run lint` | ESLint on TypeScript sources across root, `build/`, `src/ts/`, `bin/`, `scaffold/` (check only; `lint:src` / `lint:build` auto-fix) |
 | `npm run preview:production` | Serve the production build locally |
 | `npm run scaffold -- --path=/path` | Create new page boilerplate |
 | `npm run screenshot -- /path/ ...` | Contact-sheet screenshots of the built site at 360/600/768/960/1024/1440px, plus a viewport-edge layout check that exits 2 on a flag (see AGENTS.md §1) |

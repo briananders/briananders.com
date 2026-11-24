@@ -1,0 +1,6 @@
+#!/bin/sh
+# Automatically convert any legacy JavaScript files brought in by merging older branches.
+
+if [ -f "bin/convert-js-to-ts.ts" ] && command -v node >/dev/null 2>&1; then
+  node bin/convert-js-to-ts.ts
+fi

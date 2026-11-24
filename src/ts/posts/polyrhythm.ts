@@ -1,0 +1,365 @@
+const ready = require('../_modules/document-ready.ts');
+
+let canvasContext!: CanvasRenderingContext2D;
+let canvas!: HTMLCanvasElement;
+let playButton!: HTMLButtonElement;
+
+const circles: Circle[] = [];
+const WIDTH = 1000;
+const numberOfCircles = 20;
+const tones = [
+  65.40639, // C2
+  82.40689, // E2
+  97.99886, // G2
+  110.0000, // A2
+  130.8128, // C3
+  164.8138, // E3
+  195.9977, // G3
+  220.0000, // A3
+  261.6256, // C4
+  329.6276, // E4
+  391.9954, // G4
+  440.0000, // A4
+  523.2511, // C5
+  659.2551, // E5
+  783.9909, // G5
+  880.0000, // A5
+  1046.502, // C6
+  1318.510, // E6
+  1567.982, // G6
+  1760.000 // A6
+];
+
+let audioCtx!: AudioContext;
+
+/**
+ * Color generator helper for computing gradient color shades and flash-to-white highlight colors.
+ */
+class ColorObject {
+  rgb: (white: number) => string;
+
+  /**
+   * @param {number} position - Zero-based index of the circle in the column sequence.
+   */
+  constructor(position: number) {
+    // rgb(205 72 0) dark
+    // rgb(245 127 23) light
+    /** Computes interpolated red channel value. */
+    const red = (x: number): number => 205 + (((245 - 205) / numberOfCircles) * x);
+    /** Computes interpolated green channel value. */
+    const green = (x: number): number => 72 + (((127 - 72) / numberOfCircles) * x);
+    /** Computes interpolated blue channel value. */
+    const blue = (x: number): number => 0 + (((23 - 0) / numberOfCircles) * x);
+
+    /** Blends red channel towards pure white based on flash step. */
+    const whiteRed = (x: number, step: number): number => {
+      const white = 255;
+      const noWhite = red(x);
+      const delta = white - noWhite;
+
+      return noWhite + (delta * step);
+    };
+    /** Blends green channel towards pure white based on flash step. */
+    const whiteGreen = (x: number, step: number): number => {
+      const white = 255;
+      const noWhite = green(x);
+      const delta = white - noWhite;
+
+      return noWhite + (delta * step);
+    };
+    /** Blends blue channel towards pure white based on flash step. */
+    const whiteBlue = (x: number, step: number): number => {
+      const white = 255;
+      const noWhite = blue(x);
+      const delta = white - noWhite;
+
+      return noWhite + (delta * step);
+    };
+
+    /**
+     * Computes RGBA color string with optional white highlight flash level.
+     *
+     * @param {number} white - Flash intensity between 0 (base color) and 1 (fully white).
+     * @returns {string} RGBA CSS color string.
+     */
+    // eslint-disable-next-line @stylistic/max-len
+    this.rgb = (white: number) => `rgba(${whiteRed(position, white)},${whiteGreen(position, white)},${whiteBlue(position, white)},1)`;
+  }
+}
+
+/**
+ * Calculates vertical speed for a given circle index to establish the polyrhythm relationship.
+ *
+ * @param {number} x - Index of the circle.
+ * @param {number} width - Diameter of the circle.
+ * @returns {number} Initial vertical velocity in pixels per tick.
+ */
+function velocityFunction(x: number, width: number): number {
+  const min = (WIDTH - width) / (numberOfCircles * 100);
+  return min + ((min / 19) * x);
+}
+
+/**
+ * Represents a single oscillating tone circle in the polyrhythmic display.
+ */
+class Circle {
+  ding: number;
+
+  draw: () => void;
+
+  update: () => void;
+
+  /**
+   * @param {number} [position=0] - Column index of the circle.
+   */
+  constructor(position = 0) {
+    const numberOfGaps = numberOfCircles + 1;
+
+    const spaceSize = (WIDTH * 0.1) / numberOfGaps;
+    const circleWidth = (WIDTH * 0.9) / numberOfCircles;
+
+    let velocity = velocityFunction(position, circleWidth);
+
+    // size
+    const radius = circleWidth / 2;
+    const x = radius + (circleWidth * position) + (spaceSize * (position + 1));
+    let y = radius;
+
+    // color
+    const border = new ColorObject(position);
+
+    /**
+     * Calculates fade factor based on time elapsed since last wall collision.
+     *
+     * @param {number} lastDing - Timestamp of the last collision ding.
+     * @returns {number} Opacity / flash weight value from 0 to 1.
+     */
+    function ballTransparency(lastDing: number): number {
+      const now = Date.now();
+      const timeDelta = now - lastDing;
+
+      if (timeDelta > 1000) {
+        return 0;
+      }
+      return 1 - (timeDelta / 1000);
+    }
+
+    /**
+     * Renders the circle path and outline to the 2D canvas context.
+     *
+     * @returns {void}
+     */
+    this.draw = () => {
+      canvasContext.beginPath();
+      canvasContext.arc(x, y, radius, 0, 2 * Math.PI, false);
+
+      // canvasContext.fillStyle = `rgba(255, 255, 255, ${ballTransparency(this.ding)})`;
+      canvasContext.fillStyle = 'transparent';
+      canvasContext.fill();
+
+      canvasContext.lineWidth = 3;
+      canvasContext.strokeStyle = border.rgb(ballTransparency(this.ding));
+      canvasContext.stroke();
+
+      canvasContext.closePath();
+    };
+
+    /**
+     * Updates position, detects top/bottom wall collisions, inverts velocity, and triggers ding tone.
+     *
+     * @returns {void}
+     */
+    this.update = () => {
+      if ((y + velocity) - radius < 0) {
+        y = Math.abs(y + velocity - radius) + radius;
+        velocity = Math.abs(velocity);
+        this.ding = Date.now();
+        ding(position);
+      } else if ((y + velocity + radius) > canvas.height) {
+        y = (canvas.height - radius) - ((radius + y + velocity) % canvas.height);
+        // math
+        velocity = 0 - Math.abs(velocity);
+        this.ding = Date.now();
+        ding(position);
+      } else {
+        y += velocity;
+      }
+    };
+
+    this.ding = Date.now() - 100000;
+  }
+}
+
+// //////////////////////////////////////////////////////////////////////////////
+// //////////////////////////////////////////////////////////////////////////////
+// //////////////////////////// PRIVATE FUNCTIONS ///////////////////////////////
+// //////////////////////////////////////////////////////////////////////////////
+// //////////////////////////////////////////////////////////////////////////////
+
+/**
+ * Sets fixed width and height pixel dimensions on the canvas element.
+ *
+ * @returns {void}
+ */
+function setCanvasDimensions(): void {
+  canvas.width = WIDTH;
+  canvas.height = WIDTH;
+}
+
+/**
+ * Updates physics and position of all active circles.
+ *
+ * @returns {void}
+ */
+function update(): void {
+  let i = circles.length;
+
+  while (i) {
+    circles[--i].update();
+  }
+}
+
+/**
+ * Draws all active circles onto the canvas context.
+ *
+ * @returns {void}
+ */
+function drawCanvas(): void {
+  canvasContext.save();
+
+  let i = circles.length;
+
+  while (i) {
+    circles[--i].draw();
+  }
+
+  canvasContext.restore();
+}
+
+/**
+ * Main animation loop that clears canvas, updates positions, and repaints.
+ *
+ * @returns {void}
+ */
+function draw(): void {
+  clear();
+
+  update();
+  drawCanvas();
+
+  window.setTimeout(draw, 1000 / 240);
+
+  // document.querySelector('debug').innerText += audioCtx.state.toString();
+}
+
+/**
+ * Creates and registers a new Circle instance.
+ *
+ * @param {number} position - Column index.
+ * @returns {void}
+ */
+function createCircle(position: number): void {
+  circles.push(new Circle(position));
+}
+
+/**
+ * Instantiates all circles across the polyrhythm grid.
+ *
+ * @returns {void}
+ */
+function createCircles(): void {
+  for (let i = 0; i < numberOfCircles; i++) {
+    createCircle(i);
+  }
+}
+
+/**
+ * Plays a musical tone with decay envelope using Web Audio API when a circle bounces.
+ *
+ * @param {number} position - Circle tone index mapped to the `tones` array.
+ * @returns {void}
+ */
+function ding(position: number): void {
+  const frequency = tones[position];
+
+  const oscillator = audioCtx.createOscillator();
+  oscillator.type = 'sine';
+  oscillator.frequency.value = frequency;
+
+  const gainNode = audioCtx.createGain();
+  gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime); // Initial volume
+
+  oscillator.connect(gainNode);
+  gainNode.connect(audioCtx.destination);
+
+  oscillator.start();
+
+  // Fade out the tone over 2 seconds
+  gainNode.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 2);
+
+  setTimeout(() => {
+    oscillator.stop();
+  }, 2100); // 2 seconds fade-out + 100ms buffer
+}
+
+/**
+ * Clears the full rectangle area of the canvas.
+ *
+ * @returns {void}
+ */
+function clear(): void {
+  canvasContext.clearRect(0, 0, canvas.width, canvas.height);
+}
+
+/**
+ * Binds UI click event listeners, such as the play button to start audio context.
+ *
+ * @returns {void}
+ */
+function setUpEvents(): void {
+  playButton.addEventListener('click', () => {
+    const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+    if (!AudioContextClass) {
+      return;
+    }
+    audioCtx = new AudioContextClass();
+    draw();
+    // audioCtx.resume().then(() => {
+    // console.log('Playback resumed successfully');
+    // }).catch(error => {
+    // document.querySelector('debug').innerText += `\n\n${error.toString()}`;
+    // });
+
+    playButton.style.display = 'none';
+  });
+}
+
+/**
+ * Initializes canvas elements, contexts, circles, and user events.
+ *
+ * @returns {void}
+ */
+function initialize(): void {
+  const canvasEl = document.getElementById('canvas') as HTMLCanvasElement | null;
+  const playButtonEl = document.getElementById('play') as HTMLButtonElement | null;
+  if (!canvasEl || !playButtonEl) {
+    return;
+  }
+
+  const context = canvasEl.getContext('2d');
+  if (!context) {
+    return;
+  }
+
+  canvas = canvasEl;
+  canvasContext = context;
+  playButton = playButtonEl;
+
+  setCanvasDimensions();
+
+  createCircles();
+
+  setUpEvents();
+}
+
+ready.all(initialize);

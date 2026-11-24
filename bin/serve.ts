@@ -1,0 +1,22 @@
+'use strict';
+
+// Usage: node bin/serve.ts <directory> <port>
+
+const express: typeof import('express') = require('express');
+
+const [,, dir, portArg] = process.argv;
+
+if (!dir || !portArg) {
+  console.error('Usage: node bin/serve.ts <directory> <port>');
+  process.exit(1);
+}
+
+const port = parseInt(portArg, 10);
+const app = express();
+
+app.use(express.static(dir));
+
+// Start the HTTP server to serve static files from the specified directory
+app.listen(port, () => {
+  console.log(`Serving ${dir} on http://localhost:${port}`);
+});

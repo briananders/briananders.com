@@ -2,18 +2,19 @@ import js from '@eslint/js';
 import stylistic from '@stylistic/eslint-plugin';
 import importX from 'eslint-plugin-import-x';
 import globals from 'globals';
+import tseslint from 'typescript-eslint';
 
 export default [
   js.configs.recommended,
+  ...tseslint.configs.recommended,
   {
-    files: ['**/*.js'],
+    files: ['**/*.ts', '**/*.mts'],
     plugins: {
       '@stylistic': stylistic,
       'import-x': importX,
     },
     languageOptions: {
       ecmaVersion: 2022,
-      sourceType: 'commonjs',
       globals: {
         ...globals.browser,
         ...globals.commonjs,
@@ -43,13 +44,16 @@ export default [
       eqeqeq: ['error', 'always', { null: 'ignore' }],
       'no-var': 'error',
       'prefer-const': ['error', { destructuring: 'any', ignoreReadBeforeAssign: true }],
-      'no-unused-vars': ['error', {
+      'no-unused-vars': 'off',
+      '@typescript-eslint/no-unused-vars': ['error', {
         vars: 'all',
         args: 'after-used',
         ignoreRestSiblings: true,
         argsIgnorePattern: '^_',
         caughtErrorsIgnorePattern: '^_',
       }],
+      '@typescript-eslint/no-require-imports': 'off',
+      '@typescript-eslint/no-explicit-any': 'off',
       'no-restricted-globals': ['error', {
         name: 'event',
         message: 'Use local parameter instead.',
@@ -76,12 +80,24 @@ export default [
         SwitchCase: 1,
         ignoredNodes: ['TemplateLiteral'],
       }],
-      'import-x/no-unresolved': ['error', { commonjs: true }],
+      'import-x/no-unresolved': ['error', {
+        commonjs: true,
+        ignore: ['\\.scss$'],
+      }],
       'import-x/no-duplicates': 'error',
     },
   },
   {
-    files: ['build/**/*.js', 'bin/**/*.js'],
+    files: [
+      'index.ts',
+      'preview-production.ts',
+      's3-uploader.ts',
+      'scaffold.ts',
+      'build/**/*.ts',
+      'bin/**/*.ts',
+      'scaffold/**/*.ts',
+      'test/**/*.mts'
+    ],
     languageOptions: {
       globals: {
         ...globals.node,
@@ -91,12 +107,12 @@ export default [
       'no-console': 'off',
       'import-x/no-unresolved': ['error', {
         commonjs: true,
-        ignore: ['^svgo$'],
+        ignore: ['^svgo$', '\\.scss$'],
       }],
     },
   },
   {
-    files: ['src/js/**/*.js'],
+    files: ['src/ts/**/*.ts'],
     rules: {
       'no-console': 'off',
     },
