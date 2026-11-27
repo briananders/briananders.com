@@ -1,44 +1,32 @@
 # GitHub Workflows
 
-## Claude Code Review
+All workflows run on `ubuntu-latest` (Ubuntu 26.04 LTS), use Node 24-native action releases (`actions/checkout@v7`, `actions/setup-node@v7`, `actions/upload-artifact@v7`, `anthropics/claude-code-action@v1`), and read the project Node version from `.nvmrc` (`v26.13.1`).
 
-The `claude-pr-review.yml` workflow automatically reviews pull requests using Claude AI.
+## Workflows
 
-### Setup Requirements
+| File | Trigger | Purpose |
+|---|---|---|
+| `build-validation.yml` | `pull_request` | Runs `npm run typecheck`, `npm run lint`, `npm run build` (plus committed AVIF verification), and `npm test` using `npm ci`. |
+| `deploy-staging.yml` | Push to `staging`, `workflow_dispatch` | Builds and deploys to `staging.briananders.com` via `npm run stage`. Queued via native `concurrency` (`cancel-in-progress: false`). |
+| `deploy-production.yml` | Push to `main`, `workflow_dispatch` | Builds, deploys to `www.briananders.com` via `npm run deploy`, invalidates CloudFront, and pushes a `deploy/<timestamp>` tag. Queued via native `concurrency` (`cancel-in-progress: false`). |
+| `sync-staging.yml` | Push to `main` | Merges `origin/main` back into `staging` when non-`.github` files differ. |
+| `claude-code-review.yml` | PR `opened`, `synchronize` | Runs automated PR review via `anthropics/claude-code-action@v1`. |
+| `claude.yml` | `@claude` mentions on issues, PR comments, and reviews | Sets up Node + Chromium and runs `anthropics/claude-code-action@v1` with `typecheck`, `build`, `build:golden`, `test`, `lint`, and `screenshot` allowed; uploads `screenshots/` as an artifact. |
 
-1. **Anthropic API Key**: Add your Anthropic API key as a repository secret named `ANTHROPIC_API_KEY`
-   - Go to repository Settings → Secrets and variables → Actions
-   - Click "New repository secret"
-   - Name: `ANTHROPIC_API_KEY`
-   - Value: Your Anthropic API key from https://console.anthropic.com/
+## Required Secrets
 
-2. **API Credits**: Ensure your Anthropic account has sufficient credits
-   - Check your balance at https://console.anthropic.com/settings/billing
-   - The workflow will fail with "Credit balance is too low" if insufficient
+- `CLAUDE_CODE_OAUTH_TOKEN` — Used by `claude-code-review.yml` and `claude.yml`.
+- `AWS_ACCESS_KEY`, `AWS_SECRET_ACCESS_KEY`, `CLOUDFRONT_ID` — Used by `deploy-staging.yml` and `deploy-production.yml`.
 
-### Configuration
+## Customizing Claude Workflows
 
-The workflow can be customized by editing `.github/workflows/claude-pr-review.yml`:
+Edit `.github/workflows/claude-code-review.yml` or `.github/workflows/claude.yml`:
 
-- **Model Selection**: Change the `model` parameter to use different Claude models:
-  - `claude-sonnet-4-20250514` - Fast, balanced (default)
-  - `claude-opus-4-20250514` - Most capable, slower and more expensive
-  
-- **Review Prompt**: Modify the `direct_prompt` section to customize what Claude reviews
+- **Prompt**: Update the `prompt` input.
+- **CLI flags (model, allowed tools, max turns)**: Pass them in `claude_args` (for example `--allowedTools "..."` or `--model ...`).
 
-### Troubleshooting
+## Troubleshooting
 
-**Error: "Credit balance is too low"**
-- Solution: Add credits to your Anthropic account at https://console.anthropic.com/settings/billing
-
-**Error: Invalid model name**
-- Solution: Use a valid model identifier (see Configuration section above)
-- Check current model names at https://docs.anthropic.com/en/docs/about-claude/models
-
-**Workflow not triggering**
-- The workflow only runs on PR `opened` and `synchronize` events
-- Check that the repository has the `ANTHROPIC_API_KEY` secret configured
-
-**Permission errors**
-- Ensure the workflow has the correct permissions (already configured in the file)
-- Check repository Settings → Actions → General → Workflow permissions
+- **Permission errors**: Verify each workflow's `permissions` block and repository Settings → Actions → General → Workflow permissions.
+- **Claude workflow auth errors**: Confirm `CLAUDE_CODE_OAUTH_TOKEN` is valid under Settings → Secrets and variables → Actions.
+- **Stale AVIF failure in `build-validation.yml`**: Run `npm run build` locally and commit the updated files in `src/images/` and `src/images/avif-manifest.json`.

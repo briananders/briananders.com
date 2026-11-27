@@ -531,8 +531,8 @@ Branch flow: feature branch (from `staging`) → PR into `staging` → `staging`
 
 - **Production**: Push to `main` branch triggers GitHub Actions → builds → deploys to `www.briananders.com` S3 bucket → invalidates CloudFront cache → creates a deploy tag
 - **Staging**: Push to `staging` branch triggers GitHub Actions → builds → deploys to `staging.briananders.com` S3 bucket
-- **PR validation**: All PRs run build + tests, and fail if the build changed `src/images/` (an uncommitted AVIF)
-- **`@claude` in GitHub**: `claude.yml` installs dependencies and Chromium, lets Claude run build, test, lint and screenshot, and uploads `screenshots/` as a workflow artifact
+- **PR validation**: All PRs run `typecheck`, `lint`, `build` (failing if the build changed `src/images/`, i.e. an uncommitted AVIF), and `test` via `npm ci` on Node 26.13.1
+- **`@claude` in GitHub**: `claude.yml` installs dependencies and Chromium, lets Claude run `typecheck`, `build`, `build:golden`, `test`, `lint` and `screenshot`, and uploads `screenshots/` as a workflow artifact
 - The `s3-upload-allowlist.json` preserves `/band-news/`, `/last-fm-history/`, `/data/`, and `/movies/` paths during deploy
 
 ---
