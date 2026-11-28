@@ -115,6 +115,10 @@ scripts:
           <%- defaultLastFMModule(); %>
         <% } %>
       </div>
-      <%- blockLink('More music details', { href: '/music/last-fm/' }); %>
+      <div class="cluster index-music__links">
+        <%- blockLink('Listening history', { href: '/music/listening-history/' }); %>
+        <%- blockLink('Music news', { href: '/music/music-news/' }); %>
+        <%- blockLink('All music', { href: '/music/' }); %>
+      </div>
     </div>
   </section>

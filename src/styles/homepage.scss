@@ -85,5 +85,16 @@ main.home {
       justify-content: flex-start;
       margin-bottom: space(2);
     }
+
+    .index-music__links {
+      @include readingWidth;
+      gap: space(2) space(4);
+
+      .block-link-wrapper {
+        width: auto;
+        max-width: none;
+        margin-bottom: 0;
+      }
+    }
   }
 }

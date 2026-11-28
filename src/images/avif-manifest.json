@@ -621,15 +621,11 @@
   },
   "og/music.avif": {
     "source": "og/music.jpg",
-    "sha256": "ced61274c197eea4"
+    "sha256": "80ead8d48b7b12ee"
   },
-  "og/music/last-fm-scrobbles.avif": {
-    "source": "og/music/last-fm-scrobbles.jpg",
-    "sha256": "800c6666d813d122"
-  },
-  "og/music/last-fm.avif": {
-    "source": "og/music/last-fm.jpg",
-    "sha256": "b35c5d62f16dfd76"
+  "og/music/listening-history.avif": {
+    "source": "og/music/listening-history.jpg",
+    "sha256": "121b1f0bfa8e505e"
   },
   "og/music/music-news.avif": {
     "source": "og/music/music-news.jpg",

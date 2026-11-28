@@ -1,33 +1,22 @@
 ---
 title: "Recent Listening Trends"
-description: "Music is a major contributor to my life. I am constantly looking for my next favorite album. I'm one of
-those nuts that listens to the same thing over and over until I'm sick of it. I track my listening habits to see what
-I've been enjoying. Here are some of the albums that I have been listening to recently."
+description: "Recent Listening Trends has been merged into Music Listening History."
 date: 2017-09-07
-priority: 0.8
-musicPinOrder: 1
-musicSummary: "Rolling-window Last.fm listening trends from the past 7 days to 2 years."
-metaDescription: 'The albums and artists I''ve had on repeat lately, from my Last.fm scrobbles over rolling windows from 7 days to 2 years.'
-ogImage:
-  selector: '.lfm-grid'
-  alt: 'Recent listening dashboard: 30-day totals and a two-year trend chart'
-  position: 'top'
-  wait: 4000
+priority: 0.1
+robots: false
+redirectTo: '/music/listening-history/'
 layout: base
 pageClasses:
-- 'posts'
-- 'last-fm'
+  - 'posts'
 styles:
-- 'main'
-- 'posts/last-fm'
-scripts:
-- 'posts/last-fm'
+  - 'main'
 ---
 
-<div class="content">
-  <p>
-    Pick a window to see what has been on repeat. Select any album or artist for its full listening history, or dig through every year, month, and week in the <%- inlineLink('music listening history', { href: '/music/last-fm-scrobbles/' }) %>.
-  </p>
-</div>
-
-<%- partial('last-fm-dashboard', { ...locals, mode: 'recent' }) %>
+<section>
+  <div class="content">
+    <p>
+      Recent Listening Trends has been merged into Music Listening History.
+      <%- inlineLink('Continue to /music/listening-history/', { href: '/music/listening-history/' }) %>.
+    </p>
+  </div>
+</section>

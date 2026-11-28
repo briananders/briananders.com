@@ -9,13 +9,21 @@
 // -----------------------------------------------------------------------------
 
 import type { LastFmAlbum, LastFmArtist } from './data.ts';
-import type { FocusBand, MonthlySeriesRow, MoverRow } from './stats.ts';
+import type {
+  FocusBand,
+  MonthlySeriesRow,
+  MoverRow,
+  SortDirection,
+  YearlyTopBand,
+  YearlyTopBandSortKey
+} from './stats.ts';
 
 const {
   bindTooltip, h, hideTooltip, replace, showTooltip, svg,
 } = require('./dom.ts');
 const format = require('./format.ts');
 const { imageUrl } = require('./data.ts');
+const stats = require('./stats.ts');
 
 export interface NiceScaleResult {
   max: number;
@@ -109,6 +117,16 @@ export interface AreaChartOptions {
   band?: AreaChartBand | null;
   bandLabel?: string;
   caption?: string;
+}
+
+export interface YearlyTopBandsOptions {
+  onSelectArtist: (band: YearlyTopBand) => void;
+  onSelectYear: (year: number) => void;
+}
+
+interface InvokerCommandEvent extends Event {
+  command?: string;
+  source?: Element | null;
 }
 
 /**
@@ -737,6 +755,237 @@ function areaChart(
   ]);
 }
 
+// -- Yearly top-20 bands: sortable responsive table ---------------------------
+
+/**
+ * Picks the initial sort direction when switching to a different column.
+ *
+ * @param {YearlyTopBandSortKey} sortKey - Target column key.
+ * @returns {SortDirection} Default direction for that column.
+ */
+function defaultDirectionForColumn(sortKey: YearlyTopBandSortKey): SortDirection {
+  if (sortKey === 'years') {
+    return 'descending';
+  }
+  return 'ascending';
+}
+
+/**
+ * Moves existing table rows inside `tbody` without rebuilding them so element
+ * identity and interactive state are preserved.
+ *
+ * @param {HTMLTableSectionElement} tbody - Table body element.
+ * @param {HTMLTableRowElement[]} orderedRows - Rows in target order.
+ */
+function reorderTableRows(tbody: HTMLTableSectionElement, orderedRows: HTMLTableRowElement[]): void {
+  orderedRows.forEach((row) => {
+    if (typeof tbody.moveBefore === 'function') {
+      tbody.moveBefore(row, null);
+    } else {
+      tbody.append(row);
+    }
+  });
+}
+
+/**
+ * Builds one table row for a band that appeared in at least one yearly top 20.
+ *
+ * @param {YearlyTopBand} band - Aggregated band statistics.
+ * @param {YearlyTopBandsOptions} options - Selection callbacks.
+ * @returns {HTMLTableRowElement} Table row element.
+ */
+function buildYearlyTopBandRow(band: YearlyTopBand, options: YearlyTopBandsOptions): HTMLTableRowElement {
+  const chips = band.placements.map((placement) => {
+    let chipClass = 'lfm-top20__chip';
+    if (placement.position === 1) {
+      chipClass = 'lfm-top20__chip is-first';
+    }
+    const chip = h('button', {
+      type: 'button',
+      class: chipClass,
+      'aria-label': `${placement.year}: ranked #${placement.position}`
+        + ` (${format.number(placement.count)} plays). Load ${placement.year}.`,
+      dataset: { year: String(placement.year), position: String(placement.position) },
+      onclick: () => options.onSelectYear(placement.year),
+    }, [
+      h('span', { class: 'lfm-top20__chip-year', text: String(placement.year) }),
+      h('span', { class: 'lfm-top20__chip-rank', text: `#${placement.position}` })
+    ]);
+    bindTooltip(chip, () => ({
+      value: `#${placement.position}`,
+      label: `${band.name} · ${placement.year}`,
+      note: `${format.number(placement.count)} scrobbles`,
+    }));
+    return h('li', {}, chip);
+  });
+
+  const artistButton = h('button', {
+    type: 'button',
+    class: 'lfm-top20__artist',
+    onclick: () => options.onSelectArtist(band),
+  }, [
+    h('span', { class: 'lfm-top20__avatar' }, cover(band.image, 64)),
+    h('span', { class: 'lfm-top20__name', text: band.name })
+  ]);
+
+  return h('tr', { dataset: { bandKey: band.name.toLowerCase() } }, [
+    h('th', { scope: 'row', class: 'lfm-top20__band-cell' }, h('span', { class: 'lfm-top20__band' }, [
+      h('span', { class: 'lfm-top20__rank', 'aria-hidden': 'true' }),
+      artistButton
+    ])),
+    h('td', {
+      class: 'lfm-top20__num',
+      dataset: { label: 'Years', value: String(band.yearsCount) },
+      text: String(band.yearsCount),
+    }),
+    h('td', {
+      class: 'lfm-top20__num',
+      dataset: { label: 'Avg rank', value: band.averagePosition.toFixed(4) },
+      text: `#${band.averagePosition.toFixed(1)}`,
+    }),
+    h('td', { class: 'lfm-top20__years-cell', dataset: { label: 'Top 20 years' } }, [
+      h('ul', { class: 'lfm-top20__chips' }, chips)
+    ])
+  ]);
+}
+
+/**
+ * Renders the sortable, responsive table of every band that reached a yearly
+ * top 20, listing each qualifying year and position held.
+ *
+ * @param {HTMLElement} container - Panel body element.
+ * @param {YearlyTopBand[]} bands - Pre-sorted yearly top-20 bands.
+ * @param {YearlyTopBandsOptions} options - Artist and year selection callbacks.
+ */
+function yearlyTopBandsTable(
+  container: HTMLElement,
+  bands: YearlyTopBand[],
+  options: YearlyTopBandsOptions
+): void {
+  if (!bands.length) {
+    replace(container, h('p', { class: 'lfm-status', text: 'No yearly top-20 data available.' }));
+    return;
+  }
+
+  const tableId = 'lfm-top20-table';
+  const status = h('p', { class: 'sr-only', role: 'status', 'aria-live': 'polite' });
+
+  const sortableColumns: Array<{
+    key: YearlyTopBandSortKey;
+    label: string;
+    align: 'left' | 'right';
+    initialSort: SortDirection | null;
+  }> = [
+    {
+      key: 'name', label: 'Band', align: 'left', initialSort: null,
+    },
+    {
+      key: 'years', label: 'Years', align: 'right', initialSort: 'descending',
+    },
+    {
+      key: 'average', label: 'Avg rank', align: 'right', initialSort: null,
+    }
+  ];
+
+  const headerCells: HTMLElement[] = sortableColumns.map((col) => {
+    let headerClass = 'lfm-top20__col-head';
+    if (col.align === 'right') {
+      headerClass = 'lfm-top20__col-head is-numeric';
+    }
+    return h('th', {
+      scope: 'col',
+      class: headerClass,
+      'aria-sort': col.initialSort,
+      dataset: { sortKey: col.key },
+    }, h('button', {
+      type: 'button',
+      class: 'lfm-top20__sort-button',
+      commandfor: tableId,
+      command: '--sort',
+    }, [
+      h('span', { text: col.label }),
+      h('span', { class: 'lfm-top20__sort-icon', 'aria-hidden': 'true' })
+    ]));
+  });
+
+  headerCells.push(h('th', {
+    scope: 'col',
+    class: 'lfm-top20__col-head',
+    text: 'Top 20 years & positions',
+  }));
+
+  const rowByBand = new Map<YearlyTopBand, HTMLTableRowElement>();
+  const rows = bands.map((band) => {
+    const row = buildYearlyTopBandRow(band, options);
+    rowByBand.set(band, row);
+    return row;
+  });
+
+  const tbody: HTMLTableSectionElement = h('tbody', {}, rows);
+  const thead: HTMLTableSectionElement = h('thead', {}, h('tr', {}, headerCells));
+  const table: HTMLTableElement = h('table', { id: tableId, class: 'lfm-top20__table' }, [
+    h('caption', {
+      class: 'sr-only',
+      text: 'Bands that finished in a yearly top 20, sorted by number of years and average position.',
+    }),
+    thead,
+    tbody
+  ]);
+
+  /**
+   * Applies a column sort, updates `aria-sort` on the active header, reorders
+   * the existing `<tr>` nodes, and announces the new order for screen readers.
+   *
+   * @param {HTMLButtonElement} button - Activated column header button.
+   */
+  const sortByButton = (button: HTMLButtonElement): void => {
+    const th = button.closest('th');
+    if (!th) return;
+    const rawKey = th.dataset.sortKey;
+    if (rawKey !== 'years' && rawKey !== 'average' && rawKey !== 'name') return;
+
+    const currentSort = th.getAttribute('aria-sort');
+    let nextDirection: SortDirection = defaultDirectionForColumn(rawKey);
+    if (currentSort === 'ascending') {
+      nextDirection = 'descending';
+    } else if (currentSort === 'descending') {
+      nextDirection = 'ascending';
+    }
+
+    headerCells.forEach((cell) => { cell.removeAttribute('aria-sort'); });
+    th.setAttribute('aria-sort', nextDirection);
+
+    const sortedBands: YearlyTopBand[] = stats.sortYearlyTopBands(bands, rawKey, nextDirection);
+    const orderedRows = sortedBands
+      .map((band) => rowByBand.get(band))
+      .filter((row): row is HTMLTableRowElement => row !== undefined);
+    reorderTableRows(tbody, orderedRows);
+
+    const labelText = (button.textContent || '').trim();
+    status.textContent = `Sorted by ${labelText}, ${nextDirection}, ${orderedRows.length} bands.`;
+  };
+
+  table.addEventListener('command', (event: Event) => {
+    const commandEvent = event as InvokerCommandEvent;
+    if (commandEvent.command === '--sort' && commandEvent.source instanceof HTMLButtonElement) {
+      sortByButton(commandEvent.source);
+    }
+  });
+
+  // Fallback for browsers and test environments without Invoker Commands support.
+  const supportsInvokerCommands = typeof HTMLButtonElement !== 'undefined'
+    && 'commandForElement' in HTMLButtonElement.prototype;
+  if (!supportsInvokerCommands) {
+    thead.querySelectorAll<HTMLButtonElement>('button[command="--sort"]').forEach((button) => {
+      button.addEventListener('click', () => sortByButton(button));
+    });
+  }
+
+  replace(container, [
+    h('div', { class: 'lfm-top20' }, [table, status])
+  ]);
+}
+
 module.exports = {
   albumGrid,
   areaChart,
@@ -750,4 +999,5 @@ module.exports = {
   heatmap,
   kpiTiles,
   niceScale,
+  yearlyTopBandsTable,
 };

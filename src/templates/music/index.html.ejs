@@ -43,9 +43,13 @@ styles:
         if (isOddLastCard) {
           tabletSpanClass = 't-col-8';
         }
+        let desktopSpanClass = 'd-col-4';
+        if (pinnedPages.length === 2) {
+          desktopSpanClass = 'd-col-6';
+        }
         const summary = data.musicSummary || data.metaDescription || data.description;
       %>
-        <a href="/<%= url %>" class="music-pinned-card card-link col-4 <%= tabletSpanClass %> d-col-4">
+        <a href="/<%= url %>" class="music-pinned-card card-link col-4 <%= tabletSpanClass %> <%= desktopSpanClass %>">
           <article class="music-pinned-card__body">
             <h3 class="music-pinned-card__title"><%= data.title %></h3>
             <p class="music-pinned-card__summary"><%= summary %></p>

@@ -1,18 +1,15 @@
 // -----------------------------------------------------------------------------
 // Last.fm listening dashboard controller.
 //
-// One controller drives both music pages; the template's `data-mode` picks
-// which period controls and panels exist:
-//
-//   recent  — rolling windows (7D … 2Y), plus a 24-month context chart with
-//             the selected window shaded.
-//   history — every published period (all time, rolling, year, quarter,
-//             month, week), plus year columns and a year × month heatmap
-//             that double as period pickers.
+// Drives the unified music listening dashboard (/music/listening-history/):
+//   - Defaults to the rolling last-90-days window.
+//   - Offers every published period (all time, rolling, year, quarter, month,
+//     week), a 24-month context timeline with the active span shaded, year
+//     columns, a year × month heatmap, and a sortable yearly top-20 bands table.
 //
 // Every panel re-renders against the same selected period so the numbers
 // always agree. URL state: ?type=&period= for the period, ?trends= for the
-// drill-down dialog (both kept compatible with the previous pages' links).
+// drill-down dialog (keeping legacy ?period=last-7-days links working too).
 // -----------------------------------------------------------------------------
 
 import type {
@@ -40,7 +37,13 @@ import type {
   YearTotalRow,
   YearTotalsPayload
 } from './data.ts';
-import type { MonthlySeriesRow, MoverRow, ReportSummary } from './stats.ts';
+import type {
+  MonthlySeriesRow,
+  MoverRow,
+  ReportSummary,
+  YearlyReportInput,
+  YearlyTopBand
+} from './stats.ts';
 
 const charts = require('./charts.ts');
 const createDetailDialog = require('./detail-dialog.ts');
@@ -78,9 +81,12 @@ interface DashboardState {
   yearTotals: YearTotalRow[] | null;
   heatRows: HeatmapRow[] | null;
   timelineSeries: MonthlySeriesRow[] | null;
+  top20Bands: YearlyTopBand[] | null;
 }
 
-const DEFAULT_WINDOW = 'last-30-days';
+const DEFAULT_TYPE: PeriodTypeKey = 'rolling';
+const DEFAULT_PERIOD = 'last-90-days';
+const TOP_BANDS_LIMIT = 20;
 const LIMITS = { albums: [9, 25], artists: [10, 25] } as const;
 
 /**
@@ -154,7 +160,6 @@ function preserveFocus(container: HTMLElement, render: () => void): void {
  * @param {HTMLElement} root - Element with `data-lfm-dashboard`.
  */
 function initDashboard(root: HTMLElement): void {
-  const mode = root.dataset.mode === 'history' ? 'history' : 'recent';
   const $ = (name: string): HTMLElement | null => root.querySelector<HTMLElement>(`[data-lfm="${name}"]`);
   const els = {
     grid: $('grid')!,
@@ -176,11 +181,13 @@ function initDashboard(root: HTMLElement): void {
     timelineNote: $('timeline-note'),
     years: $('years'),
     heatmap: $('heatmap'),
+    top20: $('top20'),
+    top20Note: $('top20-note'),
   };
 
   const state: DashboardState = {
-    type: mode === 'recent' ? 'rolling' : 'all-time',
-    slug: mode === 'recent' ? DEFAULT_WINDOW : 'all-time',
+    type: DEFAULT_TYPE,
+    slug: DEFAULT_PERIOD,
     index: null,
     asOf: new Date(),
     token: 0,
@@ -191,6 +198,7 @@ function initDashboard(root: HTMLElement): void {
     yearTotals: null,
     heatRows: null,
     timelineSeries: null,
+    top20Bands: null,
   };
 
   // -- Drill-down dialog + ?trends= URL sync ----------------------------------
@@ -292,64 +300,76 @@ function initDashboard(root: HTMLElement): void {
 
   const writePeriodToUrl = (): void => {
     const url = new URL(window.location.href);
-    if (mode === 'history') {
-      if (state.type === 'all-time') {
-        url.searchParams.delete('type');
-        url.searchParams.delete('period');
-      } else {
-        url.searchParams.set('type', state.type);
-        url.searchParams.set('period', state.slug);
-      }
-    } else if (state.slug === DEFAULT_WINDOW) {
-      url.searchParams.delete('period');
+    const trends = url.searchParams.get('trends');
+    url.searchParams.delete('type');
+    url.searchParams.delete('period');
+    url.searchParams.delete('trends');
+    if (state.type === DEFAULT_TYPE && state.slug === DEFAULT_PERIOD) {
+      // Default selection keeps the URL clean.
+    } else if (state.type === 'all-time') {
+      url.searchParams.set('type', 'all-time');
     } else {
+      url.searchParams.set('type', state.type);
       url.searchParams.set('period', state.slug);
+    }
+    if (trends) {
+      url.searchParams.set('trends', trends);
     }
     writeUrl(url, 'replace', window.history.state);
   };
 
   /**
    * Resolves the requested period against what the data actually offers,
-   * falling back to the newest period of a type (or the default window).
+   * defaulting to the last 90 days rolling window when unspecified and
+   * preserving legacy `?period=<rolling-window>` links without a `type`.
    *
-   * @param {string} type - Requested type.
+   * @param {string|null} type - Requested type.
    * @param {string|null} slug - Requested slug.
    * @returns {{type: PeriodTypeKey, slug: string}} Valid period.
    */
-  const resolvePeriod = (type: string, slug: string | null): { type: PeriodTypeKey; slug: string } => {
-    if (mode === 'recent') {
-      const ok = slug !== null && (data.ROLLING_WINDOWS as readonly RollingWindow[]).some((w) => w.key === slug);
-      return { type: 'rolling', slug: ok && slug ? slug : DEFAULT_WINDOW };
+  const resolvePeriod = (type: string | null, slug: string | null): { type: PeriodTypeKey; slug: string } => {
+    if (!type) {
+      const isRollingSlug = slug !== null
+        && (data.ROLLING_WINDOWS as readonly RollingWindow[]).some((w) => w.key === slug);
+      if (isRollingSlug && slug) {
+        return { type: 'rolling', slug };
+      }
+      return { type: DEFAULT_TYPE, slug: DEFAULT_PERIOD };
     }
     const matchedType = (data.PERIOD_TYPES as readonly PeriodTypeOption[]).find((t) => t.key === type);
-    if (!matchedType || matchedType.key === 'all-time') {
+    if (!matchedType) {
+      return { type: DEFAULT_TYPE, slug: DEFAULT_PERIOD };
+    }
+    if (matchedType.key === 'all-time') {
       return { type: 'all-time', slug: 'all-time' };
     }
     const validType = matchedType.key;
     const options = periodsOf(validType);
-    if (!options.length) return { type: 'all-time', slug: 'all-time' };
-    const matchedSlug = slug !== null && options.some((p) => p.slug === slug) ? slug : options[0].slug;
-    return { type: validType, slug: matchedSlug };
+    if (!options.length) {
+      return { type: DEFAULT_TYPE, slug: DEFAULT_PERIOD };
+    }
+    if (slug !== null && options.some((p) => p.slug === slug)) {
+      return { type: validType, slug };
+    }
+    if (validType === 'rolling' && options.some((p) => p.slug === DEFAULT_PERIOD)) {
+      return { type: 'rolling', slug: DEFAULT_PERIOD };
+    }
+    return { type: validType, slug: options[0].slug };
   };
 
   // -- Toolbar ------------------------------------------------------------------
 
   const renderToolbar = (): void => {
-    const segments = mode === 'recent'
-      ? (data.ROLLING_WINDOWS as readonly RollingWindow[]).map((w) => ({
-        key: w.key, long: w.label.replace('Last ', ''), short: w.short, pressed: state.slug === w.key, label: w.label,
-      }))
-      : (data.PERIOD_TYPES as readonly PeriodTypeOption[]).map((t) => ({
-        key: t.key, long: t.label, short: t.label, pressed: state.type === t.key, label: t.label,
-      }));
+    const segments = (data.PERIOD_TYPES as readonly PeriodTypeOption[]).map((t) => ({
+      key: t.key, long: t.label, short: t.label, pressed: state.type === t.key, label: t.label,
+    }));
     replace(els.periods, segments.map((seg) => h('button', {
       type: 'button',
       class: 'lfm-segment',
       'aria-pressed': String(seg.pressed),
       'aria-label': seg.label,
       onclick: () => {
-        if (mode === 'recent') selectPeriod('rolling', seg.key);
-        else if (seg.key !== state.type) selectPeriod(seg.key, null);
+        if (seg.key !== state.type) selectPeriod(seg.key, null);
       },
     }, [
       h('span', { class: 'lfm-segment__long', text: seg.long }),
@@ -652,6 +672,7 @@ function initDashboard(root: HTMLElement): void {
       });
       yearsEl.querySelectorAll<HTMLElement>('.lfm-cols__col').forEach((col, i) => { col.dataset.key = rows[i].key; });
     });
+    yearsEl.classList.remove('is-skeleton');
   };
 
   const renderHeatmap = (span: PeriodSpan | null): void => {
@@ -668,20 +689,54 @@ function initDashboard(root: HTMLElement): void {
         onSelectYear: (year: number) => selectFromChart('year', String(year)),
       });
     });
+    heatmapEl.classList.remove('is-skeleton');
   };
 
   const renderTimeline = (span: PeriodSpan | null): void => {
     if (!els.timeline || !state.timelineSeries) return;
     const series = state.timelineSeries;
     const origin = series[0].month;
-    const band = span
-      ? { from: monthPosition(span.start, origin), to: monthPosition(span.end, origin, true) }
-      : null;
-    const label = labelFor(state.type, state.slug);
-    if (els.timelineNote) {
-      els.timelineNote.textContent = `Scrobbles per month. Shaded: ${label.toLowerCase()}.`;
+    let band: { from: number; to: number } | null = null;
+    let bandLabel: string | undefined;
+    if (span && state.type !== 'all-time') {
+      const from = monthPosition(span.start, origin);
+      const to = monthPosition(span.end, origin, true);
+      if (to > 0 && from < series.length) {
+        band = { from, to };
+        bandLabel = labelFor(state.type, state.slug);
+      }
     }
-    charts.areaChart(els.timeline, series, { band, bandLabel: label });
+    if (els.timelineNote) {
+      if (band && bandLabel) {
+        els.timelineNote.textContent = `Scrobbles per month. Shaded: ${bandLabel.toLowerCase()}.`;
+      } else {
+        els.timelineNote.textContent = 'Scrobbles per month.';
+      }
+    }
+    charts.areaChart(els.timeline, series, { band, bandLabel });
+    els.timeline.classList.remove('is-skeleton');
+  };
+
+  const renderTop20Bands = (bands: YearlyTopBand[], yearCount: number, yearRange: string): void => {
+    if (!els.top20) return;
+    if (els.top20Note) {
+      let rangeSuffix = '';
+      if (yearRange) {
+        rangeSuffix = ` (${yearRange})`;
+      }
+      els.top20Note.textContent = `${format.number(bands.length)} bands across ${format.number(yearCount)} years`
+        + `${rangeSuffix}. Default order: years in the top ${TOP_BANDS_LIMIT}, then average position. `
+        + 'Select a band for its history or a year chip to load that year.';
+    }
+    charts.yearlyTopBandsTable(els.top20, bands, {
+      onSelectArtist: (band: YearlyTopBand) => openTrend({
+        kind: 'artist',
+        artist: band.name,
+        image: band.image,
+      }),
+      onSelectYear: (year: number) => selectFromChart('year', String(year)),
+    });
+    els.top20.classList.remove('is-skeleton');
   };
 
   const renderRange = (span: PeriodSpan | null, comp: ComparisonEntry | null): void => {
@@ -702,10 +757,10 @@ function initDashboard(root: HTMLElement): void {
   /**
    * Loads a period (plus its comparison) and re-renders every panel.
    *
-   * @param {string} type - Report type.
-   * @param {string|null} slug - Period slug (null = newest of that type).
+   * @param {string|null} type - Report type.
+   * @param {string|null} slug - Period slug (null = default/newest of that type).
    */
-  const selectPeriod = async (type: string, slug: string | null): Promise<void> => {
+  const selectPeriod = async (type: string | null, slug: string | null): Promise<void> => {
     ({ type: state.type, slug: state.slug } = resolvePeriod(type, slug));
     const request = ++state.token;
     writePeriodToUrl();
@@ -752,7 +807,7 @@ function initDashboard(root: HTMLElement): void {
       if (request !== state.token) return;
       renderAlbums(report);
       renderArtists(report);
-      root.querySelectorAll('.is-skeleton').forEach((el) => el.classList.remove('is-skeleton'));
+      [els.kpis, els.albums, els.artists, els.focus, els.movers].forEach((el) => el.classList.remove('is-skeleton'));
     } catch {
       if (request !== state.token) return;
       els.range.textContent = 'That period couldn’t be loaded. Try another one.';
@@ -804,6 +859,35 @@ function initDashboard(root: HTMLElement): void {
     renderTimeline(state.span);
   };
 
+  const loadYearlyTopBands = async (): Promise<void> => {
+    if (!els.top20) return;
+    const yearEntries = data.reportsOfType(state.index, 'year') as ReportIndexEntry[];
+    const loaded = await Promise.all(
+      yearEntries.map(async (entry): Promise<YearlyReportInput | null> => {
+        const yearNumber = Number(data.periodSlug(entry.filename, 'year'));
+        if (!Number.isInteger(yearNumber)) return null;
+        try {
+          const yearReport = await (data.getReport(entry.filename) as Promise<LastFmReport>);
+          return { year: yearNumber, report: yearReport };
+        } catch {
+          return null;
+        }
+      })
+    );
+    const validReports = loaded.filter((entry): entry is YearlyReportInput => entry !== null);
+    const bands: YearlyTopBand[] = stats.yearlyTopBands(validReports, TOP_BANDS_LIMIT);
+    state.top20Bands = bands;
+
+    const sortedYears = validReports.map((entry) => entry.year).sort((a, b) => a - b);
+    let yearRange = '';
+    if (sortedYears.length === 1) {
+      yearRange = String(sortedYears[0]);
+    } else if (sortedYears.length > 1) {
+      yearRange = `${sortedYears[0]}–${sortedYears[sortedYears.length - 1]}`;
+    }
+    renderTop20Bands(bands, sortedYears.length, yearRange);
+  };
+
   // -- Boot ---------------------------------------------------------------------
 
   // Showing more rows can reveal items whose comparison count needs a lookup.
@@ -821,11 +905,17 @@ function initDashboard(root: HTMLElement): void {
   const boot = async (): Promise<void> => {
     const lastUpdated = await (data.getLastUpdated() as Promise<LastUpdatedInfo>).catch(() => null);
     if (lastUpdated && lastUpdated.datetime) state.asOf = new Date(lastUpdated.datetime);
-    if (mode === 'history') state.index = await (data.getIndex() as Promise<ReportIndex>).catch(() => null);
+    state.index = await (data.getIndex() as Promise<ReportIndex>).catch(() => null);
     const params = new URLSearchParams(window.location.search);
-    selectPeriod(params.get('type') || state.type, params.get('period'));
-    if (mode === 'history') loadHistoryPanels().catch(() => {});
-    else loadTimeline().catch(() => {});
+    selectPeriod(params.get('type'), params.get('period'));
+    loadHistoryPanels().catch(() => {});
+    loadTimeline().catch(() => {});
+    loadYearlyTopBands().catch(() => {
+      if (els.top20) {
+        els.top20.classList.remove('is-skeleton');
+        replace(els.top20, h('p', { class: 'lfm-status is-error', text: 'Yearly top-20 bands could not be loaded.' }));
+      }
+    });
     syncDialogToUrl();
   };
   renderToolbar();

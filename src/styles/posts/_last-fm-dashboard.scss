@@ -1,10 +1,10 @@
 // -----------------------------------------------------------------------------
 // Last.fm listening dashboard.
 //
-// Shared by posts/last-fm.scss (recent) and posts/last-fm-scrobbles.scss
-// (history). Mobile-first: one column of panels at 4 columns, then the 8- and
-// 12-column tiers place panels side by side. Every colour, radius, space, and
-// duration reads from system tokens; chart colours from the --chart-* set.
+// Shared dashboard styles imported by posts/last-fm-scrobbles.scss. Mobile-first:
+// one column of panels at 4 columns, then the 8- and 12-column tiers place panels
+// side by side. Every colour, radius, space, and duration reads from system tokens;
+// chart colours from the --chart-* set.
 //
 // The dialog and tooltip are appended to <body> (outside .lfm), so they are
 // styled at the top level with their own lfm- prefix.
@@ -1244,6 +1244,344 @@ $stepper-min: 17rem;
 
 .lfm-footer {
   margin-top: var(--space-6);
+}
+
+// Yearly top-20 bands: sortable responsive table ----------------------------------------------
+
+.lfm-top20 {
+  container-type: inline-size;
+  min-width: 0;
+}
+
+.lfm .lfm-top20__table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--font-sans);
+
+  thead th {
+    padding: 0;
+    border-bottom: 0.0625rem solid var(--color-border);
+    vertical-align: middle;
+    text-align: left;
+  }
+
+  thead th:not(:has(> button)) {
+    padding: var(--space-2);
+    font-size: var(--fs-2xs);
+    font-weight: var(--fw-semibold);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+  }
+
+  thead th.is-numeric {
+    text-align: right;
+  }
+
+  tbody {
+    counter-reset: lfm-top20-row;
+  }
+
+  tbody tr {
+    counter-increment: lfm-top20-row;
+    border-bottom: 0.0625rem solid var(--color-divider);
+  }
+
+  tbody tr:last-child {
+    border-bottom: 0;
+  }
+
+  tbody th,
+  tbody td {
+    padding: var(--space-3) var(--space-2);
+    vertical-align: middle;
+  }
+}
+
+.lfm-top20__sort-button {
+  @include lfm-button {
+    --lfm-button-bg: var(--lfm-sort-bg, transparent);
+    --lfm-button-bg-hover: var(--color-surface-2);
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-1);
+    width: var(--lfm-sort-width, 100%);
+    min-height: 2.25rem;
+    padding: var(--lfm-sort-pad, var(--space-2));
+    border: var(--lfm-sort-border, 0 solid transparent);
+    border-radius: var(--lfm-sort-radius, var(--radius-xs));
+    font-family: var(--font-sans);
+    font-size: var(--fs-2xs);
+    font-weight: var(--fw-semibold);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+    white-space: nowrap;
+    transition:
+      background-color var(--dur-2) var(--ease-standard),
+      border-color var(--dur-2) var(--ease-standard),
+      color var(--dur-2) var(--ease-standard);
+
+    &:hover {
+      color: var(--color-text);
+    }
+
+    th.is-numeric > & {
+      justify-content: flex-end;
+    }
+
+    th[aria-sort] > & {
+      color: var(--color-text);
+    }
+  }
+}
+
+.lfm-top20__sort-icon {
+  @include lfm-decorative(inline-flex);
+  align-items: center;
+  justify-content: center;
+  font-size: var(--fs-2xs);
+  line-height: 1;
+  opacity: 0.45;
+
+  &::before {
+    content: "↕";
+  }
+
+  th[aria-sort="ascending"] &::before {
+    content: "▲";
+  }
+
+  th[aria-sort="descending"] &::before {
+    content: "▼";
+  }
+
+  th[aria-sort] & {
+    color: var(--color-primary-300);
+    opacity: 1;
+  }
+}
+
+.lfm-top20__band-cell {
+  text-align: left;
+  font-weight: var(--fw-semibold);
+  min-width: 12rem;
+}
+
+.lfm-top20__band {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-width: 0;
+}
+
+.lfm-top20__rank {
+  @include lfm-decorative(inline-block);
+  flex: 0 0 1.75rem;
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-semibold);
+  color: var(--color-text-muted);
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+
+  &::before {
+    content: counter(lfm-top20-row);
+  }
+}
+
+.lfm-top20__artist {
+  @include lfm-button {
+    --lfm-button-bg-hover: var(--color-surface-2);
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    min-width: 0;
+    padding: var(--space-1) var(--space-2) var(--space-1) var(--space-1);
+    border-radius: var(--radius-md);
+    text-align: left;
+    transition: background-color var(--dur-2) var(--ease-standard), color var(--dur-2) var(--ease-standard);
+
+    &:hover .lfm-top20__name {
+      color: var(--color-primary-300);
+    }
+  }
+}
+
+.lfm-top20__avatar {
+  flex: 0 0 2rem;
+  width: 2rem;
+  height: 2rem;
+  overflow: hidden;
+  border-radius: 50%;
+  background-color: var(--color-surface-2);
+
+  api-image,
+  picture,
+  img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}
+
+.lfm-top20__name {
+  min-width: 0;
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-semibold);
+  color: var(--color-text);
+  overflow-wrap: anywhere;
+  transition: color var(--dur-2) var(--ease-standard);
+}
+
+.lfm-top20__num {
+  text-align: right;
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-semibold);
+  color: var(--color-text);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.lfm-top20__years-cell {
+  width: 55%;
+}
+
+.lfm .lfm-top20__chips {
+  @include lfm-list-reset;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+}
+
+.lfm-top20__chip {
+  @include lfm-button {
+    --lfm-button-bg: var(--lfm-chip-bg, var(--color-surface-2));
+    --lfm-button-bg-hover: var(--color-surface-3);
+    display: inline-flex;
+    align-items: baseline;
+    gap: var(--space-1);
+    padding: calc(var(--unit) / 2) var(--space-2);
+    border: 0.0625rem solid var(--color-border);
+    border-radius: var(--radius-pill);
+    font-family: var(--font-sans);
+    font-size: var(--fs-2xs);
+    line-height: var(--lh-snug);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+    transition:
+      background-color var(--dur-1) var(--ease-standard),
+      border-color var(--dur-1) var(--ease-standard);
+
+    &:hover {
+      border-color: var(--color-border-strong);
+    }
+
+    &.is-first {
+      --lfm-button-bg: var(--color-primary-tint);
+      border-color: var(--color-primary-500);
+    }
+  }
+}
+
+.lfm-top20__chip-year {
+  color: var(--color-text);
+  font-weight: var(--fw-medium);
+}
+
+.lfm-top20__chip-rank {
+  color: var(--color-text-muted);
+  font-weight: var(--fw-semibold);
+
+  .is-first > & {
+    color: var(--color-primary-300);
+  }
+}
+
+@container (width < 42rem) {
+  .lfm .lfm-top20__table {
+    --lfm-sort-width: auto;
+    --lfm-sort-pad: var(--space-1) var(--space-3);
+    --lfm-sort-border: 0.0625rem solid var(--color-border);
+    --lfm-sort-radius: var(--radius-pill);
+    --lfm-sort-bg: var(--color-surface-2);
+    --lfm-chip-bg: var(--color-surface-1);
+  }
+
+  .lfm .lfm-top20__table,
+  .lfm .lfm-top20__table thead,
+  .lfm .lfm-top20__table tbody {
+    display: block;
+    width: 100%;
+  }
+
+  .lfm .lfm-top20__table thead tr {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    padding-bottom: var(--space-3);
+    margin-bottom: var(--space-3);
+    border-bottom: 0.0625rem solid var(--color-divider);
+  }
+
+  .lfm .lfm-top20__table thead th {
+    display: block;
+    border: 0;
+  }
+
+  .lfm .lfm-top20__table thead th:not([data-sort-key]) {
+    display: none;
+  }
+
+  .lfm .lfm-top20__table thead th[aria-sort] {
+    --lfm-sort-bg: var(--color-primary-tint);
+    --lfm-sort-border: 0.0625rem solid var(--color-primary-500);
+  }
+
+  .lfm .lfm-top20__table tbody {
+    display: grid;
+    gap: var(--space-3);
+  }
+
+  .lfm .lfm-top20__table tbody tr {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-2) var(--space-3);
+    padding: var(--space-3);
+    border: 0.0625rem solid var(--color-border);
+    border-radius: var(--radius-md);
+    background-color: var(--color-surface-2);
+  }
+
+  .lfm .lfm-top20__table tbody th,
+  .lfm .lfm-top20__table tbody td {
+    display: block;
+    padding: 0;
+    border: 0;
+    text-align: left;
+  }
+
+  .lfm-top20__band-cell {
+    grid-column: 1 / -1;
+    min-width: 0;
+  }
+
+  .lfm-top20__rank {
+    flex-basis: auto;
+    min-width: 1.25rem;
+    text-align: left;
+  }
+
+  .lfm-top20__years-cell {
+    grid-column: 1 / -1;
+    width: auto;
+  }
+
+  .lfm-top20__num::before {
+    content: attr(data-label) ": ";
+    font-weight: var(--fw-regular);
+    color: var(--color-text-muted);
+  }
 }
 
 // Tooltip (appended to <body>, or to an open dialog) ------------------------------------------

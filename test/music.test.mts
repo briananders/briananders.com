@@ -158,33 +158,49 @@ describe('rendered golden music section', () => {
   const readGolden = (relativePath: string): string => readFileSync(path.join(goldenDir, relativePath), 'utf8');
 
   test(
-    '/music/ pins Recent Listening Trends, Music Listening History, and Music News before oldest-to-newest shows',
+    '/music/ pins Music Listening History and Music News before oldest-to-newest shows',
     () => {
       const html = readGolden('music/index.html');
 
-      const recentPos = html.indexOf('/music/last-fm/');
-      const historyPos = html.indexOf('/music/last-fm-scrobbles/');
+      const historyPos = html.indexOf('/music/listening-history/');
       const newsPos = html.indexOf('/music/music-news/');
       const firstShowPos = html.indexOf('/music/show/2006-06-21-bonner-springs/');
       const middleShowPos = html.indexOf('/music/show/2019-05-23-new-orleans/');
       const lastShowPos = html.indexOf('/music/show/2026-11-14-san-francisco/');
 
-      assert.ok(recentPos > -1 && historyPos > -1 && newsPos > -1, 'all 3 pinned music posts must appear on /music/');
-      assert.ok(recentPos < historyPos && historyPos < newsPos, 'pinned posts must render in pin order');
+      assert.equal(html.includes('/music/last-fm/'), false, 'merged /music/last-fm/ must not be pinned on /music/');
+      assert.equal(
+        html.includes('/music/last-fm-scrobbles/'),
+        false,
+        'moved /music/last-fm-scrobbles/ must not be pinned on /music/',
+      );
+      assert.ok(historyPos > -1 && newsPos > -1, 'both pinned music posts must appear on /music/');
+      assert.ok(historyPos < newsPos, 'pinned posts must render in pin order');
       assert.ok(newsPos < firstShowPos, 'pinned posts must appear above the shows list');
       assert.ok(firstShowPos < middleShowPos && middleShowPos < lastShowPos, 'shows must be listed oldest to newest');
     },
   );
 
-  test('/posts/ excludes the three moved music posts while legacy /posts/ URLs redirect cleanly', () => {
+  test('homepage links to listening history and music news under Music that I have been listening to', () => {
+    const homeHtml = readGolden('index.html');
+    const sectionStart = homeHtml.indexOf('Music that I have been listening to');
+    assert.ok(sectionStart > -1, 'expected homepage music section heading');
+    const musicSection = homeHtml.slice(sectionStart);
+    assert.ok(musicSection.includes('/music/listening-history/'), 'expected listening history link on homepage');
+    assert.ok(musicSection.includes('/music/music-news/'), 'expected music news link on homepage');
+  });
+
+  test('/posts/ excludes the moved music posts while legacy and merged URLs redirect cleanly', () => {
     const postsHtml = readGolden('posts/index.html');
     assert.equal(postsHtml.includes('/posts/last-fm/'), false);
     assert.equal(postsHtml.includes('/posts/last-fm-scrobbles/'), false);
     assert.equal(postsHtml.includes('/posts/music-news/'), false);
 
     const redirectPairs: Array<[string, string]> = [
-      ['posts/last-fm/index.html', '/music/last-fm/'],
-      ['posts/last-fm-scrobbles/index.html', '/music/last-fm-scrobbles/'],
+      ['music/last-fm/index.html', '/music/listening-history/'],
+      ['music/last-fm-scrobbles/index.html', '/music/listening-history/'],
+      ['posts/last-fm/index.html', '/music/listening-history/'],
+      ['posts/last-fm-scrobbles/index.html', '/music/listening-history/'],
       ['posts/music-news/index.html', '/music/music-news/']
     ];
     redirectPairs.forEach(([file, target]) => {
@@ -197,6 +213,35 @@ describe('rendered golden music section', () => {
           || stubHtml.includes(`href="https://briananders.com${target}"`),
         `${file} canonical should point to ${target}`,
       );
+    });
+  });
+
+  test('redirects.txt maps every historical URL directly to an existing non-redirect golden page', () => {
+    const raw = readFileSync(path.join(projectRoot, 'redirects.txt'), 'utf8').trim();
+    const lines = raw.split('\n').filter((line) => line.trim().length > 0);
+    assert.ok(lines.length >= 50, `expected historical redirect map, found ${lines.length} entries`);
+
+    const sources = new Set<string>();
+    const targets = new Set<string>();
+    lines.forEach((line) => {
+      const parts = line.trim().split(/\s+/);
+      assert.equal(parts.length, 2, `invalid redirect line: ${line}`);
+      const [fromUrl, toUrl] = parts;
+      assert.ok(fromUrl.startsWith('/') && fromUrl.endsWith('/'), `expected normalized source path: ${fromUrl}`);
+      assert.ok(toUrl.startsWith('/') && toUrl.endsWith('/'), `expected normalized target path: ${toUrl}`);
+      assert.notEqual(fromUrl, toUrl, `self-redirect not allowed: ${line}`);
+      assert.equal(sources.has(fromUrl), false, `duplicate redirect source: ${fromUrl}`);
+      sources.add(fromUrl);
+      targets.add(toUrl);
+
+      const goldenTarget = path.join(goldenDir, toUrl.replace(/^\/+/, ''), 'index.html');
+      assert.ok(existsSync(goldenTarget), `redirect target missing from golden: ${toUrl}`);
+      const targetHtml = readFileSync(goldenTarget, 'utf8');
+      assert.equal(targetHtml.includes('http-equiv=refresh'), false, `redirect target is itself a redirect: ${toUrl}`);
+    });
+
+    targets.forEach((target) => {
+      assert.equal(sources.has(target), false, `redirect chain detected through ${target}`);
     });
   });
 

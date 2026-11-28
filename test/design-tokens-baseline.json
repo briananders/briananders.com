@@ -123,10 +123,6 @@
     "colors": 0,
     "px": 0
   },
-  "src/styles/posts/last-fm.scss": {
-    "colors": 0,
-    "px": 0
-  },
   "src/styles/posts/lissajous-curve.scss": {
     "colors": 2,
     "px": 3

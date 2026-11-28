@@ -165,14 +165,19 @@ const FIXTURES: Record<string, unknown> = {
   },
 };
 (data.ROLLING_WINDOWS as RollingWindowEntry[]).forEach((w) => {
-  const startDate = w.key === 'last-12-months' ? '2023-06-16' : '2024-05-16';
+  let startDate = '2024-05-16';
+  if (w.key === 'last-12-months') {
+    startDate = '2023-06-16';
+  } else if (w.key === 'last-90-days') {
+    startDate = '2024-03-17';
+  }
   FIXTURES[`reports/rolling_${w.key}.json`] = report(
     w.key,
     100,
     [artist('Underoath', 40), artist('The Beatles', 10)],
     [album('Underoath', 'Voyeurist', 20)],
     {
-      // A real year for the 30-day window's baseline, so pace scaling is exercised.
+      // Real day spans for rolling windows so pace scaling is exercised accurately.
       startDate, endDate: '2024-06-15', label: w.label,
     },
   );
@@ -202,9 +207,9 @@ const settle = async (rounds = 12): Promise<void> => {
 /**
  * Renders the real dashboard partial into the page and boots it.
  */
-const mount = async (mode: string, search = ''): Promise<void> => {
-  window.history.replaceState(null, '', `/posts/test/${search}`);
-  document.body.innerHTML = ejs.render(partial, { mode });
+const mount = async (search = ''): Promise<void> => {
+  window.history.replaceState(null, '', `/music/listening-history/${search}`);
+  document.body.innerHTML = ejs.render(partial, {});
   data.clearCache();
   requests = [];
   dashboard.init();
@@ -389,6 +394,92 @@ describe('last-fm stats', () => {
     assert.equal(stats.monthKey(new Date('2024-01-15T00:00:00Z'), -1), '2023-12');
     assert.equal(stats.monthKey(new Date('2024-01-15T00:00:00Z'), 23), '2025-12');
   });
+
+  test('yearlyTopBands aggregates top-20 yearly placements and orders by years then average position', () => {
+    const filler = Array.from({ length: 19 }, (_, idx) => artist(`Filler ${idx + 1}`, 20 - idx));
+    const year2022 = report('2022', 500, [
+      artist('He Is Legend', 120, 'hil-old'),
+      artist('Emery', 100),
+      ...filler.slice(0, 18),
+      artist('Outside Top 20', 1)
+    ], []);
+    const year2023 = report('2023', 500, [
+      artist('The Beatles', 150),
+      artist('Emery', 110),
+      artist('he is legend', 90, 'hil-new')
+    ], []);
+    const year2024 = report('2024', 500, [
+      artist('Emery', 140),
+      artist('The Beatles', 130)
+    ], []);
+
+    const bands = stats.yearlyTopBands([
+      { year: 2024, report: year2024 },
+      { year: 2022, report: year2022 },
+      { year: 2023, report: year2023 }
+    ], 20);
+
+    // #21 artist must be excluded.
+    assert.equal(bands.some((b: { name: string }) => b.name === 'Outside Top 20'), false);
+
+    // Emery: 3 yrs (avg 1.67) > The Beatles: 2 yrs (avg 1.5) > He Is Legend: 2 yrs (avg 2.0)
+    assert.deepEqual(
+      bands.slice(0, 3).map((b: { name: string }) => b.name),
+      ['Emery', 'The Beatles', 'he is legend'],
+    );
+    assert.equal(bands[0].yearsCount, 3);
+    assert.ok(Math.abs(bands[0].averagePosition - (5 / 3)) < 1e-9);
+    assert.equal(bands[0].bestPosition, 1);
+    assert.deepEqual(
+      bands[0].placements.map((p: { year: number; position: number }) => [p.year, p.position]),
+      [[2022, 2], [2023, 2], [2024, 1]],
+    );
+    // Case-insensitive merge keeps the newest year's image.
+    assert.equal(bands[2].image, 'hil-new');
+    assert.equal(bands[2].yearsCount, 2);
+    assert.equal(bands[2].averagePosition, 2);
+  });
+
+  test('sortYearlyTopBands supports years, average position, and name without mutating input', () => {
+    const sample = [
+      {
+        name: 'Emery', yearsCount: 3, averagePosition: 5.0, bestPosition: 1, placements: [],
+      },
+      {
+        name: 'The Beatles', yearsCount: 3, averagePosition: 2.5, bestPosition: 1, placements: [],
+      },
+      {
+        name: 'Atreyu', yearsCount: 1, averagePosition: 1.0, bestPosition: 1, placements: [],
+      },
+      {
+        name: 'Bayside', yearsCount: 2, averagePosition: 2.5, bestPosition: 2, placements: [],
+      }
+    ];
+    const snapshot = sample.map((b) => b.name);
+
+    // Years descending: more years first, then lower (better) average position.
+    assert.deepEqual(
+      stats.sortYearlyTopBands(sample, 'years', 'descending').map((b: { name: string }) => b.name),
+      ['The Beatles', 'Emery', 'Bayside', 'Atreyu'],
+    );
+    // Years ascending: fewer years first, ties still favor lower average position.
+    assert.deepEqual(
+      stats.sortYearlyTopBands(sample, 'years', 'ascending').map((b: { name: string }) => b.name),
+      ['Atreyu', 'Bayside', 'The Beatles', 'Emery'],
+    );
+    // Average position ascending: #1.0 first, ties favor more years.
+    assert.deepEqual(
+      stats.sortYearlyTopBands(sample, 'average', 'ascending').map((b: { name: string }) => b.name),
+      ['Atreyu', 'The Beatles', 'Bayside', 'Emery'],
+    );
+    // Name ascending: alphabetical.
+    assert.deepEqual(
+      stats.sortYearlyTopBands(sample, 'name', 'ascending').map((b: { name: string }) => b.name),
+      ['Atreyu', 'Bayside', 'Emery', 'The Beatles'],
+    );
+    // Input array was not mutated.
+    assert.deepEqual(sample.map((b) => b.name), snapshot);
+  });
 });
 
 // ── format.ts + chart scale ──────────────────────────────────────────────────
@@ -434,27 +525,46 @@ describe('listening dashboard', () => {
     document.body.innerHTML = '';
   });
 
-  test('history mode renders every panel for all time, including the long view', async () => {
-    await mount('history');
-    assert.equal($req('[data-lfm="range"]').textContent, 'Mar 2022 – Jun 2024');
+  test('defaults to last 90 days and renders every panel, timeline, long view, and yearly top-20 bands', async () => {
+    await mount();
+    assert.equal(window.location.search, '');
+    assert.equal($req('.lfm-segment[aria-pressed="true"]').getAttribute('aria-label'), 'Rolling');
+    assert.equal($req<HTMLSelectElement>('.lfm-stepper__select').value, 'last-90-days');
+    assert.ok(requests.includes('/last-fm-history/reports/rolling_last-90-days.json'));
+    assert.ok(requests.includes('/last-fm-history/reports/rolling_last-12-months.json'));
     assert.equal($$('.lfm-kpi').length, 4);
-    assert.equal($req('.lfm-kpi__value').textContent, '360');
-    assert.equal($req('.lfm-album__title').textContent, 'In Keeping Secrets');
-    assert.equal($req('.lfm-bars__name').textContent, 'Coheed and Cambria');
+    assert.equal($req('.lfm-kpi__value').textContent, '100');
+    assert.equal($('.lfm-area__band') !== null, true, 'the selected 90-day window is shaded on the timeline');
+    assert.match($req('[data-lfm="timeline-note"]').textContent || '', /Shaded: last 90 days/);
     assert.equal($$('.lfm-stack').length, 2, 'artist and album focus bars');
-    // All time has no earlier period, so momentum compares the last 12 months with it.
-    assert.match($req('[data-lfm="movers-note"]').textContent || '', /Last 12 months vs all time/);
     assert.deepEqual($$('.lfm-cols__col').map((col) => col.dataset.key), ['2022', '2023', '2024']);
     assert.equal($$('.lfm-heat__row').length, 4, 'header + one row per year');
     assert.equal($('.lfm-heat__cell[data-month="2022-01"]'), null, 'months before the first scrobble are untracked');
     assert.equal($('.lfm-heat__cell[data-month="2024-07"]'), null, 'months after the data date are untracked');
     assert.ok($req('.lfm-heat__cell[data-month="2023-02"]').classList.contains('is-zero'));
+    assert.equal($$('.lfm-top20__table tbody tr').length, 3, 'all bands from yearly top-20 reports render');
     assert.equal($$('.is-skeleton').length, 0);
     assert.equal($req('[data-lfm="grid"]').getAttribute('aria-busy'), 'false');
   });
 
+  test('all time renders lifetime totals, unshaded timeline, and last-12-months movers', async () => {
+    await mount('?type=all-time');
+    assert.equal(window.location.search, '?type=all-time');
+    assert.equal($req('[data-lfm="range"]').textContent, 'Mar 2022 – Jun 2024');
+    assert.equal($req('.lfm-kpi__value').textContent, '360');
+    assert.equal($req('.lfm-album__title').textContent, 'In Keeping Secrets');
+    assert.equal($req('.lfm-bars__name').textContent, 'Coheed and Cambria');
+    assert.match($req('[data-lfm="movers-note"]').textContent || '', /Last 12 months vs all time/);
+    assert.equal($('.lfm-area__band'), null, 'all time does not shade the 24-month timeline');
+    assert.equal($req('[data-lfm="timeline-note"]').textContent, 'Scrobbles per month.');
+    assert.equal($req('[data-lfm="artists-note"]').hidden, true);
+    assert.equal($('.lfm-bars.has-compare'), null);
+    assert.equal($('.lfm-bars__was'), null);
+    assert.equal($req('.lfm-bars__row').hasAttribute('aria-label'), false);
+  });
+
   test('selecting a year column loads that year against the one before it', async () => {
-    await mount('history');
+    await mount();
     $req('.lfm-cols__col[data-key="2023"]').click();
     await settle();
     assert.equal(window.location.search, '?type=year&period=2023');
@@ -469,7 +579,7 @@ describe('listening dashboard', () => {
   });
 
   test('a heatmap cell loads its month', async () => {
-    await mount('history');
+    await mount();
     $req('.lfm-heat__cell[data-month="2024-05"]').click();
     await settle();
     assert.equal(window.location.search, '?type=month&period=2024-05');
@@ -477,12 +587,12 @@ describe('listening dashboard', () => {
   });
 
   test('changing period while a deep link is open keeps the trends slashes readable', async () => {
-    await mount('history', '?type=year&period=1999&trends=artists/underoath');
+    await mount('?type=year&period=1999&trends=artists/underoath');
     assert.equal(window.location.search, '?type=year&period=2024&trends=artists/underoath');
   });
 
   test('?trends=years/YYYY opens the year dialog; closing it clears the parameter', async () => {
-    await mount('history', '?trends=years/2023');
+    await mount('?trends=years/2023');
     const dialog = $req<HTMLDialogElement>('dialog.lfm-dialog');
     assert.equal(dialog.hasAttribute('open'), true);
     assert.ok(requests.includes('/last-fm-history/trends/years/2023.json'));
@@ -496,7 +606,7 @@ describe('listening dashboard', () => {
   });
 
   test('selecting an artist opens its history and records a readable URL', async () => {
-    await mount('history', '?type=year&period=2024');
+    await mount('?type=year&period=2024');
     $req('.lfm-bars__row').click();
     await settle();
     assert.equal(window.location.search, '?type=year&period=2024&trends=artists/underoath');
@@ -505,23 +615,67 @@ describe('listening dashboard', () => {
     assert.equal($$('.lfm-dialog .lfm-facts dd')[0].textContent, '15');
   });
 
-  test('recent mode defaults to 30 days and switches windows with their baseline', async () => {
-    await mount('recent');
-    assert.equal($req('.lfm-segment[aria-pressed="true"]').getAttribute('aria-label'), 'Last 30 days');
-    assert.ok(requests.includes('/last-fm-history/reports/rolling_last-30-days.json'));
-    assert.ok(requests.includes('/last-fm-history/reports/rolling_last-12-months.json'));
-    assert.equal($('.lfm-area__band') !== null, true, 'the selected window is shaded on the timeline');
-    assert.equal($('[data-lfm="years"]'), null, 'no long-view panels on the recent page');
-
-    $$('.lfm-segment')[0].click();
-    await settle();
-    assert.equal(window.location.search, '?period=last-7-days');
+  test('legacy ?period=<rolling-window> links load that rolling window and shade the timeline', async () => {
+    await mount('?period=last-7-days');
+    assert.equal(window.location.search, '?type=rolling&period=last-7-days');
+    assert.equal($req('.lfm-segment[aria-pressed="true"]').getAttribute('aria-label'), 'Rolling');
+    assert.equal($req<HTMLSelectElement>('.lfm-stepper__select').value, 'last-7-days');
+    assert.ok(requests.includes('/last-fm-history/reports/rolling_last-7-days.json'));
     assert.ok(requests.includes('/last-fm-history/reports/rolling_last-90-days.json'));
     assert.match($req('[data-lfm="timeline-note"]').textContent || '', /Shaded: last 7 days/);
   });
 
+  test('yearly top-20 bands table lists years/positions, sorts in place, and links to artists and years', async () => {
+    await mount();
+    const table = $req<HTMLTableElement>('.lfm-top20__table');
+    const rowNames = (): string[] => $$('.lfm-top20__table tbody tr .lfm-top20__name')
+      .map((el) => el.textContent || '');
+
+    // Default sort: years descending, then average position ascending, then band name.
+    assert.deepEqual(rowNames(), ['Coheed and Cambria', 'Paul Simon', 'Underoath']);
+    assert.equal($req('.lfm-top20__table thead th[data-sort-key="years"]').getAttribute('aria-sort'), 'descending');
+
+    // Verify year and position chips for Coheed and Cambria: 2023 #1 (highlighted), 2024 #2.
+    const coheedChips = $$('.lfm-top20__table tbody tr:first-child .lfm-top20__chip');
+    assert.deepEqual(
+      coheedChips.map((chip) => `${chip.dataset.year}:#${chip.dataset.position}`),
+      ['2023:#1', '2024:#2'],
+    );
+    assert.ok(coheedChips[0].classList.contains('is-first'));
+    assert.equal(coheedChips[1].classList.contains('is-first'), false);
+
+    // Keep references to existing <tr> nodes to confirm sorting reorders in place.
+    const initialRows = new Set($$('.lfm-top20__table tbody tr'));
+
+    // Click Avg rank header: Underoath (avg #1.0) moves to first.
+    $req<HTMLButtonElement>('th[data-sort-key="average"] button').click();
+    assert.deepEqual(rowNames(), ['Underoath', 'Coheed and Cambria', 'Paul Simon']);
+    assert.equal($req('th[data-sort-key="average"]').getAttribute('aria-sort'), 'ascending');
+    assert.equal($req('th[data-sort-key="years"]').hasAttribute('aria-sort'), false);
+    assert.match($req('.lfm-top20 [role="status"]').textContent || '', /Sorted by Avg rank, ascending, 3 bands/);
+    $$('.lfm-top20__table tbody tr').forEach((row) => assert.ok(initialRows.has(row)));
+
+    // Click Band header twice: ascending then descending.
+    const bandBtn = $req<HTMLButtonElement>('th[data-sort-key="name"] button');
+    bandBtn.click();
+    assert.deepEqual(rowNames(), ['Coheed and Cambria', 'Paul Simon', 'Underoath']);
+    bandBtn.click();
+    assert.deepEqual(rowNames(), ['Underoath', 'Paul Simon', 'Coheed and Cambria']);
+    assert.equal(table.querySelectorAll('thead th[aria-sort]').length, 1);
+
+    // Clicking a year chip loads that year in the dashboard.
+    $req<HTMLButtonElement>('.lfm-top20__chip[data-year="2023"]').click();
+    await settle();
+    assert.equal(window.location.search, '?type=year&period=2023');
+
+    // Clicking a band button opens its trend dialog.
+    $req<HTMLButtonElement>('.lfm-top20__table tbody tr[data-band-key="underoath"] .lfm-top20__artist').click();
+    await settle();
+    assert.equal($req('.lfm-dialog__title').textContent, 'Underoath');
+  });
+
   test('top lists compare each item with the previous period', async () => {
-    await mount('history', '?type=year&period=2024');
+    await mount('?type=year&period=2024');
     // 2024 is in progress on the data date (June 15), so it reads "so far".
     assert.equal($req('[data-lfm="artists-note"]').textContent, 'Plays in 2024 so far, compared with 2023.');
     assert.equal($req('[data-lfm="albums-note"]').hidden, false);
@@ -564,34 +718,29 @@ describe('listening dashboard', () => {
     assert.equal($req('.lfm-album__count').textContent, '18 plays · was 30');
   });
 
-  test('rolling windows compare with the usual pace, and all time compares with nothing', async () => {
-    await mount('recent');
-    // 30 days against a 365-day baseline: 40 plays there is a usual 3 per 30 days.
-    const expectedArtistsNote = 'Plays in the last 30 days. '
-      + '“Usual” is your pace over the last 12 months, scaled to 30 days.';
+  test('rolling windows compare with the usual pace', async () => {
+    await mount();
+    // 90 days against a 365-day baseline: 40 plays there is a usual 10 per 90 days.
+    const expectedArtistsNote = 'Plays in the last 90 days. '
+      + '“Usual” is your pace over the last 12 months, scaled to 90 days.';
     assert.equal($req('[data-lfm="artists-note"]').textContent, expectedArtistsNote);
     assert.deepEqual(
       $$('[data-lfm="artists"] .lfm-key li').map((li) => li.textContent),
-      ['Last 30 days', 'Usual pace (last 12 months)'],
+      ['Last 90 days', 'Usual pace (last 12 months)'],
     );
-    const expectedRowAria = '1. Underoath: 40 scrobbles in the last 30 days, '
-      + 'compared with a usual 3 at your pace over the last 12 months.';
+    const expectedRowAria = '1. Underoath: 40 scrobbles in the last 90 days, '
+      + 'compared with a usual 10 at your pace over the last 12 months.';
     assert.equal($req('.lfm-bars__row').getAttribute('aria-label'), expectedRowAria);
-    assert.equal($req('.lfm-bars__was').textContent, 'usual 3');
-    assert.equal($req('.lfm-album__count').textContent, '20 plays · usual 2');
-
-    await mount('history');
-    assert.equal($req('[data-lfm="artists-note"]').hidden, true);
-    assert.equal($('.lfm-bars.has-compare'), null);
-    assert.equal($('.lfm-bars__was'), null);
-    assert.equal($req('.lfm-bars__row').hasAttribute('aria-label'), false);
+    assert.equal($req('.lfm-bars__was').textContent, 'usual 10');
+    assert.equal($req('.lfm-album__count').textContent, '20 plays · usual 5');
   });
 
   test('an unknown period in the URL falls back instead of breaking', async () => {
-    await mount('history', '?type=year&period=1999');
+    await mount('?type=year&period=1999');
     assert.equal(window.location.search, '?type=year&period=2024');
-    await mount('recent', '?period=forever');
+    await mount('?period=forever');
     assert.equal(window.location.search, '');
-    assert.equal($req('.lfm-segment[aria-pressed="true"]').getAttribute('aria-label'), 'Last 30 days');
+    assert.equal($req('.lfm-segment[aria-pressed="true"]').getAttribute('aria-label'), 'Rolling');
+    assert.equal($req<HTMLSelectElement>('.lfm-stepper__select').value, 'last-90-days');
   });
 });

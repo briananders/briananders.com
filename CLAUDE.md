@@ -37,9 +37,9 @@ These paths are **preserved during deploys** via `s3-upload-allowlist.json` and 
 | `/data/` | Static JSON datasets (word lists for Wordle/Wordscapes solvers) | Various post scripts |
 | `/movies/` | Movie/IMDb ratings data | `src/js/posts/imdb-ratings.js` |
 
-### Last.fm Listening Dashboards
+### Last.fm Listening Dashboard
 
-`/music/last-fm/` (recent, rolling windows) and `/music/last-fm-scrobbles/` (history, every period type) share one dashboard: the `src/partials/last-fm-dashboard.ejs` shell, `src/styles/posts/_last-fm-dashboard.scss`, and the controller in `src/ts/_modules/last-fm/dashboard.ts` (with `robots: false` meta-refresh redirect stubs retained at the legacy `/posts/last-fm/` and `/posts/last-fm-scrobbles/` paths). The browser never calls the Last.fm API; everything is read from `/last-fm-history/` (user `imbanders`):
+`/music/listening-history/` unifies recent rolling-window listening trends (defaulting to the last 90 days) with full scrobble history (all time, rolling, year, quarter, month, week), a 24-month context timeline, year columns, a year × month heatmap, and a sortable yearly top-20 bands table. It uses the `src/partials/last-fm-dashboard.ejs` shell, `src/styles/posts/_last-fm-dashboard.scss`, and the controller in `src/ts/_modules/last-fm/dashboard.ts`. Legacy `/music/last-fm-scrobbles/`, `/music/last-fm/`, `/posts/last-fm/`, and `/posts/last-fm-scrobbles/` routes are retained as `robots: false` meta-refresh redirect stubs pointing to `/music/listening-history/` (see `redirects.txt` at the repo root for the full historical URL redirect map). The browser never calls the Last.fm API; everything is read from `/last-fm-history/` (user `imbanders`):
 
 | Path | Shape | Used for |
 |---|---|---|
@@ -70,7 +70,7 @@ Architecture lives in `src/js/_modules/band-news/` and `src/js/_components/`:
 
 ### Music Section & Concert Archive
 
-`/music/` (`src/templates/music/index.html.ejs`) pins the three music tools (`musicPinOrder`: `last-fm`, `last-fm-scrobbles`, `music-news`) above a chronological (oldest-to-newest) list of attended concerts stored under `src/templates/music/show/{YYYY-MM-DD}-{location}.ejs`. Every show page delegates its layout to `src/partials/music-show.ejs` and `src/styles/music/show.scss`, using shared UTC date formatting, sorting, adjacent-show lookup, and external URL builders in `build/helpers/music.ts`.
+`/music/` (`src/templates/music/index.html.ejs`) pins the two music tools (`musicPinOrder`: `listening-history`, `music-news`) above a chronological (oldest-to-newest) list of attended concerts stored under `src/templates/music/show/{YYYY-MM-DD}-{location}.ejs`. Every show page delegates its layout to `src/partials/music-show.ejs` and `src/styles/music/show.scss`, using shared UTC date formatting, sorting, adjacent-show lookup, and external URL builders in `build/helpers/music.ts`.
 
 ## Tech Stack
 

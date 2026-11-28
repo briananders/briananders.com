@@ -58,6 +58,31 @@ export interface YearlyTotalRow {
   value: number;
 }
 
+export interface YearlyReportInput {
+  year: number;
+  report: LastFmReport;
+}
+
+export interface YearlyTopBandPlacement {
+  year: number;
+  position: number;
+  count: number;
+}
+
+export interface YearlyTopBand {
+  name: string;
+  image?: string | null;
+  yearsCount: number;
+  averagePosition: number;
+  bestPosition: number;
+  placements: YearlyTopBandPlacement[];
+}
+
+export type YearlyTopBandSortKey = 'years' | 'average' | 'name';
+export type SortDirection = 'ascending' | 'descending';
+
+const bandNameCollator = new Intl.Collator(undefined, { numeric: true, sensitivity: 'base' });
+
 /**
  * Rank bands for the "where the plays went" part-to-whole bars. Ordered, so
  * they take the ordinal ramp (lightest = the band that matters most).
@@ -339,6 +364,118 @@ function byYear(series: MonthlySeriesRow[]): YearlyTotalRow[] {
     .map(([year, value]) => ({ year, value }));
 }
 
+/**
+ * Sorts yearly top-20 bands by the chosen column with deterministic tiebreakers.
+ * Default ordering ranks bands by most years in the top 20 first, then by the
+ * lowest (best) average position across those years, and finally by band name.
+ *
+ * @param {YearlyTopBand[]} bands - Bands to sort.
+ * @param {YearlyTopBandSortKey} [sortKey='years'] - Primary field to sort by.
+ * @param {SortDirection} [direction='descending'] - Sort direction for the primary field.
+ * @returns {YearlyTopBand[]} Sorted copy of the band list.
+ */
+function sortYearlyTopBands(
+  bands: YearlyTopBand[],
+  sortKey: YearlyTopBandSortKey = 'years',
+  direction: SortDirection = 'descending'
+): YearlyTopBand[] {
+  let factor = -1;
+  if (direction === 'ascending') {
+    factor = 1;
+  }
+  return bands.slice().sort((bandA, bandB) => {
+    if (sortKey === 'name') {
+      const nameDiff = bandNameCollator.compare(bandA.name, bandB.name);
+      if (nameDiff !== 0) return factor * nameDiff;
+      if (bandA.yearsCount !== bandB.yearsCount) return bandB.yearsCount - bandA.yearsCount;
+      return bandA.averagePosition - bandB.averagePosition;
+    }
+    if (sortKey === 'average') {
+      const avgDiff = bandA.averagePosition - bandB.averagePosition;
+      if (Math.abs(avgDiff) > 1e-9) return factor * avgDiff;
+      if (bandA.yearsCount !== bandB.yearsCount) return bandB.yearsCount - bandA.yearsCount;
+      return bandNameCollator.compare(bandA.name, bandB.name);
+    }
+    const yearsDiff = bandA.yearsCount - bandB.yearsCount;
+    if (yearsDiff !== 0) return factor * yearsDiff;
+    const avgDiff = bandA.averagePosition - bandB.averagePosition;
+    if (Math.abs(avgDiff) > 1e-9) return avgDiff;
+    return bandNameCollator.compare(bandA.name, bandB.name);
+  });
+}
+
+/**
+ * Aggregates every band that finished in the top N of any calendar-year report,
+ * tracking each qualifying year and chart position, then sorts by years count
+ * (descending) followed by average position (ascending).
+ *
+ * @param {YearlyReportInput[]} yearReports - Calendar-year reports.
+ * @param {number} [topLimit=20] - Maximum yearly rank included.
+ * @returns {YearlyTopBand[]} Aggregated and default-sorted top bands.
+ */
+function yearlyTopBands(
+  yearReports: YearlyReportInput[],
+  topLimit: number = 20
+): YearlyTopBand[] {
+  const orderedReports = yearReports.slice().sort((a, b) => a.year - b.year);
+  const grouped = new Map<string, {
+    name: string;
+    image: string | null;
+    byYear: Map<number, YearlyTopBandPlacement>;
+  }>();
+
+  orderedReports.forEach(({ year, report }) => {
+    const topArtists = (report.artists || []).slice(0, topLimit);
+    topArtists.forEach((artist, index) => {
+      const position = index + 1;
+      const key = String(artist.name || '').trim().toLowerCase();
+      if (!key) return;
+      let entry = grouped.get(key);
+      if (!entry) {
+        entry = {
+          name: artist.name,
+          image: artist.image || null,
+          byYear: new Map<number, YearlyTopBandPlacement>(),
+        };
+        grouped.set(key, entry);
+      } else {
+        // Prefer the newest year's capitalization and image when available.
+        entry.name = artist.name;
+        if (artist.image) {
+          entry.image = artist.image;
+        }
+      }
+      const existingYear = entry.byYear.get(year);
+      if (!existingYear || position < existingYear.position) {
+        entry.byYear.set(year, {
+          year,
+          position,
+          count: Number(artist.count) || 0,
+        });
+      }
+    });
+  });
+
+  const rows: YearlyTopBand[] = [...grouped.values()].map((entry) => {
+    const placements = [...entry.byYear.values()].sort((a, b) => a.year - b.year);
+    const totalPosition = placements.reduce((sum, item) => sum + item.position, 0);
+    const bestPosition = placements.reduce(
+      (best, item) => Math.min(best, item.position),
+      placements[0].position
+    );
+    return {
+      name: entry.name,
+      image: entry.image,
+      yearsCount: placements.length,
+      averagePosition: totalPosition / placements.length,
+      bestPosition,
+      placements,
+    };
+  });
+
+  return sortYearlyTopBands(rows, 'years', 'descending');
+}
+
 module.exports = {
   FOCUS_BANDS,
   byYear,
@@ -349,7 +486,9 @@ module.exports = {
   monthKey,
   movers,
   newAlbums,
+  sortYearlyTopBands,
   sumMonths,
   summarize,
   trendFacts,
+  yearlyTopBands,
 };
