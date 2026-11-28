@@ -25,6 +25,7 @@ My personal website, built as a custom static site generator.
 - `build/`: The custom Node.js TypeScript build system tools (bundlers, asset movers, page mappings).
 - `test/`: Node.js native test runner suites (`test/*.test.mts`).
 - `package/`: The output directory for the optimized production build.
+- `dist/`: Output directory for non-public deployment artifacts (such as `dist/redirects.json`, compiled from `redirects.txt`).
 - `golden/`: The output directory for the unoptimized golden build (skips gzip/hashing).
 - `.githooks/`: Committed git hooks (activated automatically by `npm install`), including `post-merge` to auto-convert incoming legacy JavaScript from older branches into TypeScript.
 
@@ -51,8 +52,9 @@ My personal website, built as a custom static site generator.
 - `npm run visual-diff`: Runs the visual regression diffing script using Playwright/Puppeteer.
 
 ### Building
-- `npm run build`: Build the site for production into the `/package` folder, including file compression and gzip.
+- `npm run build`: Build the site for production into the `/package` folder (including file compression and gzip) and generate `dist/redirects.json` from `redirects.txt`.
 - `npm run build:golden`: Build the site into the `/golden` folder without gzip compression and asset hashing. Build time, commit hash, and build-time randomness are pinned, so regenerating only changes files whose pages changed.
+- `npm run build:redirects`: Compile the `redirects.txt` dictionary into AWS S3 routing rules at `dist/redirects.json`.
 
 ### Testing
 - `npm test`: Runs the Node.js native test runner suite on the build processes.

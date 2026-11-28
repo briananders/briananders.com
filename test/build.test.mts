@@ -6,6 +6,7 @@ import path from 'node:path';
 
 const projectRoot = path.resolve(process.cwd());
 const packageDir = path.join(projectRoot, 'package');
+const distDir = path.join(projectRoot, 'dist');
 
 interface BuildOutput {
   stdout: string;
@@ -113,6 +114,18 @@ test('production build completes and outputs expected artifacts', async () => {
   // Sitemaps should be created
   assert.equal(await pathExists(path.join(packageDir, 'sitemap.json')), true, 'sitemap.json should exist');
   assert.equal(await pathExists(path.join(packageDir, 'sitemap.xml')), true, 'sitemap.xml should exist');
+
+  // Redirect routing rules should be emitted into dist/ (not package/)
+  assert.equal(
+    await pathExists(path.join(distDir, 'redirects.json')),
+    true,
+    'dist/redirects.json should exist',
+  );
+  assert.equal(
+    await pathExists(path.join(packageDir, 'redirects.json')),
+    false,
+    'redirects.json should not be emitted into public package/',
+  );
 
   // Gzip artifacts for some files
   assert.equal(await pathExists(path.join(packageDir, 'sitemap.json.gz')), true, 'sitemap.json.gz should exist');

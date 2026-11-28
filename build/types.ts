@@ -4,6 +4,7 @@ export interface BuildDirectories {
   root: string;
   src: string;
   package: string;
+  dist: string;
   build: string;
   nodeModules: string;
 }

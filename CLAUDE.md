@@ -120,7 +120,7 @@ Architecture lives in `src/js/_modules/band-news/` and `src/js/_components/`:
 │   │   └── sitemap.ts          # Renders sitemap.json.ejs + sitemap.xml.ejs
 │   ├── constants/              # Event names, completion flags, directory paths, formats, golden-build, site-data (.ts)
 │   ├── hashing/                # XXHash JS/images/CSS + URL rewriting (.ts)
-│   ├── helpers/                # Build helpers, EJS functions, music, SEO, commit-hash, check-done (.ts)
+│   ├── helpers/                # Build helpers, EJS functions, music, SEO, redirects, commit-hash, check-done (.ts)
 │   ├── optimize/               # WebP/AVIF, gzip, HTML/JS minification, SVGO (.ts)
 │   ├── move-assets.ts          # Copies images (SVG→SVGO, raster→WebP+AVIF+copy), videos, txt, downloads
 │   ├── page-mapping-data.ts    # Front-matter index compiled from all EJS templates
@@ -511,8 +511,9 @@ Source file changes dispatch by path:
 | Script | Description |
 |---|---|
 | `npm start` | Dev server at localhost:3000 with file watching and proxy to staging for external data |
-| `npm run build` | Production build to `/package` |
+| `npm run build` | Production build to `/package` (plus S3 routing rules to `dist/redirects.json`) |
 | `npm run build:golden` | Golden build (no gzip/hash) to `/golden` for visual diff |
+| `npm run build:redirects` | Compile `redirects.txt` dictionary into AWS S3 routing rules at `dist/redirects.json` |
 | `npm run deploy` | Deploy production build to S3 |
 | `npm run stage` | Deploy staging build to S3 |
 | `npm test` | Run tests (requires Node 26 — use nvm first) |
@@ -532,6 +533,7 @@ Branch flow: feature branch (from `staging`) → PR into `staging` → `staging`
 - **Production**: Push to `main` branch triggers GitHub Actions → builds → deploys to `www.briananders.com` S3 bucket → invalidates CloudFront cache → creates a deploy tag
 - **Staging**: Push to `staging` branch triggers GitHub Actions → builds → deploys to `staging.briananders.com` S3 bucket
 - **PR validation**: All PRs run `typecheck`, `lint`, `build` (failing if the build changed `src/images/`, i.e. an uncommitted AVIF), and `test` via `npm ci` on Node 26.13.1
+- **Redirects**: `redirects.txt` at the repo root is the source `<from> <to>` dictionary; `build/helpers/generate-redirects.ts` (run on every build and via `npm run build:redirects`) compiles it into an AWS S3 Static Website Hosting routing-rules JSON array at `dist/redirects.json` (gitignored, outside `package/` so it is not uploaded publicly), collapsing identical-slug directory moves via `ReplaceKeyPrefixWith`, sorting longest-prefix-first, and enforcing S3's 50-rule ceiling.
 - **`@claude` in GitHub**: `claude.yml` installs dependencies and Chromium, lets Claude run `typecheck`, `build`, `build:golden`, `test`, `lint` and `screenshot`, and uploads `screenshots/` as a workflow artifact
 - The `s3-upload-allowlist.json` preserves `/band-news/`, `/last-fm-history/`, `/data/`, and `/movies/` paths during deploy
 

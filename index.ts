@@ -61,6 +61,7 @@ const prodBuilder: (configs: BuildConfigs) => void = require(`${dir.build}prod-b
 const goldenBuilder: (configs: BuildConfigs) => void = require(`${dir.build}golden-builder.ts`);
 const compileSitemap: (configs: BuildConfigs) => void = require(`${dir.build}bundlers/sitemap.ts`);
 const generateBuildTxt: (configs: BuildConfigs) => void = require(`${dir.build}helpers/generate-build-txt.ts`);
+const generateRedirects: (configs: BuildConfigs) => void = require(`${dir.build}helpers/generate-redirects.ts`);
 
 const completionFlagsSource: CompletionFlags = require(`${dir.build}constants/completion-flags.ts`);
 const BUILD_EVENTS: BuildEventsMap = require(`${dir.build}constants/build-events.ts`);
@@ -165,6 +166,7 @@ async function startInitialBuild(): Promise<void> {
   }
   await fs.mkdirp(dir.package);
   generateBuildTxt(configs);
+  generateRedirects(configs);
   compilePageMappingData(configs);
   bundleJS(configs);
   bundleSCSS(configs);

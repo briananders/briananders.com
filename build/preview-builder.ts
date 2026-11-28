@@ -114,6 +114,7 @@ function previewBuilder(configs: BuildConfigs): void {
     moveOneImage, moveOneVideo, moveOneTxtFile, moveOneDownload,
   }: MoveAssetsModule = require(`${dir.build}move-assets.ts`);
   const generateBuildTxt: (c: BuildConfigs) => void = require(`${dir.build}helpers/generate-build-txt.ts`);
+  const generateRedirects: (c: BuildConfigs) => void = require(`${dir.build}helpers/generate-redirects.ts`);
   const commitHash: CommitHashHelper = require('./helpers/commit-hash.ts');
 
   // Start listening for previewReady before the first compile completes.
@@ -203,6 +204,8 @@ function previewBuilder(configs: BuildConfigs): void {
   const indexWatcher = chokidar.watch(`${dir.root}index.ts`);
   // Watch the source directory for incremental rebuild triggers.
   const sourceWatcher = chokidar.watch(dir.src);
+  // Watch the root redirect dictionary so dist/redirects.json stays current during dev.
+  const redirectsWatcher = chokidar.watch(`${dir.root}redirects.txt`);
 
   // Only register change/add/unlink listeners after the initial scan is complete
   // to avoid spurious events for files that existed before the watcher started.
@@ -216,6 +219,13 @@ function previewBuilder(configs: BuildConfigs): void {
   });
 
   indexWatcher.on('change', buildChanged);
+
+  redirectsWatcher.on('ready', () => {
+    redirectsWatcher.on('change', () => {
+      log(`${timestamp.stamp()} ${'File modified: /redirects.txt'.yellow}`);
+      generateRedirects(configs);
+    });
+  });
 
   sourceWatcher.on('ready', () => {
     sourceWatcher

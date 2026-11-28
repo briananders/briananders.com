@@ -6,6 +6,7 @@
   "scripts": {
     "build": "NODE_ENV=production node index.ts",
     "build:golden": "NODE_ENV=production node index.ts --golden",
+    "build:redirects": "node build/helpers/generate-redirects.ts",
     "clean": "rm -rf node_modules tmp dist && npm cache clean --force",
     "convert-js": "node bin/convert-js-to-ts.ts",
     "debug:start": "node index.ts --verbose",

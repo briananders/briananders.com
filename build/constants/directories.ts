@@ -31,6 +31,12 @@ function createDirectories(appRoot: string, isGoldenBuild = false): BuildDirecto
      */
     package: packageDir,
 
+    /**
+     * Output directory for non-public deployment artifacts (such as S3 routing
+     * rules in `dist/redirects.json`) that should not be uploaded into the site bucket.
+     */
+    dist: `${appRoot}/dist/`,
+
     /** Build system scripts (this directory). */
     build: `${appRoot}/build/`,
 
