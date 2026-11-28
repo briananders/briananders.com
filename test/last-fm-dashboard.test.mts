@@ -163,6 +163,12 @@ const FIXTURES: Record<string, unknown> = {
     months: [{ month: '2023-01', count: 60 }, { month: '2024-05', count: 30 }],
     totalScrobbles: 90,
   },
+  'trends/albums/paul-simon/graceland.json': {
+    artist: 'Paul Simon',
+    album: 'Graceland',
+    months: [{ month: '2022-03', count: 30 }, { month: '2023-07', count: 18 }],
+    totalScrobbles: 48,
+  },
 };
 (data.ROLLING_WINDOWS as RollingWindowEntry[]).forEach((w) => {
   let startDate = '2024-05-16';
@@ -171,11 +177,12 @@ const FIXTURES: Record<string, unknown> = {
   } else if (w.key === 'last-90-days') {
     startDate = '2024-03-17';
   }
+  const extraAlbums = Array.from({ length: 11 }, (_, idx) => album(`Band ${idx + 2}`, `Record ${idx + 2}`, 15 - idx));
   FIXTURES[`reports/rolling_${w.key}.json`] = report(
     w.key,
     100,
     [artist('Underoath', 40), artist('The Beatles', 10)],
-    [album('Underoath', 'Voyeurist', 20)],
+    [album('Underoath', 'Voyeurist', 20), ...extraAlbums],
     {
       // Real day spans for rolling windows so pace scaling is exercised accurately.
       startDate, endDate: '2024-06-15', label: w.label,
@@ -395,13 +402,13 @@ describe('last-fm stats', () => {
     assert.equal(stats.monthKey(new Date('2024-01-15T00:00:00Z'), 23), '2025-12');
   });
 
-  test('yearlyTopBands aggregates top-20 yearly placements and orders by years then average position', () => {
-    const filler = Array.from({ length: 19 }, (_, idx) => artist(`Filler ${idx + 1}`, 20 - idx));
+  test('yearlyTopBands aggregates top-15 yearly placements and orders by years then average position', () => {
+    const filler = Array.from({ length: 14 }, (_, idx) => artist(`Filler ${idx + 1}`, 20 - idx));
     const year2022 = report('2022', 500, [
       artist('He Is Legend', 120, 'hil-old'),
       artist('Emery', 100),
-      ...filler.slice(0, 18),
-      artist('Outside Top 20', 1)
+      ...filler.slice(0, 13),
+      artist('Outside Top 15', 1)
     ], []);
     const year2023 = report('2023', 500, [
       artist('The Beatles', 150),
@@ -417,10 +424,11 @@ describe('last-fm stats', () => {
       { year: 2024, report: year2024 },
       { year: 2022, report: year2022 },
       { year: 2023, report: year2023 }
-    ], 20);
+    ], undefined, report('all-time', 1000, [artist('The Beatles', 950), artist('Emery', 420)], []));
 
-    // #21 artist must be excluded.
-    assert.equal(bands.some((b: { name: string }) => b.name === 'Outside Top 20'), false);
+    // Default limit is 15, so #15 is included and #16 must be excluded.
+    assert.equal(bands.some((b: { name: string }) => b.name === 'Filler 13'), true);
+    assert.equal(bands.some((b: { name: string }) => b.name === 'Outside Top 15'), false);
 
     // Emery: 3 yrs (avg 1.67) > The Beatles: 2 yrs (avg 1.5) > He Is Legend: 2 yrs (avg 2.0)
     assert.deepEqual(
@@ -430,6 +438,9 @@ describe('last-fm stats', () => {
     assert.equal(bands[0].yearsCount, 3);
     assert.ok(Math.abs(bands[0].averagePosition - (5 / 3)) < 1e-9);
     assert.equal(bands[0].bestPosition, 1);
+    assert.equal(bands[0].allTimeScrobbles, 420);
+    assert.equal(bands[1].allTimeScrobbles, 950);
+    assert.equal(bands[2].allTimeScrobbles, null);
     assert.deepEqual(
       bands[0].placements.map((p: { year: number; position: number }) => [p.year, p.position]),
       [[2022, 2], [2023, 2], [2024, 1]],
@@ -440,19 +451,24 @@ describe('last-fm stats', () => {
     assert.equal(bands[2].averagePosition, 2);
   });
 
-  test('sortYearlyTopBands supports years, average position, and name without mutating input', () => {
+  test('sortYearlyTopBands supports years, average, all-time listens, and name without mutating', () => {
     const sample = [
       {
-        name: 'Emery', yearsCount: 3, averagePosition: 5.0, bestPosition: 1, placements: [],
+        name: 'Emery', yearsCount: 3, averagePosition: 5.0, bestPosition: 1, allTimeScrobbles: 300, placements: [],
       },
       {
-        name: 'The Beatles', yearsCount: 3, averagePosition: 2.5, bestPosition: 1, placements: [],
+        name: 'The Beatles',
+        yearsCount: 3,
+        averagePosition: 2.5,
+        bestPosition: 1,
+        allTimeScrobbles: 900,
+        placements: [],
       },
       {
-        name: 'Atreyu', yearsCount: 1, averagePosition: 1.0, bestPosition: 1, placements: [],
+        name: 'Atreyu', yearsCount: 1, averagePosition: 1.0, bestPosition: 1, allTimeScrobbles: null, placements: [],
       },
       {
-        name: 'Bayside', yearsCount: 2, averagePosition: 2.5, bestPosition: 2, placements: [],
+        name: 'Bayside', yearsCount: 2, averagePosition: 2.5, bestPosition: 2, allTimeScrobbles: 500, placements: [],
       }
     ];
     const snapshot = sample.map((b) => b.name);
@@ -472,6 +488,16 @@ describe('last-fm stats', () => {
       stats.sortYearlyTopBands(sample, 'average', 'ascending').map((b: { name: string }) => b.name),
       ['Atreyu', 'The Beatles', 'Bayside', 'Emery'],
     );
+    // All-time descending: highest listens first, unknown (null) always last.
+    assert.deepEqual(
+      stats.sortYearlyTopBands(sample, 'allTime', 'descending').map((b: { name: string }) => b.name),
+      ['The Beatles', 'Bayside', 'Emery', 'Atreyu'],
+    );
+    // All-time ascending: lowest known listens first, unknown (null) still last.
+    assert.deepEqual(
+      stats.sortYearlyTopBands(sample, 'allTime', 'ascending').map((b: { name: string }) => b.name),
+      ['Emery', 'Bayside', 'The Beatles', 'Atreyu'],
+    );
     // Name ascending: alphabetical.
     assert.deepEqual(
       stats.sortYearlyTopBands(sample, 'name', 'ascending').map((b: { name: string }) => b.name),
@@ -479,6 +505,42 @@ describe('last-fm stats', () => {
     );
     // Input array was not mutated.
     assert.deepEqual(sample.map((b) => b.name), snapshot);
+  });
+
+  test('yearlyTopAlbums aggregates top-15 yearly albums with all-time plays and sorts cleanly', () => {
+    const filler = Array.from({ length: 14 }, (_, idx) => album(`Filler ${idx}`, `Album ${idx}`, 20 - idx));
+    const y2022 = report('2022', 400, [], [
+      album('Paul Simon', 'Graceland', 80),
+      album('Underoath', 'Voyeurist', 60),
+      ...filler.slice(0, 13),
+      album('Excluded Band', 'Rank 16', 5)
+    ]);
+    const y2023 = report('2023', 400, [], [
+      album('underoath', 'VOYEURIST', 95),
+      album('Paul Simon', 'Graceland', 70)
+    ]);
+    const allTime = report('all-time', 2000, [], [album('Paul Simon', 'Graceland', 320)]);
+
+    const albums = stats.yearlyTopAlbums(
+      [{ year: 2023, report: y2023 }, { year: 2022, report: y2022 }],
+      undefined,
+      allTime,
+    );
+
+    assert.equal(albums.some((a: { album: string }) => a.album === 'Album 12'), true);
+    assert.equal(albums.some((a: { album: string }) => a.album === 'Rank 16'), false);
+    // Both have 2 years and avg 1.5; tiebreaks alphabetically ("Graceland" < "VOYEURIST").
+    assert.deepEqual(albums.slice(0, 2).map((a: { album: string }) => a.album), ['Graceland', 'VOYEURIST']);
+    assert.equal(albums[0].allTimeScrobbles, 320);
+    assert.equal(albums[1].allTimeScrobbles, null);
+    assert.deepEqual(
+      albums[0].placements.map((p: { year: number; position: number }) => [p.year, p.position]),
+      [[2022, 1], [2023, 2]],
+    );
+    assert.deepEqual(
+      stats.sortYearlyTopAlbums(albums.slice(0, 2), 'allTime', 'descending').map((a: { album: string }) => a.album),
+      ['Graceland', 'VOYEURIST'],
+    );
   });
 });
 
@@ -525,7 +587,7 @@ describe('listening dashboard', () => {
     document.body.innerHTML = '';
   });
 
-  test('defaults to last 90 days and renders every panel, timeline, long view, and yearly top-20 bands', async () => {
+  test('defaults to last 90 days and renders every panel, timeline, long view, and yearly top-15 tables', async () => {
     await mount();
     assert.equal(window.location.search, '');
     assert.equal($req('.lfm-segment[aria-pressed="true"]').getAttribute('aria-label'), 'Rolling');
@@ -542,9 +604,30 @@ describe('listening dashboard', () => {
     assert.equal($('.lfm-heat__cell[data-month="2022-01"]'), null, 'months before the first scrobble are untracked');
     assert.equal($('.lfm-heat__cell[data-month="2024-07"]'), null, 'months after the data date are untracked');
     assert.ok($req('.lfm-heat__cell[data-month="2023-02"]').classList.contains('is-zero'));
-    assert.equal($$('.lfm-top20__table tbody tr').length, 3, 'all bands from yearly top-20 reports render');
+    assert.equal($$('#lfm-yearly-top-bands-table tbody tr').length, 3, 'all bands from yearly top-15 reports render');
+    assert.equal($$('#lfm-yearly-top-albums-table tbody tr').length, 2, 'all albums from yearly top-15 reports render');
     assert.equal($$('.is-skeleton').length, 0);
     assert.equal($req('[data-lfm="grid"]').getAttribute('aria-busy'), 'false');
+  });
+
+  test('Show top 25 albums toggle expands and collapses immediately without blocking on lookups', async () => {
+    await mount();
+    const toggle = $req<HTMLButtonElement>('[data-lfm="albums-toggle"]');
+    assert.equal(toggle.hidden, false);
+    assert.equal(toggle.textContent, 'Show top 25');
+    assert.equal($$('.lfm-album').length, 9);
+
+    // Click expands synchronously (even before any promise ticks).
+    toggle.click();
+    assert.equal($$('.lfm-album').length, 12);
+    assert.equal(toggle.textContent, 'Show top 9');
+    assert.equal(toggle.getAttribute('aria-expanded'), 'true');
+
+    // Click again collapses synchronously.
+    toggle.click();
+    assert.equal($$('.lfm-album').length, 9);
+    assert.equal(toggle.textContent, 'Show top 25');
+    assert.equal(toggle.getAttribute('aria-expanded'), 'false');
   });
 
   test('all time renders lifetime totals, unshaded timeline, and last-12-months movers', async () => {
@@ -625,18 +708,29 @@ describe('listening dashboard', () => {
     assert.match($req('[data-lfm="timeline-note"]').textContent || '', /Shaded: last 7 days/);
   });
 
-  test('yearly top-20 bands table lists years/positions, sorts in place, and links to artists and years', async () => {
+  test('yearly top-15 bands table lists all-time listens, sorts in place, and links to artists and years', async () => {
     await mount();
-    const table = $req<HTMLTableElement>('.lfm-top20__table');
-    const rowNames = (): string[] => $$('.lfm-top20__table tbody tr .lfm-top20__name')
+    const table = $req<HTMLTableElement>('#lfm-yearly-top-bands-table');
+    const rowNames = (): string[] => $$('#lfm-yearly-top-bands-table tbody tr .lfm-yearly-top__name')
+      .map((el) => el.textContent || '');
+    const allTimeValues = (): string[] => $$('#lfm-yearly-top-bands-table tbody tr .lfm-yearly-top__alltime')
       .map((el) => el.textContent || '');
 
     // Default sort: years descending, then average position ascending, then band name.
     assert.deepEqual(rowNames(), ['Coheed and Cambria', 'Paul Simon', 'Underoath']);
-    assert.equal($req('.lfm-top20__table thead th[data-sort-key="years"]').getAttribute('aria-sort'), 'descending');
+    // Coheed comes from all_time.json (120), Paul Simon has no trend file (—), Underoath hydrates from trend (15).
+    assert.deepEqual(allTimeValues(), ['120', '—', '15']);
+    assert.equal(
+      $req('#lfm-yearly-top-bands-table thead th:last-child').textContent,
+      'Top 15 years & positions',
+    );
+    assert.equal(
+      $req('#lfm-yearly-top-bands-table thead th[data-sort-key="years"]').getAttribute('aria-sort'),
+      'descending',
+    );
 
     // Verify year and position chips for Coheed and Cambria: 2023 #1 (highlighted), 2024 #2.
-    const coheedChips = $$('.lfm-top20__table tbody tr:first-child .lfm-top20__chip');
+    const coheedChips = $$('#lfm-yearly-top-bands-table tbody tr:first-child .lfm-yearly-top__chip');
     assert.deepEqual(
       coheedChips.map((chip) => `${chip.dataset.year}:#${chip.dataset.position}`),
       ['2023:#1', '2024:#2'],
@@ -645,18 +739,32 @@ describe('listening dashboard', () => {
     assert.equal(coheedChips[1].classList.contains('is-first'), false);
 
     // Keep references to existing <tr> nodes to confirm sorting reorders in place.
-    const initialRows = new Set($$('.lfm-top20__table tbody tr'));
+    const initialRows = new Set($$('#lfm-yearly-top-bands-table tbody tr'));
+
+    // Click All-time header: Coheed (120), Underoath (15), Paul Simon (—).
+    $req<HTMLButtonElement>('#lfm-yearly-top-bands-table th[data-sort-key="allTime"] button').click();
+    assert.deepEqual(rowNames(), ['Coheed and Cambria', 'Underoath', 'Paul Simon']);
+    assert.equal(
+      $req('#lfm-yearly-top-bands-table th[data-sort-key="allTime"]').getAttribute('aria-sort'),
+      'descending',
+    );
 
     // Click Avg rank header: Underoath (avg #1.0) moves to first.
-    $req<HTMLButtonElement>('th[data-sort-key="average"] button').click();
+    $req<HTMLButtonElement>('#lfm-yearly-top-bands-table th[data-sort-key="average"] button').click();
     assert.deepEqual(rowNames(), ['Underoath', 'Coheed and Cambria', 'Paul Simon']);
-    assert.equal($req('th[data-sort-key="average"]').getAttribute('aria-sort'), 'ascending');
-    assert.equal($req('th[data-sort-key="years"]').hasAttribute('aria-sort'), false);
-    assert.match($req('.lfm-top20 [role="status"]').textContent || '', /Sorted by Avg rank, ascending, 3 bands/);
-    $$('.lfm-top20__table tbody tr').forEach((row) => assert.ok(initialRows.has(row)));
+    assert.equal(
+      $req('#lfm-yearly-top-bands-table th[data-sort-key="average"]').getAttribute('aria-sort'),
+      'ascending',
+    );
+    assert.equal($req('#lfm-yearly-top-bands-table th[data-sort-key="years"]').hasAttribute('aria-sort'), false);
+    assert.match(
+      $req('[data-lfm="yearly-top-bands"] [role="status"]').textContent || '',
+      /Sorted by Avg rank, ascending, 3 bands/,
+    );
+    $$('#lfm-yearly-top-bands-table tbody tr').forEach((row) => assert.ok(initialRows.has(row)));
 
     // Click Band header twice: ascending then descending.
-    const bandBtn = $req<HTMLButtonElement>('th[data-sort-key="name"] button');
+    const bandBtn = $req<HTMLButtonElement>('#lfm-yearly-top-bands-table th[data-sort-key="name"] button');
     bandBtn.click();
     assert.deepEqual(rowNames(), ['Coheed and Cambria', 'Paul Simon', 'Underoath']);
     bandBtn.click();
@@ -664,14 +772,48 @@ describe('listening dashboard', () => {
     assert.equal(table.querySelectorAll('thead th[aria-sort]').length, 1);
 
     // Clicking a year chip loads that year in the dashboard.
-    $req<HTMLButtonElement>('.lfm-top20__chip[data-year="2023"]').click();
+    $req<HTMLButtonElement>('#lfm-yearly-top-bands-table .lfm-yearly-top__chip[data-year="2023"]').click();
     await settle();
     assert.equal(window.location.search, '?type=year&period=2023');
 
     // Clicking a band button opens its trend dialog.
-    $req<HTMLButtonElement>('.lfm-top20__table tbody tr[data-band-key="underoath"] .lfm-top20__artist').click();
+    const underoathButton = $req<HTMLButtonElement>(
+      '#lfm-yearly-top-bands-table tbody tr[data-band-key="underoath"] .lfm-yearly-top__artist',
+    );
+    underoathButton.click();
     await settle();
     assert.equal($req('.lfm-dialog__title').textContent, 'Underoath');
+  });
+
+  test('yearly top-15 albums table renders albums, hydrates all-time listens, sorts, and opens dialogs', async () => {
+    await mount();
+    const rowTitles = (): string[] => $$('#lfm-yearly-top-albums-table tbody tr .lfm-yearly-top__name')
+      .map((el) => el.textContent || '');
+    const allTimeValues = (): string[] => $$('#lfm-yearly-top-albums-table tbody tr .lfm-yearly-top__alltime')
+      .map((el) => el.textContent || '');
+
+    // Graceland (2 yrs: 2022 #1, 2023 #1) ranks before Define the Great Line (1 yr: 2024 #1).
+    assert.deepEqual(rowTitles(), ['Graceland', 'Define the Great Line']);
+    // Graceland hydrates all-time plays from trends/albums/paul-simon/graceland.json (48).
+    assert.deepEqual(allTimeValues(), ['48', '—']);
+    assert.equal(
+      $req('#lfm-yearly-top-albums-table thead th:last-child').textContent,
+      'Top 15 years & positions',
+    );
+
+    // Sort by Album ascending flips Define the Great Line first.
+    $req<HTMLButtonElement>('#lfm-yearly-top-albums-table th[data-sort-key="name"] button').click();
+    assert.deepEqual(rowTitles(), ['Define the Great Line', 'Graceland']);
+    assert.match(
+      $req('[data-lfm="yearly-top-albums"] [role="status"]').textContent || '',
+      /Sorted by Album, ascending, 2 albums/,
+    );
+
+    // Clicking Graceland opens its album trend dialog.
+    $req<HTMLButtonElement>('#lfm-yearly-top-albums-table tbody tr:last-child .lfm-yearly-top__artist').click();
+    await settle();
+    assert.equal($req('.lfm-dialog__title').textContent, 'Graceland');
+    assert.equal($req('.lfm-dialog__subtitle').textContent, 'Paul Simon');
   });
 
   test('top lists compare each item with the previous period', async () => {

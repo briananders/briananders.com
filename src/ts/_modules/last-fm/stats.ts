@@ -75,12 +75,25 @@ export interface YearlyTopBand {
   yearsCount: number;
   averagePosition: number;
   bestPosition: number;
+  allTimeScrobbles: number | null;
   placements: YearlyTopBandPlacement[];
 }
 
-export type YearlyTopBandSortKey = 'years' | 'average' | 'name';
+export interface YearlyTopAlbum {
+  artist: string;
+  album: string;
+  image?: string | null;
+  yearsCount: number;
+  averagePosition: number;
+  bestPosition: number;
+  allTimeScrobbles: number | null;
+  placements: YearlyTopBandPlacement[];
+}
+
+export type YearlyTopBandSortKey = 'years' | 'average' | 'allTime' | 'name';
 export type SortDirection = 'ascending' | 'descending';
 
+const YEARLY_TOP_LIMIT = 15;
 const bandNameCollator = new Intl.Collator(undefined, { numeric: true, sensitivity: 'base' });
 
 /**
@@ -365,8 +378,78 @@ function byYear(series: MonthlySeriesRow[]): YearlyTotalRow[] {
 }
 
 /**
- * Sorts yearly top-20 bands by the chosen column with deterministic tiebreakers.
- * Default ordering ranks bands by most years in the top 20 first, then by the
+ * Compares two nullable all-time scrobble totals, always placing known numbers
+ * before unknown (`null`) entries while applying `factor` to known values.
+ *
+ * @param {number|null} countA - First item's all-time listens.
+ * @param {number|null} countB - Second item's all-time listens.
+ * @param {number} factor - Direction multiplier (`1` ascending, `-1` descending).
+ * @returns {number} Comparator result.
+ */
+function compareAllTimeCounts(countA: number | null, countB: number | null, factor: number): number {
+  if (countA === null && countB === null) return 0;
+  if (countA === null) return 1;
+  if (countB === null) return -1;
+  if (countA === countB) return 0;
+  return factor * (countA - countB);
+}
+
+/**
+ * Shared comparator for sorting yearly top bands or albums by years,
+ * average position, all-time listens, or display label.
+ *
+ * @param {T[]} entries - Items to sort.
+ * @param {(entry: T) => string} getLabel - Extracts the label for alphabetical sorting/tiebreaks.
+ * @param {YearlyTopBandSortKey} [sortKey='years'] - Primary field to sort by.
+ * @param {SortDirection} [direction='descending'] - Sort direction for the primary field.
+ * @returns {T[]} Sorted copy of the entries.
+ */
+function sortYearlyTopEntries<T extends {
+  yearsCount: number;
+  averagePosition: number;
+  allTimeScrobbles: number | null;
+}>(
+  entries: T[],
+  getLabel: (entry: T) => string,
+  sortKey: YearlyTopBandSortKey = 'years',
+  direction: SortDirection = 'descending'
+): T[] {
+  let factor = -1;
+  if (direction === 'ascending') {
+    factor = 1;
+  }
+  return entries.slice().sort((entryA, entryB) => {
+    if (sortKey === 'name') {
+      const nameDiff = bandNameCollator.compare(getLabel(entryA), getLabel(entryB));
+      if (nameDiff !== 0) return factor * nameDiff;
+      if (entryA.yearsCount !== entryB.yearsCount) return entryB.yearsCount - entryA.yearsCount;
+      return entryA.averagePosition - entryB.averagePosition;
+    }
+    if (sortKey === 'average') {
+      const avgDiff = entryA.averagePosition - entryB.averagePosition;
+      if (Math.abs(avgDiff) > 1e-9) return factor * avgDiff;
+      if (entryA.yearsCount !== entryB.yearsCount) return entryB.yearsCount - entryA.yearsCount;
+      return bandNameCollator.compare(getLabel(entryA), getLabel(entryB));
+    }
+    if (sortKey === 'allTime') {
+      const allTimeDiff = compareAllTimeCounts(entryA.allTimeScrobbles, entryB.allTimeScrobbles, factor);
+      if (allTimeDiff !== 0) return allTimeDiff;
+      if (entryA.yearsCount !== entryB.yearsCount) return entryB.yearsCount - entryA.yearsCount;
+      const avgDiff = entryA.averagePosition - entryB.averagePosition;
+      if (Math.abs(avgDiff) > 1e-9) return avgDiff;
+      return bandNameCollator.compare(getLabel(entryA), getLabel(entryB));
+    }
+    const yearsDiff = entryA.yearsCount - entryB.yearsCount;
+    if (yearsDiff !== 0) return factor * yearsDiff;
+    const avgDiff = entryA.averagePosition - entryB.averagePosition;
+    if (Math.abs(avgDiff) > 1e-9) return avgDiff;
+    return bandNameCollator.compare(getLabel(entryA), getLabel(entryB));
+  });
+}
+
+/**
+ * Sorts yearly top bands by the chosen column with deterministic tiebreakers.
+ * Default ordering ranks bands by most years in the top list first, then by the
  * lowest (best) average position across those years, and finally by band name.
  *
  * @param {YearlyTopBand[]} bands - Bands to sort.
@@ -379,46 +462,56 @@ function sortYearlyTopBands(
   sortKey: YearlyTopBandSortKey = 'years',
   direction: SortDirection = 'descending'
 ): YearlyTopBand[] {
-  let factor = -1;
-  if (direction === 'ascending') {
-    factor = 1;
-  }
-  return bands.slice().sort((bandA, bandB) => {
-    if (sortKey === 'name') {
-      const nameDiff = bandNameCollator.compare(bandA.name, bandB.name);
-      if (nameDiff !== 0) return factor * nameDiff;
-      if (bandA.yearsCount !== bandB.yearsCount) return bandB.yearsCount - bandA.yearsCount;
-      return bandA.averagePosition - bandB.averagePosition;
-    }
-    if (sortKey === 'average') {
-      const avgDiff = bandA.averagePosition - bandB.averagePosition;
-      if (Math.abs(avgDiff) > 1e-9) return factor * avgDiff;
-      if (bandA.yearsCount !== bandB.yearsCount) return bandB.yearsCount - bandA.yearsCount;
-      return bandNameCollator.compare(bandA.name, bandB.name);
-    }
-    const yearsDiff = bandA.yearsCount - bandB.yearsCount;
-    if (yearsDiff !== 0) return factor * yearsDiff;
-    const avgDiff = bandA.averagePosition - bandB.averagePosition;
-    if (Math.abs(avgDiff) > 1e-9) return avgDiff;
-    return bandNameCollator.compare(bandA.name, bandB.name);
-  });
+  return sortYearlyTopEntries(bands, (band) => band.name, sortKey, direction);
+}
+
+/**
+ * Sorts yearly top albums by the chosen column with deterministic tiebreakers.
+ * Default ordering ranks albums by most years in the top list first, then by the
+ * lowest (best) average position across those years, and finally by album title.
+ *
+ * @param {YearlyTopAlbum[]} albums - Albums to sort.
+ * @param {YearlyTopBandSortKey} [sortKey='years'] - Primary field to sort by.
+ * @param {SortDirection} [direction='descending'] - Sort direction for the primary field.
+ * @returns {YearlyTopAlbum[]} Sorted copy of the album list.
+ */
+function sortYearlyTopAlbums(
+  albums: YearlyTopAlbum[],
+  sortKey: YearlyTopBandSortKey = 'years',
+  direction: SortDirection = 'descending'
+): YearlyTopAlbum[] {
+  return sortYearlyTopEntries(albums, (item) => `${item.album} ${item.artist}`, sortKey, direction);
 }
 
 /**
  * Aggregates every band that finished in the top N of any calendar-year report,
- * tracking each qualifying year and chart position, then sorts by years count
- * (descending) followed by average position (ascending).
+ * tracking each qualifying year and chart position plus any known all-time play
+ * count from `allTimeReport`, then sorts by years count (descending) followed
+ * by average position (ascending).
  *
  * @param {YearlyReportInput[]} yearReports - Calendar-year reports.
- * @param {number} [topLimit=20] - Maximum yearly rank included.
+ * @param {number} [topLimit=YEARLY_TOP_LIMIT] - Maximum yearly rank included.
+ * @param {LastFmReport | null} [allTimeReport=null] - Optional all-time report for initial listen totals.
  * @returns {YearlyTopBand[]} Aggregated and default-sorted top bands.
  */
 function yearlyTopBands(
   yearReports: YearlyReportInput[],
-  topLimit: number = 20
+  topLimit: number = YEARLY_TOP_LIMIT,
+  allTimeReport: LastFmReport | null = null
 ): YearlyTopBand[] {
   const orderedReports = yearReports.slice().sort((a, b) => a.year - b.year);
+  const allTimeLookup = new Map<string, number>();
+  if (allTimeReport && allTimeReport.artists) {
+    allTimeReport.artists.forEach((artist) => {
+      const key = String(artist.name || '').trim().toLowerCase();
+      if (key) {
+        allTimeLookup.set(key, Number(artist.count) || 0);
+      }
+    });
+  }
+
   const grouped = new Map<string, {
+    key: string;
     name: string;
     image: string | null;
     byYear: Map<number, YearlyTopBandPlacement>;
@@ -433,6 +526,7 @@ function yearlyTopBands(
       let entry = grouped.get(key);
       if (!entry) {
         entry = {
+          key,
           name: artist.name,
           image: artist.image || null,
           byYear: new Map<number, YearlyTopBandPlacement>(),
@@ -463,12 +557,18 @@ function yearlyTopBands(
       (best, item) => Math.min(best, item.position),
       placements[0].position
     );
+    const knownAllTime = allTimeLookup.get(entry.key);
+    let allTimeScrobbles: number | null = null;
+    if (knownAllTime !== undefined) {
+      allTimeScrobbles = knownAllTime;
+    }
     return {
       name: entry.name,
       image: entry.image,
       yearsCount: placements.length,
       averagePosition: totalPosition / placements.length,
       bestPosition,
+      allTimeScrobbles,
       placements,
     };
   });
@@ -476,8 +576,105 @@ function yearlyTopBands(
   return sortYearlyTopBands(rows, 'years', 'descending');
 }
 
+/**
+ * Aggregates every album that finished in the top N of any calendar-year report,
+ * tracking each qualifying year and chart position plus any known all-time play
+ * count from `allTimeReport`, then sorts by years count (descending) followed
+ * by average position (ascending).
+ *
+ * @param {YearlyReportInput[]} yearReports - Calendar-year reports.
+ * @param {number} [topLimit=YEARLY_TOP_LIMIT] - Maximum yearly rank included.
+ * @param {LastFmReport | null} [allTimeReport=null] - Optional all-time report for initial listen totals.
+ * @returns {YearlyTopAlbum[]} Aggregated and default-sorted top albums.
+ */
+function yearlyTopAlbums(
+  yearReports: YearlyReportInput[],
+  topLimit: number = YEARLY_TOP_LIMIT,
+  allTimeReport: LastFmReport | null = null
+): YearlyTopAlbum[] {
+  const orderedReports = yearReports.slice().sort((a, b) => a.year - b.year);
+  const allTimeLookup = new Map<string, number>();
+  if (allTimeReport && allTimeReport.albums) {
+    allTimeReport.albums.forEach((album) => {
+      allTimeLookup.set(albumKey(album), Number(album.count) || 0);
+    });
+  }
+
+  const grouped = new Map<string, {
+    key: string;
+    artist: string;
+    album: string;
+    image: string | null;
+    byYear: Map<number, YearlyTopBandPlacement>;
+  }>();
+
+  orderedReports.forEach(({ year, report }) => {
+    const topAlbums = (report.albums || []).slice(0, topLimit);
+    topAlbums.forEach((albumItem, index) => {
+      const position = index + 1;
+      const artistName = String(albumItem.artist || '').trim();
+      const albumTitle = String(albumItem.album || '').trim();
+      if (!artistName || !albumTitle) return;
+      const key = albumKey(albumItem);
+      let entry = grouped.get(key);
+      if (!entry) {
+        entry = {
+          key,
+          artist: albumItem.artist,
+          album: albumItem.album,
+          image: albumItem.albumImage || null,
+          byYear: new Map<number, YearlyTopBandPlacement>(),
+        };
+        grouped.set(key, entry);
+      } else {
+        // Prefer the newest year's capitalization and cover art when available.
+        entry.artist = albumItem.artist;
+        entry.album = albumItem.album;
+        if (albumItem.albumImage) {
+          entry.image = albumItem.albumImage;
+        }
+      }
+      const existingYear = entry.byYear.get(year);
+      if (!existingYear || position < existingYear.position) {
+        entry.byYear.set(year, {
+          year,
+          position,
+          count: Number(albumItem.count) || 0,
+        });
+      }
+    });
+  });
+
+  const rows: YearlyTopAlbum[] = [...grouped.values()].map((entry) => {
+    const placements = [...entry.byYear.values()].sort((a, b) => a.year - b.year);
+    const totalPosition = placements.reduce((sum, item) => sum + item.position, 0);
+    const bestPosition = placements.reduce(
+      (best, item) => Math.min(best, item.position),
+      placements[0].position
+    );
+    const knownAllTime = allTimeLookup.get(entry.key);
+    let allTimeScrobbles: number | null = null;
+    if (knownAllTime !== undefined) {
+      allTimeScrobbles = knownAllTime;
+    }
+    return {
+      artist: entry.artist,
+      album: entry.album,
+      image: entry.image,
+      yearsCount: placements.length,
+      averagePosition: totalPosition / placements.length,
+      bestPosition,
+      allTimeScrobbles,
+      placements,
+    };
+  });
+
+  return sortYearlyTopAlbums(rows, 'years', 'descending');
+}
+
 module.exports = {
   FOCUS_BANDS,
+  YEARLY_TOP_LIMIT,
   byYear,
   compareCounts,
   cutoff,
@@ -486,9 +683,11 @@ module.exports = {
   monthKey,
   movers,
   newAlbums,
+  sortYearlyTopAlbums,
   sortYearlyTopBands,
   sumMonths,
   summarize,
   trendFacts,
+  yearlyTopAlbums,
   yearlyTopBands,
 };

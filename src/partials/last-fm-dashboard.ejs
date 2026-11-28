@@ -2,8 +2,8 @@
   Unified Last.fm listening dashboard shell for /music/listening-history/.
   Combines recent rolling-window views (defaulting to the last 90 days) with
   full listening history (all time, year, quarter, month, week) and the yearly
-  top-20 bands table. Panel headings render here so the page reads without
-  JavaScript; src/ts/_modules/last-fm/dashboard.ts fills every [data-lfm] body.
+  top-15 bands and albums tables. Panel headings render here so the page reads
+  without JavaScript; src/ts/_modules/last-fm/dashboard.ts fills every [data-lfm] body.
 %>
 <div class="lfm content" data-lfm-dashboard>
 
@@ -88,15 +88,26 @@
       <div class="lfm-panel__body is-skeleton" data-lfm="heatmap"></div>
     </section>
 
-    <section class="lfm-panel lfm-panel--top20" aria-labelledby="lfm-top20-title">
+    <section class="lfm-panel lfm-panel--yearly-top-bands" aria-labelledby="lfm-yearly-top-bands-title">
       <header class="lfm-panel__header">
         <p class="lfm-overline">Consistency</p>
-        <h2 class="lfm-panel__title" id="lfm-top20-title">Yearly top 20 bands</h2>
-        <p class="lfm-panel__note" data-lfm="top20-note">
-          Every band to finish in a calendar-year top 20, ordered by years on the list and average position.
+        <h2 class="lfm-panel__title" id="lfm-yearly-top-bands-title">Yearly top 15 bands</h2>
+        <p class="lfm-panel__note" data-lfm="yearly-top-bands-note">
+          Every band to finish in a calendar-year top 15, ordered by years on the list and average position.
         </p>
       </header>
-      <div class="lfm-panel__body is-skeleton" data-lfm="top20"></div>
+      <div class="lfm-panel__body is-skeleton" data-lfm="yearly-top-bands"></div>
+    </section>
+
+    <section class="lfm-panel lfm-panel--yearly-top-albums" aria-labelledby="lfm-yearly-top-albums-title">
+      <header class="lfm-panel__header">
+        <p class="lfm-overline">Endurance</p>
+        <h2 class="lfm-panel__title" id="lfm-yearly-top-albums-title">Yearly top 15 albums</h2>
+        <p class="lfm-panel__note" data-lfm="yearly-top-albums-note">
+          Every album to finish in a calendar-year top 15, ordered by years on the list and average position.
+        </p>
+      </header>
+      <div class="lfm-panel__body is-skeleton" data-lfm="yearly-top-albums"></div>
     </section>
 
   </div>

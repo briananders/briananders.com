@@ -5,7 +5,7 @@
 //   - Defaults to the rolling last-90-days window.
 //   - Offers every published period (all time, rolling, year, quarter, month,
 //     week), a 24-month context timeline with the active span shaded, year
-//     columns, a year × month heatmap, and a sortable yearly top-20 bands table.
+//     columns, a year × month heatmap, and sortable yearly top-15 bands and albums tables.
 //
 // Every panel re-renders against the same selected period so the numbers
 // always agree. URL state: ?type=&period= for the period, ?trends= for the
@@ -17,7 +17,8 @@ import type {
   HeatmapRow,
   KpiDirection,
   KpiTile,
-  ListComparison
+  ListComparison,
+  YearlyTopTableHandle
 } from './charts.ts';
 import type {
   ComparisonEntry,
@@ -42,6 +43,7 @@ import type {
   MoverRow,
   ReportSummary,
   YearlyReportInput,
+  YearlyTopAlbum,
   YearlyTopBand
 } from './stats.ts';
 
@@ -81,13 +83,56 @@ interface DashboardState {
   yearTotals: YearTotalRow[] | null;
   heatRows: HeatmapRow[] | null;
   timelineSeries: MonthlySeriesRow[] | null;
-  top20Bands: YearlyTopBand[] | null;
+  yearlyTopBands: YearlyTopBand[] | null;
+  yearlyTopAlbums: YearlyTopAlbum[] | null;
 }
 
 const DEFAULT_TYPE: PeriodTypeKey = 'rolling';
 const DEFAULT_PERIOD = 'last-90-days';
-const TOP_BANDS_LIMIT = 20;
+const { YEARLY_TOP_LIMIT }: { YEARLY_TOP_LIMIT: number } = stats;
+const TREND_FETCH_CONCURRENCY = 8;
 const LIMITS = { albums: [9, 25], artists: [10, 25] } as const;
+
+/**
+ * Runs an async worker across `items` with bounded concurrency so large batches
+ * of trend requests do not saturate browser connection pools.
+ *
+ * @param {T[]} items - Items to process.
+ * @param {number} concurrency - Maximum simultaneous workers.
+ * @param {(item: T) => Promise<void>} worker - Async worker callback.
+ * @returns {Promise<void>} Resolves once every item has finished.
+ */
+async function runWithConcurrency<T>(
+  items: T[],
+  concurrency: number,
+  worker: (item: T) => Promise<void>
+): Promise<void> {
+  if (!items.length) return;
+  let nextIndex = 0;
+  const workerCount = Math.min(concurrency, items.length);
+  const runners = Array.from({ length: workerCount }, async () => {
+    while (nextIndex < items.length) {
+      const current = items[nextIndex];
+      nextIndex += 1;
+      await worker(current);
+    }
+  });
+  await Promise.all(runners);
+}
+
+/**
+ * Extracts a lifetime play count from a trend payload, falling back to summing
+ * its monthly counts when `totalScrobbles` is omitted.
+ *
+ * @param {TrendPayload} trend - Parsed trend JSON.
+ * @returns {number} Lifetime play count.
+ */
+function totalFromTrend(trend: TrendPayload): number {
+  if (typeof trend.totalScrobbles === 'number' && !Number.isNaN(trend.totalScrobbles)) {
+    return trend.totalScrobbles;
+  }
+  return (trend.months || []).reduce((sum, row) => sum + (Number(row.count) || 0), 0);
+}
 
 /**
  * Upper-cases the first character.
@@ -181,8 +226,10 @@ function initDashboard(root: HTMLElement): void {
     timelineNote: $('timeline-note'),
     years: $('years'),
     heatmap: $('heatmap'),
-    top20: $('top20'),
-    top20Note: $('top20-note'),
+    yearlyTopBands: $('yearly-top-bands'),
+    yearlyTopBandsNote: $('yearly-top-bands-note'),
+    yearlyTopAlbums: $('yearly-top-albums'),
+    yearlyTopAlbumsNote: $('yearly-top-albums-note'),
   };
 
   const state: DashboardState = {
@@ -198,7 +245,8 @@ function initDashboard(root: HTMLElement): void {
     yearTotals: null,
     heatRows: null,
     timelineSeries: null,
-    top20Bands: null,
+    yearlyTopBands: null,
+    yearlyTopAlbums: null,
   };
 
   // -- Drill-down dialog + ?trends= URL sync ----------------------------------
@@ -717,18 +765,23 @@ function initDashboard(root: HTMLElement): void {
     els.timeline.classList.remove('is-skeleton');
   };
 
-  const renderTop20Bands = (bands: YearlyTopBand[], yearCount: number, yearRange: string): void => {
-    if (!els.top20) return;
-    if (els.top20Note) {
+  const renderYearlyTopBands = (
+    bands: YearlyTopBand[],
+    yearCount: number,
+    yearRange: string
+  ): YearlyTopTableHandle | null => {
+    if (!els.yearlyTopBands) return null;
+    if (els.yearlyTopBandsNote) {
       let rangeSuffix = '';
       if (yearRange) {
         rangeSuffix = ` (${yearRange})`;
       }
-      els.top20Note.textContent = `${format.number(bands.length)} bands across ${format.number(yearCount)} years`
-        + `${rangeSuffix}. Default order: years in the top ${TOP_BANDS_LIMIT}, then average position. `
+      els.yearlyTopBandsNote.textContent = `${format.number(bands.length)} bands across ${format.number(yearCount)} `
+        + `years${rangeSuffix}. Default order: years in the top ${YEARLY_TOP_LIMIT}, then average position. `
         + 'Select a band for its history or a year chip to load that year.';
     }
-    charts.yearlyTopBandsTable(els.top20, bands, {
+    const handle: YearlyTopTableHandle = charts.yearlyTopBandsTable(els.yearlyTopBands, bands, {
+      topLimit: YEARLY_TOP_LIMIT,
       onSelectArtist: (band: YearlyTopBand) => openTrend({
         kind: 'artist',
         artist: band.name,
@@ -736,7 +789,37 @@ function initDashboard(root: HTMLElement): void {
       }),
       onSelectYear: (year: number) => selectFromChart('year', String(year)),
     });
-    els.top20.classList.remove('is-skeleton');
+    els.yearlyTopBands.classList.remove('is-skeleton');
+    return handle;
+  };
+
+  const renderYearlyTopAlbums = (
+    albums: YearlyTopAlbum[],
+    yearCount: number,
+    yearRange: string
+  ): YearlyTopTableHandle | null => {
+    if (!els.yearlyTopAlbums) return null;
+    if (els.yearlyTopAlbumsNote) {
+      let rangeSuffix = '';
+      if (yearRange) {
+        rangeSuffix = ` (${yearRange})`;
+      }
+      els.yearlyTopAlbumsNote.textContent = `${format.number(albums.length)} albums across `
+        + `${format.number(yearCount)} years${rangeSuffix}. Default order: years in the top ${YEARLY_TOP_LIMIT}, `
+        + 'then average position. Select an album for its history or a year chip to load that year.';
+    }
+    const handle: YearlyTopTableHandle = charts.yearlyTopAlbumsTable(els.yearlyTopAlbums, albums, {
+      topLimit: YEARLY_TOP_LIMIT,
+      onSelectAlbum: (album: YearlyTopAlbum) => openTrend({
+        kind: 'album',
+        artist: album.artist,
+        album: album.album,
+        image: album.image,
+      }),
+      onSelectYear: (year: number) => selectFromChart('year', String(year)),
+    });
+    els.yearlyTopAlbums.classList.remove('is-skeleton');
+    return handle;
   };
 
   const renderRange = (span: PeriodSpan | null, comp: ComparisonEntry | null): void => {
@@ -859,25 +942,32 @@ function initDashboard(root: HTMLElement): void {
     renderTimeline(state.span);
   };
 
-  const loadYearlyTopBands = async (): Promise<void> => {
-    if (!els.top20) return;
+  /**
+   * Loads every calendar-year report alongside the all-time report to build
+   * both yearly top-15 tables, then hydrates all-time play totals for items
+   * outside the all-time top 50 from their monthly trend files.
+   *
+   * @returns {Promise<void>} Resolves once initial tables render and hydration finishes.
+   */
+  const loadYearlyTopLists = async (): Promise<void> => {
+    if (!els.yearlyTopBands && !els.yearlyTopAlbums) return;
     const yearEntries = data.reportsOfType(state.index, 'year') as ReportIndexEntry[];
-    const loaded = await Promise.all(
-      yearEntries.map(async (entry): Promise<YearlyReportInput | null> => {
-        const yearNumber = Number(data.periodSlug(entry.filename, 'year'));
-        if (!Number.isInteger(yearNumber)) return null;
-        try {
-          const yearReport = await (data.getReport(entry.filename) as Promise<LastFmReport>);
-          return { year: yearNumber, report: yearReport };
-        } catch {
-          return null;
-        }
-      })
-    );
-    const validReports = loaded.filter((entry): entry is YearlyReportInput => entry !== null);
-    const bands: YearlyTopBand[] = stats.yearlyTopBands(validReports, TOP_BANDS_LIMIT);
-    state.top20Bands = bands;
-
+    const [allTimeReport, loadedYears] = await Promise.all([
+      (data.getReport('all_time.json') as Promise<LastFmReport>).catch(() => null),
+      Promise.all(
+        yearEntries.map(async (entry): Promise<YearlyReportInput | null> => {
+          const yearNumber = Number(data.periodSlug(entry.filename, 'year'));
+          if (!Number.isInteger(yearNumber)) return null;
+          try {
+            const yearReport = await (data.getReport(entry.filename) as Promise<LastFmReport>);
+            return { year: yearNumber, report: yearReport };
+          } catch {
+            return null;
+          }
+        })
+      )
+    ]);
+    const validReports = loadedYears.filter((entry): entry is YearlyReportInput => entry !== null);
     const sortedYears = validReports.map((entry) => entry.year).sort((a, b) => a - b);
     let yearRange = '';
     if (sortedYears.length === 1) {
@@ -885,21 +975,79 @@ function initDashboard(root: HTMLElement): void {
     } else if (sortedYears.length > 1) {
       yearRange = `${sortedYears[0]}–${sortedYears[sortedYears.length - 1]}`;
     }
-    renderTop20Bands(bands, sortedYears.length, yearRange);
+
+    const bands: YearlyTopBand[] = stats.yearlyTopBands(validReports, YEARLY_TOP_LIMIT, allTimeReport);
+    const albums: YearlyTopAlbum[] = stats.yearlyTopAlbums(validReports, YEARLY_TOP_LIMIT, allTimeReport);
+    state.yearlyTopBands = bands;
+    state.yearlyTopAlbums = albums;
+
+    const bandsHandle = renderYearlyTopBands(bands, sortedYears.length, yearRange);
+    const albumsHandle = renderYearlyTopAlbums(albums, sortedYears.length, yearRange);
+
+    const missingBands = bands.filter((band) => band.allTimeScrobbles === null);
+    const missingAlbums = albums.filter((album) => album.allTimeScrobbles === null);
+
+    await Promise.all([
+      bandsHandle ? runWithConcurrency(missingBands, TREND_FETCH_CONCURRENCY, async (band) => {
+        const key = band.name.toLowerCase();
+        const path: string = data.trendPath({ kind: 'artist', artist: band.name });
+        try {
+          const trend = await (data.getTrend(path) as Promise<TrendPayload>);
+          bandsHandle.setAllTimeScrobbles(key, totalFromTrend(trend));
+        } catch {
+          bandsHandle.setAllTimeScrobbles(key, null);
+        }
+      }).then(() => bandsHandle.refreshSortIfActive('allTime')) : Promise.resolve(),
+      albumsHandle ? runWithConcurrency(missingAlbums, TREND_FETCH_CONCURRENCY, async (album) => {
+        const key = `${album.artist.toLowerCase()}\u0000${album.album.toLowerCase()}`;
+        const path: string = data.trendPath({ kind: 'album', artist: album.artist, album: album.album });
+        try {
+          const trend = await (data.getTrend(path) as Promise<TrendPayload>);
+          albumsHandle.setAllTimeScrobbles(key, totalFromTrend(trend));
+        } catch {
+          albumsHandle.setAllTimeScrobbles(key, null);
+        }
+      }).then(() => albumsHandle.refreshSortIfActive('allTime')) : Promise.resolve()
+    ]);
   };
 
   // -- Boot ---------------------------------------------------------------------
 
-  // Showing more rows can reveal items whose comparison count needs a lookup.
+  // Expand/collapse immediately so the button responds without waiting on
+  // comparison trend lookups; hydrate any missing counts afterward.
   els.albumsToggle.addEventListener('click', () => {
     const [few, many] = LIMITS.albums;
-    state.limits.albums = state.limits.albums === few ? many : few;
-    resolveMissing('albums', state.limits.albums).then(() => { if (state.report) renderAlbums(state.report); });
+    if (state.limits.albums === few) {
+      state.limits.albums = many;
+    } else {
+      state.limits.albums = few;
+    }
+    if (!state.report) return;
+    const activeToken = state.token;
+    const targetReport = state.report;
+    renderAlbums(targetReport);
+    resolveMissing('albums', state.limits.albums).then(() => {
+      if (state.token === activeToken && state.report === targetReport) {
+        renderAlbums(targetReport);
+      }
+    });
   });
   els.artistsToggle.addEventListener('click', () => {
     const [few, many] = LIMITS.artists;
-    state.limits.artists = state.limits.artists === few ? many : few;
-    resolveMissing('artists', state.limits.artists).then(() => { if (state.report) renderArtists(state.report); });
+    if (state.limits.artists === few) {
+      state.limits.artists = many;
+    } else {
+      state.limits.artists = few;
+    }
+    if (!state.report) return;
+    const activeToken = state.token;
+    const targetReport = state.report;
+    renderArtists(targetReport);
+    resolveMissing('artists', state.limits.artists).then(() => {
+      if (state.token === activeToken && state.report === targetReport) {
+        renderArtists(targetReport);
+      }
+    });
   });
 
   const boot = async (): Promise<void> => {
@@ -910,10 +1058,20 @@ function initDashboard(root: HTMLElement): void {
     selectPeriod(params.get('type'), params.get('period'));
     loadHistoryPanels().catch(() => {});
     loadTimeline().catch(() => {});
-    loadYearlyTopBands().catch(() => {
-      if (els.top20) {
-        els.top20.classList.remove('is-skeleton');
-        replace(els.top20, h('p', { class: 'lfm-status is-error', text: 'Yearly top-20 bands could not be loaded.' }));
+    loadYearlyTopLists().catch(() => {
+      if (els.yearlyTopBands) {
+        els.yearlyTopBands.classList.remove('is-skeleton');
+        replace(
+          els.yearlyTopBands,
+          h('p', { class: 'lfm-status is-error', text: `Yearly top-${YEARLY_TOP_LIMIT} bands could not be loaded.` })
+        );
+      }
+      if (els.yearlyTopAlbums) {
+        els.yearlyTopAlbums.classList.remove('is-skeleton');
+        replace(
+          els.yearlyTopAlbums,
+          h('p', { class: 'lfm-status is-error', text: `Yearly top-${YEARLY_TOP_LIMIT} albums could not be loaded.` })
+        );
       }
     });
     syncDialogToUrl();
